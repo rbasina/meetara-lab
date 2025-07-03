@@ -13,11 +13,138 @@ from pathlib import Path
 # Import trinity-core components
 from agents.mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage
 
+class VoiceCategoryManager:
+    """Enhanced Voice Category Manager with intelligent domain routing (from TARA reference)"""
+    
+    def __init__(self, config: Optional[Dict] = None):
+        self.config = config or {}
+        self.voice_profiles = self._initialize_enhanced_voice_profiles()
+        print("✅ Enhanced VoiceCategoryManager initialized with TARA proven routing")
+    
+    def _initialize_enhanced_voice_profiles(self) -> Dict[str, Dict]:
+        """Initialize enhanced voice profiles with TARA proven structure"""
+        return {
+            "meditative_voice": {
+                "domains": ["yoga", "spiritual", "meditation", "mindfulness", "mythology"],
+                "tone": "calm",
+                "pace": "slow", 
+                "pitch": "low",
+                "empathy": "very_high",
+                "modulation": "gentle_whisper",
+                "breathing_rhythm": "deep_slow",
+                "energy_level": "tranquil"
+            },
+            "therapeutic_voice": {
+                "domains": ["healthcare", "mental_health", "therapy", "counseling", "fitness", "nutrition", "sleep", "preventive_care"],
+                "tone": "professional",
+                "pace": "moderate",
+                "pitch": "medium",
+                "empathy": "high", 
+                "modulation": "calm",
+                "breathing_rhythm": "steady",
+                "energy_level": "supportive"
+            },
+            "professional_voice": {
+                "domains": ["business", "teaching", "corporate", "leadership", "entrepreneurship", "marketing", "sales"],
+                "tone": "confident",
+                "pace": "moderate",
+                "pitch": "medium",
+                "empathy": "medium",
+                "modulation": "authoritative",
+                "breathing_rhythm": "controlled",
+                "energy_level": "focused"
+            },
+            "educational_voice": {
+                "domains": ["education", "training", "learning", "academic", "tutoring"],
+                "tone": "friendly",
+                "pace": "moderate",
+                "pitch": "medium",
+                "empathy": "high",
+                "modulation": "engaging",
+                "breathing_rhythm": "natural",
+                "energy_level": "encouraging"
+            },
+            "creative_voice": {
+                "domains": ["creative", "art", "writing", "design", "storytelling", "music"],
+                "tone": "enthusiastic", 
+                "pace": "varied",
+                "pitch": "medium",
+                "empathy": "medium",
+                "modulation": "expressive",
+                "breathing_rhythm": "dynamic",
+                "energy_level": "inspiring"
+            },
+            "casual_voice": {
+                "domains": ["parenting", "relationships", "social", "personal", "personal_assistant", "dating", "travel"],
+                "tone": "warm",
+                "pace": "natural",
+                "pitch": "medium",
+                "empathy": "medium",
+                "modulation": "conversational",
+                "breathing_rhythm": "relaxed",
+                "energy_level": "friendly"
+            }
+        }
+    
+    def get_voice_for_domain(self, domain: str) -> str:
+        """Get appropriate voice category for a domain with intelligent routing"""
+        domain_lower = domain.lower()
+        
+        # Direct domain matching
+        for voice_name, profile in self.voice_profiles.items():
+            if domain_lower in profile["domains"]:
+                return voice_name
+        
+        # Smart keyword matching for unknown domains
+        if any(keyword in domain_lower for keyword in ["health", "medical", "therapy", "care"]):
+            return "therapeutic_voice"
+        elif any(keyword in domain_lower for keyword in ["business", "work", "professional", "corporate"]):
+            return "professional_voice"
+        elif any(keyword in domain_lower for keyword in ["learn", "teach", "education", "study"]):
+            return "educational_voice"
+        elif any(keyword in domain_lower for keyword in ["art", "creative", "design", "music"]):
+            return "creative_voice"
+        elif any(keyword in domain_lower for keyword in ["meditation", "spiritual", "yoga", "mindful"]):
+            return "meditative_voice"
+        elif any(keyword in domain_lower for keyword in ["family", "parent", "relationship", "personal"]):
+            return "casual_voice"
+        
+        # Default fallback
+        return "professional_voice"
+    
+    def get_all_voice_categories(self) -> List[str]:
+        """Get all available voice categories"""
+        return list(self.voice_profiles.keys())
+    
+    def get_voice_profile(self, voice_name: str) -> Dict[str, Any]:
+        """Get voice profile details with fallback"""
+        return self.voice_profiles.get(voice_name, self.voice_profiles["professional_voice"])
+    
+    def get_voice_characteristics(self, domain: str) -> Dict[str, Any]:
+        """Get voice characteristics for a specific domain"""
+        voice_name = self.get_voice_for_domain(domain)
+        profile = self.get_voice_profile(voice_name)
+        
+        return {
+            "voice_category": voice_name,
+            "tone": profile["tone"],
+            "pace": profile["pace"],
+            "pitch": profile["pitch"],
+            "empathy": profile["empathy"],
+            "modulation": profile["modulation"],
+            "breathing_rhythm": profile.get("breathing_rhythm", "natural"),
+            "energy_level": profile.get("energy_level", "balanced"),
+            "domains": profile["domains"]
+        }
+
 class IntelligentRouter(BaseAgent):
     """Intelligent Universal Router with Trinity Architecture and multi-domain analysis"""
     
     def __init__(self, mcp=None):
         super().__init__(AgentType.INTELLIGENT_ROUTER, mcp)
+        
+        # Initialize Voice Category Manager (from TARA reference)
+        self.voice_manager = VoiceCategoryManager()
         
         # Load domain mappings from cloud-optimized configuration
         self.domain_mapping = self._load_domain_mapping()
@@ -30,7 +157,8 @@ class IntelligentRouter(BaseAgent):
                            "medication_management", "emergency_care", "women_health", "senior_health"],
                 "priority": "high",
                 "model_tier": "quality",
-                "empathy_level": "very_high"
+                "empathy_level": "very_high",
+                "voice_default": "therapeutic_voice"
             },
             "daily_life": {
                 "domains": ["parenting", "relationships", "personal_assistant", "communication",
@@ -38,7 +166,8 @@ class IntelligentRouter(BaseAgent):
                            "time_management", "decision_making", "conflict_resolution", "work_life_balance"],
                 "priority": "medium",
                 "model_tier": "fast", 
-                "empathy_level": "high"
+                "empathy_level": "high",
+                "voice_default": "casual_voice"
             },
             "business": {
                 "domains": ["entrepreneurship", "marketing", "sales", "customer_service",
@@ -46,7 +175,8 @@ class IntelligentRouter(BaseAgent):
                            "operations", "hr_management", "strategy", "consulting", "legal_business"],
                 "priority": "medium",
                 "model_tier": "balanced",
-                "empathy_level": "moderate"
+                "empathy_level": "moderate",
+                "voice_default": "professional_voice"
             },
             "education": {
                 "domains": ["academic_tutoring", "skill_development", "career_guidance",
@@ -54,29 +184,47 @@ class IntelligentRouter(BaseAgent):
                            "study_techniques", "educational_technology"],
                 "priority": "medium",
                 "model_tier": "balanced",
-                "empathy_level": "high"
+                "empathy_level": "high",
+                "voice_default": "educational_voice"
             },
             "creative": {
                 "domains": ["writing", "storytelling", "content_creation", "social_media",
                            "design_thinking", "photography", "music", "art_appreciation"],
                 "priority": "low",
                 "model_tier": "lightning",
-                "empathy_level": "moderate"
+                "empathy_level": "moderate",
+                "voice_default": "creative_voice"
             },
             "technology": {
                 "domains": ["programming", "ai_ml", "cybersecurity", "data_analysis",
                            "tech_support", "software_development"],
                 "priority": "medium",
                 "model_tier": "balanced",
-                "empathy_level": "moderate"
+                "empathy_level": "moderate",
+                "voice_default": "professional_voice"
             },
             "specialized": {
                 "domains": ["legal", "financial", "scientific_research", "engineering"],
                 "priority": "high",
                 "model_tier": "quality",
-                "empathy_level": "moderate"
+                "empathy_level": "moderate",
+                "voice_default": "professional_voice"
             }
         }
+        
+        # Initialize routing statistics
+        self.routing_stats = {
+            "total_requests": 0,
+            "domain_distribution": {},
+            "voice_distribution": {},
+            "model_tier_usage": {},
+            "performance_metrics": {}
+        }
+        
+        print("🎯 Enhanced Intelligent Router initialized with Voice Category Management")
+        print(f"   ✅ Voice categories: {len(self.voice_manager.get_all_voice_categories())}")
+        print(f"   ✅ Domain categories: {len(self.domain_categories)}")
+        print(f"   ✅ Total domains: {sum(len(cat['domains']) for cat in self.domain_categories.values())}")
         
         # RoBERTa-powered routing patterns
         self.routing_patterns = self._create_routing_patterns()
@@ -219,7 +367,7 @@ class IntelligentRouter(BaseAgent):
             
             # Notify other agents
             self.send_message(
-                AgentType.TRAINING_CONDUCTOR,
+                AgentType.CONDUCTOR,
                 MessageType.STATUS_UPDATE,
                 {
                     "action": "request_routed",
@@ -473,5 +621,61 @@ class IntelligentRouter(BaseAgent):
             "performance_rating": "excellent" if self.performance_stats["success_rate"] > 0.95 else "good"
         }
 
+    def get_voice_for_domain(self, domain: str) -> str:
+        """Get appropriate voice for domain using TARA proven routing"""
+        return self.voice_manager.get_voice_for_domain(domain)
+    
+    def get_voice_characteristics(self, domain: str) -> Dict[str, Any]:
+        """Get comprehensive voice characteristics for domain"""
+        return self.voice_manager.get_voice_characteristics(domain)
+    
+    def get_domain_voice_mapping(self) -> Dict[str, str]:
+        """Get complete domain-to-voice mapping"""
+        mapping = {}
+        
+        for category, config in self.domain_categories.items():
+            for domain in config["domains"]:
+                voice = self.voice_manager.get_voice_for_domain(domain)
+                mapping[domain] = voice
+        
+        return mapping
+    
+    def validate_routing_configuration(self) -> Dict[str, Any]:
+        """Validate routing configuration completeness (from TARA reference)"""
+        
+        total_domains = sum(len(cat['domains']) for cat in self.domain_categories.values())
+        voice_categories = len(self.voice_manager.get_all_voice_categories())
+        
+        # Check domain coverage
+        domain_voice_mapping = self.get_domain_voice_mapping()
+        
+        validation_result = {
+            "total_domains": total_domains,
+            "voice_categories": voice_categories,
+            "domain_voice_coverage": len(domain_voice_mapping),
+            "configuration_complete": len(domain_voice_mapping) == total_domains,
+            "voice_distribution": {},
+            "category_health": {}
+        }
+        
+        # Analyze voice distribution
+        for voice in self.voice_manager.get_all_voice_categories():
+            validation_result["voice_distribution"][voice] = sum(
+                1 for v in domain_voice_mapping.values() if v == voice
+            )
+        
+        # Check category health
+        for category, config in self.domain_categories.items():
+            validation_result["category_health"][category] = {
+                "domains": len(config["domains"]),
+                "priority": config["priority"],
+                "model_tier": config["model_tier"],
+                "empathy_level": config["empathy_level"],
+                "voice_default": config["voice_default"]
+            }
+        
+        return validation_result
+
 # Global intelligent router
+intelligent_router = IntelligentRouter() 
 intelligent_router = IntelligentRouter() 

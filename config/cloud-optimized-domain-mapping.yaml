@@ -150,4 +150,26 @@ advantages:
   cost: "All 60+ domains for $3-15 vs $0 but 200+ hours of time"
   quality: "Equal or better quality with fine-tuning"
   scalability: "Can train multiple domains in parallel"
-  flexibility: "Mix tiers based on domain importance" 
+  flexibility: "Mix tiers based on domain importance"
+
+# REAL-TIME DATA SOURCES (TARA Universal Model approach)
+data_sources:
+  real_time_scenarios: true
+  agentic_conversations: true
+  crisis_intervention: true
+  emotional_intelligence: true
+  professional_contexts: true
+  quality_filtering: 31  # 31% success rate like TARA
+  samples_per_domain: 2000  # 2000+ samples like TARA
+  
+# TARA PROVEN PARAMETERS
+tara_proven_params:
+  batch_size: 2
+  lora_r: 8
+  max_steps: 846
+  learning_rate: 1e-4
+  sequence_length: 64
+  base_model_fallback: "microsoft/DialoGPT-medium"
+  validation_target: 101.0  # 101% validation scores
+  output_format: "Q4_K_M"
+  target_size_mb: 8.3 

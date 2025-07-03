@@ -1,0 +1,71 @@
+{
+    "config": {
+      "max_domains_per_query": 4,
+      "confidence_threshold": 0.7,
+      "fusion_weight_threshold": 0.3,
+      "context_window_size": 1000,
+      "response_synthesis_method": "weighted_fusion"
+    },
+    "domain_patterns": {
+      "general_health": {
+        "keywords": ["health", "wellness", "medical", "fitness", "nutrition", "exercise", "diet", "healthy"],
+        "phrases": ["health advice", "staying healthy", "wellness tips", "medical guidance", "health concern"],
+        "context_indicators": ["feel better", "improve health", "stay fit", "healthy lifestyle", "medical help"]
+      },
+      "mental_health": {
+        "keywords": ["mental", "psychology", "therapy", "counseling", "stress", "anxiety", "depression", "emotional"],
+        "phrases": ["mental health", "emotional support", "feeling anxious", "mental wellness", "psychological help"],
+        "context_indicators": ["worried", "stressed", "anxious", "depressed", "overwhelmed"]
+      },
+      "nutrition": {
+        "keywords": ["nutrition", "diet", "food", "eating", "nutrients", "vitamins", "calories", "meal"],
+        "phrases": ["healthy eating", "nutrition advice", "diet plan", "food choices", "nutritional value"],
+        "context_indicators": ["eat better", "lose weight", "gain weight", "balanced diet", "food intake"]
+      },
+      "fitness": {
+        "keywords": ["fitness", "exercise", "workout", "training", "gym", "sports", "cardio", "strength"],
+        "phrases": ["fitness routine", "exercise plan", "workout program", "training schedule", "fitness goals"],
+        "context_indicators": ["get fit", "build muscle", "lose weight", "stay active", "physical activity"]
+      },
+      "parenting": {
+        "keywords": ["parenting", "children", "kids", "family", "child", "parent", "baby", "toddler"],
+        "phrases": ["parenting advice", "child care", "family life", "raising children", "parenting tips"],
+        "context_indicators": ["my child", "as a parent", "family time", "kids behavior", "child development"]
+      },
+      "relationships": {
+        "keywords": ["relationship", "partner", "love", "dating", "marriage", "friendship", "couples"],
+        "phrases": ["relationship advice", "dating tips", "marriage guidance", "friendship issues"],
+        "context_indicators": ["my partner", "relationship problems", "dating advice", "love life"]
+      },
+      "entrepreneurship": {
+        "keywords": ["business", "startup", "entrepreneur", "venture", "innovation", "company", "founder"],
+        "phrases": ["start a business", "entrepreneurship advice", "startup guidance", "business venture"],
+        "context_indicators": ["start my business", "business idea", "entrepreneur", "startup help"]
+      },
+      "marketing": {
+        "keywords": ["marketing", "promotion", "advertising", "brand", "campaign", "customer", "sales"],
+        "phrases": ["marketing strategy", "brand promotion", "advertising campaign", "customer engagement"],
+        "context_indicators": ["market my product", "promote business", "advertising help", "brand building"]
+      },
+      "academic_tutoring": {
+        "keywords": ["tutoring", "academic", "study", "homework", "subject", "learning", "education"],
+        "phrases": ["academic tutoring", "study help", "homework assistance", "subject tutoring"],
+        "context_indicators": ["need tutoring", "study help", "homework help", "academic support"]
+      },
+      "writing": {
+        "keywords": ["writing", "author", "content", "article", "blog", "story", "creative", "text"],
+        "phrases": ["creative writing", "content creation", "writing skills", "writing tips"],
+        "context_indicators": ["want to write", "writing help", "improve writing", "creative writing"]
+      },
+      "programming": {
+        "keywords": ["programming", "code", "software", "development", "coding", "language", "algorithm"],
+        "phrases": ["programming help", "code development", "software programming", "coding assistance"],
+        "context_indicators": ["learn programming", "coding help", "software development", "programming advice"]
+      },
+      "legal": {
+        "keywords": ["legal", "law", "lawyer", "attorney", "court", "contract", "rights", "lawsuit"],
+        "phrases": ["legal advice", "legal assistance", "law help", "legal guidance"],
+        "context_indicators": ["legal help", "law advice", "legal issue", "attorney advice"]
+      }
+    }
+  }

@@ -4,13 +4,16 @@ Master orchestrator of the entire training pipeline
 """
 
 import asyncio
+import json
 import time
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
+from pathlib import Path
+import yaml
 from .mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage, mcp_protocol
 
 class TrainingConductorAgent(BaseAgent):
-    """Master orchestrator of the entire training pipeline"""
+    """Enhanced Training Conductor with 62-domain intelligence and Trinity Architecture coordination"""
     
     def __init__(self, mcp=None):
         super().__init__(AgentType.CONDUCTOR, mcp or mcp_protocol)
@@ -19,6 +22,248 @@ class TrainingConductorAgent(BaseAgent):
         self.training_start_time: Optional[datetime] = None
         self.training_stats: Dict[str, Any] = {}
         self.coordination_strategies: Dict[str, Any] = {}
+        self.orchestration_active = False
+        
+        # 62-Domain Configuration
+        self.domain_mapping = {}
+        self.domain_categories = {}
+        self.category_requirements = {}
+        self.quality_requirements = {}
+        self.training_complexity = {}
+        
+        # Load domain configuration
+        self._load_domain_configuration()
+        
+    def _load_domain_configuration(self):
+        """Load 62-domain configuration from cloud-optimized mapping"""
+        try:
+            config_path = Path("config/cloud-optimized-domain-mapping.yaml")
+            
+            if config_path.exists():
+                with open(config_path, 'r') as f:
+                    config = yaml.safe_load(f)
+                    
+                # Extract domain categories and their domains
+                domain_categories = ['healthcare', 'daily_life', 'business', 'education', 'creative', 'technology', 'specialized']
+                
+                for category in domain_categories:
+                    if category in config:
+                        self.domain_mapping[category] = list(config[category].keys())
+                        
+                        # Map each domain to its category
+                        for domain in config[category].keys():
+                            self.domain_categories[domain] = category
+                            
+                # Initialize category-based requirements
+                self._initialize_category_requirements()
+                
+                # Load quality requirements per category
+                self._initialize_quality_requirements()
+                
+                # Load training complexity per category
+                self._initialize_training_complexity()
+                
+                total_domains = sum(len(domains) for domains in self.domain_mapping.values())
+                print(f"✅ Training Conductor: Loaded {total_domains} domains across {len(self.domain_mapping)} categories")
+                
+                # Print category breakdown
+                for category, domains in self.domain_mapping.items():
+                    print(f"   → {category}: {len(domains)} domains")
+                    
+            else:
+                print("⚠️ Domain mapping not found, using default configuration")
+                self._initialize_default_configuration()
+                
+        except Exception as e:
+            print(f"⚠️ Error loading domain configuration: {e}")
+            self._initialize_default_configuration()
+            
+    def _initialize_default_configuration(self):
+        """Initialize default domain configuration if YAML not available - Full 62 domains"""
+        self.domain_mapping = {
+            "healthcare": [
+                "general_health", "mental_health", "nutrition", "fitness", "sleep", "stress_management",
+                "preventive_care", "chronic_conditions", "medication_management", "emergency_care",
+                "women_health", "senior_health"
+            ],
+            "daily_life": [
+                "parenting", "relationships", "personal_assistant", "communication", "home_management", "shopping",
+                "planning", "transportation", "time_management", "decision_making", "conflict_resolution", "work_life_balance"
+            ],
+            "business": [
+                "entrepreneurship", "marketing", "sales", "customer_service", "project_management", "team_leadership",
+                "financial_planning", "operations", "hr_management", "strategy", "consulting", "legal_business"
+            ],
+            "education": [
+                "academic_tutoring", "skill_development", "career_guidance", "exam_preparation",
+                "language_learning", "research_assistance", "study_techniques", "educational_technology"
+            ],
+            "creative": [
+                "writing", "storytelling", "content_creation", "social_media", "design_thinking",
+                "photography", "music", "art_appreciation"
+            ],
+            "technology": [
+                "programming", "ai_ml", "cybersecurity", "data_analysis", "tech_support", "software_development"
+            ],
+            "specialized": [
+                "legal", "financial", "scientific_research", "engineering"
+            ]
+        }
+        
+        # Map domains to categories
+        for category, domains in self.domain_mapping.items():
+            for domain in domains:
+                self.domain_categories[domain] = category
+                
+        self._initialize_category_requirements()
+        self._initialize_quality_requirements()
+        self._initialize_training_complexity()
+        
+    def _initialize_category_requirements(self):
+        """Initialize quality requirements based on domain categories"""
+        self.category_requirements = {
+            "healthcare": {
+                "min_validation_score": 95,
+                "min_data_quality": 90,
+                "crisis_scenarios": True,
+                "therapeutic_focus": True,
+                "safety_critical": True,
+                "complexity_hours": 3
+            },
+            "specialized": {
+                "min_validation_score": 92,
+                "min_data_quality": 88,
+                "crisis_scenarios": True,
+                "therapeutic_focus": False,
+                "safety_critical": True,
+                "complexity_hours": 2.5
+            },
+            "business": {
+                "min_validation_score": 88,
+                "min_data_quality": 85,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False,
+                "complexity_hours": 2
+            },
+            "education": {
+                "min_validation_score": 87,
+                "min_data_quality": 82,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False,
+                "complexity_hours": 1.5
+            },
+            "technology": {
+                "min_validation_score": 87,
+                "min_data_quality": 82,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False,
+                "complexity_hours": 1.5
+            },
+            "daily_life": {
+                "min_validation_score": 85,
+                "min_data_quality": 80,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False,
+                "complexity_hours": 1
+            },
+            "creative": {
+                "min_validation_score": 82,
+                "min_data_quality": 78,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False,
+                "complexity_hours": 1
+            }
+        }
+        
+        # Apply requirements to all domains in each category
+        for category, requirements in self.category_requirements.items():
+            if category in self.domain_mapping:
+                for domain in self.domain_mapping[category]:
+                    self.quality_requirements[domain] = requirements.copy()
+                    
+    def _initialize_quality_requirements(self):
+        """Initialize quality requirements based on domain categories"""
+        # Category-based quality requirements
+        category_requirements = {
+            "healthcare": {
+                "min_validation_score": 95,
+                "min_data_quality": 90,
+                "crisis_scenarios": True,
+                "therapeutic_focus": True,
+                "safety_critical": True
+            },
+            "specialized": {
+                "min_validation_score": 92,
+                "min_data_quality": 88,
+                "crisis_scenarios": True,
+                "therapeutic_focus": False,
+                "safety_critical": True
+            },
+            "business": {
+                "min_validation_score": 88,
+                "min_data_quality": 85,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False
+            },
+            "education": {
+                "min_validation_score": 87,
+                "min_data_quality": 82,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False
+            },
+            "technology": {
+                "min_validation_score": 87,
+                "min_data_quality": 82,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False
+            },
+            "daily_life": {
+                "min_validation_score": 85,
+                "min_data_quality": 80,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False
+            },
+            "creative": {
+                "min_validation_score": 82,
+                "min_data_quality": 78,
+                "crisis_scenarios": False,
+                "therapeutic_focus": False,
+                "safety_critical": False
+            }
+        }
+        
+        # Apply requirements to all domains in each category
+        for category, requirements in category_requirements.items():
+            if category in self.domain_mapping:
+                for domain in self.domain_mapping[category]:
+                    self.quality_requirements[domain] = requirements.copy()
+                    
+    def _initialize_training_complexity(self):
+        """Initialize training complexity estimates based on domain categories"""
+        category_complexity = {
+            "healthcare": timedelta(hours=3),      # High complexity, safety-critical
+            "specialized": timedelta(hours=2.5),   # High complexity, accuracy-critical
+            "business": timedelta(hours=2),        # Medium complexity, reasoning-heavy
+            "education": timedelta(hours=1.5),     # Medium complexity, structured
+            "technology": timedelta(hours=1.5),    # Medium complexity, technical
+            "daily_life": timedelta(hours=1),      # Lower complexity, conversational
+            "creative": timedelta(hours=1)         # Lower complexity, creative
+        }
+        
+        # Apply complexity to all domains in each category
+        for category, complexity in category_complexity.items():
+            if category in self.domain_mapping:
+                for domain in self.domain_mapping[category]:
+                    self.training_complexity[domain] = complexity
         
     async def start(self):
         """Start the Training Conductor Agent"""
@@ -318,41 +563,53 @@ class TrainingConductorAgent(BaseAgent):
             self.coordination_strategies["quality_first"] = False
             
     def _estimate_training_duration(self, domain: str) -> timedelta:
-        """Estimate training duration for a domain"""
+        """Estimate training duration for a domain based on category"""
         # Base estimate on previous training stats
         if domain in self.training_stats:
             return self.training_stats[domain]["duration"]
+        
+        # Get domain category for intelligent estimation
+        category = self.domain_categories.get(domain)
+        
+        if category and category in self.category_requirements:
+            hours = self.category_requirements[category]["complexity_hours"]
+            return timedelta(hours=hours)
             
-        # Default estimates based on domain complexity
+        # Default estimates based on domain complexity (fallback)
         complexity_map = {
-            "healthcare": timedelta(hours=2),
-            "mental_health": timedelta(hours=1.5),
+            "healthcare": timedelta(hours=3),
+            "mental_health": timedelta(hours=3),
+            "specialized": timedelta(hours=2.5),
             "business": timedelta(hours=2),
             "education": timedelta(hours=1.5),
+            "technology": timedelta(hours=1.5),
+            "daily_life": timedelta(hours=1),
             "creative": timedelta(hours=1),
         }
         
         return complexity_map.get(domain, timedelta(hours=1.5))
         
     def _get_quality_requirements(self, domain: str) -> Dict[str, Any]:
-        """Get quality requirements for a domain"""
-        # High-stakes domains need higher quality
-        high_quality_domains = ["healthcare", "mental_health", "crisis_intervention"]
+        """Get quality requirements for a domain based on its category"""
+        # Use domain category to determine requirements
+        category = self.domain_categories.get(domain)
         
-        if domain in high_quality_domains:
+        if category and category in self.category_requirements:
+            requirements = self.category_requirements[category]
             return {
-                "min_validation_score": 95,
-                "min_data_quality": 90,
-                "crisis_scenarios": True,
-                "therapeutic_focus": True
+                "min_validation_score": requirements["min_validation_score"],
+                "min_data_quality": requirements["min_data_quality"],
+                "crisis_scenarios": requirements["crisis_scenarios"],
+                "therapeutic_focus": requirements["therapeutic_focus"]
             }
-        else:
-            return {
-                "min_validation_score": 85,
-                "min_data_quality": 80,
-                "crisis_scenarios": False,
-                "therapeutic_focus": False
-            }
+        
+        # Fallback for unknown domains
+        return {
+            "min_validation_score": 85,
+            "min_data_quality": 80,
+            "crisis_scenarios": False,
+            "therapeutic_focus": False
+        }
             
     def _get_quality_thresholds(self, domain: str) -> Dict[str, float]:
         """Get quality monitoring thresholds"""

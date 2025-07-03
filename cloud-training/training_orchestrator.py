@@ -20,7 +20,7 @@ class TrainingOrchestrator(BaseAgent):
     """Training Orchestrator with cloud coordination and TARA management"""
     
     def __init__(self, mcp=None):
-        super().__init__(AgentType.TRAINING_CONDUCTOR, mcp)
+        super().__init__(AgentType.CONDUCTOR, mcp)
         
         # Load cloud-optimized domain mapping
         self.domain_mapping = self._load_domain_mapping()
@@ -158,8 +158,16 @@ class TrainingOrchestrator(BaseAgent):
     def _load_domain_mapping(self) -> Dict[str, Any]:
         """Load cloud-optimized domain mapping"""
         try:
-            with open("../cloud-optimized-domain-mapping.yaml", 'r') as f:
+            with open("../config/cloud-optimized-domain-mapping.yaml", 'r') as f:
                 return yaml.safe_load(f)
+        except FileNotFoundError:
+            # Try from current directory
+            try:
+                with open("config/cloud-optimized-domain-mapping.yaml", 'r') as f:
+                    return yaml.safe_load(f)
+            except FileNotFoundError:
+                print("⚠️ Domain mapping not found, using default configuration")
+                return {}
         except Exception as e:
             print(f"⚠️ Failed to load domain mapping: {e}")
             return {}
@@ -570,9 +578,16 @@ class TrainingOrchestrator(BaseAgent):
     async def _update_coordination_state(self, result: Dict[str, Any]):
         """Update coordination state tracking"""
         
-        # Update completed domains
-        self.coordination_state["completed_domains"].extend(result.get("completed_domains", []))
-        self.coordination_state["failed_domains"].extend(result.get("failed_domains", []))
+        # Extract domain lists from training plan results
+        training_plan = result.get("training_plan", {})
+        if training_plan and "domains" in training_plan:
+            # For successful orchestration, assume all domains succeeded (simulation)
+            completed_domains = training_plan["domains"][:result.get("successful_domains", 0)]
+            failed_domains = training_plan["domains"][result.get("successful_domains", 0):]
+            
+            # Update completed domains
+            self.coordination_state["completed_domains"].extend(completed_domains)
+            self.coordination_state["failed_domains"].extend(failed_domains)
         
         # Update performance metrics
         self.coordination_state["performance_metrics"]["last_orchestration"] = {

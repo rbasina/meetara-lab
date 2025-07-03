@@ -29,6 +29,8 @@ tests/
 ├── integration/                # Cross-component integration tests
 │   ├── __init__.py
 │   ├── test_trinity_integration.py # Trinity Architecture tests
+│   ├── test_62_domains_integration.py # 62-Domain validation tests
+│   ├── test_agent_ecosystem_integration.py # Agent ecosystem tests
 │   ├── test_cloud_orchestration.py # Cloud system tests
 │   ├── test_component_communication.py # Inter-component tests
 │   └── test_meetara_integration.py # MeeTARA ecosystem tests
@@ -326,6 +328,60 @@ Testing framework integrates with [Memory-Bank](../memory-bank/README.md) approa
 - **Debugging Tests**: [Test Debugging Guide](debugging-guide.md)
 - **Performance Testing**: [Performance Test Best Practices](performance-testing.md)
 - **Mock Services**: [Mock Provider Documentation](mock-services.md)
+
+## 🔍 Dynamic Domain Integration Testing
+
+### Comprehensive Domain Coverage Validation
+The domain integration test (`tests/integration/test_domains_integration.py`) ensures all agents properly support the complete MeeTARA Lab domain architecture with dynamic scaling:
+
+#### Key Features:
+- **Dynamic Domain Detection**: Automatically reads domain count from YAML configuration
+- **Future-Proof**: Adapts to any number of domains without code changes
+- **Category-Based Validation**: Tests quality thresholds per domain category
+- **Comprehensive Coverage**: Validates all agents across the complete domain set
+
+#### Test Architecture:
+```python
+# Example: Dynamic domain validation
+@pytest.fixture
+def expected_domains(self, domain_config: Dict) -> Set[str]:
+    """Extract all domains from configuration dynamically"""
+    domains = set()
+    for category_data in domain_config.values():
+        if isinstance(category_data, dict):
+            domains.update(category_data.keys())
+    return domains
+
+def test_training_conductor_all_domains(self, expected_domains: Set[str], domain_count: int):
+    # Test scales automatically to any domain count
+    assert len(configured_domains) == domain_count
+    assert configured_domains == expected_domains
+```
+
+#### Validation Points:
+1. **YAML Configuration**: All domains present in config file (dynamic count)
+2. **Agent Default Configs**: Complete fallback configurations 
+3. **Domain Keywords**: Comprehensive keyword mapping (auto-scaling)
+4. **Compatibility Matrix**: Full cross-domain compatibility scores
+5. **Category-Based Quality**: Appropriate thresholds per domain type
+6. **Backward Compatibility**: Legacy domain references still work
+
+#### Running Domain Tests:
+```bash
+# Run complete domain integration test (auto-detects domain count)
+pytest tests/integration/test_domains_integration.py -v
+
+# Run with detailed output
+python tests/integration/test_domains_integration.py
+```
+
+This test suite ensures the MeeTARA Lab system maintains complete coverage across all configured domains while automatically adapting to domain set changes without requiring code updates.
+
+## 🎯 Test Integration Standards
+
+All test scripts must be located within the `tests/` folder structure. Tests should be generalized and data-driven rather than hardcoded to specific numbers. The comprehensive test runner (`tests/run_all_tests.py`) provides centralized execution and reporting for all test categories.
+
+For questions about testing standards or adding new test cases, refer to the existing test patterns in each category folder.
 
 ---
 

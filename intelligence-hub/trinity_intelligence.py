@@ -89,13 +89,83 @@ class TrinityIntelligenceHub(BaseAgent):
     async def _initialize_intelligence_patterns(self):
         """Initialize intelligence patterns from proven TARA knowledge"""
         
-        # Load proven domain relationships from TARA Universal Model
+        # Load proven domain relationships from TARA Universal Model - ALL 62 DOMAINS
         domain_relationships = {
-            "healthcare": ["mental_health", "fitness", "nutrition", "preventive_care"],
-            "mental_health": ["healthcare", "stress_management", "relationships"],
-            "business": ["leadership", "decision_making", "strategic_planning"],
-            "education": ["learning", "skill_development", "knowledge_transfer"],
-            "creative": ["innovation", "problem_solving", "artistic_expression"]
+            # Healthcare domains (12) - Complex interconnections
+            "general_health": ["mental_health", "fitness", "nutrition", "preventive_care", "sleep"],
+            "mental_health": ["general_health", "stress_management", "relationships", "work_life_balance"],
+            "nutrition": ["general_health", "fitness", "chronic_conditions", "women_health"],
+            "fitness": ["general_health", "nutrition", "sleep", "stress_management"],
+            "sleep": ["general_health", "mental_health", "stress_management", "fitness"],
+            "stress_management": ["mental_health", "work_life_balance", "sleep", "general_health"],
+            "preventive_care": ["general_health", "nutrition", "fitness", "senior_health"],
+            "chronic_conditions": ["general_health", "medication_management", "nutrition", "senior_health"],
+            "medication_management": ["chronic_conditions", "general_health", "senior_health"],
+            "emergency_care": ["general_health", "chronic_conditions", "senior_health"],
+            "women_health": ["general_health", "nutrition", "preventive_care"],
+            "senior_health": ["general_health", "chronic_conditions", "preventive_care", "medication_management"],
+            
+            # Daily Life domains (12) - Life management connections
+            "parenting": ["relationships", "communication", "decision_making", "time_management"],
+            "relationships": ["communication", "conflict_resolution", "mental_health", "parenting"],
+            "personal_assistant": ["planning", "time_management", "home_management", "shopping"],
+            "communication": ["relationships", "conflict_resolution", "parenting", "team_leadership"],
+            "home_management": ["personal_assistant", "shopping", "planning", "time_management"],
+            "shopping": ["home_management", "personal_assistant", "financial_planning"],
+            "planning": ["personal_assistant", "time_management", "project_management", "decision_making"],
+            "transportation": ["planning", "time_management", "home_management"],
+            "time_management": ["planning", "work_life_balance", "personal_assistant", "parenting"],
+            "decision_making": ["planning", "parenting", "business", "conflict_resolution"],
+            "conflict_resolution": ["relationships", "communication", "team_leadership", "decision_making"],
+            "work_life_balance": ["time_management", "stress_management", "mental_health", "relationships"],
+            
+            # Business domains (12) - Strategic connections
+            "entrepreneurship": ["marketing", "financial_planning", "strategy", "decision_making"],
+            "marketing": ["entrepreneurship", "sales", "content_creation", "social_media"],
+            "sales": ["marketing", "customer_service", "communication", "entrepreneurship"],
+            "customer_service": ["sales", "communication", "conflict_resolution", "operations"],
+            "project_management": ["planning", "team_leadership", "operations", "strategy"],
+            "team_leadership": ["project_management", "communication", "hr_management", "conflict_resolution"],
+            "financial_planning": ["entrepreneurship", "strategy", "legal_business", "shopping"],
+            "operations": ["project_management", "customer_service", "hr_management", "strategy"],
+            "hr_management": ["team_leadership", "operations", "legal_business", "communication"],
+            "strategy": ["entrepreneurship", "financial_planning", "consulting", "project_management"],
+            "consulting": ["strategy", "business", "decision_making", "communication"],
+            "legal_business": ["financial_planning", "hr_management", "legal", "entrepreneurship"],
+            
+            # Education domains (8) - Learning connections
+            "academic_tutoring": ["skill_development", "exam_preparation", "study_techniques"],
+            "skill_development": ["academic_tutoring", "career_guidance", "language_learning"],
+            "career_guidance": ["skill_development", "team_leadership", "entrepreneurship"],
+            "exam_preparation": ["academic_tutoring", "study_techniques", "stress_management"],
+            "language_learning": ["skill_development", "communication", "educational_technology"],
+            "research_assistance": ["academic_tutoring", "data_analysis", "scientific_research"],
+            "study_techniques": ["academic_tutoring", "exam_preparation", "time_management"],
+            "educational_technology": ["language_learning", "study_techniques", "ai_ml"],
+            
+            # Creative domains (8) - Creative connections
+            "writing": ["storytelling", "content_creation", "communication", "research_assistance"],
+            "storytelling": ["writing", "content_creation", "art_appreciation", "social_media"],
+            "content_creation": ["writing", "storytelling", "marketing", "social_media"],
+            "social_media": ["content_creation", "marketing", "communication", "photography"],
+            "design_thinking": ["content_creation", "photography", "art_appreciation", "problem_solving"],
+            "photography": ["design_thinking", "social_media", "art_appreciation", "content_creation"],
+            "music": ["art_appreciation", "storytelling", "content_creation"],
+            "art_appreciation": ["music", "photography", "design_thinking", "storytelling"],
+            
+            # Technology domains (6) - Technical connections
+            "programming": ["software_development", "ai_ml", "data_analysis", "tech_support"],
+            "ai_ml": ["programming", "data_analysis", "educational_technology", "research_assistance"],
+            "cybersecurity": ["programming", "tech_support", "software_development", "data_analysis"],
+            "data_analysis": ["programming", "ai_ml", "research_assistance", "financial_planning"],
+            "tech_support": ["programming", "cybersecurity", "software_development", "customer_service"],
+            "software_development": ["programming", "tech_support", "cybersecurity", "ai_ml"],
+            
+            # Specialized domains (4) - Expert connections
+            "legal": ["legal_business", "consulting", "financial", "conflict_resolution"],
+            "financial": ["financial_planning", "legal", "data_analysis", "strategy"],
+            "scientific_research": ["research_assistance", "data_analysis", "ai_ml", "engineering"],
+            "engineering": ["scientific_research", "programming", "software_development", "problem_solving"]
         }
         
         # Initialize domain intelligence
@@ -115,18 +185,85 @@ class TrinityIntelligenceHub(BaseAgent):
         print(f"🧠 Initialized intelligence patterns for {len(self.domain_intelligence)} domains")
         
     def _calculate_domain_complexity(self, domain: str) -> float:
-        """Calculate domain complexity score"""
+        """Calculate domain complexity score for ALL 62 domains"""
         complexity_map = {
-            "healthcare": 95.0,  # High complexity, critical decisions
-            "mental_health": 92.0,  # High complexity, emotional nuance
-            "business": 88.0,  # High complexity, strategic thinking
-            "education": 85.0,  # Moderate-high complexity
-            "creative": 78.0,  # Moderate complexity, subjective
-            "fitness": 75.0,  # Moderate complexity
-            "nutrition": 72.0,  # Moderate complexity
-            "communication": 70.0,  # Moderate complexity
+            # Healthcare domains (12) - High complexity, critical decisions
+            "general_health": 95.0,
+            "mental_health": 98.0,  # Highest complexity, emotional nuance
+            "nutrition": 85.0,
+            "fitness": 82.0,
+            "sleep": 78.0,
+            "stress_management": 88.0,
+            "preventive_care": 90.0,
+            "chronic_conditions": 92.0,
+            "medication_management": 95.0,
+            "emergency_care": 97.0,
+            "women_health": 89.0,
+            "senior_health": 91.0,
+            
+            # Daily Life domains (12) - Moderate complexity, human-centered
+            "parenting": 85.0,
+            "relationships": 87.0,
+            "personal_assistant": 75.0,
+            "communication": 82.0,
+            "home_management": 70.0,
+            "shopping": 65.0,
+            "planning": 78.0,
+            "transportation": 68.0,
+            "time_management": 80.0,
+            "decision_making": 88.0,
+            "conflict_resolution": 90.0,
+            "work_life_balance": 85.0,
+            
+            # Business domains (12) - High complexity, strategic thinking
+            "entrepreneurship": 92.0,
+            "marketing": 85.0,
+            "sales": 82.0,
+            "customer_service": 80.0,
+            "project_management": 87.0,
+            "team_leadership": 90.0,
+            "financial_planning": 88.0,
+            "operations": 85.0,
+            "hr_management": 87.0,
+            "strategy": 93.0,
+            "consulting": 91.0,
+            "legal_business": 89.0,
+            
+            # Education domains (8) - Moderate-high complexity, pedagogical
+            "academic_tutoring": 83.0,
+            "skill_development": 85.0,
+            "career_guidance": 87.0,
+            "exam_preparation": 81.0,
+            "language_learning": 84.0,
+            "research_assistance": 88.0,
+            "study_techniques": 79.0,
+            "educational_technology": 86.0,
+            
+            # Creative domains (8) - Moderate complexity, subjective
+            "writing": 82.0,
+            "storytelling": 85.0,
+            "content_creation": 80.0,
+            "social_media": 75.0,
+            "design_thinking": 87.0,
+            "photography": 76.0,
+            "music": 84.0,
+            "art_appreciation": 78.0,
+            
+            # Technology domains (6) - High complexity, technical precision
+            "programming": 93.0,
+            "ai_ml": 96.0,
+            "cybersecurity": 94.0,
+            "data_analysis": 90.0,
+            "tech_support": 83.0,
+            "software_development": 91.0,
+            
+            # Specialized domains (4) - Highest complexity, expert knowledge
+            "legal": 97.0,
+            "financial": 94.0,
+            "scientific_research": 95.0,
+            "engineering": 93.0
         }
-        return complexity_map.get(domain, 65.0)
+        return complexity_map.get(domain, 75.0)  # Default for any missing domains
         
     def _extract_learning_patterns(self, domain: str) -> Dict[str, Any]:
         """Extract proven learning patterns for domain"""

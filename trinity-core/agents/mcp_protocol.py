@@ -21,6 +21,7 @@ class AgentType(Enum):
     GGUF_CREATOR = "gguf_creator"
     KNOWLEDGE_TRANSFER = "knowledge_transfer"
     CROSS_DOMAIN = "cross_domain_intelligence"
+    INTELLIGENT_ROUTER = "intelligent_router"
 
 class MessageType(Enum):
     STATUS_UPDATE = "status_update"
@@ -229,11 +230,13 @@ class BaseAgent:
     def send_message(self, recipient: Optional[AgentType], message_type: MessageType, 
                     data: Dict[str, Any], priority: int = 1):
         """Send a message via MCP"""
-        self.mcp.send_message(self.agent_type, recipient, message_type, data, priority)
+        if self.mcp:
+            self.mcp.send_message(self.agent_type, recipient, message_type, data, priority)
         
     def broadcast_message(self, message_type: MessageType, data: Dict[str, Any], priority: int = 1):
         """Broadcast a message via MCP"""
-        self.mcp.broadcast_message(self.agent_type, message_type, data, priority)
+        if self.mcp:
+            self.mcp.broadcast_message(self.agent_type, message_type, data, priority)
         
     def update_context(self, updates: Dict[str, Any]):
         """Update the shared context"""
