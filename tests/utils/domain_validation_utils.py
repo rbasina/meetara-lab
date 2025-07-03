@@ -13,7 +13,7 @@ class DomainConfigManager:
     
     def __init__(self, config_path: Optional[str] = None):
         """Initialize with optional custom config path"""
-        self.config_path = Path(config_path) if config_path else Path("config/cloud-optimized-domain-mapping.yaml")
+        self.config_path = Path(config_path) if config_path else Path("config/trinity_domain_model_mapping_config.yaml")
         self._config = None
         self._domains = None
         self._categories = None

@@ -18,6 +18,30 @@ import sys
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
+# Import centralized domain mapping
+try:
+    from trinity_core.domain_integration import (
+        domain_integration,
+        get_domain_categories, 
+        get_all_domains, 
+        validate_domain, 
+        get_model_for_domain,
+        get_domain_stats
+    )
+    print("✅ Successfully imported centralized domain integration")
+except ImportError:
+    # Fallback import for different environments
+    sys.path.append(str(project_root / "trinity-core"))
+    from domain_integration import (
+        domain_integration,
+        get_domain_categories, 
+        get_all_domains, 
+        validate_domain, 
+        get_model_for_domain,
+        get_domain_stats
+    )
+    print("✅ Successfully imported domain integration (fallback)")
+
 # Dynamically import mcp_protocol from the agents directory
 mcp_protocol_path = project_root / "trinity-core" / "agents" / "mcp_protocol.py"
 if mcp_protocol_path.exists():
@@ -40,55 +64,56 @@ class TrainingOrchestrator(BaseAgent):
     def __init__(self, mcp=None):
         super().__init__(AgentType.CONDUCTOR, mcp)
         
-        # Load cloud-optimized domain mapping
-        self.domain_mapping = self._load_domain_mapping()
+        # Load domain configuration using centralized approach
+        self.domain_mapping = self._load_domain_configuration()
         
-        # Multi-domain coordination
+        # Multi-domain coordination using dynamic domain stats
+        domain_stats = get_domain_stats()
         self.domain_categories = {
             "healthcare": {
-                "domains": 12,
+                "domains": domain_stats["domains_per_category"].get("healthcare", 12),
                 "priority": "high",
                 "batch_size": 4,  # Process 4 domains in parallel
                 "estimated_time": "4-6 hours",
                 "cost_estimate": "$10-15"
             },
             "daily_life": {
-                "domains": 12, 
+                "domains": domain_stats["domains_per_category"].get("daily_life", 12), 
                 "priority": "medium",
                 "batch_size": 6,  # Process 6 domains in parallel
                 "estimated_time": "6-10 hours",
                 "cost_estimate": "$3-5"
             },
             "business": {
-                "domains": 12,
+                "domains": domain_stats["domains_per_category"].get("business", 12),
                 "priority": "medium", 
                 "batch_size": 4,  # Process 4 domains in parallel
                 "estimated_time": "3-5 hours",
                 "cost_estimate": "$8-12"
             },
             "education": {
-                "domains": 8,
+                "domains": domain_stats["domains_per_category"].get("education", 8),
                 "priority": "medium",
                 "batch_size": 4,  # Process 4 domains in parallel
                 "estimated_time": "2-4 hours", 
                 "cost_estimate": "$5-8"
             },
             "creative": {
-                "domains": 8,
+                "domains": domain_stats["domains_per_category"].get("creative", 8),
                 "priority": "low",
                 "batch_size": 8,  # Process all 8 in parallel (fast tier)
                 "estimated_time": "5-8 hours",
                 "cost_estimate": "$2-3"
             },
             "technology": {
-                "domains": 6,
+                "domains": domain_stats["domains_per_category"].get("technology", 6),
                 "priority": "medium",
                 "batch_size": 3,  # Process 3 domains in parallel
                 "estimated_time": "2-3 hours",
                 "cost_estimate": "$4-6"
             },
             "specialized": {
-                "domains": 4,
+                "domains": domain_stats["domains_per_category"].get("specialized", 4),
                 "priority": "high",
                 "batch_size": 2,  # Process 2 domains in parallel
                 "estimated_time": "2-3 hours",
@@ -168,221 +193,225 @@ class TrainingOrchestrator(BaseAgent):
         """Start the Training Orchestrator"""
         await super().start()
         print("🎼 Training Orchestrator ready with Trinity Architecture")
+        print(f"   → Total domains: {len(get_all_domains())}")
+        print(f"   → Config-driven: Centralized domain integration")
         
         # Start background tasks
         asyncio.create_task(self._monitor_cost_limits())
         asyncio.create_task(self._health_check_loop())
         
-    def _load_domain_mapping(self) -> Dict[str, Any]:
-        """Load cloud-optimized domain mapping with UTF-8 encoding"""
-        possible_paths = [
-            "config/cloud-optimized-domain-mapping.yaml",
-            "../config/cloud-optimized-domain-mapping.yaml",
-            "G:/My Drive/meetara-lab/config/cloud-optimized-domain-mapping.yaml",
-            Path(__file__).parent.parent / "config" / "cloud-optimized-domain-mapping.yaml"
-        ]
-        
-        for config_path in possible_paths:
-            try:
-                with open(config_path, 'r', encoding='utf-8') as f:
-                    mapping = yaml.safe_load(f)
-                    print(f"✅ Domain mapping loaded from: {config_path}")
-                    return mapping
-            except FileNotFoundError:
-                continue
-            except Exception as e:
-                print(f"⚠️ Failed to load {config_path}: {e}")
-                continue
-        
-        print("⚠️ Domain mapping not found, using minimal configuration")
-        return self._get_minimal_mapping()
-    
-    def _get_minimal_mapping(self) -> Dict[str, Any]:
-        """Minimal mapping for testing"""
-        return {
-            "model_tiers": {
-                "fast": "microsoft/Phi-3.5-mini-instruct",
-                "quality": "microsoft/Phi-3-medium-4k-instruct",
-                "expert": "microsoft/Phi-3-medium-14B-instruct"
-            },
-            "healthcare": {"general_health": "microsoft/Phi-3-medium-14B-instruct"},
-            "business": {"entrepreneurship": "microsoft/Phi-3-medium-4k-instruct"},
-            "education": {"academic_tutoring": "microsoft/Phi-3-medium-4k-instruct"}
-        }
-            
-    async def orchestrate_universal_training(self, target_domains: List[str] = None,
-                                           training_mode: str = "balanced") -> Dict[str, Any]:
-        """Orchestrate universal training across all 60+ domains"""
+    def _load_domain_configuration(self) -> Dict[str, Any]:
+        """Load domain configuration using centralized domain integration"""
         try:
-            print("🚀 Starting universal training orchestration")
+            # Use centralized domain mapping - no hardcoded paths!
+            domain_categories = get_domain_categories()
+            domain_stats = get_domain_stats()
             
-            # Step 1: Plan training strategy
-            training_plan = await self._create_training_plan(target_domains, training_mode)
+            print(f"✅ Domain configuration loaded via centralized integration")
+            print(f"   → Total domains: {domain_stats['total_domains']}")
+            print(f"   → Categories: {domain_stats['total_categories']}")
+            print(f"   → Config path: {domain_stats.get('config_path', 'Dynamic')}")
             
-            # Step 2: Allocate cloud resources
-            resource_allocation = await self._allocate_cloud_resources(training_plan)
-            
-            # Step 3: Execute coordinated training
-            training_results = await self._execute_coordinated_training(training_plan, resource_allocation)
-            
-            # Step 4: Monitor and optimize
-            optimization_results = await self._monitor_and_optimize(training_results)
-            
-            # Step 5: Apply Trinity coordination enhancements
-            final_results = await self._apply_trinity_coordination(optimization_results)
-            
-            orchestration_result = {
-                "total_domains": len(training_plan["domains"]),
-                "successful_domains": len(final_results["completed_domains"]),
-                "failed_domains": len(final_results["failed_domains"]),
-                "total_cost": final_results["total_cost"],
-                "total_time": final_results["total_time"],
-                "speed_improvement": final_results["speed_improvement"],
-                "quality_average": final_results["average_quality"],
-                "training_plan": training_plan,
-                "resource_allocation": resource_allocation,
-                "trinity_enhanced": True,
-                "orchestration_timestamp": datetime.now().isoformat(),
-                "success": True
+            return {
+                "domain_categories": domain_categories,
+                "domain_stats": domain_stats,
+                "config_loaded": True,
+                "centralized": True
             }
-            
-            # Update coordination state
-            await self._update_coordination_state(orchestration_result)
-            
-            print(f"✅ Universal training orchestration complete")
-            print(f"📊 Results: {orchestration_result['successful_domains']}/{orchestration_result['total_domains']} domains successful")
-            print(f"💰 Total cost: ${orchestration_result['total_cost']:.2f}")
-            print(f"⚡ Speed improvement: {orchestration_result['speed_improvement']}")
-            
-            return orchestration_result
             
         except Exception as e:
-            print(f"❌ Universal training orchestration failed: {e}")
-            return {
-                "success": False,
-                "error": str(e),
-                "orchestration_timestamp": datetime.now().isoformat()
-            }
-            
-    async def _create_training_plan(self, target_domains: List[str] = None,
-                                  training_mode: str = "balanced") -> Dict[str, Any]:
-        """Create comprehensive training plan"""
-        
-        # Determine domains to train
-        if target_domains:
-            domains_to_train = target_domains
-        else:
-            # All 60+ domains
-            domains_to_train = []
-            for category_name, category_config in self.domain_categories.items():
-                category_domains = self.domain_mapping.get(category_name, {})
-                domains_to_train.extend(list(category_domains.keys()))
-                
-        # Group domains by category for optimized training
-        domain_groups = {}
-        for domain in domains_to_train:
-            category = self._get_domain_category(domain)
-            if category not in domain_groups:
-                domain_groups[category] = []
-            domain_groups[category].append(domain)
-            
-        # Create training batches based on category configurations
-        training_batches = []
-        estimated_cost = 0
-        estimated_time = 0
-        
-        for category, domains in domain_groups.items():
-            category_config = self.domain_categories.get(category, {})
-            batch_size = category_config.get("batch_size", 4)
-            
-            # Split domains into batches
-            for i in range(0, len(domains), batch_size):
-                batch_domains = domains[i:i + batch_size]
-                
-                # Estimate cost and time for batch
-                model_tier = self._get_category_model_tier(category)
-                batch_cost, batch_time = self._estimate_batch_cost_time(batch_domains, model_tier, training_mode)
-                
-                training_batches.append({
-                    "batch_id": len(training_batches) + 1,
-                    "category": category,
-                    "domains": batch_domains,
-                    "model_tier": model_tier,
-                    "estimated_cost": batch_cost,
-                    "estimated_time": batch_time,
-                    "priority": category_config.get("priority", "medium")
-                })
-                
-                estimated_cost += batch_cost
-                estimated_time += batch_time
-                
-        # Sort batches by priority (high priority first)
-        priority_order = {"high": 1, "medium": 2, "low": 3}
-        training_batches.sort(key=lambda x: priority_order.get(x["priority"], 2))
-        
-        return {
-            "domains": domains_to_train,
-            "domain_groups": domain_groups,
-            "training_batches": training_batches,
-            "training_mode": training_mode,
-            "estimated_total_cost": estimated_cost,
-            "estimated_total_time": estimated_time,
-            "total_batches": len(training_batches),
-            "cost_within_budget": estimated_cost <= self.cost_optimization["monthly_target"]
-        }
-        
+            print(f"❌ Failed to load domain configuration: {e}")
+            raise Exception(f"Training Orchestrator requires centralized domain integration: {e}")
+
     def _get_domain_category(self, domain: str) -> str:
-        """Get category for a specific domain"""
-        for category_name in self.domain_categories.keys():
-            if domain in self.domain_mapping.get(category_name, {}):
-                return category_name
+        """Get domain category using centralized validation"""
+        # Use centralized domain integration
+        for category, domains in get_domain_categories().items():
+            if domain in domains:
+                return category
         return "daily_life"  # Default fallback
-        
+
     def _get_category_model_tier(self, category: str) -> str:
-        """Get model tier for category"""
+        """Get model tier recommendation for category"""
         tier_mapping = {
-            "healthcare": "quality",
-            "specialized": "quality", 
-            "business": "balanced",
-            "education": "balanced",
-            "technology": "balanced",
-            "daily_life": "fast",
-            "creative": "lightning"
+            "healthcare": "quality",      # High accuracy for safety
+            "specialized": "quality",     # High accuracy for precision  
+            "business": "balanced",       # Balance of speed and accuracy
+            "education": "balanced",      # Educational effectiveness
+            "technology": "balanced",     # Technical precision
+            "daily_life": "fast",        # Conversational speed
+            "creative": "lightning"       # Creative speed
         }
         return tier_mapping.get(category, "balanced")
-        
+
     def _estimate_batch_cost_time(self, domains: List[str], model_tier: str, 
                                 training_mode: str) -> tuple:
-        """Estimate cost and time for training batch"""
+        """Estimate cost and time for batch training"""
         
-        # Get cost estimates from domain mapping
-        cost_estimates = self.domain_mapping.get("cost_estimates", {})
+        # Base estimates per model tier (per domain)
+        tier_estimates = {
+            "lightning": {"time_hours": 0.5, "cost_per_domain": 0.25},
+            "fast": {"time_hours": 1.0, "cost_per_domain": 0.50}, 
+            "balanced": {"time_hours": 2.0, "cost_per_domain": 1.00},
+            "quality": {"time_hours": 3.0, "cost_per_domain": 1.50}
+        }
         
-        if model_tier in cost_estimates:
-            tier_config = cost_estimates[model_tier]
-            cost_per_domain = float(tier_config["total_cost"].replace("$", "").split("-")[0]) / 60  # Divide by 60 domains
-            time_per_domain = 10  # minutes estimate
-        else:
-            # Fallback estimates
-            cost_per_domain = 0.10  # $0.10 per domain
-            time_per_domain = 10    # 10 minutes per domain
-            
-        batch_cost = len(domains) * cost_per_domain
-        batch_time = len(domains) * time_per_domain  # minutes
+        base_estimate = tier_estimates.get(model_tier, tier_estimates["balanced"])
+        
+        # Calculate for all domains
+        total_time = base_estimate["time_hours"] * len(domains)
+        total_cost = base_estimate["cost_per_domain"] * len(domains)
         
         # Apply training mode multipliers
         mode_multipliers = {
-            "lightning": {"cost": 0.7, "time": 0.5},
-            "balanced": {"cost": 1.0, "time": 1.0},
-            "quality": {"cost": 1.5, "time": 1.5}
+            "speed": {"time": 0.7, "cost": 1.2},      # Faster but more expensive
+            "balanced": {"time": 1.0, "cost": 1.0},    # Baseline
+            "cost": {"time": 1.3, "cost": 0.8},       # Slower but cheaper
+            "quality": {"time": 1.5, "cost": 1.1}      # Slower, more expensive, higher quality
         }
         
         multiplier = mode_multipliers.get(training_mode, mode_multipliers["balanced"])
-        batch_cost *= multiplier["cost"]
-        batch_time *= multiplier["time"]
         
-        return round(batch_cost, 2), round(batch_time, 1)
+        final_time = total_time * multiplier["time"]
+        final_cost = total_cost * multiplier["cost"]
         
+        return final_cost, final_time
+
+    async def orchestrate_universal_training(self, target_domains: List[str] = None,
+                                           training_mode: str = "balanced") -> Dict[str, Any]:
+        """Orchestrate training across all domains with Trinity Architecture"""
+        
+        start_time = datetime.now()
+        
+        # Use all domains if none specified
+        if target_domains is None:
+            target_domains = get_all_domains()
+        
+        # Validate all domains using centralized validation
+        invalid_domains = [d for d in target_domains if not validate_domain(d)]
+        if invalid_domains:
+            raise ValueError(f"Invalid domains: {invalid_domains}")
+        
+        print(f"🚀 Starting universal training orchestration")
+        print(f"   → Target domains: {len(target_domains)}")
+        print(f"   → Training mode: {training_mode}")
+        print(f"   → Trinity Architecture: Enabled")
+        
+        try:
+            # Create comprehensive training plan
+            training_plan = await self._create_training_plan(target_domains, training_mode)
+            
+            # Allocate cloud resources with Trinity optimization
+            resource_allocation = await self._allocate_cloud_resources(training_plan)
+            
+            # Execute coordinated training
+            training_results = await self._execute_coordinated_training(training_plan, resource_allocation)
+            
+            # Monitor and optimize with Trinity intelligence
+            optimization_results = await self._monitor_and_optimize(training_results)
+            
+            # Apply Trinity coordination for exponential gains
+            final_results = await self._apply_trinity_coordination(optimization_results)
+            
+            # Update coordination state
+            await self._update_coordination_state(final_results)
+            
+            total_time = (datetime.now() - start_time).total_seconds()
+            
+            print(f"✅ Universal training orchestration completed")
+            print(f"   → Total time: {total_time:.1f}s")
+            print(f"   → Domains completed: {len(final_results.get('completed_domains', []))}")
+            print(f"   → Total cost: ${final_results.get('total_cost', 0):.2f}")
+            
+            return final_results
+            
+        except Exception as e:
+            print(f"❌ Training orchestration failed: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "timestamp": datetime.now().isoformat()
+            }
+
+    async def _create_training_plan(self, target_domains: List[str] = None,
+                                  training_mode: str = "balanced") -> Dict[str, Any]:
+        """Create comprehensive training plan using centralized domain data"""
+        
+        # Group domains by category using centralized mapping
+        domain_categories = get_domain_categories()
+        category_batches = {}
+        
+        for domain in target_domains:
+            category = self._get_domain_category(domain)
+            if category not in category_batches:
+                category_batches[category] = []
+            category_batches[category].append(domain)
+        
+        # Create training batches with intelligent optimization
+        training_batches = []
+        total_estimated_cost = 0
+        total_estimated_time = 0
+        
+        for category, domains in category_batches.items():
+            model_tier = self._get_category_model_tier(category)
+            batch_cost, batch_time = self._estimate_batch_cost_time(domains, model_tier, training_mode)
+            
+            # Get recommended model for first domain in category (all use same tier)
+            recommended_model = get_model_for_domain(domains[0]) if domains else "microsoft/Phi-3.5-mini-instruct"
+            
+            batch = {
+                "category": category,
+                "domains": domains,
+                "model_tier": model_tier,
+                "recommended_model": recommended_model,
+                "estimated_cost": batch_cost,
+                "estimated_time": batch_time,
+                "batch_size": self.domain_categories[category]["batch_size"],
+                "priority": self.domain_categories[category]["priority"]
+            }
+            
+            training_batches.append(batch)
+            total_estimated_cost += batch_cost
+            total_estimated_time += batch_time
+        
+        # Sort batches by priority (high -> medium -> low)
+        priority_order = {"high": 0, "medium": 1, "low": 2}
+        training_batches.sort(key=lambda x: priority_order.get(x["priority"], 1))
+        
+        training_plan = {
+            "target_domains": target_domains,
+            "training_mode": training_mode,
+            "training_batches": training_batches,
+            "total_domains": len(target_domains),
+            "total_estimated_cost": total_estimated_cost,
+            "total_estimated_time": total_estimated_time,
+            "cost_within_budget": total_estimated_cost <= self.cost_optimization["monthly_target"],
+            "trinity_optimization": True,
+            "centralized_domains": True,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        print(f"📋 Training plan created:")
+        print(f"   → Batches: {len(training_batches)}")
+        print(f"   → Estimated cost: ${total_estimated_cost:.2f}")
+        print(f"   → Estimated time: {total_estimated_time:.1f}h")
+        print(f"   → Within budget: {training_plan['cost_within_budget']}")
+        
+        return training_plan
+
+    def refresh_domain_configuration(self):
+        """Refresh domain configuration from centralized source"""
+        domain_integration.refresh_config()
+        self.domain_mapping = self._load_domain_configuration()
+        
+        # Update domain categories with fresh stats
+        domain_stats = get_domain_stats()
+        for category in self.domain_categories:
+            if category in domain_stats["domains_per_category"]:
+                self.domain_categories[category]["domains"] = domain_stats["domains_per_category"][category]
+        
+        print(f"✅ Domain configuration refreshed - {len(get_all_domains())} domains loaded")
+
     async def _allocate_cloud_resources(self, training_plan: Dict[str, Any]) -> Dict[str, Any]:
         """Allocate optimal cloud resources for training plan"""
         
@@ -414,8 +443,8 @@ class TrainingOrchestrator(BaseAgent):
     async def _select_optimal_provider(self, training_plan: Dict[str, Any]) -> str:
         """Select optimal cloud provider based on cost and requirements"""
         
-        estimated_cost = training_plan["estimated_total_cost"]
-        estimated_time = training_plan["estimated_total_time"]
+        estimated_cost = training_plan["total_estimated_cost"]
+        estimated_time = training_plan["total_estimated_time"]
         
         # Prefer Google Colab Pro+ for simplicity and integration
         if estimated_cost < 15.0 and estimated_time < 12 * 60:  # Under $15 and 12 hours
@@ -629,7 +658,7 @@ class TrainingOrchestrator(BaseAgent):
         
         # Update performance metrics
         self.coordination_state["performance_metrics"]["last_orchestration"] = {
-            "timestamp": result["orchestration_timestamp"],
+            "timestamp": result["timestamp"],
             "domains_completed": result["successful_domains"],
             "total_cost": result["total_cost"],
             "speed_improvement": result["speed_improvement"]

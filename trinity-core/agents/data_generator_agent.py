@@ -990,7 +990,7 @@ class DataGeneratorAgent(BaseAgent):
         # Load cloud-optimized domain mapping for context
         try:
             import yaml
-            config_path = Path("config/cloud-optimized-domain-mapping.yaml")
+            config_path = Path("config/trinity_domain_model_mapping_config.yaml")
             if config_path.exists():
                 with open(config_path, 'r') as f:
                     domain_config = yaml.safe_load(f)

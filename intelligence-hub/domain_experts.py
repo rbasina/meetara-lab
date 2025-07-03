@@ -79,7 +79,7 @@ class DomainExperts(BaseAgent):
     def _load_domain_mapping(self) -> Dict[str, Any]:
         """Load cloud-optimized domain mapping"""
         try:
-            with open("../config/cloud-optimized-domain-mapping.yaml", 'r') as f:
+            with open("../config/trinity_domain_model_mapping_config.yaml", 'r') as f:
                 return yaml.safe_load(f)
         except Exception as e:
             print(f"⚠️ Failed to load domain mapping: {e}")

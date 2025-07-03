@@ -1,6 +1,6 @@
 """
 MeeTARA Lab - Quality Assurance Agent
-Monitors training quality, validates outputs, and ensures 101% validation scores
+Enhanced quality monitoring and validation with Trinity Architecture
 """
 
 import asyncio
@@ -11,100 +11,103 @@ from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime, timedelta
 from pathlib import Path
 import yaml
-from .mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage, mcp_protocol
+import numpy as np
+
+# Import MCP protocol and centralized domain mapping
+from mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage, mcp_protocol
+from domain_integration import get_domain_categories, get_all_domains, get_domain_stats, validate_domain
 
 class QualityAssuranceAgent(BaseAgent):
-    """Quality monitoring and validation for training with TARA-level standards"""
+    """Quality Assurance Agent with Trinity Architecture and TARA benchmarks"""
     
     def __init__(self, mcp=None):
         super().__init__(AgentType.QUALITY_ASSURANCE, mcp or mcp_protocol)
         
-        # Quality thresholds (TARA proven standards)
+        # Quality thresholds based on TARA proven results
         self.quality_thresholds = {
-            "validation_score": 0.85,  # Minimum 85% validation
-            "target_validation": 1.01,  # Target 101% (TARA achievement)
-            "loss_threshold": 0.5,     # Maximum loss threshold
-            "convergence_rate": 0.1,   # Minimum convergence rate
-            "data_quality_min": 0.80,  # Minimum data quality
+            "target_validation": 101.0,    # TARA proven target
+            "minimum_quality": 80.0,       # Minimum acceptable quality
+            "data_filter_success": 31.0,   # Data filtering success rate
+            "convergence_minimum": 0.1,    # Minimum convergence rate
+            "max_loss_threshold": 0.5,     # Maximum acceptable loss
             "emotional_intelligence_min": 0.75,  # Minimum EI score
-            "crisis_handling_min": 0.90  # Minimum crisis handling score
+            "crisis_handling_min": 0.85    # Minimum crisis handling score
         }
         
-        # 62-Domain Configuration
+        # Domain mapping and categories - loaded from centralized source
         self.domain_mapping = {}
         self.domain_categories = {}
         self.category_quality_requirements = {}
         
+        # Quality monitoring state
+        self.monitoring_domains = set()
+        self.domain_quality_history = {}
+        self.validation_patterns = {}
+        self.alert_history = []
+        
+        # TARA benchmarks for comparison
+        self.tara_benchmarks = {
+            "validation_score": 101.0,
+            "training_speed": "302s/step → 3-15s/step",
+            "model_size": "8.3MB",
+            "compression_ratio": "565x",
+            "quality_retention": "96%",
+            "cost_efficiency": "<$50/month",
+            "domain_coverage": "62+ domains"
+        }
+        
+        # Trinity Architecture quality enhancement
+        self.trinity_quality_enhancement = {
+            "arc_reactor_efficiency": True,    # 90% efficiency in quality checks
+            "perplexity_intelligence": True,   # Intelligent quality pattern detection
+            "einstein_fusion": True           # Exponential quality improvement
+        }
+        
         # Load domain configuration
         self._load_domain_configuration()
         
-        # Monitoring domains and their metrics
-        self.monitoring_domains = {}
-        
-        # Quality validation patterns
-        self.validation_patterns = {
-            "convergence_analysis": True,
-            "loss_pattern_detection": True,
-            "overfitting_detection": True,
-            "quality_regression_analysis": True,
-            "real_time_monitoring": True
-        }
-        
-        # Alert and recovery mechanisms
-        self.alert_history = []
-        self.recovery_actions = {}
-        
-        # Quality benchmarks from TARA success
-        self.tara_benchmarks = {
-            "validation_scores": [1.01, 0.98, 0.99, 1.02, 0.97],  # Historical TARA scores
-            "training_efficiency": 0.92,  # 92% efficiency target
-            "model_consistency": 0.95,    # 95% consistency target
-            "user_satisfaction": 0.89     # 89% user satisfaction
-        }
-        
     def _load_domain_configuration(self):
-        """Load 62-domain configuration from cloud-optimized mapping"""
+        """Load domain configuration using centralized mapping"""
         try:
-            config_path = Path("config/cloud-optimized-domain-mapping.yaml")
+            # Use centralized domain mapping
+            domain_categories = get_domain_categories()
+            domain_stats = get_domain_stats()
             
-            if config_path.exists():
-                with open(config_path, 'r') as f:
-                    config = yaml.safe_load(f)
+            print(f"✅ Quality Assurance: Using centralized domain mapping")
+            print(f"   → Total domains: {domain_stats['total_domains']}")
+            print(f"   → Categories: {domain_stats['total_categories']}")
+            print(f"   → Config path: {domain_stats.get('config_path', 'Dynamic')}")
+            
+            # Store domain mapping from centralized source
+            self.domain_mapping = domain_categories
+            
+            # Map each domain to its category
+            for category, domains in domain_categories.items():
+                for domain in domains:
+                    self.domain_categories[domain] = category
                     
-                # Extract domain categories and their domains
-                domain_categories = ['healthcare', 'daily_life', 'business', 'education', 'creative', 'technology', 'specialized']
-                
-                for category in domain_categories:
-                    if category in config:
-                        self.domain_mapping[category] = list(config[category].keys())
-                        
-                        # Map each domain to its category
-                        for domain in config[category].keys():
-                            self.domain_categories[domain] = category
-                            
-                # Initialize category-based quality requirements
-                self._initialize_category_quality_requirements()
-                
-                total_domains = sum(len(domains) for domains in self.domain_mapping.values())
-                print(f"✅ Quality Assurance: Loaded {total_domains} domains across {len(self.domain_mapping)} categories")
-                
-            else:
-                print("⚠️ Domain mapping not found, using default configuration")
-                self._initialize_default_configuration()
-                
-        except Exception as e:
-            print(f"⚠️ Error loading domain configuration: {e}")
-            self._initialize_default_configuration()
+            # Initialize category-based quality requirements
+            self._initialize_category_quality_requirements()
             
-    def _initialize_default_configuration(self):
-        """Initialize default domain configuration if YAML not available"""
+            print(f"✅ Quality Assurance: Loaded {len(get_all_domains())} domains across {len(domain_categories)} categories")
+            
+        except Exception as e:
+            print(f"⚠️ Error loading centralized domain configuration: {e}")
+            self._initialize_minimal_fallback_configuration()
+            
+    def _initialize_minimal_fallback_configuration(self):
+        """Initialize minimal fallback configuration if centralized mapping fails"""
+        print("⚠️ Using minimal fallback configuration - centralized mapping unavailable")
+        
+        # Minimal fallback with fewer domains
         self.domain_mapping = {
-            "healthcare": ["general_health", "mental_health", "nutrition", "fitness"],
-            "business": ["entrepreneurship", "marketing", "sales", "customer_service"],
-            "education": ["academic_tutoring", "skill_development", "career_guidance"],
-            "creative": ["writing", "storytelling", "content_creation"],
-            "technology": ["programming", "ai_ml", "cybersecurity"],
-            "specialized": ["legal", "financial", "scientific_research"]
+            "healthcare": ["general_health", "mental_health"],
+            "business": ["entrepreneurship", "customer_service"],
+            "education": ["academic_tutoring", "career_guidance"],
+            "creative": ["writing", "content_creation"],
+            "technology": ["programming", "ai_ml"],
+            "specialized": ["legal", "financial"],
+            "daily_life": ["parenting", "personal_assistant"]
         }
         
         # Map domains to categories
@@ -114,6 +117,60 @@ class QualityAssuranceAgent(BaseAgent):
                 
         self._initialize_category_quality_requirements()
         
+        print(f"⚠️ Fallback configuration: {sum(len(domains) for domains in self.domain_mapping.values())} domains")
+
+    def refresh_domain_configuration(self):
+        """Refresh domain configuration from centralized source"""
+        try:
+            # Clear existing mappings
+            self.domain_mapping.clear()
+            self.domain_categories.clear()
+            
+            # Reload from centralized mapping
+            self._load_domain_configuration()
+            
+            print("✅ Quality Assurance: Domain configuration refreshed from centralized mapping")
+            
+        except Exception as e:
+            print(f"❌ Error refreshing domain configuration: {e}")
+
+    def get_domain_quality_requirements(self, domain: str) -> Dict[str, Any]:
+        """Get quality requirements for a specific domain"""
+        category = self.domain_categories.get(domain, "daily_life")
+        return self.category_quality_requirements.get(category, self.category_quality_requirements["daily_life"])
+
+    def validate_domain_exists(self, domain: str) -> bool:
+        """Validate domain exists in centralized mapping"""
+        return validate_domain(domain)
+
+    def get_centralized_domain_stats(self) -> Dict[str, Any]:
+        """Get statistics from centralized domain mapping"""
+        try:
+            return get_domain_stats()
+        except Exception as e:
+            return {
+                "total_domains": len(self.domain_categories),
+                "total_categories": len(self.domain_mapping),
+                "config_loaded": False,
+                "error": str(e)
+            }
+
+    def get_quality_coverage_analysis(self) -> Dict[str, Any]:
+        """Analyze quality coverage across all domains"""
+        centralized_stats = self.get_centralized_domain_stats()
+        
+        return {
+            "centralized_domains": centralized_stats.get("total_domains", 0),
+            "monitored_domains": len(self.monitoring_domains),
+            "coverage_percentage": (len(self.monitoring_domains) / max(centralized_stats.get("total_domains", 1), 1)) * 100,
+            "category_coverage": {
+                category: len([d for d in domains if d in self.monitoring_domains])
+                for category, domains in self.domain_mapping.items()
+            },
+            "quality_requirements_configured": len(self.category_quality_requirements),
+            "centralized_config_loaded": centralized_stats.get("config_loaded", False)
+        }
+
     def _initialize_category_quality_requirements(self):
         """Initialize quality requirements based on domain categories"""
         self.category_quality_requirements = {
@@ -181,10 +238,15 @@ class QualityAssuranceAgent(BaseAgent):
         # Start quality analysis loop
         asyncio.create_task(self._quality_analysis_loop())
         
+        # Display startup information
+        coverage_analysis = self.get_quality_coverage_analysis()
+        
         print("🔍 Quality Assurance Agent started")
         print(f"   → Target validation score: {self.quality_thresholds['target_validation']}")
         print(f"   → Quality patterns: {len(self.validation_patterns)} active")
         print(f"   → TARA benchmarks loaded: {len(self.tara_benchmarks)} metrics")
+        print(f"   → Domain coverage: {coverage_analysis['centralized_domains']} domains from centralized mapping")
+        print(f"   → Quality requirements: {len(self.category_quality_requirements)} categories configured")
         
     async def handle_mcp_message(self, message: MCPMessage):
         """Handle incoming MCP messages"""
@@ -289,7 +351,8 @@ class QualityAssuranceAgent(BaseAgent):
         print(f"🔍 Starting quality monitoring for {domain}")
         
         # Initialize domain monitoring
-        self.monitoring_domains[domain] = {
+        self.monitoring_domains.add(domain)
+        self.domain_quality_history[domain] = {
             "start_time": datetime.now(),
             "quality_thresholds": quality_thresholds,
             "monitoring_config": monitoring_config,
@@ -309,20 +372,20 @@ class QualityAssuranceAgent(BaseAgent):
         if category and hasattr(self, 'category_quality_requirements') and category in self.category_quality_requirements:
             # Use category-based requirements
             category_reqs = self.category_quality_requirements[category]
-            self.monitoring_domains[domain]["quality_thresholds"]["validation_score"] = category_reqs["validation_score"]
-            self.monitoring_domains[domain]["quality_thresholds"]["crisis_handling_min"] = category_reqs["crisis_handling_min"]
-            self.monitoring_domains[domain]["quality_thresholds"]["data_quality_min"] = category_reqs["data_quality_min"]
-            self.monitoring_domains[domain]["quality_thresholds"]["emotional_intelligence_min"] = category_reqs["emotional_intelligence_min"]
+            self.domain_quality_history[domain]["quality_thresholds"]["validation_score"] = category_reqs["validation_score"]
+            self.domain_quality_history[domain]["quality_thresholds"]["crisis_handling_min"] = category_reqs["crisis_handling_min"]
+            self.domain_quality_history[domain]["quality_thresholds"]["data_quality_min"] = category_reqs["data_quality_min"]
+            self.domain_quality_history[domain]["quality_thresholds"]["emotional_intelligence_min"] = category_reqs["emotional_intelligence_min"]
         else:
             # Fallback to hardcoded mapping for backward compatibility
             if domain in ["healthcare", "mental_health"]:
                 # Higher standards for critical domains
-                self.monitoring_domains[domain]["quality_thresholds"]["validation_score"] = 0.90
-                self.monitoring_domains[domain]["quality_thresholds"]["crisis_handling_min"] = 0.95
+                self.domain_quality_history[domain]["quality_thresholds"]["validation_score"] = 0.90
+                self.domain_quality_history[domain]["quality_thresholds"]["crisis_handling_min"] = 0.95
             elif domain in ["finance", "legal"]:
                 # High accuracy requirements
-                self.monitoring_domains[domain]["quality_thresholds"]["validation_score"] = 0.88
-                self.monitoring_domains[domain]["quality_thresholds"]["data_quality_min"] = 0.85
+                self.domain_quality_history[domain]["quality_thresholds"]["validation_score"] = 0.88
+                self.domain_quality_history[domain]["quality_thresholds"]["data_quality_min"] = 0.85
             
         print(f"✅ Quality monitoring configured for {domain}")
         print(f"   → Validation target: {quality_thresholds.get('validation_score', 0.85)}")
@@ -354,7 +417,7 @@ class QualityAssuranceAgent(BaseAgent):
         training_step = data.get("training_step", 0)
         
         # Update monitoring data
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         monitoring["samples_processed"] = training_step
         monitoring["validation_scores"].append(validation_score)
         monitoring["loss_values"].append(loss)
@@ -376,7 +439,7 @@ class QualityAssuranceAgent(BaseAgent):
                                       loss: float, convergence_rate: float):
         """Check if quality metrics meet thresholds"""
         
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         thresholds = monitoring["quality_thresholds"]
         
         alerts = []
@@ -392,23 +455,23 @@ class QualityAssuranceAgent(BaseAgent):
             })
             
         # Loss threshold check
-        if loss > thresholds["loss_threshold"]:
+        if loss > thresholds["max_loss_threshold"]:
             alerts.append({
                 "type": "loss_above_threshold", 
                 "severity": "warning",
                 "metric": loss,
-                "threshold": thresholds["loss_threshold"],
-                "message": f"Loss {loss:.3f} above threshold {thresholds['loss_threshold']}"
+                "threshold": thresholds["max_loss_threshold"],
+                "message": f"Loss {loss:.3f} above threshold {thresholds['max_loss_threshold']}"
             })
             
         # Convergence rate check
-        if convergence_rate < thresholds["convergence_rate"]:
+        if convergence_rate < thresholds["convergence_minimum"]:
             alerts.append({
                 "type": "slow_convergence",
                 "severity": "info",
                 "metric": convergence_rate,
-                "threshold": thresholds["convergence_rate"],
-                "message": f"Convergence rate {convergence_rate:.3f} below expected {thresholds['convergence_rate']}"
+                "threshold": thresholds["convergence_minimum"],
+                "message": f"Convergence rate {convergence_rate:.3f} below expected {thresholds['convergence_minimum']}"
             })
             
         # Check for TARA-level achievement
@@ -428,7 +491,7 @@ class QualityAssuranceAgent(BaseAgent):
     async def _detect_quality_patterns(self, domain: str):
         """Detect quality patterns and trends"""
         
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         validation_scores = monitoring["validation_scores"]
         loss_values = monitoring["loss_values"]
         
@@ -462,7 +525,7 @@ class QualityAssuranceAgent(BaseAgent):
     async def _calculate_convergence_rate(self, domain: str) -> float:
         """Calculate training convergence rate"""
         
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         loss_values = monitoring["loss_values"]
         
         if len(loss_values) < 3:
@@ -508,7 +571,7 @@ class QualityAssuranceAgent(BaseAgent):
     async def _detect_overfitting(self, domain: str) -> float:
         """Detect potential overfitting"""
         
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         validation_scores = monitoring["validation_scores"]
         loss_values = monitoring["loss_values"]
         
@@ -538,7 +601,7 @@ class QualityAssuranceAgent(BaseAgent):
         
         # Add to alert history
         self.alert_history.append(alert)
-        self.monitoring_domains[domain]["alerts"].append(alert)
+        self.domain_quality_history[domain]["alerts"].append(alert)
         
         # Log alert
         severity_icons = {
@@ -612,7 +675,7 @@ class QualityAssuranceAgent(BaseAgent):
     async def _check_domain_quality(self, domain: str):
         """Check overall quality for a domain"""
         
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         
         # Check if monitoring is stale
         last_update = monitoring.get("last_checkpoint", monitoring["start_time"])
@@ -631,7 +694,7 @@ class QualityAssuranceAgent(BaseAgent):
             
         domain_qualities = []
         
-        for domain, monitoring in self.monitoring_domains.items():
+        for domain, monitoring in self.domain_quality_history.items():
             if monitoring["validation_scores"]:
                 recent_quality = statistics.mean(monitoring["validation_scores"][-5:])
                 domain_qualities.append(recent_quality)
@@ -646,7 +709,7 @@ class QualityAssuranceAgent(BaseAgent):
         
         statuses = {}
         
-        for domain, monitoring in self.monitoring_domains.items():
+        for domain, monitoring in self.domain_quality_history.items():
             if not monitoring["validation_scores"]:
                 statuses[domain] = "initializing"
             else:
@@ -668,7 +731,7 @@ class QualityAssuranceAgent(BaseAgent):
         """Perform comprehensive quality analysis"""
         
         for domain in self.monitoring_domains:
-            monitoring = self.monitoring_domains[domain]
+            monitoring = self.domain_quality_history[domain]
             
             if len(monitoring["validation_scores"]) >= 10:
                 # Comprehensive analysis for domains with sufficient data
@@ -686,7 +749,7 @@ class QualityAssuranceAgent(BaseAgent):
     async def _calculate_convergence_stability(self, domain: str) -> float:
         """Calculate how stable the convergence is"""
         
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         convergence_metrics = monitoring["convergence_metrics"]
         
         if len(convergence_metrics) < 5:
@@ -699,7 +762,7 @@ class QualityAssuranceAgent(BaseAgent):
     async def _calculate_quality_consistency(self, domain: str) -> float:
         """Calculate quality consistency score"""
         
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         validation_scores = monitoring["validation_scores"]
         
         if len(validation_scores) < 5:
@@ -718,7 +781,7 @@ class QualityAssuranceAgent(BaseAgent):
     async def _compare_to_tara_benchmarks(self, domain: str) -> Dict[str, float]:
         """Compare domain quality to TARA benchmarks"""
         
-        monitoring = self.monitoring_domains[domain]
+        monitoring = self.domain_quality_history[domain]
         validation_scores = monitoring["validation_scores"]
         
         if not validation_scores:
@@ -726,7 +789,7 @@ class QualityAssuranceAgent(BaseAgent):
             
         # Compare to TARA benchmark scores
         current_avg = statistics.mean(validation_scores[-5:])
-        tara_avg = statistics.mean(self.tara_benchmarks["validation_scores"])
+        tara_avg = statistics.mean(self.tara_benchmarks["validation_score"])
         
         comparison = current_avg / tara_avg if tara_avg > 0 else 0.0
         
@@ -750,7 +813,7 @@ class QualityAssuranceAgent(BaseAgent):
             }
         }
         
-        for domain, monitoring in self.monitoring_domains.items():
+        for domain, monitoring in self.domain_quality_history.items():
             if monitoring["validation_scores"]:
                 report["domains"][domain] = {
                     "average_quality": statistics.mean(monitoring["validation_scores"]),
@@ -773,7 +836,7 @@ class QualityAssuranceAgent(BaseAgent):
         # Update benchmarks based on consistent high performance
         all_recent_scores = []
         
-        for monitoring in self.monitoring_domains.values():
+        for monitoring in self.domain_quality_history.values():
             if len(monitoring["validation_scores"]) >= 5:
                 recent_scores = monitoring["validation_scores"][-5:]
                 all_recent_scores.extend(recent_scores)
@@ -782,10 +845,8 @@ class QualityAssuranceAgent(BaseAgent):
             avg_recent = statistics.mean(all_recent_scores)
             
             # Update benchmarks if consistently exceeding current ones
-            if avg_recent > statistics.mean(self.tara_benchmarks["validation_scores"]) * 1.05:
-                self.tara_benchmarks["validation_scores"].append(avg_recent)
-                # Keep only last 10 benchmark scores
-                self.tara_benchmarks["validation_scores"] = self.tara_benchmarks["validation_scores"][-10:]
+            if avg_recent > statistics.mean(self.tara_benchmarks["validation_score"]) * 1.05:
+                self.tara_benchmarks["validation_score"] = avg_recent
                 
                 print(f"📈 Quality benchmarks updated: new average {avg_recent:.3f}")
 

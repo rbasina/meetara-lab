@@ -1,124 +1,91 @@
 """
 MeeTARA Lab - Training Conductor Agent
-Master orchestrator of the entire training pipeline
+Orchestrates multi-domain training with intelligent resource management and quality assurance
 """
 
 import asyncio
 import json
 import time
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime, timedelta
 from pathlib import Path
 import yaml
+from enum import Enum
+from collections import defaultdict, deque
 from .mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage, mcp_protocol
 
+# Use centralized domain mapping
+from ..domain_integration import (
+    domain_integration, 
+    get_domain_categories, 
+    get_all_domains, 
+    validate_domain, 
+    get_model_for_domain,
+    get_enhanced_feature_for_domain
+)
+
 class TrainingConductorAgent(BaseAgent):
-    """Enhanced Training Conductor with 62-domain intelligence and Trinity Architecture coordination"""
+    """Orchestrates multi-domain training with intelligent resource management"""
     
     def __init__(self, mcp=None):
-        super().__init__(AgentType.CONDUCTOR, mcp or mcp_protocol)
-        self.training_queue: List[str] = []
-        self.current_training: Optional[str] = None
-        self.training_start_time: Optional[datetime] = None
-        self.training_stats: Dict[str, Any] = {}
-        self.coordination_strategies: Dict[str, Any] = {}
-        self.orchestration_active = False
+        super().__init__(AgentType.TRAINING_CONDUCTOR, mcp or mcp_protocol)
         
-        # 62-Domain Configuration
-        self.domain_mapping = {}
-        self.domain_categories = {}
-        self.category_requirements = {}
-        self.quality_requirements = {}
-        self.training_complexity = {}
-        
-        # Load domain configuration
+        # Load domain configuration using centralized approach
         self._load_domain_configuration()
         
+        # Training orchestration
+        self.training_queue = deque()
+        self.active_training = None
+        self.training_history = []
+        self.performance_metrics = defaultdict(list)
+        
+        # Resource management
+        self.resource_allocation = {}
+        self.optimization_strategies = {}
+        
+        # Quality assurance
+        self.quality_requirements = {}
+        self.quality_thresholds = {}
+        
+        # Training complexity analysis
+        self.training_complexity = {}
+        
+        # Knowledge base for continuous learning
+        self.knowledge_base = {}
+        
     def _load_domain_configuration(self):
-        """Load 62-domain configuration from cloud-optimized mapping"""
+        """Load domain configuration using centralized domain integration"""
         try:
-            config_path = Path("config/cloud-optimized-domain-mapping.yaml")
+            # Use centralized domain mapping
+            self.domain_categories = get_domain_categories()
+            self.domain_mapping = self.domain_categories.copy()
             
-            if config_path.exists():
-                with open(config_path, 'r') as f:
-                    config = yaml.safe_load(f)
-                    
-                # Extract domain categories and their domains
-                domain_categories = ['healthcare', 'daily_life', 'business', 'education', 'creative', 'technology', 'specialized']
-                
-                for category in domain_categories:
-                    if category in config:
-                        self.domain_mapping[category] = list(config[category].keys())
-                        
-                        # Map each domain to its category
-                        for domain in config[category].keys():
-                            self.domain_categories[domain] = category
-                            
-                # Initialize category-based requirements
-                self._initialize_category_requirements()
-                
-                # Load quality requirements per category
-                self._initialize_quality_requirements()
-                
-                # Load training complexity per category
-                self._initialize_training_complexity()
-                
-                total_domains = sum(len(domains) for domains in self.domain_mapping.values())
-                print(f"✅ Training Conductor: Loaded {total_domains} domains across {len(self.domain_mapping)} categories")
-                
-                # Print category breakdown
-                for category, domains in self.domain_mapping.items():
-                    print(f"   → {category}: {len(domains)} domains")
-                    
-            else:
-                print("⚠️ Domain mapping not found, using default configuration")
-                self._initialize_default_configuration()
+            # Create reverse mapping for quick lookups
+            self.domain_to_category = {}
+            for category, domains in self.domain_categories.items():
+                for domain in domains:
+                    self.domain_to_category[domain] = category
+            
+            # Initialize category-based requirements
+            self._initialize_category_requirements()
+            
+            # Load quality requirements per category
+            self._initialize_quality_requirements()
+            
+            # Load training complexity per category
+            self._initialize_training_complexity()
+            
+            total_domains = len(get_all_domains())
+            print(f"✅ Training Conductor: Loaded {total_domains} domains across {len(self.domain_mapping)} categories")
+            
+            # Print category breakdown
+            for category, domains in self.domain_mapping.items():
+                print(f"   → {category}: {len(domains)} domains")
                 
         except Exception as e:
-            print(f"⚠️ Error loading domain configuration: {e}")
-            self._initialize_default_configuration()
+            print(f"❌ Error loading domain configuration: {e}")
+            raise Exception(f"Training Conductor requires valid domain configuration: {e}")
             
-    def _initialize_default_configuration(self):
-        """Initialize default domain configuration if YAML not available - Full 62 domains"""
-        self.domain_mapping = {
-            "healthcare": [
-                "general_health", "mental_health", "nutrition", "fitness", "sleep", "stress_management",
-                "preventive_care", "chronic_conditions", "medication_management", "emergency_care",
-                "women_health", "senior_health"
-            ],
-            "daily_life": [
-                "parenting", "relationships", "personal_assistant", "communication", "home_management", "shopping",
-                "planning", "transportation", "time_management", "decision_making", "conflict_resolution", "work_life_balance"
-            ],
-            "business": [
-                "entrepreneurship", "marketing", "sales", "customer_service", "project_management", "team_leadership",
-                "financial_planning", "operations", "hr_management", "strategy", "consulting", "legal_business"
-            ],
-            "education": [
-                "academic_tutoring", "skill_development", "career_guidance", "exam_preparation",
-                "language_learning", "research_assistance", "study_techniques", "educational_technology"
-            ],
-            "creative": [
-                "writing", "storytelling", "content_creation", "social_media", "design_thinking",
-                "photography", "music", "art_appreciation"
-            ],
-            "technology": [
-                "programming", "ai_ml", "cybersecurity", "data_analysis", "tech_support", "software_development"
-            ],
-            "specialized": [
-                "legal", "financial", "scientific_research", "engineering"
-            ]
-        }
-        
-        # Map domains to categories
-        for category, domains in self.domain_mapping.items():
-            for domain in domains:
-                self.domain_categories[domain] = category
-                
-        self._initialize_category_requirements()
-        self._initialize_quality_requirements()
-        self._initialize_training_complexity()
-        
     def _initialize_category_requirements(self):
         """Initialize quality requirements based on domain categories"""
         self.category_requirements = {
@@ -241,46 +208,44 @@ class TrainingConductorAgent(BaseAgent):
             }
         }
         
-        # Apply requirements to all domains in each category
+        # Apply to all domains
         for category, requirements in category_requirements.items():
             if category in self.domain_mapping:
                 for domain in self.domain_mapping[category]:
-                    self.quality_requirements[domain] = requirements.copy()
+                    self.quality_thresholds[domain] = requirements.copy()
                     
     def _initialize_training_complexity(self):
-        """Initialize training complexity estimates based on domain categories"""
-        category_complexity = {
-            "healthcare": timedelta(hours=3),      # High complexity, safety-critical
-            "specialized": timedelta(hours=2.5),   # High complexity, accuracy-critical
-            "business": timedelta(hours=2),        # Medium complexity, reasoning-heavy
-            "education": timedelta(hours=1.5),     # Medium complexity, structured
-            "technology": timedelta(hours=1.5),    # Medium complexity, technical
-            "daily_life": timedelta(hours=1),      # Lower complexity, conversational
-            "creative": timedelta(hours=1)         # Lower complexity, creative
+        """Initialize training complexity estimates per domain category"""
+        complexity_mapping = {
+            "healthcare": {"base_hours": 3.0, "complexity_multiplier": 1.5},
+            "specialized": {"base_hours": 2.5, "complexity_multiplier": 1.3},
+            "business": {"base_hours": 2.0, "complexity_multiplier": 1.2},
+            "education": {"base_hours": 1.5, "complexity_multiplier": 1.1},
+            "technology": {"base_hours": 1.5, "complexity_multiplier": 1.1},
+            "daily_life": {"base_hours": 1.0, "complexity_multiplier": 1.0},
+            "creative": {"base_hours": 1.0, "complexity_multiplier": 1.0}
         }
         
-        # Apply complexity to all domains in each category
-        for category, complexity in category_complexity.items():
+        for category, complexity in complexity_mapping.items():
             if category in self.domain_mapping:
                 for domain in self.domain_mapping[category]:
-                    self.training_complexity[domain] = complexity
-        
+                    self.training_complexity[domain] = complexity.copy()
+
     async def start(self):
         """Start the Training Conductor Agent"""
         await super().start()
         
-        # Initialize coordination strategies
-        self.coordination_strategies = {
-            "sequential_training": True,  # Start with proven approach
-            "parallel_domains": False,    # Enable when resources allow
-            "smart_scheduling": True,     # Optimize training order
-            "cost_optimization": True,    # Enable cost intelligence
-            "quality_first": True         # Prioritize quality over speed
-        }
+        # Initialize training orchestration
+        await self._initialize_training_orchestration()
         
         # Start orchestration loop
         asyncio.create_task(self._orchestration_loop())
         
+        print("🎯 Training Conductor Agent started")
+        print(f"   → Domains managed: {len(get_all_domains())}")
+        print(f"   → Categories: {len(self.domain_categories)}")
+        print(f"   → Config-driven: Centralized domain integration")
+
     async def handle_mcp_message(self, message: MCPMessage):
         """Handle incoming MCP messages"""
         if message.message_type == MessageType.RESOURCE_STATUS:
@@ -293,76 +258,128 @@ class TrainingConductorAgent(BaseAgent):
             await self._handle_error_notification(message.data)
         elif message.message_type == MessageType.OPTIMIZATION_REQUEST:
             await self._handle_optimization_request(message.data)
-            
+
     async def _orchestration_loop(self):
-        """Main orchestration loop"""
+        """Main orchestration loop for training management"""
         while self.running:
             try:
-                # Check if we need to start new training
-                if not self.current_training and self.training_queue:
+                # Check for new training requests
+                if not self.active_training and self.training_queue:
                     await self._start_next_training()
                 
-                # Monitor current training
-                if self.current_training:
+                # Monitor active training
+                if self.active_training:
                     await self._monitor_current_training()
                 
-                # Optimize resource allocation
+                # Optimize training order
+                await self._optimize_training_order()
+                
+                # Resource optimization
                 await self._optimize_resources()
                 
-                # Update coordination strategies
+                # Update strategies based on performance
                 await self._update_strategies()
                 
                 await asyncio.sleep(10)  # Check every 10 seconds
                 
             except Exception as e:
-                print(f"❌ Conductor orchestration error: {e}")
+                print(f"❌ Training orchestration error: {e}")
                 await asyncio.sleep(30)
-                
+
     async def queue_domain_training(self, domain: str, priority: int = 1):
-        """Queue a domain for training"""
-        if domain not in self.training_queue:
-            if priority == 3:  # High priority
-                self.training_queue.insert(0, domain)
-            else:
-                self.training_queue.append(domain)
-                
-        print(f"📋 Domain queued for training: {domain} (queue length: {len(self.training_queue)})")
+        """Queue a domain for training with priority"""
         
-        # Notify other agents
-        self.broadcast_message(
-            MessageType.STATUS_UPDATE,
-            {
-                "action": "domain_queued",
-                "domain": domain,
-                "queue_length": len(self.training_queue),
-                "priority": priority
-            }
-        )
+        # Validate domain using centralized validation
+        if not validate_domain(domain):
+            raise ValueError(f"Invalid domain: {domain}")
         
+        # Get domain category and model
+        category = self.domain_to_category.get(domain, "daily_life")
+        model = get_model_for_domain(domain)
+        
+        training_request = {
+            "domain": domain,
+            "category": category,
+            "priority": priority,
+            "model": model,
+            "timestamp": datetime.now(),
+            "estimated_duration": self._estimate_training_duration(domain),
+            "quality_requirements": self._get_quality_requirements(domain),
+            "enhanced_features": get_enhanced_feature_for_domain(domain, "training_orchestrator")
+        }
+        
+        # Insert based on priority
+        inserted = False
+        for i, existing in enumerate(self.training_queue):
+            if priority > existing["priority"]:
+                self.training_queue.insert(i, training_request)
+                inserted = True
+                break
+        
+        if not inserted:
+            self.training_queue.append(training_request)
+            
+        print(f"✅ Queued {domain} training (priority: {priority}, category: {category})")
+
     async def queue_batch_training(self, domains: List[str], batch_name: str = "custom"):
         """Queue multiple domains for batch training"""
+        
+        # Validate all domains
+        invalid_domains = [d for d in domains if not validate_domain(d)]
+        if invalid_domains:
+            raise ValueError(f"Invalid domains: {invalid_domains}")
+        
+        # Queue all domains with batch priority
         for domain in domains:
-            await self.queue_domain_training(domain)
+            await self.queue_domain_training(domain, priority=2)
             
-        print(f"📋 Batch queued: {batch_name} ({len(domains)} domains)")
-        
-        # Optimize training order based on knowledge transfer
-        await self._optimize_training_order()
-        
+        print(f"✅ Queued batch training: {batch_name} ({len(domains)} domains)")
+
+    def get_training_stats(self) -> Dict[str, Any]:
+        """Get comprehensive training statistics"""
+        return {
+            "queue_status": {
+                "pending": len(self.training_queue),
+                "active": 1 if self.active_training else 0,
+                "completed": len(self.training_history)
+            },
+            "domain_coverage": {
+                "total_domains": len(get_all_domains()),
+                "categories": len(self.domain_categories),
+                "config_driven": True
+            },
+            "performance": {
+                "average_training_time": self._calculate_time_optimization(),
+                "resource_efficiency": self._calculate_resource_efficiency(),
+                "quality_achievement": self._calculate_quality_achievement()
+            },
+            "domain_integration": {
+                "centralized_mapping": True,
+                "enhanced_features": len(domain_integration.enhanced_features),
+                "config_loaded": domain_integration.domain_mapping.get("config_loaded", False)
+            }
+        }
+
+    def refresh_domain_configuration(self):
+        """Refresh domain configuration from centralized source"""
+        domain_integration.refresh_config()
+        self._load_domain_configuration()
+        print(f"✅ Domain configuration refreshed - {len(get_all_domains())} domains loaded")
+
     async def _start_next_training(self):
         """Start training the next domain in queue"""
         if not self.training_queue:
             return
             
-        domain = self.training_queue.pop(0)
-        self.current_training = domain
+        training_request = self.training_queue.popleft()
+        self.active_training = training_request["domain"]
         self.training_start_time = datetime.now()
         
-        print(f"🚀 Starting training: {domain}")
+        print(f"🚀 Starting training: {self.active_training}")
         
         # Update context
         self.update_context({
-            "current_domain": domain,
+            "current_domain": self.active_training,
             "training_step": 0,
             "progress_percentage": 0.0
         })
@@ -373,8 +390,8 @@ class TrainingConductorAgent(BaseAgent):
             MessageType.COORDINATION_REQUEST,
             {
                 "action": "allocate_resources",
-                "domain": domain,
-                "estimated_duration": self._estimate_training_duration(domain)
+                "domain": self.active_training,
+                "estimated_duration": self._estimate_training_duration(self.active_training)
             }
         )
         
@@ -384,8 +401,8 @@ class TrainingConductorAgent(BaseAgent):
             MessageType.COORDINATION_REQUEST,
             {
                 "action": "prepare_training_data",
-                "domain": domain,
-                "quality_requirements": self._get_quality_requirements(domain)
+                "domain": self.active_training,
+                "quality_requirements": self._get_quality_requirements(self.active_training)
             }
         )
         
@@ -395,14 +412,14 @@ class TrainingConductorAgent(BaseAgent):
             MessageType.COORDINATION_REQUEST,
             {
                 "action": "start_monitoring",
-                "domain": domain,
-                "quality_thresholds": self._get_quality_thresholds(domain)
+                "domain": self.active_training,
+                "quality_thresholds": self._get_quality_thresholds(self.active_training)
             }
         )
         
     async def _monitor_current_training(self):
         """Monitor the current training progress"""
-        if not self.current_training:
+        if not self.active_training:
             return
             
         context = self.get_context()
@@ -421,18 +438,19 @@ class TrainingConductorAgent(BaseAgent):
                 
     async def _complete_training(self):
         """Complete the current training"""
-        domain = self.current_training
+        domain = self.active_training
         duration = datetime.now() - self.training_start_time if self.training_start_time else None
         
         print(f"✅ Training completed: {domain} ({duration})")
         
         # Store training stats
-        self.training_stats[domain] = {
+        self.training_history.append({
+            "domain": domain,
             "completion_time": datetime.now(),
             "duration": duration,
             "final_quality": self.get_context().data_quality_score,
             "success": True
-        }
+        })
         
         # Request GGUF creation
         self.send_message(
@@ -441,23 +459,18 @@ class TrainingConductorAgent(BaseAgent):
             {
                 "action": "create_gguf",
                 "domain": domain,
-                "training_stats": self.training_stats[domain]
+                "training_stats": self.training_history[-1]
             }
         )
         
         # Update knowledge base
-        self.send_message(
-            AgentType.KNOWLEDGE_TRANSFER,
-            MessageType.KNOWLEDGE_SHARE,
-            {
-                "domain": domain,
-                "training_patterns": self._extract_training_patterns(domain),
-                "optimization_insights": self._extract_optimization_insights(domain)
-            }
-        )
+        self.knowledge_base[domain] = {
+            "training_patterns": self._extract_training_patterns(domain),
+            "optimization_insights": self._extract_optimization_insights(domain)
+        }
         
         # Reset current training
-        self.current_training = None
+        self.active_training = None
         self.training_start_time = None
         
         # Update context
@@ -469,14 +482,14 @@ class TrainingConductorAgent(BaseAgent):
         
     async def _handle_stalled_training(self):
         """Handle stalled training situations"""
-        print(f"⚠️ Training appears stalled: {self.current_training}")
+        print(f"⚠️ Training appears stalled: {self.active_training}")
         
         # Request diagnostic information
         self.broadcast_message(
             MessageType.COORDINATION_REQUEST,
             {
                 "action": "diagnostic_check",
-                "domain": self.current_training,
+                "domain": self.active_training,
                 "issue": "stalled_training"
             },
             priority=2
@@ -499,7 +512,7 @@ class TrainingConductorAgent(BaseAgent):
                 MessageType.OPTIMIZATION_REQUEST,
                 {
                     "strategy": strategy,
-                    "domain": self.current_training,
+                    "domain": self.active_training,
                     "priority": "high"
                 },
                 priority=2
@@ -516,8 +529,8 @@ class TrainingConductorAgent(BaseAgent):
             MessageType.OPTIMIZATION_REQUEST,
             {
                 "action": "optimize_training_order",
-                "domains": self.training_queue.copy(),
-                "current_knowledge": self._get_current_knowledge_base()
+                "domains": list(self.training_queue),
+                "current_knowledge": self.knowledge_base
             }
         )
         
@@ -554,19 +567,19 @@ class TrainingConductorAgent(BaseAgent):
         # Enable parallel training if resources allow
         if (len(context.gpu_utilization) > 1 and 
             all(util < 70 for util in context.gpu_utilization.values())):
-            self.coordination_strategies["parallel_domains"] = True
+            self.optimization_strategies["parallel_domains"] = True
             
         # Adjust quality vs speed balance
         if context.data_quality_score < 70:
-            self.coordination_strategies["quality_first"] = True
+            self.optimization_strategies["quality_first"] = True
         elif context.data_quality_score > 95:
-            self.coordination_strategies["quality_first"] = False
+            self.optimization_strategies["quality_first"] = False
             
     def _estimate_training_duration(self, domain: str) -> timedelta:
         """Estimate training duration for a domain based on category"""
         # Base estimate on previous training stats
-        if domain in self.training_stats:
-            return self.training_stats[domain]["duration"]
+        if domain in self.training_history:
+            return self.training_history[-1]["duration"]
         
         # Get domain category for intelligent estimation
         category = self.domain_categories.get(domain)
@@ -653,7 +666,7 @@ class TrainingConductorAgent(BaseAgent):
             return 0
             
         actual_duration = datetime.now() - self.training_start_time
-        estimated_duration = self._estimate_training_duration(self.current_training)
+        estimated_duration = self._estimate_training_duration(self.active_training)
         
         if actual_duration <= estimated_duration:
             return 100
@@ -678,15 +691,6 @@ class TrainingConductorAgent(BaseAgent):
         """Calculate quality achievement score"""
         context = self.get_context()
         return context.data_quality_score
-        
-    def _get_current_knowledge_base(self) -> Dict[str, Any]:
-        """Get current knowledge base for optimization"""
-        context = self.get_context()
-        return {
-            "successful_patterns": context.successful_patterns,
-            "optimization_strategies": context.optimization_strategies,
-            "training_stats": self.training_stats
-        }
         
     async def _handle_resource_status(self, data: Dict[str, Any]):
         """Handle resource status updates"""
@@ -721,7 +725,7 @@ class TrainingConductorAgent(BaseAgent):
     async def _handle_error_notification(self, data: Dict[str, Any]):
         """Handle error notifications"""
         error_type = data.get("error_type", "unknown")
-        domain = data.get("domain", self.current_training)
+        domain = data.get("domain", self.active_training)
         
         print(f"🚨 Training error detected: {error_type} in {domain}")
         
@@ -735,7 +739,7 @@ class TrainingConductorAgent(BaseAgent):
         if request_type == "update_training_order":
             new_order = data.get("optimized_order", [])
             if new_order:
-                self.training_queue = new_order
+                self.training_queue = deque(new_order)
                 print(f"📋 Training order optimized: {new_order}")
                 
     async def _implement_error_recovery(self, error_type: str, domain: str, error_data: Dict[str, Any]):

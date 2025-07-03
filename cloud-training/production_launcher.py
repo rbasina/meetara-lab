@@ -1,4 +1,4 @@
-﻿"""
+"""
 MeeTARA Lab - Production Training Launcher
 Trinity Architecture GPU Training for All 62 Domains
 """
@@ -11,45 +11,28 @@ import yaml
 import asyncio
 from pathlib import Path
 from typing import Dict, List, Any, Optional
+import importlib.util
 import argparse
 
 # Add parent directory to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root))
 
-# Import MCP protocol
-try:
-    from trinity_core.agents.mcp_protocol import get_mcp_protocol, AgentType, MessageType, BaseAgent
-except ImportError:
-    try:
-        from trinity_core.agents.mcp_protocol import get_mcp_protocol, AgentType, MessageType, BaseAgent
-    except ImportError:
-        try:
-            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            from trinity_core.agents.mcp_protocol import get_mcp_protocol, AgentType, MessageType, BaseAgent
-        except ImportError:
-            try:
-                from trinity_core.agents.mcp_protocol import get_mcp_protocol, AgentType, MessageType, BaseAgent
-            except ImportError:
-                print("Error: Cannot import MCP protocol. Please check the file structure.")
-                print(f"Current path: {os.getcwd()}")
-                print(f"Sys path: {sys.path}")
-                # Try one more approach
-                try:
-                    sys.path.append(os.getcwd())
-                    from trinity_core.agents.mcp_protocol import get_mcp_protocol, AgentType, MessageType, BaseAgent
-                except ImportError:
-                    try:
-                        from trinity_core.agents.mcp_protocol import get_mcp_protocol, AgentType, MessageType, BaseAgent
-                    except ImportError:
-                        try:
-                            from trinity_core.agents.mcp_protocol import get_mcp_protocol, AgentType, MessageType, BaseAgent
-                        except ImportError:
-                            print("Critical error: Cannot import MCP protocol. Trying direct import...")
-                            try:
-                                from trinity_core.agents.mcp_protocol import get_mcp_protocol, AgentType, MessageType, BaseAgent
-                            except ImportError:
-                                print("Failed to import MCP protocol. Exiting.")
-                                sys.exit(1)
+# Dynamically import mcp_protocol from the agents directory
+mcp_protocol_path = project_root / "trinity-core" / "agents" / "mcp_protocol.py"
+if mcp_protocol_path.exists():
+    spec = importlib.util.spec_from_file_location("mcp_protocol", mcp_protocol_path)
+    mcp_protocol_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mcp_protocol_module)
+    
+    # Import required classes from the module
+    BaseAgent = mcp_protocol_module.BaseAgent
+    AgentType = mcp_protocol_module.AgentType
+    MessageType = mcp_protocol_module.MessageType
+    get_mcp_protocol = mcp_protocol_module.get_mcp_protocol
+    print("? Successfully imported MCP Protocol components")
+else:
+    raise ImportError(f"MCP Protocol module not found at {mcp_protocol_path}")
 
 class ProductionLauncher:
     """Production launcher for training all 62 domains"""
@@ -59,7 +42,7 @@ class ProductionLauncher:
         self.config_path = config_path or os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "config",
-            "cloud-optimized-domain-mapping.yaml"
+            "trinity_domain_model_mapping_config.yaml"
         )
         self.domains = self._load_domains()
         self.mcp = get_mcp_protocol()
@@ -102,7 +85,7 @@ class ProductionLauncher:
     
     async def train_domain(self, category: str, domain: str) -> bool:
         """Train a single domain"""
-        print(f"🚀 Training domain: {category}/{domain}")
+        print(f"?? Training domain: {category}/{domain}")
         
         # Simulate training time based on domain complexity
         domain_complexity = len(domain) / 10.0  # Simple complexity metric
@@ -113,17 +96,17 @@ class ProductionLauncher:
         
         # Check budget
         if self.current_cost + domain_cost > self.budget_limit:
-            print(f"⚠️ Budget limit reached: ${self.current_cost:.2f} + ${domain_cost:.2f} > ${self.budget_limit:.2f}")
+            print(f"?? Budget limit reached: ${self.current_cost:.2f} + ${domain_cost:.2f} > ${self.budget_limit:.2f}")
             return False
         
         # Simulate training
         if not self.simulation:
             # In real mode, we would call the actual training code here
-            print(f"⚙️ Running actual training for {category}/{domain}...")
+            print(f"?? Running actual training for {category}/{domain}...")
             # TODO: Implement actual training
         else:
             # Simulate training with a delay
-            print(f"⏳ Simulating training for {category}/{domain} ({training_time:.1f}s)...")
+            print(f"? Simulating training for {category}/{domain} ({training_time:.1f}s)...")
             await asyncio.sleep(training_time)
         
         # Update cost
@@ -145,18 +128,18 @@ class ProductionLauncher:
             f.write(f"Format: Q4_K_M\n")
             f.write(f"Quality Score: 101%\n")
         
-        print(f"✅ Completed {category}/{domain} - Cost: ${domain_cost:.2f} - Total: ${self.current_cost:.2f}")
+        print(f"? Completed {category}/{domain} - Cost: ${domain_cost:.2f} - Total: ${self.current_cost:.2f}")
         return True
     
     async def train_all_domains(self):
         """Train all domains in parallel"""
-        print(f"🌟 Starting Trinity Architecture training for all domains")
-        print(f"🔄 Mode: {'Simulation' if self.simulation else 'Production'}")
-        print(f"💰 Budget: ${self.budget_limit:.2f}")
+        print(f"?? Starting Trinity Architecture training for all domains")
+        print(f"?? Mode: {'Simulation' if self.simulation else 'Production'}")
+        print(f"?? Budget: ${self.budget_limit:.2f}")
         
         # Count domains
         total_domains = sum(len(domains) for domains in self.domains.values())
-        print(f"📊 Total domains: {total_domains} across {len(self.domains)} categories")
+        print(f"?? Total domains: {total_domains} across {len(self.domains)} categories")
         
         # Start MCP
         self.mcp.start()
@@ -175,9 +158,9 @@ class ProductionLauncher:
         
         # Print results
         success_count = sum(1 for result in results if result)
-        print(f"\n🏁 Training complete: {success_count}/{total_domains} domains trained successfully")
-        print(f"⏱️ Total time: {time.time() - self.start_time:.1f}s")
-        print(f"💵 Total cost: ${self.current_cost:.2f} / ${self.budget_limit:.2f}")
+        print(f"\n?? Training complete: {success_count}/{total_domains} domains trained successfully")
+        print(f"?? Total time: {time.time() - self.start_time:.1f}s")
+        print(f"?? Total cost: ${self.current_cost:.2f} / ${self.budget_limit:.2f}")
         
         # Print output directory
         output_dir = os.path.join(
@@ -185,7 +168,7 @@ class ProductionLauncher:
             "model-factory",
             "trinity_gguf_models"
         )
-        print(f"📦 Models saved to: {output_dir}")
+        print(f"?? Models saved to: {output_dir}")
 
 def main():
     """Main function"""

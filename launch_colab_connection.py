@@ -299,7 +299,7 @@ def create_colab_notebook(training_script_b64, domains=None, mode="balanced"):
                 "metadata": {},
                 "source": [
                     "# Create domain mapping configuration\n",
-                    "%%writefile config/cloud-optimized-domain-mapping.yaml\n",
+                    "%%writefile config/trinity_domain_model_mapping_config.yaml\n",
                     "# MeeTARA Lab - Cloud Optimized Domain Mapping\n",
                     "# Quality-focused configuration for 62 domains across 7 categories\n",
                     "\n",

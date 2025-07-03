@@ -1,0 +1,76 @@
+{
+  "tara_proven_params": {
+    "batch_size": 2,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.1,
+    "max_steps": 846,
+    "learning_rate": 5e-5,
+    "warmup_steps": 100,
+    "save_steps": 50,
+    "eval_steps": 50,
+    "logging_steps": 10,
+    "gradient_accumulation_steps": 4,
+    "max_grad_norm": 1.0,
+    "fp16": true,
+    "dataloader_num_workers": 4,
+    "remove_unused_columns": false,
+    "optim": "adamw_torch",
+    "lr_scheduler_type": "cosine",
+    "weight_decay": 0.01,
+    "adam_beta1": 0.9,
+    "adam_beta2": 0.999,
+    "adam_epsilon": 1e-8
+  },
+  "trinity_config": {
+    "arc_reactor_efficiency": 0.90,
+    "perplexity_intelligence": true,
+    "einstein_fusion_multiplier": 5.04,
+    "optimization_enabled": true,
+    "context_awareness": true,
+    "adaptive_routing": true
+  },
+  "model_tier_mappings": {
+    "lightning": {
+      "model_path": "microsoft/Phi-3.5-mini-instruct",
+      "cost_per_hour": 0.25,
+      "recommended_gpu": "T4",
+      "batch_size": 8,
+      "sequence_length": 128,
+      "performance_tier": "lightning"
+    },
+    "fast": {
+      "model_path": "microsoft/Phi-3.5-mini-instruct", 
+      "cost_per_hour": 0.50,
+      "recommended_gpu": "T4",
+      "batch_size": 6,
+      "sequence_length": 256,
+      "performance_tier": "fast"
+    },
+    "balanced": {
+      "model_path": "microsoft/Phi-3.5-mini-instruct",
+      "cost_per_hour": 1.00,
+      "recommended_gpu": "V100",
+      "batch_size": 4,
+      "sequence_length": 512,
+      "performance_tier": "balanced"
+    },
+    "quality": {
+      "model_path": "microsoft/Phi-3.5-mini-instruct",
+      "cost_per_hour": 1.50,
+      "recommended_gpu": "A100",
+      "batch_size": 2,
+      "sequence_length": 1024,
+      "performance_tier": "quality"
+    }
+  },
+  "category_model_mappings": {
+    "healthcare": "quality",
+    "specialized": "quality",
+    "business": "balanced",
+    "education": "balanced",
+    "technology": "balanced",
+    "daily_life": "fast",
+    "creative": "lightning"
+  }
+} 

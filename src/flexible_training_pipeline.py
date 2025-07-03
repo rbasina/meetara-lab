@@ -2,7 +2,7 @@
 """
 MeeTARA Lab - Flexible Training Pipeline
 Handles: Single Domain | Multiple Domains | All Domains
-With smart base model selection from cloud-optimized-domain-mapping.yaml
+With smart base model selection from trinity_domain_model_mapping_config.yaml
 
 Usage:
     # Single domain
@@ -35,7 +35,7 @@ import random
 class FlexibleTrainingPipeline:
     """Flexible training pipeline for single/multiple/all domains"""
     
-    def __init__(self, config_path: str = "config/cloud-optimized-domain-mapping.yaml"):
+    def __init__(self, config_path: str = "config/trinity_domain_model_mapping_config.yaml"):
         self.config_path = config_path
         self.load_configuration()
         self.setup_gpu_environment()
@@ -405,7 +405,7 @@ def main():
     parser.add_argument('--domain', help='Single domain to train (for single mode)')
     parser.add_argument('--domains', help='Comma-separated domains (for multiple mode)')
     parser.add_argument('--categories', help='Comma-separated categories (for custom mode)')
-    parser.add_argument('--config', default='config/cloud-optimized-domain-mapping.yaml',
+    parser.add_argument('--config', default='config/trinity_domain_model_mapping_config.yaml',
                        help='Path to domain mapping config')
     parser.add_argument('--samples', type=int, default=2000,
                        help='Training samples per domain (default: 2000)')

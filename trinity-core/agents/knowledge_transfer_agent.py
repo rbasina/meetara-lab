@@ -81,7 +81,7 @@ class KnowledgeTransferAgent(BaseAgent):
     def _load_domain_configuration(self):
         """Load 62-domain configuration from cloud-optimized mapping"""
         try:
-            config_path = Path("config/cloud-optimized-domain-mapping.yaml")
+            config_path = Path("config/trinity_domain_model_mapping_config.yaml")
             
             if config_path.exists():
                 with open(config_path, 'r') as f:

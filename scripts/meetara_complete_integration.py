@@ -4,7 +4,7 @@ MeeTARA Lab - Complete Integration Script
 Aligns MCP agents with all 62 domains and 10 enhanced TARA features
 
 🎯 COMPREHENSIVE ALIGNMENT:
-✅ All 62 domains from cloud-optimized-domain-mapping.yaml
+✅ All 62 domains from trinity_domain_model_mapping_config.yaml
 ✅ All 10 Enhanced TARA Features preserved and enhanced
 ✅ Trinity Architecture (Arc Reactor + Perplexity + Einstein Fusion)
 ✅ MCP Agent Ecosystem with 7 coordinated agents
@@ -63,7 +63,7 @@ class MeeTARACompleteIntegration:
         print(f"✅ Cost targets: <${self.cost_targets['total_budget']}/month")
         
     def _load_all_62_domains(self) -> Dict[str, List[str]]:
-        """Load all 62 domains from cloud-optimized-domain-mapping.yaml"""
+        """Load all 62 domains from trinity_domain_model_mapping_config.yaml"""
         
         all_62_domains = {
             # HEALTHCARE DOMAINS (12 domains) - Use quality tier for safety
@@ -554,7 +554,7 @@ class MeeTARACompleteIntegration:
 
 **MeeTARA Lab** successfully achieves:
 ✅ Complete alignment with NEW_CURSOR_AI_PROMPT.md
-✅ All 62 domains from cloud-optimized-domain-mapping.yaml
+✅ All 62 domains from trinity_domain_model_mapping_config.yaml
 ✅ All 10 Enhanced TARA Features preserved and enhanced
 ✅ Trinity Architecture fully operational
 ✅ MCP Agent Ecosystem coordinated

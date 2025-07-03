@@ -116,7 +116,7 @@ else:
 get_ipython().run_line_magic('cd', 'meetara-lab')
 
 # Load cloud-optimized domain mapping
-with open('config/cloud-optimized-domain-mapping.yaml', 'r') as f:
+with open('config/trinity_domain_model_mapping_config.yaml', 'r') as f:
     DOMAIN_CONFIG = yaml.safe_load(f)
 
 # Extract all domains with their models

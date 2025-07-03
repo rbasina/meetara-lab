@@ -2,7 +2,7 @@
 MeeTARA Lab - Complete Agent Ecosystem
 Fully aligned with NEW_CURSOR_AI_PROMPT.md requirements
 
-✅ ALL 62 DOMAINS from cloud-optimized-domain-mapping.yaml
+✅ ALL 62 DOMAINS from trinity_domain_model_mapping_config.yaml
 ✅ ALL 10 ENHANCED TARA FEATURES preserved and enhanced
 ✅ Trinity Architecture (Arc Reactor + Perplexity + Einstein Fusion)
 ✅ MCP Protocol coordination between all 7 agents
@@ -153,7 +153,7 @@ class EnhancedDataGeneratorAgent:
     def _get_domain_configuration(self, domain_context: DomainTrainingContext) -> Dict[str, Any]:
         """Get domain-specific configuration including enhanced features"""
         
-        # Model tier mapping from cloud-optimized-domain-mapping.yaml
+        # Model tier mapping from trinity_domain_model_mapping_config.yaml
         model_configs = {
             "healthcare": {"tier": "quality", "model": "meta-llama/Llama-3.2-8B", "gpu": "V100"},
             "daily_life": {"tier": "fast", "model": "microsoft/DialoGPT-small", "gpu": "T4"},
