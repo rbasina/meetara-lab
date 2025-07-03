@@ -18,6 +18,16 @@ import argparse
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
+# Import centralized domain mapping
+try:
+    from trinity_core.domain_integration import get_domain_categories, get_all_domains, get_domain_stats
+    print("✅ Successfully imported centralized domain integration")
+except ImportError:
+    # Fallback import for different environments
+    sys.path.append(str(project_root / "trinity-core"))
+    from domain_integration import get_domain_categories, get_all_domains, get_domain_stats
+    print("✅ Successfully imported domain integration (fallback)")
+
 # Dynamically import mcp_protocol from the agents directory
 mcp_protocol_path = project_root / "trinity-core" / "agents" / "mcp_protocol.py"
 if mcp_protocol_path.exists():
@@ -30,12 +40,12 @@ if mcp_protocol_path.exists():
     AgentType = mcp_protocol_module.AgentType
     MessageType = mcp_protocol_module.MessageType
     get_mcp_protocol = mcp_protocol_module.get_mcp_protocol
-    print("? Successfully imported MCP Protocol components")
+    print("✅ Successfully imported MCP Protocol components")
 else:
     raise ImportError(f"MCP Protocol module not found at {mcp_protocol_path}")
 
 class ProductionLauncher:
-    """Production launcher for training all 62 domains"""
+    """Production launcher for training all 62 domains using centralized domain mapping"""
     
     def __init__(self, config_path: str = None, simulation: bool = True):
         self.simulation = simulation
@@ -44,48 +54,55 @@ class ProductionLauncher:
             "config",
             "trinity_domain_model_mapping_config.yaml"
         )
-        self.domains = self._load_domains()
+        self.domains = self._load_domains_from_centralized_mapping()
         self.mcp = get_mcp_protocol()
         self.start_time = time.time()
         self.budget_limit = 50.0  # $50 budget limit
         self.current_cost = 0.0
         
-    def _load_domains(self) -> Dict[str, List[str]]:
-        """Load domain mapping from config file"""
-        if not os.path.exists(self.config_path):
-            print(f"Warning: Config file not found at {self.config_path}")
-            print("Creating default domain mapping...")
-            return self._create_default_domains()
-        
+    def _load_domains_from_centralized_mapping(self) -> Dict[str, List[str]]:
+        """Load domain mapping from centralized domain integration"""
         try:
-            with open(self.config_path, 'r') as f:
-                domains = yaml.safe_load(f)
-            return domains
+            # Use centralized domain mapping
+            domain_categories = get_domain_categories()
+            domain_stats = get_domain_stats()
+            
+            print(f"✅ Production Launcher: Using centralized domain mapping")
+            print(f"   → Total domains: {domain_stats['total_domains']}")
+            print(f"   → Categories: {domain_stats['total_categories']}")
+            print(f"   → Config path: {domain_stats.get('config_path', 'Dynamic')}")
+            
+            return domain_categories
+            
         except Exception as e:
-            print(f"Error loading domain mapping: {e}")
-            return self._create_default_domains()
+            print(f"❌ CRITICAL: Could not load centralized domain mapping: {e}")
+            print(f"   This is a config-driven system - no hardcoded fallbacks!")
+            print(f"   Please ensure config/trinity_domain_model_mapping_config.yaml exists and is accessible.")
+            raise Exception(f"Production Launcher requires centralized domain integration: {e}")
     
-    def _create_default_domains(self) -> Dict[str, List[str]]:
-        """Create default domain mapping"""
-        return {
-            "healthcare": ["medical", "therapy", "wellness", "nutrition", "fitness", "mental_health", "elderly_care", "pediatrics", "emergency_care"],
-            "business": ["marketing", "finance", "management", "entrepreneurship", "sales", "hr", "strategy", "operations", "consulting"],
-            "education": ["k12", "higher_ed", "professional_dev", "language_learning", "stem", "arts", "special_ed", "adult_ed", "early_childhood"],
-            "technology": ["programming", "data_science", "cybersecurity", "ai", "cloud", "devops", "mobile", "web_dev", "iot"],
-            "creative": ["writing", "design", "music", "film", "photography", "art", "fashion", "crafts", "performing_arts"],
-            "personal": ["relationships", "self_improvement", "parenting", "travel", "cooking", "home", "finance_personal", "hobbies", "spirituality"],
-            "professional": ["legal", "engineering", "scientific", "government", "nonprofit", "retail", "hospitality", "transportation", "manufacturing"]
-        }
+    def get_domain_statistics(self) -> Dict[str, Any]:
+        """Get domain statistics from centralized mapping"""
+        try:
+            return get_domain_stats()
+        except Exception as e:
+            return {
+                "total_domains": sum(len(domains) for domains in self.domains.values()),
+                "total_categories": len(self.domains),
+                "config_loaded": False,
+                "error": str(e)
+            }
     
-    def _save_config(self):
-        """Save domain mapping to config file"""
-        os.makedirs(os.path.dirname(self.config_path), exist_ok=True)
-        with open(self.config_path, 'w') as f:
-            yaml.dump(self.domains, f)
-    
+    def refresh_domains_from_centralized_mapping(self):
+        """Refresh domains from centralized mapping"""
+        try:
+            self.domains = self._load_domains_from_centralized_mapping()
+            print("✅ Production Launcher: Domain configuration refreshed from centralized mapping")
+        except Exception as e:
+            print(f"❌ Error refreshing domain configuration: {e}")
+
     async def train_domain(self, category: str, domain: str) -> bool:
         """Train a single domain"""
-        print(f"?? Training domain: {category}/{domain}")
+        print(f"🚀 Training domain: {category}/{domain}")
         
         # Simulate training time based on domain complexity
         domain_complexity = len(domain) / 10.0  # Simple complexity metric
@@ -96,17 +113,17 @@ class ProductionLauncher:
         
         # Check budget
         if self.current_cost + domain_cost > self.budget_limit:
-            print(f"?? Budget limit reached: ${self.current_cost:.2f} + ${domain_cost:.2f} > ${self.budget_limit:.2f}")
+            print(f"💰 Budget limit reached: ${self.current_cost:.2f} + ${domain_cost:.2f} > ${self.budget_limit:.2f}")
             return False
         
         # Simulate training
         if not self.simulation:
             # In real mode, we would call the actual training code here
-            print(f"?? Running actual training for {category}/{domain}...")
+            print(f"🔥 Running actual training for {category}/{domain}...")
             # TODO: Implement actual training
         else:
             # Simulate training with a delay
-            print(f"? Simulating training for {category}/{domain} ({training_time:.1f}s)...")
+            print(f"⏱️ Simulating training for {category}/{domain} ({training_time:.1f}s)...")
             await asyncio.sleep(training_time)
         
         # Update cost
@@ -128,18 +145,20 @@ class ProductionLauncher:
             f.write(f"Format: Q4_K_M\n")
             f.write(f"Quality Score: 101%\n")
         
-        print(f"? Completed {category}/{domain} - Cost: ${domain_cost:.2f} - Total: ${self.current_cost:.2f}")
+        print(f"✅ Completed {category}/{domain} - Cost: ${domain_cost:.2f} - Total: ${self.current_cost:.2f}")
         return True
     
     async def train_all_domains(self):
-        """Train all domains in parallel"""
-        print(f"?? Starting Trinity Architecture training for all domains")
-        print(f"?? Mode: {'Simulation' if self.simulation else 'Production'}")
-        print(f"?? Budget: ${self.budget_limit:.2f}")
+        """Train all domains in parallel using centralized domain mapping"""
+        print(f"🚀 Starting Trinity Architecture training for all domains")
+        print(f"🎯 Mode: {'Simulation' if self.simulation else 'Production'}")
+        print(f"💰 Budget: ${self.budget_limit:.2f}")
+        print(f"🔧 Using centralized domain mapping (no hardcoded fallbacks)")
         
-        # Count domains
-        total_domains = sum(len(domains) for domains in self.domains.values())
-        print(f"?? Total domains: {total_domains} across {len(self.domains)} categories")
+        # Get domain statistics
+        domain_stats = self.get_domain_statistics()
+        print(f"📊 Total domains: {domain_stats['total_domains']} across {domain_stats['total_categories']} categories")
+        print(f"📁 Config loaded: {domain_stats.get('config_loaded', False)}")
         
         # Start MCP
         self.mcp.start()
@@ -158,9 +177,11 @@ class ProductionLauncher:
         
         # Print results
         success_count = sum(1 for result in results if result)
-        print(f"\n?? Training complete: {success_count}/{total_domains} domains trained successfully")
-        print(f"?? Total time: {time.time() - self.start_time:.1f}s")
-        print(f"?? Total cost: ${self.current_cost:.2f} / ${self.budget_limit:.2f}")
+        total_domains = len(results)
+        
+        print(f"\n🎉 Training complete: {success_count}/{total_domains} domains trained successfully")
+        print(f"⏱️ Total time: {time.time() - self.start_time:.1f}s")
+        print(f"💰 Total cost: ${self.current_cost:.2f} / ${self.budget_limit:.2f}")
         
         # Print output directory
         output_dir = os.path.join(
@@ -168,7 +189,8 @@ class ProductionLauncher:
             "model-factory",
             "trinity_gguf_models"
         )
-        print(f"?? Models saved to: {output_dir}")
+        print(f"📁 Models saved to: {output_dir}")
+        print(f"🔧 Centralized domain mapping: ✅ SUCCESS")
 
 def main():
     """Main function"""

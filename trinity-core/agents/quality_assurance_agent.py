@@ -97,27 +97,16 @@ class QualityAssuranceAgent(BaseAgent):
             
     def _initialize_minimal_fallback_configuration(self):
         """Initialize minimal fallback configuration if centralized mapping fails"""
-        print("⚠️ Using minimal fallback configuration - centralized mapping unavailable")
+        print("❌ CRITICAL: Could not load centralized domain mapping!")
+        print("   This is a config-driven system - no hardcoded fallbacks!")
+        print("   Please ensure config/trinity_domain_model_mapping_config.yaml exists and is accessible.")
         
-        # Minimal fallback with fewer domains
-        self.domain_mapping = {
-            "healthcare": ["general_health", "mental_health"],
-            "business": ["entrepreneurship", "customer_service"],
-            "education": ["academic_tutoring", "career_guidance"],
-            "creative": ["writing", "content_creation"],
-            "technology": ["programming", "ai_ml"],
-            "specialized": ["legal", "financial"],
-            "daily_life": ["parenting", "personal_assistant"]
-        }
-        
-        # Map domains to categories
-        for category, domains in self.domain_mapping.items():
-            for domain in domains:
-                self.domain_categories[domain] = category
-                
-        self._initialize_category_quality_requirements()
-        
-        print(f"⚠️ Fallback configuration: {sum(len(domains) for domains in self.domain_mapping.values())} domains")
+        # Instead of hardcoded fallback, raise an exception to force proper config
+        raise Exception(
+            "Quality Assurance Agent requires centralized domain integration. "
+            "No hardcoded fallbacks available. Please fix the config file: "
+            "config/trinity_domain_model_mapping_config.yaml"
+        )
 
     def refresh_domain_configuration(self):
         """Refresh domain configuration from centralized source"""

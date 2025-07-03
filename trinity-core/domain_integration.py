@@ -28,28 +28,20 @@ class DomainIntegration:
         # 10 Enhanced TARA Features - MUST BE PRESERVED
         self.enhanced_features = {
             "tts_manager": {
-                "description": "6 voice categories with Edge-TTS + pyttsx3 integration",
                 "file": "trinity-core/tts_manager.py",
-                "domains": "ALL",
-                "voice_categories": ["meditative", "therapeutic", "professional", "educational", "creative", "casual"]
+                "description": "6 voice categories with Edge-TTS + pyttsx3 fallback"
             },
             "emotion_detector": {
-                "description": "RoBERTa-based emotion detection with professional context",
-                "file": "trinity-core/emotion_detector.py", 
-                "domains": "ALL",
-                "emotion_categories": ["joy", "sadness", "anger", "fear", "surprise", "disgust", "neutral"]
+                "file": "trinity-core/emotion_detector.py",
+                "description": "RoBERTa-based emotion detection with crisis handling"
             },
             "intelligent_router": {
-                "description": "Multi-domain analysis with RoBERTa-powered routing",
                 "file": "trinity-core/intelligent_router.py",
-                "domains": "ALL",
-                "routing_methods": ["single_domain", "multi_domain", "cross_domain"]
+                "description": "Multi-domain analysis with RoBERTa routing"
             },
             "universal_gguf_factory": {
-                "description": "Real GGUF creation with quality assurance",
-                "file": "model-factory/trinity_master_gguf_factory.py",
-                "domains": "ALL",
-                "output_format": "Q4_K_M"
+                "file": "model-factory/gguf_factory.py",
+                "description": "Real GGUF creation with quality assurance"
             },
             "training_orchestrator": {
                 "description": "Multi-domain training coordination",

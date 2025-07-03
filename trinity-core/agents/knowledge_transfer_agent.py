@@ -79,79 +79,73 @@ class KnowledgeTransferAgent(BaseAgent):
         }
         
     def _load_domain_configuration(self):
-        """Load 62-domain configuration from cloud-optimized mapping"""
+        """Load 62-domain configuration using centralized domain integration"""
         try:
-            config_path = Path("config/trinity_domain_model_mapping_config.yaml")
+            # Import centralized domain integration
+            import sys
+            from pathlib import Path
+            import os
             
-            if config_path.exists():
-                with open(config_path, 'r') as f:
-                    config = yaml.safe_load(f)
+            # Add project root to path for imports - multiple approaches
+            current_dir = Path.cwd()
+            project_root = current_dir if (current_dir / "trinity-core").exists() else current_dir.parent
+            sys.path.append(str(project_root))
+            
+            # Try centralized domain integration first
+            try:
+                from trinity_core.domain_integration import (
+                    get_domain_categories, 
+                    get_all_domains, 
+                    get_domain_stats
+                )
+                print("✅ Knowledge Transfer: Successfully imported centralized domain integration")
+            except ImportError:
+                # Fallback import for different environments
+                sys.path.append(str(project_root / "trinity-core"))
+                from domain_integration import (
+                    get_domain_categories, 
+                    get_all_domains, 
+                    get_domain_stats
+                )
+                print("✅ Knowledge Transfer: Successfully imported domain integration (fallback)")
+            
+            # Load domain configuration using centralized approach
+            domain_categories = get_domain_categories()
+            domain_stats = get_domain_stats()
+            
+            # Store domain mapping
+            self.domain_mapping = domain_categories
+            
+            # Map each domain to its category
+            for category, domains in domain_categories.items():
+                for domain in domains:
+                    self.domain_categories[domain] = category
                     
-                # Extract domain categories and their domains
-                domain_categories = ['healthcare', 'daily_life', 'business', 'education', 'creative', 'technology', 'specialized']
-                
-                for category in domain_categories:
-                    if category in config:
-                        self.domain_mapping[category] = list(config[category].keys())
-                        
-                        # Map each domain to its category
-                        for domain in config[category].keys():
-                            self.domain_categories[domain] = category
-                            
-                # Initialize domain-specific configurations
-                self._initialize_domain_keywords()
-                self._initialize_domain_compatibility()
-                
-                total_domains = sum(len(domains) for domains in self.domain_mapping.values())
-                print(f"✅ Knowledge Transfer: Loaded {total_domains} domains across {len(self.domain_mapping)} categories")
-                
-            else:
-                print("⚠️ Domain mapping not found, using default configuration")
-                self._initialize_default_configuration()
+            # Initialize domain-specific configurations
+            self._initialize_domain_keywords()
+            self._initialize_domain_compatibility()
+            
+            print(f"✅ Knowledge Transfer: Using centralized domain mapping")
+            print(f"   → Total domains: {domain_stats['total_domains']}")
+            print(f"   → Categories: {domain_stats['total_categories']}")
+            print(f"   → Config path: {domain_stats.get('config_path', 'Dynamic')}")
                 
         except Exception as e:
             print(f"⚠️ Error loading domain configuration: {e}")
             self._initialize_default_configuration()
             
     def _initialize_default_configuration(self):
-        """Initialize default domain configuration if YAML not available - Full 62 domains"""
-        self.domain_mapping = {
-            "healthcare": [
-                "general_health", "mental_health", "nutrition", "fitness", "sleep", "stress_management",
-                "preventive_care", "chronic_conditions", "medication_management", "emergency_care",
-                "women_health", "senior_health"
-            ],
-            "daily_life": [
-                "parenting", "relationships", "personal_assistant", "communication", "home_management", "shopping",
-                "planning", "transportation", "time_management", "decision_making", "conflict_resolution", "work_life_balance"
-            ],
-            "business": [
-                "entrepreneurship", "marketing", "sales", "customer_service", "project_management", "team_leadership",
-                "financial_planning", "operations", "hr_management", "strategy", "consulting", "legal_business"
-            ],
-            "education": [
-                "academic_tutoring", "skill_development", "career_guidance", "exam_preparation",
-                "language_learning", "research_assistance", "study_techniques", "educational_technology"
-            ],
-            "creative": [
-                "writing", "storytelling", "content_creation", "social_media", "design_thinking",
-                "photography", "music", "art_appreciation"
-            ],
-            "technology": [
-                "programming", "ai_ml", "cybersecurity", "data_analysis", "tech_support", "software_development"
-            ],
-            "specialized": [
-                "legal", "financial", "scientific_research", "engineering"
-            ]
-        }
+        """Initialize default domain configuration if YAML not available"""
+        print("❌ CRITICAL: Could not load centralized domain mapping!")
+        print("   This is a config-driven system - no hardcoded fallbacks!")
+        print("   Please ensure config/trinity_domain_model_mapping_config.yaml exists and is accessible.")
         
-        # Map domains to categories
-        for category, domains in self.domain_mapping.items():
-            for domain in domains:
-                self.domain_categories[domain] = category
-                
-        self._initialize_domain_keywords()
-        self._initialize_domain_compatibility()
+        # Instead of hardcoded fallback, raise an exception to force proper config
+        raise Exception(
+            "Knowledge Transfer Agent requires centralized domain integration. "
+            "No hardcoded fallbacks available. Please fix the config file: "
+            "config/trinity_domain_model_mapping_config.yaml"
+        )
         
     def _initialize_domain_keywords(self):
         """Initialize domain-specific keywords for pattern recognition"""
@@ -261,7 +255,7 @@ class KnowledgeTransferAgent(BaseAgent):
         try:
             config_path = Path("config/knowledge_transfer.json")
             if config_path.exists():
-                with open(config_path, 'r') as f:
+                with open(config_path, 'r', encoding='utf-8') as f:
                     transfer_config = json.load(f)
                     self.transfer_config.update(transfer_config.get("transfer", {}))
                     self.knowledge_categories.update(transfer_config.get("categories", {}))
@@ -274,14 +268,14 @@ class KnowledgeTransferAgent(BaseAgent):
         
         try:
             if self.pattern_storage_path.exists():
-                with open(self.pattern_storage_path, 'r') as f:
+                with open(self.pattern_storage_path, 'r', encoding='utf-8') as f:
                     stored_patterns = json.load(f)
                     self.cross_domain_patterns = stored_patterns.get("patterns", {})
                     self.intelligence_metrics = stored_patterns.get("metrics", self.intelligence_metrics)
                     print(f"✅ Loaded {len(self.cross_domain_patterns)} cross-domain patterns")
                     
             if self.transfer_log_path.exists():
-                with open(self.transfer_log_path, 'r') as f:
+                with open(self.transfer_log_path, 'r', encoding='utf-8') as f:
                     self.transfer_history = json.load(f)
                     print(f"✅ Loaded {len(self.transfer_history)} transfer records")
                     
@@ -926,11 +920,11 @@ class KnowledgeTransferAgent(BaseAgent):
                 "last_updated": datetime.now().isoformat()
             }
             
-            with open(self.pattern_storage_path, 'w') as f:
+            with open(self.pattern_storage_path, 'w', encoding='utf-8') as f:
                 json.dump(pattern_data, f, indent=2)
                 
             # Save transfer history
-            with open(self.transfer_log_path, 'w') as f:
+            with open(self.transfer_log_path, 'w', encoding='utf-8') as f:
                 json.dump(self.transfer_history, f, indent=2)
                 
         except Exception as e:

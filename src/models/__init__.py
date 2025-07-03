@@ -14,7 +14,7 @@ sys.path.insert(0, str(model_factory_path))
 
 # Import from existing files with clean naming
 try:
-    from trinity_master_gguf_factory import (
+    from gguf_factory import (
         create_gguf_model,
         optimize_model_size,
         validate_gguf_quality

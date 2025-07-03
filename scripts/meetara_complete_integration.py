@@ -153,7 +153,7 @@ class MeeTARACompleteIntegration:
             
             "4_universal_gguf_factory": {
                 "description": "Real file creation system with enhanced GGUF factory v2",
-                "file": "model-factory/trinity_master_gguf_factory.py",
+                "file": "model-factory/gguf_factory.py",
                 "integration": "Universal model generation",
                 "quality_assurance": "Quality assurance pipeline",
                 "deployment_automation": "Deployment automation",

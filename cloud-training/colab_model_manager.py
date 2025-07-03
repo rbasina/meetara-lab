@@ -95,8 +95,8 @@ class ColabModelManager:
         """Get complete domain to model mapping"""
         domain_model_mapping = {}
         
-        # Process each category
-        categories = ['healthcare', 'business', 'education', 'technology', 'specialized', 'creative', 'daily_life']
+        # Process each category dynamically from domain mapping
+        categories = list(self.domain_mapping.keys())
         
         for category in categories:
             category_domains = self.domain_mapping.get(category, {})
