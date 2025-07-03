@@ -1,0 +1,115 @@
+# MeeTARA Lab - SAFETY-FIRST Domain Mapping
+# Microsoft Phi-3 models ONLY - Enterprise safety verified
+
+version: "2.3-safety" 
+description: "Safety-First - Microsoft Phi-3 enterprise safety verified"
+
+# ✅ MICROSOFT PHI-3 SAFETY VERIFIED MODELS ONLY
+model_tiers:
+  safe_fast: "microsoft/Phi-3.5-mini-instruct"      # 3.8B - Microsoft safety tested ✅
+  safe_quality: "microsoft/Phi-3-medium-4k-instruct" # 14B - Microsoft enterprise grade ✅
+
+# 🛡️ CRITICAL DOMAINS - CONSERVATIVE SAFETY APPROACH
+healthcare:
+  general_health: "microsoft/Phi-3.5-mini-instruct"        # ✅ Educational only
+  mental_health: "microsoft/Phi-3.5-mini-instruct"         # ✅ Wellness support
+  nutrition: "microsoft/Phi-3.5-mini-instruct"             # ✅ Nutrition education
+  fitness: "microsoft/Phi-3.5-mini-instruct"               # ✅ Exercise guidance
+  sleep: "microsoft/Phi-3.5-mini-instruct"                 # ✅ Sleep hygiene
+  stress_management: "microsoft/Phi-3.5-mini-instruct"     # ✅ Stress education
+  preventive_care: "microsoft/Phi-3.5-mini-instruct"       # ✅ Prevention info
+  chronic_conditions: "microsoft/Phi-3.5-mini-instruct"    # ✅ General info
+  medication_management: "microsoft/Phi-3.5-mini-instruct" # ✅ Reminders only
+  emergency_care: "microsoft/Phi-3.5-mini-instruct"        # ✅ Emergency contacts
+  women_health: "microsoft/Phi-3.5-mini-instruct"          # ✅ Women's wellness
+  senior_health: "microsoft/Phi-3.5-mini-instruct"         # ✅ Senior wellness
+
+specialized:
+  legal: "microsoft/Phi-3.5-mini-instruct"               # ✅ Information only
+  financial: "microsoft/Phi-3.5-mini-instruct"           # ✅ Education only
+  scientific_research: "microsoft/Phi-3-medium-4k-instruct" # ✅ Research methods
+  engineering: "microsoft/Phi-3-medium-4k-instruct"      # ✅ Engineering help
+
+business:
+  entrepreneurship: "microsoft/Phi-3-medium-4k-instruct"   # ✅ Business education
+  marketing: "microsoft/Phi-3-medium-4k-instruct"          # ✅ Marketing help
+  sales: "microsoft/Phi-3-medium-4k-instruct"              # ✅ Sales techniques
+  customer_service: "microsoft/Phi-3.5-mini-instruct"     # ✅ Service help
+  project_management: "microsoft/Phi-3-medium-4k-instruct" # ✅ PM methods
+  team_leadership: "microsoft/Phi-3-medium-4k-instruct"    # ✅ Leadership
+  financial_planning: "microsoft/Phi-3.5-mini-instruct"   # ✅ Planning education
+  operations: "microsoft/Phi-3.5-mini-instruct"           # ✅ Operations
+  hr_management: "microsoft/Phi-3-medium-4k-instruct"     # ✅ HR practices
+  strategy: "microsoft/Phi-3-medium-4k-instruct"          # ✅ Strategy help
+  consulting: "microsoft/Phi-3-medium-4k-instruct"        # ✅ Methodologies
+  legal_business: "microsoft/Phi-3.5-mini-instruct"       # ✅ General info
+
+education:
+  academic_tutoring: "microsoft/Phi-3-medium-4k-instruct" # ✅ Academic help
+  skill_development: "microsoft/Phi-3-medium-4k-instruct" # ✅ Skill building
+  career_guidance: "microsoft/Phi-3-medium-4k-instruct"   # ✅ Career advice
+  exam_preparation: "microsoft/Phi-3-medium-4k-instruct"  # ✅ Study help
+  language_learning: "microsoft/Phi-3.5-mini-instruct"   # ✅ Language practice
+  research_assistance: "microsoft/Phi-3-medium-4k-instruct" # ✅ Research help
+  study_techniques: "microsoft/Phi-3.5-mini-instruct"    # ✅ Study methods
+  educational_technology: "microsoft/Phi-3.5-mini-instruct" # ✅ EdTech
+
+technology:
+  programming: "microsoft/Phi-3-medium-4k-instruct"       # ✅ Coding help
+  ai_ml: "microsoft/Phi-3-medium-4k-instruct"             # ✅ AI/ML education
+  cybersecurity: "microsoft/Phi-3.5-mini-instruct"       # ✅ Security education
+  data_analysis: "microsoft/Phi-3-medium-4k-instruct"     # ✅ Data science
+  tech_support: "microsoft/Phi-3.5-mini-instruct"        # ✅ Tech help
+  software_development: "microsoft/Phi-3-medium-4k-instruct" # ✅ Development
+
+daily_life:
+  parenting: "microsoft/Phi-3-medium-4k-instruct"          # ✅ Parenting help
+  relationships: "microsoft/Phi-3-medium-4k-instruct"      # ✅ Relationship advice
+  personal_assistant: "microsoft/Phi-3.5-mini-instruct"   # ✅ Task help
+  communication: "microsoft/Phi-3.5-mini-instruct"        # ✅ Communication
+  home_management: "microsoft/Phi-3.5-mini-instruct"      # ✅ Home help
+  shopping: "microsoft/Phi-3.5-mini-instruct"             # ✅ Shopping help
+  planning: "microsoft/Phi-3.5-mini-instruct"             # ✅ Planning
+  transportation: "microsoft/Phi-3.5-mini-instruct"       # ✅ Travel help
+  time_management: "microsoft/Phi-3.5-mini-instruct"      # ✅ Time management
+  decision_making: "microsoft/Phi-3-medium-4k-instruct"   # ✅ Decision help
+  conflict_resolution: "microsoft/Phi-3.5-mini-instruct" # ✅ Conflict help
+  work_life_balance: "microsoft/Phi-3.5-mini-instruct"    # ✅ Balance help
+
+creative:
+  writing: "microsoft/Phi-3-medium-4k-instruct"           # ✅ Creative writing
+  storytelling: "microsoft/Phi-3-medium-4k-instruct"      # ✅ Storytelling
+  content_creation: "microsoft/Phi-3.5-mini-instruct"    # ✅ Content help
+  social_media: "microsoft/Phi-3.5-mini-instruct"        # ✅ Social content
+  design_thinking: "microsoft/Phi-3.5-mini-instruct"     # ✅ Design methods
+  photography: "microsoft/Phi-3.5-mini-instruct"         # ✅ Photo help
+  music: "microsoft/Phi-3.5-mini-instruct"               # ✅ Music help
+  art_appreciation: "microsoft/Phi-3.5-mini-instruct"    # ✅ Art discussion
+
+# 🛡️ MICROSOFT PHI-3 SAFETY FEATURES
+safety_features:
+  content_filtering: "Built-in harmful content detection"
+  bias_mitigation: "Extensive bias testing and mitigation" 
+  responsible_ai: "Microsoft Responsible AI framework"
+  red_team_testing: "Comprehensive adversarial testing"
+  enterprise_security: "Enterprise-grade security"
+
+# ⚖️ COMPLIANCE DISCLAIMERS
+disclaimers:
+  healthcare: "Educational only. Consult healthcare professionals."
+  legal: "Information only. Consult legal professionals."
+  financial: "Educational only. Consult financial advisors."
+
+# ✅ VERIFIED LICENSES
+verified_licenses:
+  "microsoft/Phi-3.5-mini-instruct": "MIT"
+  "microsoft/Phi-3-medium-4k-instruct": "MIT"
+
+# 🎯 SAFETY TRAINING PARAMETERS
+safety_training_params:
+  batch_size: 2
+  lora_r: 8
+  max_steps: 846
+  base_model_fallback: "microsoft/Phi-3.5-mini-instruct"
+  safety_mode: true
+  content_filtering: true

@@ -1,0 +1,614 @@
+{
+  "domain": "healthcare",
+  "generated_at": "2025-07-03 03:39:54",
+  "total_samples_generated": 200,
+  "quality_samples_passed": 200,
+  "success_rate": 100.0,
+  "agentic_features": {
+    "crisis_intervention_enabled": true,
+    "emotional_intelligence_enabled": true,
+    "real_time_scenarios_enabled": true
+  },
+  "conversations": [
+    {
+      "text": "[Follow-up - Urgent] Social_Worker: Regarding your treatment in the specialist setting, this pregnant case requires attention. Psychiatrist: I need guidance on managing this pregnant treatment."
+    },
+    {
+      "text": "[Initial - Urgent] Pharmacist: Regarding your medical_history in the pharmacy setting, this pediatric case requires attention. Patient: I need guidance on managing this pediatric medical_history."
+    },
+    {
+      "text": "[Consultation - Priority] Psychiatrist: Regarding your treatment in the mental_health setting, this elderly case requires attention. Pediatrician: I need guidance on managing this elderly treatment."
+    },
+    {
+      "text": "[Initial - Priority] Psychiatrist: Regarding your therapy in the intensive_care setting, this routine case requires attention. Cardiologist: I need guidance on managing this routine therapy."
+    },
+    {
+      "text": "[Follow-up - Urgent] Technician: Regarding your treatment in the chronic_care setting, this complex case requires attention. Radiologist: I need guidance on managing this complex treatment."
+    },
+    {
+      "text": "[Initial - Priority] Nurse: Regarding your consultation in the laboratory setting, this pregnant case requires attention. Technician: I need guidance on managing this pregnant consultation."
+    },
+    {
+      "text": "[Follow-up - Urgent] Case_Manager: Regarding your vaccination in the pharmacy setting, this pregnant case requires attention. Pediatrician: I need guidance on managing this pregnant vaccination."
+    },
+    {
+      "text": "[Initial - Urgent] Cardiologist: Regarding your symptoms in the laboratory setting, this non_compliant case requires attention. Specialist: I need guidance on managing this non_compliant symptoms."
+    },
+    {
+      "text": "[Progress Review - Urgent] Therapist: Regarding your diagnosis in the pharmacy setting, this pregnant case requires attention. Specialist: I need guidance on managing this pregnant diagnosis."
+    },
+    {
+      "text": "[Consultation - Routine] Psychiatrist: Regarding your medical_history in the radiology setting, this pediatric case requires attention. Family_Member: I need guidance on managing this pediatric medical_history."
+    },
+    {
+      "text": "[Consultation - Priority] Case_Manager: Regarding your tests in the follow_up setting, this high_risk case requires attention. Social_Worker: I need guidance on managing this high_risk tests."
+    },
+    {
+      "text": "[Consultation - Routine] Pharmacist: Regarding your medication in the surgical setting, this elderly case requires attention. Patient: I need guidance on managing this elderly medication."
+    },
+    {
+      "text": "[Progress Review - Priority] Pediatrician: Regarding your consultation in the pediatric setting, this recurring case requires attention. Social_Worker: I need guidance on managing this recurring consultation."
+    },
+    {
+      "text": "[Follow-up - Routine] Doctor: Regarding your tests in the primary_care setting, this urgent case requires attention. Nurse: I need guidance on managing this urgent tests."
+    },
+    {
+      "text": "[Initial - Priority] Cardiologist: Regarding your screening in the surgical setting, this elderly case requires attention. Neurologist: I need guidance on managing this elderly screening."
+    },
+    {
+      "text": "[Progress Review - Priority] Surgeon: Regarding your therapy in the surgical setting, this chronic case requires attention. Radiologist: I need guidance on managing this chronic therapy."
+    },
+    {
+      "text": "[Consultation - Priority] Surgeon: Regarding your medical_history in the laboratory setting, this language_barrier case requires attention. Doctor: I need guidance on managing this language_barrier medical_history."
+    },
+    {
+      "text": "[Follow-up - Urgent] Radiologist: Regarding your diagnosis in the outpatient setting, this elderly case requires attention. Surgeon: I need guidance on managing this elderly diagnosis."
+    },
+    {
+      "text": "[Consultation - Priority] Case_Manager: Regarding your referral in the primary_care setting, this chronic case requires attention. Therapist: I need guidance on managing this chronic referral."
+    },
+    {
+      "text": "[Consultation - Routine] Doctor: Regarding your surgery in the emergency setting, this routine case requires attention. Case_Manager: I need guidance on managing this routine surgery."
+    },
+    {
+      "text": "[CRISIS - LANGUAGE_BARRIER] EMERGENCY: Patient experiencing severe chest pain, immediate assessment needed"
+    },
+    {
+      "text": "[Consultation - Routine] Radiologist: Regarding your therapy in the outpatient setting, this rare_condition case requires attention. Surgeon: I need guidance on managing this rare_condition therapy."
+    },
+    {
+      "text": "[Initial - Priority] Social_Worker: Regarding your second_opinion in the primary_care setting, this simple case requires attention. Family_Member: I need guidance on managing this simple second_opinion."
+    },
+    {
+      "text": "[CRISIS - COMPLEX] CRITICAL: Elderly patient confused and agitated, possible delirium or emergency"
+    },
+    {
+      "text": "[Progress Review - Urgent] Therapist: Regarding your referral in the intensive_care setting, this pediatric case requires attention. Nurse: I need guidance on managing this pediatric referral."
+    },
+    {
+      "text": "[Progress Review - Priority] Therapist: Regarding your consultation in the chronic_care setting, this non_compliant case requires attention. Family_Member: I need guidance on managing this non_compliant consultation."
+    },
+    {
+      "text": "[Consultation - Priority] Social_Worker: Regarding your billing in the specialist setting, this urgent case requires attention. Neurologist: I need guidance on managing this urgent billing."
+    },
+    {
+      "text": "[Consultation - Routine] Therapist: Regarding your insurance in the follow_up setting, this simple case requires attention. Patient: I need guidance on managing this simple insurance."
+    },
+    {
+      "text": "[CRISIS - LANGUAGE_BARRIER] EMERGENCY: Patient experiencing severe chest pain, immediate assessment needed"
+    },
+    {
+      "text": "[Consultation - Routine] Pharmacist: Regarding your surgery in the follow_up setting, this language_barrier case requires attention. Surgeon: I need guidance on managing this language_barrier surgery."
+    },
+    {
+      "text": "[Initial - Urgent] Case_Manager: Regarding your family_planning in the radiology setting, this simple case requires attention. Nurse: I need guidance on managing this simple family_planning."
+    },
+    {
+      "text": "[Follow-up - Priority] Radiologist: Regarding your recovery in the pharmacy setting, this pediatric case requires attention. Social_Worker: I need guidance on managing this pediatric recovery."
+    },
+    {
+      "text": "[CRISIS - RECURRING] CRITICAL: Elderly patient confused and agitated, possible delirium or emergency"
+    },
+    {
+      "text": "[Progress Review - Priority] Pharmacist: Regarding your tests in the intensive_care setting, this new_patient case requires attention. Surgeon: I need guidance on managing this new_patient tests."
+    },
+    {
+      "text": "[Initial - Priority] Nurse: Regarding your recovery in the surgical setting, this pregnant case requires attention. Therapist: I need guidance on managing this pregnant recovery."
+    },
+    {
+      "text": "[Initial - Urgent] Doctor: Regarding your medical_history in the chronic_care setting, this language_barrier case requires attention. Social_Worker: I need guidance on managing this language_barrier medical_history."
+    },
+    {
+      "text": "[Follow-up - Priority] Technician: Regarding your counseling in the pharmacy setting, this complex case requires attention. Pharmacist: I need guidance on managing this complex counseling."
+    },
+    {
+      "text": "[Initial - Urgent] Pharmacist: Regarding your tests in the mental_health setting, this recurring case requires attention. Social_Worker: I need guidance on managing this recurring tests."
+    },
+    {
+      "text": "[Consultation - Routine] Family_Member: Regarding your consultation in the outpatient setting, this recurring case requires attention. Pediatrician: I need guidance on managing this recurring consultation."
+    },
+    {
+      "text": "[Follow-up - Priority] Cardiologist: Regarding your second_opinion in the primary_care setting, this high_risk case requires attention. Pharmacist: I need guidance on managing this high_risk second_opinion."
+    },
+    {
+      "text": "[Follow-up - Priority] Neurologist: Regarding your medication in the geriatric setting, this multiple_conditions case requires attention. Specialist: I need guidance on managing this multiple_conditions medication."
+    },
+    {
+      "text": "[Initial - Priority] Cardiologist: Regarding your second_opinion in the rehabilitation setting, this elderly case requires attention. Therapist: I need guidance on managing this elderly second_opinion."
+    },
+    {
+      "text": "[Progress Review - Urgent] Specialist: Regarding your second_opinion in the preventive setting, this routine case requires attention. Neurologist: I need guidance on managing this routine second_opinion."
+    },
+    {
+      "text": "[Consultation - Routine] Case_Manager: Regarding your screening in the pharmacy setting, this high_risk case requires attention. Nurse: I need guidance on managing this high_risk screening."
+    },
+    {
+      "text": "[Consultation - Priority] Pediatrician: Regarding your surgery in the preventive setting, this high_risk case requires attention. Psychiatrist: I need guidance on managing this high_risk surgery."
+    },
+    {
+      "text": "[Consultation - Routine] Patient: Regarding your treatment in the emergency setting, this anxious_patient case requires attention. Pharmacist: I need guidance on managing this anxious_patient treatment."
+    },
+    {
+      "text": "[Progress Review - Urgent] Radiologist: Regarding your discharge in the outpatient setting, this chronic case requires attention. Therapist: I need guidance on managing this chronic discharge."
+    },
+    {
+      "text": "[Consultation - Urgent] Doctor: Regarding your discharge in the inpatient setting, this anxious_patient case requires attention. Case_Manager: I need guidance on managing this anxious_patient discharge."
+    },
+    {
+      "text": "[Follow-up - Routine] Case_Manager: Regarding your vaccination in the laboratory setting, this elderly case requires attention. Neurologist: I need guidance on managing this elderly vaccination."
+    },
+    {
+      "text": "[Progress Review - Routine] Psychiatrist: Regarding your insurance in the rehabilitation setting, this anxious_patient case requires attention. Family_Member: I need guidance on managing this anxious_patient insurance."
+    },
+    {
+      "text": "[Follow-up - Routine] Surgeon: Regarding your tests in the follow_up setting, this simple case requires attention. Technician: I need guidance on managing this simple tests."
+    },
+    {
+      "text": "[Progress Review - Routine] Social_Worker: Regarding your treatment in the laboratory setting, this non_compliant case requires attention. Nurse: I need guidance on managing this non_compliant treatment."
+    },
+    {
+      "text": "[Progress Review - Priority] Surgeon: Regarding your billing in the preventive setting, this pregnant case requires attention. Psychiatrist: I need guidance on managing this pregnant billing."
+    },
+    {
+      "text": "[Progress Review - Priority] Pharmacist: Regarding your therapy in the geriatric setting, this acute case requires attention. Case_Manager: I need guidance on managing this acute therapy."
+    },
+    {
+      "text": "[Progress Review - Urgent] Social_Worker: Regarding your referral in the preventive setting, this simple case requires attention. Cardiologist: I need guidance on managing this simple referral."
+    },
+    {
+      "text": "[Consultation - Routine] Therapist: Regarding your counseling in the radiology setting, this high_risk case requires attention. Specialist: I need guidance on managing this high_risk counseling."
+    },
+    {
+      "text": "[Consultation - Routine] Technician: Regarding your consultation in the surgical setting, this new_patient case requires attention. Therapist: I need guidance on managing this new_patient consultation."
+    },
+    {
+      "text": "[Follow-up - Routine] Case_Manager: Regarding your medication in the outpatient setting, this rare_condition case requires attention. Doctor: I need guidance on managing this rare_condition medication."
+    },
+    {
+      "text": "[Consultation - Routine] Patient: Regarding your diagnosis in the primary_care setting, this routine case requires attention. Doctor: I need guidance on managing this routine diagnosis."
+    },
+    {
+      "text": "[Initial - Routine] Radiologist: Regarding your tests in the emergency setting, this low_risk case requires attention. Cardiologist: I need guidance on managing this low_risk tests."
+    },
+    {
+      "text": "[Follow-up - Urgent] Pediatrician: Regarding your consultation in the rehabilitation setting, this language_barrier case requires attention. Neurologist: I need guidance on managing this language_barrier consultation."
+    },
+    {
+      "text": "[Follow-up - Routine] Radiologist: Regarding your second_opinion in the pharmacy setting, this chronic case requires attention. Specialist: I need guidance on managing this chronic second_opinion."
+    },
+    {
+      "text": "[Follow-up - Priority] Cardiologist: Regarding your surgery in the radiology setting, this anxious_patient case requires attention. Family_Member: I need guidance on managing this anxious_patient surgery."
+    },
+    {
+      "text": "[Follow-up - Routine] Technician: Regarding your vaccination in the outpatient setting, this routine case requires attention. Family_Member: I need guidance on managing this routine vaccination."
+    },
+    {
+      "text": "[Initial - Urgent] Technician: Regarding your billing in the inpatient setting, this complex case requires attention. Nurse: I need guidance on managing this complex billing."
+    },
+    {
+      "text": "[Initial - Routine] Therapist: Regarding your referral in the surgical setting, this multiple_conditions case requires attention. Pharmacist: I need guidance on managing this multiple_conditions referral."
+    },
+    {
+      "text": "[Consultation - Routine] Social_Worker: Regarding your second_opinion in the emergency setting, this low_risk case requires attention. Cardiologist: I need guidance on managing this low_risk second_opinion."
+    },
+    {
+      "text": "[Consultation - Priority] Surgeon: Regarding your vaccination in the outpatient setting, this pregnant case requires attention. Pediatrician: I need guidance on managing this pregnant vaccination."
+    },
+    {
+      "text": "[Follow-up - Priority] Technician: Regarding your discharge in the chronic_care setting, this acute case requires attention. Case_Manager: I need guidance on managing this acute discharge."
+    },
+    {
+      "text": "[Initial - Routine] Family_Member: Regarding your tests in the intensive_care setting, this new_patient case requires attention. Pediatrician: I need guidance on managing this new_patient tests."
+    },
+    {
+      "text": "[Initial - Routine] Specialist: Regarding your screening in the inpatient setting, this rare_condition case requires attention. Patient: I need guidance on managing this rare_condition screening."
+    },
+    {
+      "text": "[Progress Review - Priority] Radiologist: Regarding your therapy in the rehabilitation setting, this new_patient case requires attention. Nurse: I need guidance on managing this new_patient therapy."
+    },
+    {
+      "text": "[Consultation - Urgent] Nurse: Regarding your referral in the rehabilitation setting, this pregnant case requires attention. Technician: I need guidance on managing this pregnant referral."
+    },
+    {
+      "text": "[Follow-up - Priority] Therapist: Regarding your recovery in the telehealth setting, this chronic case requires attention. Pediatrician: I need guidance on managing this chronic recovery."
+    },
+    {
+      "text": "[Progress Review - Urgent] Pediatrician: Regarding your consultation in the follow_up setting, this pregnant case requires attention. Surgeon: I need guidance on managing this pregnant consultation."
+    },
+    {
+      "text": "[Consultation - Urgent] Case_Manager: Regarding your billing in the inpatient setting, this new_patient case requires attention. Therapist: I need guidance on managing this new_patient billing."
+    },
+    {
+      "text": "[Progress Review - Routine] Therapist: Regarding your symptoms in the chronic_care setting, this elderly case requires attention. Nurse: I need guidance on managing this elderly symptoms."
+    },
+    {
+      "text": "[Progress Review - Priority] Cardiologist: Regarding your discharge in the laboratory setting, this pediatric case requires attention. Pediatrician: I need guidance on managing this pediatric discharge."
+    },
+    {
+      "text": "[Initial - Urgent] Social_Worker: Regarding your insurance in the radiology setting, this recurring case requires attention. Therapist: I need guidance on managing this recurring insurance."
+    },
+    {
+      "text": "[Progress Review - Priority] Pharmacist: Regarding your insurance in the intensive_care setting, this simple case requires attention. Case_Manager: I need guidance on managing this simple insurance."
+    },
+    {
+      "text": "[Follow-up - Routine] Pharmacist: Regarding your second_opinion in the telehealth setting, this urgent case requires attention. Cardiologist: I need guidance on managing this urgent second_opinion."
+    },
+    {
+      "text": "[Progress Review - Routine] Pharmacist: Regarding your tests in the follow_up setting, this pregnant case requires attention. Doctor: I need guidance on managing this pregnant tests."
+    },
+    {
+      "text": "[Progress Review - Priority] Social_Worker: Regarding your tests in the preventive setting, this multiple_conditions case requires attention. Family_Member: I need guidance on managing this multiple_conditions tests."
+    },
+    {
+      "text": "[Consultation - Urgent] Radiologist: Regarding your medication in the mental_health setting, this low_risk case requires attention. Technician: I need guidance on managing this low_risk medication."
+    },
+    {
+      "text": "[Initial - Priority] Pharmacist: Regarding your surgery in the laboratory setting, this anxious_patient case requires attention. Family_Member: I need guidance on managing this anxious_patient surgery."
+    },
+    {
+      "text": "[Follow-up - Urgent] Family_Member: Regarding your screening in the radiology setting, this language_barrier case requires attention. Pediatrician: I need guidance on managing this language_barrier screening."
+    },
+    {
+      "text": "[Consultation - Urgent] Cardiologist: Regarding your billing in the laboratory setting, this complex case requires attention. Neurologist: I need guidance on managing this complex billing."
+    },
+    {
+      "text": "[Consultation - Routine] Family_Member: Regarding your therapy in the chronic_care setting, this urgent case requires attention. Social_Worker: I need guidance on managing this urgent therapy."
+    },
+    {
+      "text": "[Consultation - Routine] Technician: Regarding your therapy in the pharmacy setting, this multiple_conditions case requires attention. Specialist: I need guidance on managing this multiple_conditions therapy."
+    },
+    {
+      "text": "[Consultation - Priority] Radiologist: Regarding your insurance in the telehealth setting, this recurring case requires attention. Doctor: I need guidance on managing this recurring insurance."
+    },
+    {
+      "text": "[Consultation - Routine] Specialist: Regarding your insurance in the geriatric setting, this multiple_conditions case requires attention. Pharmacist: I need guidance on managing this multiple_conditions insurance."
+    },
+    {
+      "text": "[Consultation - Routine] Nurse: Regarding your medical_history in the chronic_care setting, this simple case requires attention. Cardiologist: I need guidance on managing this simple medical_history."
+    },
+    {
+      "text": "[Follow-up - Priority] Social_Worker: Regarding your therapy in the pediatric setting, this elderly case requires attention. Therapist: I need guidance on managing this elderly therapy."
+    },
+    {
+      "text": "[Follow-up - Routine] Pharmacist: Regarding your second_opinion in the rehabilitation setting, this elderly case requires attention. Neurologist: I need guidance on managing this elderly second_opinion."
+    },
+    {
+      "text": "[Initial - Priority] Technician: Regarding your medication in the pharmacy setting, this language_barrier case requires attention. Doctor: I need guidance on managing this language_barrier medication."
+    },
+    {
+      "text": "[Consultation - Priority] Surgeon: Regarding your referral in the pharmacy setting, this recurring case requires attention. Social_Worker: I need guidance on managing this recurring referral."
+    },
+    {
+      "text": "[Initial - Routine] Nurse: Regarding your screening in the intensive_care setting, this routine case requires attention. Pediatrician: I need guidance on managing this routine screening."
+    },
+    {
+      "text": "[Follow-up - Urgent] Cardiologist: Regarding your referral in the intensive_care setting, this routine case requires attention. Technician: I need guidance on managing this routine referral."
+    },
+    {
+      "text": "[Follow-up - Urgent] Pharmacist: Regarding your therapy in the surgical setting, this multiple_conditions case requires attention. Nurse: I need guidance on managing this multiple_conditions therapy."
+    },
+    {
+      "text": "[Progress Review - Priority] Social_Worker: Regarding your second_opinion in the primary_care setting, this new_patient case requires attention. Case_Manager: I need guidance on managing this new_patient second_opinion."
+    },
+    {
+      "text": "[Consultation - Routine] Case_Manager: Regarding your symptoms in the preventive setting, this chronic case requires attention. Nurse: I need guidance on managing this chronic symptoms."
+    },
+    {
+      "text": "[Follow-up - Priority] Family_Member: Regarding your vaccination in the surgical setting, this rare_condition case requires attention. Therapist: I need guidance on managing this rare_condition vaccination."
+    },
+    {
+      "text": "[Follow-up - Urgent] Therapist: Regarding your medication in the mental_health setting, this low_risk case requires attention. Nurse: I need guidance on managing this low_risk medication."
+    },
+    {
+      "text": "[Consultation - Urgent] Doctor: Regarding your therapy in the surgical setting, this simple case requires attention. Therapist: I need guidance on managing this simple therapy."
+    },
+    {
+      "text": "[Follow-up - Routine] Nurse: Regarding your therapy in the mental_health setting, this pediatric case requires attention. Specialist: I need guidance on managing this pediatric therapy."
+    },
+    {
+      "text": "[Progress Review - Routine] Technician: Regarding your consultation in the geriatric setting, this simple case requires attention. Surgeon: I need guidance on managing this simple consultation."
+    },
+    {
+      "text": "[Initial - Urgent] Nurse: Regarding your discharge in the radiology setting, this pregnant case requires attention. Radiologist: I need guidance on managing this pregnant discharge."
+    },
+    {
+      "text": "[Follow-up - Priority] Cardiologist: Regarding your medical_history in the laboratory setting, this chronic case requires attention. Radiologist: I need guidance on managing this chronic medical_history."
+    },
+    {
+      "text": "[Follow-up - Priority] Cardiologist: Regarding your treatment in the geriatric setting, this multiple_conditions case requires attention. Surgeon: I need guidance on managing this multiple_conditions treatment."
+    },
+    {
+      "text": "[Progress Review - Urgent] Therapist: Regarding your therapy in the intensive_care setting, this chronic case requires attention. Cardiologist: I need guidance on managing this chronic therapy."
+    },
+    {
+      "text": "[Initial - Routine] Case_Manager: Regarding your medical_history in the pharmacy setting, this rare_condition case requires attention. Radiologist: I need guidance on managing this rare_condition medical_history."
+    },
+    {
+      "text": "[Follow-up - Priority] Pediatrician: Regarding your medication in the pharmacy setting, this high_risk case requires attention. Doctor: I need guidance on managing this high_risk medication."
+    },
+    {
+      "text": "[Follow-up - Priority] Doctor: Regarding your symptoms in the telehealth setting, this pregnant case requires attention. Cardiologist: I need guidance on managing this pregnant symptoms."
+    },
+    {
+      "text": "[Consultation - Priority] Specialist: Regarding your therapy in the follow_up setting, this rare_condition case requires attention. Pharmacist: I need guidance on managing this rare_condition therapy."
+    },
+    {
+      "text": "[Consultation - Priority] Social_Worker: Regarding your medical_history in the surgical setting, this pregnant case requires attention. Patient: I need guidance on managing this pregnant medical_history."
+    },
+    {
+      "text": "[Progress Review - Urgent] Technician: Regarding your diagnosis in the surgical setting, this elderly case requires attention. Radiologist: I need guidance on managing this elderly diagnosis."
+    },
+    {
+      "text": "[Consultation - Urgent] Specialist: Regarding your treatment in the emergency setting, this anxious_patient case requires attention. Nurse: I need guidance on managing this anxious_patient treatment."
+    },
+    {
+      "text": "[Consultation - Priority] Radiologist: Regarding your treatment in the outpatient setting, this multiple_conditions case requires attention. Psychiatrist: I need guidance on managing this multiple_conditions treatment."
+    },
+    {
+      "text": "[Initial - Priority] Radiologist: Regarding your therapy in the inpatient setting, this high_risk case requires attention. Nurse: I need guidance on managing this high_risk therapy."
+    },
+    {
+      "text": "[Consultation - Routine] Technician: Regarding your tests in the surgical setting, this pediatric case requires attention. Doctor: I need guidance on managing this pediatric tests."
+    },
+    {
+      "text": "[Initial - Urgent] Patient: Regarding your recovery in the preventive setting, this chronic case requires attention. Radiologist: I need guidance on managing this chronic recovery."
+    },
+    {
+      "text": "[CRISIS - SIMPLE] CRITICAL: Elderly patient confused and agitated, possible delirium or emergency"
+    },
+    {
+      "text": "[Consultation - Priority] Patient: Regarding your counseling in the geriatric setting, this anxious_patient case requires attention. Pharmacist: I need guidance on managing this anxious_patient counseling."
+    },
+    {
+      "text": "[Initial - Routine] Neurologist: Regarding your billing in the outpatient setting, this pediatric case requires attention. Specialist: I need guidance on managing this pediatric billing."
+    },
+    {
+      "text": "[Initial - Urgent] Radiologist: Regarding your discharge in the specialist setting, this chronic case requires attention. Cardiologist: I need guidance on managing this chronic discharge."
+    },
+    {
+      "text": "[Consultation - Priority] Technician: Regarding your referral in the telehealth setting, this new_patient case requires attention. Pediatrician: I need guidance on managing this new_patient referral."
+    },
+    {
+      "text": "[Consultation - Priority] Psychiatrist: Regarding your medication in the surgical setting, this language_barrier case requires attention. Neurologist: I need guidance on managing this language_barrier medication."
+    },
+    {
+      "text": "[Initial - Routine] Social_Worker: Regarding your second_opinion in the telehealth setting, this acute case requires attention. Nurse: I need guidance on managing this acute second_opinion."
+    },
+    {
+      "text": "[Consultation - Routine] Social_Worker: Regarding your symptoms in the pharmacy setting, this pediatric case requires attention. Radiologist: I need guidance on managing this pediatric symptoms."
+    },
+    {
+      "text": "[Consultation - Priority] Pediatrician: Regarding your vaccination in the laboratory setting, this routine case requires attention. Family_Member: I need guidance on managing this routine vaccination."
+    },
+    {
+      "text": "[Consultation - Routine] Social_Worker: Regarding your discharge in the specialist setting, this acute case requires attention. Family_Member: I need guidance on managing this acute discharge."
+    },
+    {
+      "text": "[Consultation - Urgent] Radiologist: Regarding your vaccination in the mental_health setting, this routine case requires attention. Case_Manager: I need guidance on managing this routine vaccination."
+    },
+    {
+      "text": "[Follow-up - Priority] Technician: Regarding your recovery in the specialist setting, this acute case requires attention. Psychiatrist: I need guidance on managing this acute recovery."
+    },
+    {
+      "text": "[Progress Review - Routine] Nurse: Regarding your diagnosis in the specialist setting, this high_risk case requires attention. Doctor: I need guidance on managing this high_risk diagnosis."
+    },
+    {
+      "text": "[Follow-up - Urgent] Patient: Regarding your therapy in the pharmacy setting, this new_patient case requires attention. Pediatrician: I need guidance on managing this new_patient therapy."
+    },
+    {
+      "text": "[Consultation - Priority] Cardiologist: Regarding your screening in the laboratory setting, this language_barrier case requires attention. Technician: I need guidance on managing this language_barrier screening."
+    },
+    {
+      "text": "[Consultation - Priority] Therapist: Regarding your recovery in the emergency setting, this rare_condition case requires attention. Social_Worker: I need guidance on managing this rare_condition recovery."
+    },
+    {
+      "text": "[Initial - Urgent] Cardiologist: Regarding your diagnosis in the inpatient setting, this anxious_patient case requires attention. Social_Worker: I need guidance on managing this anxious_patient diagnosis."
+    },
+    {
+      "text": "[Progress Review - Priority] Case_Manager: Regarding your counseling in the inpatient setting, this routine case requires attention. Doctor: I need guidance on managing this routine counseling."
+    },
+    {
+      "text": "[Initial - Priority] Psychiatrist: Regarding your diagnosis in the pediatric setting, this new_patient case requires attention. Therapist: I need guidance on managing this new_patient diagnosis."
+    },
+    {
+      "text": "[Initial - Routine] Case_Manager: Regarding your billing in the specialist setting, this acute case requires attention. Specialist: I need guidance on managing this acute billing."
+    },
+    {
+      "text": "[Follow-up - Routine] Pharmacist: Regarding your recovery in the telehealth setting, this new_patient case requires attention. Psychiatrist: I need guidance on managing this new_patient recovery."
+    },
+    {
+      "text": "[Initial - Urgent] Psychiatrist: Regarding your recovery in the rehabilitation setting, this anxious_patient case requires attention. Surgeon: I need guidance on managing this anxious_patient recovery."
+    },
+    {
+      "text": "[Consultation - Urgent] Pharmacist: Regarding your screening in the surgical setting, this high_risk case requires attention. Family_Member: I need guidance on managing this high_risk screening."
+    },
+    {
+      "text": "[Consultation - Priority] Technician: Regarding your family_planning in the preventive setting, this chronic case requires attention. Family_Member: I need guidance on managing this chronic family_planning."
+    },
+    {
+      "text": "[Follow-up - Urgent] Family_Member: Regarding your therapy in the laboratory setting, this simple case requires attention. Case_Manager: I need guidance on managing this simple therapy."
+    },
+    {
+      "text": "[Progress Review - Priority] Family_Member: Regarding your tests in the radiology setting, this chronic case requires attention. Doctor: I need guidance on managing this chronic tests."
+    },
+    {
+      "text": "[Progress Review - Urgent] Technician: Regarding your discharge in the laboratory setting, this simple case requires attention. Cardiologist: I need guidance on managing this simple discharge."
+    },
+    {
+      "text": "[Progress Review - Priority] Nurse: Regarding your discharge in the primary_care setting, this low_risk case requires attention. Cardiologist: I need guidance on managing this low_risk discharge."
+    },
+    {
+      "text": "[Consultation - Priority] Psychiatrist: Regarding your medical_history in the telehealth setting, this multiple_conditions case requires attention. Case_Manager: I need guidance on managing this multiple_conditions medical_history."
+    },
+    {
+      "text": "[CRISIS - SIMPLE] CRITICAL: Elderly patient confused and agitated, possible delirium or emergency"
+    },
+    {
+      "text": "[Initial - Priority] Nurse: Regarding your insurance in the rehabilitation setting, this anxious_patient case requires attention. Pediatrician: I need guidance on managing this anxious_patient insurance."
+    },
+    {
+      "text": "[Initial - Priority] Radiologist: Regarding your second_opinion in the pediatric setting, this acute case requires attention. Surgeon: I need guidance on managing this acute second_opinion."
+    },
+    {
+      "text": "[Follow-up - Urgent] Neurologist: Regarding your vaccination in the outpatient setting, this rare_condition case requires attention. Surgeon: I need guidance on managing this rare_condition vaccination."
+    },
+    {
+      "text": "[Consultation - Routine] Case_Manager: Regarding your recovery in the inpatient setting, this language_barrier case requires attention. Specialist: I need guidance on managing this language_barrier recovery."
+    },
+    {
+      "text": "[Follow-up - Priority] Therapist: Regarding your referral in the inpatient setting, this high_risk case requires attention. Surgeon: I need guidance on managing this high_risk referral."
+    },
+    {
+      "text": "[Progress Review - Priority] Family_Member: Regarding your billing in the outpatient setting, this pregnant case requires attention. Cardiologist: I need guidance on managing this pregnant billing."
+    },
+    {
+      "text": "[Initial - Routine] Social_Worker: Regarding your vaccination in the mental_health setting, this recurring case requires attention. Case_Manager: I need guidance on managing this recurring vaccination."
+    },
+    {
+      "text": "[Consultation - Urgent] Patient: Regarding your tests in the geriatric setting, this pediatric case requires attention. Pharmacist: I need guidance on managing this pediatric tests."
+    },
+    {
+      "text": "[Follow-up - Routine] Social_Worker: Regarding your second_opinion in the specialist setting, this rare_condition case requires attention. Pharmacist: I need guidance on managing this rare_condition second_opinion."
+    },
+    {
+      "text": "[Progress Review - Priority] Pharmacist: Regarding your referral in the radiology setting, this pregnant case requires attention. Cardiologist: I need guidance on managing this pregnant referral."
+    },
+    {
+      "text": "[Consultation - Priority] Therapist: Regarding your billing in the emergency setting, this recurring case requires attention. Cardiologist: I need guidance on managing this recurring billing."
+    },
+    {
+      "text": "[Progress Review - Priority] Family_Member: Regarding your diagnosis in the laboratory setting, this low_risk case requires attention. Surgeon: I need guidance on managing this low_risk diagnosis."
+    },
+    {
+      "text": "[Initial - Urgent] Surgeon: Regarding your symptoms in the mental_health setting, this rare_condition case requires attention. Doctor: I need guidance on managing this rare_condition symptoms."
+    },
+    {
+      "text": "[Consultation - Priority] Cardiologist: Regarding your symptoms in the pediatric setting, this multiple_conditions case requires attention. Technician: I need guidance on managing this multiple_conditions symptoms."
+    },
+    {
+      "text": "[Progress Review - Urgent] Nurse: Regarding your consultation in the inpatient setting, this routine case requires attention. Case_Manager: I need guidance on managing this routine consultation."
+    },
+    {
+      "text": "[Follow-up - Routine] Nurse: Regarding your surgery in the emergency setting, this non_compliant case requires attention. Pediatrician: I need guidance on managing this non_compliant surgery."
+    },
+    {
+      "text": "[Progress Review - Priority] Patient: Regarding your insurance in the radiology setting, this chronic case requires attention. Nurse: I need guidance on managing this chronic insurance."
+    },
+    {
+      "text": "[Follow-up - Routine] Nurse: Regarding your surgery in the pediatric setting, this complex case requires attention. Specialist: I need guidance on managing this complex surgery."
+    },
+    {
+      "text": "[Follow-up - Urgent] Doctor: Regarding your tests in the telehealth setting, this rare_condition case requires attention. Pharmacist: I need guidance on managing this rare_condition tests."
+    },
+    {
+      "text": "[Initial - Urgent] Nurse: Regarding your symptoms in the mental_health setting, this anxious_patient case requires attention. Technician: I need guidance on managing this anxious_patient symptoms."
+    },
+    {
+      "text": "[Follow-up - Priority] Neurologist: Regarding your medical_history in the outpatient setting, this simple case requires attention. Technician: I need guidance on managing this simple medical_history."
+    },
+    {
+      "text": "[Follow-up - Priority] Therapist: Regarding your medical_history in the preventive setting, this rare_condition case requires attention. Nurse: I need guidance on managing this rare_condition medical_history."
+    },
+    {
+      "text": "[Progress Review - Routine] Nurse: Regarding your referral in the emergency setting, this complex case requires attention. Technician: I need guidance on managing this complex referral."
+    },
+    {
+      "text": "[Follow-up - Routine] Technician: Regarding your surgery in the mental_health setting, this high_risk case requires attention. Surgeon: I need guidance on managing this high_risk surgery."
+    },
+    {
+      "text": "[Initial - Priority] Cardiologist: Regarding your referral in the specialist setting, this recurring case requires attention. Surgeon: I need guidance on managing this recurring referral."
+    },
+    {
+      "text": "[Follow-up - Routine] Radiologist: Regarding your screening in the geriatric setting, this rare_condition case requires attention. Psychiatrist: I need guidance on managing this rare_condition screening."
+    },
+    {
+      "text": "[Initial - Priority] Neurologist: Regarding your medication in the follow_up setting, this pregnant case requires attention. Patient: I need guidance on managing this pregnant medication."
+    },
+    {
+      "text": "[Consultation - Urgent] Patient: Regarding your diagnosis in the chronic_care setting, this non_compliant case requires attention. Radiologist: I need guidance on managing this non_compliant diagnosis."
+    },
+    {
+      "text": "[Progress Review - Urgent] Cardiologist: Regarding your symptoms in the follow_up setting, this pregnant case requires attention. Radiologist: I need guidance on managing this pregnant symptoms."
+    },
+    {
+      "text": "[Consultation - Urgent] Nurse: Regarding your consultation in the laboratory setting, this low_risk case requires attention. Surgeon: I need guidance on managing this low_risk consultation."
+    },
+    {
+      "text": "[Progress Review - Urgent] Patient: Regarding your discharge in the rehabilitation setting, this pregnant case requires attention. Technician: I need guidance on managing this pregnant discharge."
+    },
+    {
+      "text": "[Follow-up - Urgent] Family_Member: Regarding your therapy in the pediatric setting, this elderly case requires attention. Nurse: I need guidance on managing this elderly therapy."
+    },
+    {
+      "text": "[Progress Review - Urgent] Radiologist: Regarding your discharge in the rehabilitation setting, this elderly case requires attention. Nurse: I need guidance on managing this elderly discharge."
+    },
+    {
+      "text": "[Consultation - Priority] Therapist: Regarding your second_opinion in the surgical setting, this pediatric case requires attention. Cardiologist: I need guidance on managing this pediatric second_opinion."
+    },
+    {
+      "text": "[Follow-up - Urgent] Doctor: Regarding your diagnosis in the follow_up setting, this non_compliant case requires attention. Nurse: I need guidance on managing this non_compliant diagnosis."
+    },
+    {
+      "text": "[Follow-up - Urgent] Nurse: Regarding your medical_history in the pediatric setting, this recurring case requires attention. Surgeon: I need guidance on managing this recurring medical_history."
+    },
+    {
+      "text": "[Initial - Routine] Patient: Regarding your therapy in the preventive setting, this rare_condition case requires attention. Doctor: I need guidance on managing this rare_condition therapy."
+    },
+    {
+      "text": "[Progress Review - Urgent] Pediatrician: Regarding your referral in the specialist setting, this non_compliant case requires attention. Social_Worker: I need guidance on managing this non_compliant referral."
+    },
+    {
+      "text": "[Progress Review - Priority] Social_Worker: Regarding your billing in the radiology setting, this simple case requires attention. Therapist: I need guidance on managing this simple billing."
+    },
+    {
+      "text": "[Follow-up - Routine] Psychiatrist: Regarding your tests in the rehabilitation setting, this anxious_patient case requires attention. Case_Manager: I need guidance on managing this anxious_patient tests."
+    },
+    {
+      "text": "[Progress Review - Routine] Nurse: Regarding your recovery in the geriatric setting, this simple case requires attention. Family_Member: I need guidance on managing this simple recovery."
+    },
+    {
+      "text": "[Consultation - Priority] Doctor: Regarding your symptoms in the specialist setting, this non_compliant case requires attention. Social_Worker: I need guidance on managing this non_compliant symptoms."
+    },
+    {
+      "text": "[Initial - Routine] Family_Member: Regarding your recovery in the intensive_care setting, this high_risk case requires attention. Social_Worker: I need guidance on managing this high_risk recovery."
+    },
+    {
+      "text": "[Initial - Priority] Specialist: Regarding your billing in the pediatric setting, this language_barrier case requires attention. Doctor: I need guidance on managing this language_barrier billing."
+    },
+    {
+      "text": "[Consultation - Priority] Radiologist: Regarding your counseling in the outpatient setting, this routine case requires attention. Technician: I need guidance on managing this routine counseling."
+    },
+    {
+      "text": "[CRISIS - PREGNANT] EMERGENCY: Patient experiencing severe chest pain, immediate assessment needed"
+    },
+    {
+      "text": "[Consultation - Routine] Family_Member: Regarding your screening in the surgical setting, this anxious_patient case requires attention. Social_Worker: I need guidance on managing this anxious_patient screening."
+    },
+    {
+      "text": "[Follow-up - Urgent] Patient: Regarding your surgery in the pediatric setting, this elderly case requires attention. Surgeon: I need guidance on managing this elderly surgery."
+    },
+    {
+      "text": "[CRISIS - NEW_PATIENT] CRITICAL: Elderly patient confused and agitated, possible delirium or emergency"
+    }
+  ]
+}

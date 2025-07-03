@@ -1,42 +1,8 @@
-# MeeTARA Lab Trinity Architecture Dependencies
-# Install with: pip install -r requirements.txt
-
-# Core ML/AI Libraries
-torch>=2.0.0
-torchvision
-torchaudio
-transformers>=4.53.0
-datasets
-peft>=0.15.2
-accelerate
-bitsandbytes
-
-# GGUF and Model Optimization
-gguf
-llama-cpp-python
-
-# Audio Processing (TTS/Speech Recognition)
-speechbrain
-librosa
-soundfile
-
-# Computer Vision (Emotion Detection)
-opencv-python
-Pillow
-
-# Utilities
-numpy
-pyyaml
-tqdm
-rich
-huggingface_hub
-wandb
-tensorboard
-
-# Development Tools
-jupyter
-ipykernel
-notebook
-
-# Trinity Architecture Specific
-# (These will be developed as we build the system) 
+﻿# MeeTARA Lab - Requirements
+pyyaml>=6.0
+numpy>=1.20.0
+tqdm>=4.62.0
+matplotlib>=3.4.0
+torch>=1.9.0
+transformers>=4.12.0
+asyncio>=3.4.3

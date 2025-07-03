@@ -7,14 +7,32 @@ import asyncio
 import json
 import yaml
 import time
+import os
+import importlib.util
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 from pathlib import Path
 
-# Import trinity-core components
+# Import trinity-core components using a more robust approach
 import sys
-sys.path.append('../trinity-core')
-from agents.mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root))
+
+# Dynamically import mcp_protocol from the agents directory
+mcp_protocol_path = project_root / "trinity-core" / "agents" / "mcp_protocol.py"
+if mcp_protocol_path.exists():
+    spec = importlib.util.spec_from_file_location("mcp_protocol", mcp_protocol_path)
+    mcp_protocol_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mcp_protocol_module)
+    
+    # Import required classes from the module
+    BaseAgent = mcp_protocol_module.BaseAgent
+    AgentType = mcp_protocol_module.AgentType
+    MessageType = mcp_protocol_module.MessageType
+    MCPMessage = mcp_protocol_module.MCPMessage
+    print("✅ Successfully imported MCP Protocol components")
+else:
+    raise ImportError(f"MCP Protocol module not found at {mcp_protocol_path}")
 
 class TrainingOrchestrator(BaseAgent):
     """Training Orchestrator with cloud coordination and TARA management"""
@@ -156,21 +174,41 @@ class TrainingOrchestrator(BaseAgent):
         asyncio.create_task(self._health_check_loop())
         
     def _load_domain_mapping(self) -> Dict[str, Any]:
-        """Load cloud-optimized domain mapping"""
-        try:
-            with open("../config/cloud-optimized-domain-mapping.yaml", 'r') as f:
-                return yaml.safe_load(f)
-        except FileNotFoundError:
-            # Try from current directory
+        """Load cloud-optimized domain mapping with UTF-8 encoding"""
+        possible_paths = [
+            "config/cloud-optimized-domain-mapping.yaml",
+            "../config/cloud-optimized-domain-mapping.yaml",
+            "G:/My Drive/meetara-lab/config/cloud-optimized-domain-mapping.yaml",
+            Path(__file__).parent.parent / "config" / "cloud-optimized-domain-mapping.yaml"
+        ]
+        
+        for config_path in possible_paths:
             try:
-                with open("config/cloud-optimized-domain-mapping.yaml", 'r') as f:
-                    return yaml.safe_load(f)
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    mapping = yaml.safe_load(f)
+                    print(f"✅ Domain mapping loaded from: {config_path}")
+                    return mapping
             except FileNotFoundError:
-                print("⚠️ Domain mapping not found, using default configuration")
-                return {}
-        except Exception as e:
-            print(f"⚠️ Failed to load domain mapping: {e}")
-            return {}
+                continue
+            except Exception as e:
+                print(f"⚠️ Failed to load {config_path}: {e}")
+                continue
+        
+        print("⚠️ Domain mapping not found, using minimal configuration")
+        return self._get_minimal_mapping()
+    
+    def _get_minimal_mapping(self) -> Dict[str, Any]:
+        """Minimal mapping for testing"""
+        return {
+            "model_tiers": {
+                "fast": "microsoft/Phi-3.5-mini-instruct",
+                "quality": "microsoft/Phi-3-medium-4k-instruct",
+                "expert": "microsoft/Phi-3-medium-14B-instruct"
+            },
+            "healthcare": {"general_health": "microsoft/Phi-3-medium-14B-instruct"},
+            "business": {"entrepreneurship": "microsoft/Phi-3-medium-4k-instruct"},
+            "education": {"academic_tutoring": "microsoft/Phi-3-medium-4k-instruct"}
+        }
             
     async def orchestrate_universal_training(self, target_domains: List[str] = None,
                                            training_mode: str = "balanced") -> Dict[str, Any]:
