@@ -1,0 +1,15 @@
+{
+  "domain": "communication",
+  "speech_models_version": "1.0",
+  "created": "2025-07-04T08:00:24.032919",
+  "reference_type": "shared_models",
+  "efficiency": "eliminates_82.5%_duplication",
+  "shared_models_path": "model-factory\\trinity_gguf_models\\shared_speech_models",
+  "voice_category": "casual",
+  "emotion_models": {
+    "rms_model": "model-factory\\trinity_gguf_models\\shared_speech_models\\emotion\\rms_model.pkl",
+    "ser_model": "model-factory\\trinity_gguf_models\\shared_speech_models\\emotion\\ser_model.pkl"
+  },
+  "primary_voice": "model-factory\\trinity_gguf_models\\shared_speech_models\\voice\\casual_voice.pkl",
+  "storage_efficiency": "no_duplication"
+}
