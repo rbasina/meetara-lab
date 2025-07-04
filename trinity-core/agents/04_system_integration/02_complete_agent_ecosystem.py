@@ -124,8 +124,8 @@ class EnhancedDataGeneratorAgent:
             "generation_timestamp": datetime.now().isoformat()
         }
         
-        # Generate 2000+ samples per domain (TARA proven approach)
-        sample_count = 2000
+        # Generate 5000+ samples per domain (Enhanced from your local 2000-5000)
+        sample_count = 5000
         for i in range(sample_count):
             sample = await self._generate_single_sample(domain_context, domain_config, i)
             
