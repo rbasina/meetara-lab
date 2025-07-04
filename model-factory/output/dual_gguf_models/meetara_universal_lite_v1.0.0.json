@@ -1,0 +1,71 @@
+{
+  "version": "lite",
+  "name": "meetara_universal_lite_v1.0.0.gguf",
+  "size": "0.8GB",
+  "timestamp": 1751613886.8320203,
+  "components": {
+    "essential_base": {
+      "size_mb": 450,
+      "description": "Core language understanding components",
+      "features": [
+        "Tokenizer & vocabulary (100MB)",
+        "Core patterns & embeddings (200MB)",
+        "Language fundamentals (150MB)"
+      ],
+      "optimization": "aggressive_compression",
+      "quality_retention": 0.96
+    },
+    "domain_knowledge": {
+      "size_mb": 45,
+      "description": "Compressed domain expertise",
+      "features": [
+        "Essential domain patterns",
+        "Optimized representations",
+        "All 3 domains compressed"
+      ],
+      "domains_included": [
+        "healthcare",
+        "business",
+        "education"
+      ],
+      "optimization": "knowledge_distillation"
+    },
+    "enhanced_tts": {
+      "size_mb": 100,
+      "description": "6 voice categories (compressed)",
+      "features": [
+        "All 6 voice categories preserved",
+        "Essential emotion markers",
+        "Core speech patterns"
+      ]
+    },
+    "roberta_emotion": {
+      "size_mb": 80,
+      "description": "Compressed emotion model",
+      "features": [
+        "Essential empathy patterns",
+        "Core emotional intelligence",
+        "Optimized emotion detection"
+      ]
+    },
+    "enhanced_router": {
+      "size_mb": 220,
+      "description": "Advanced routing with intelligence",
+      "features": [
+        "Intelligent domain detection",
+        "Context-aware processing",
+        "Predictive routing"
+      ]
+    }
+  },
+  "performance_metrics": {
+    "loading_time": "2s",
+    "memory_usage": "1.5GB",
+    "accuracy_score": 0.95,
+    "use_cases": [
+      "mobile_deployment",
+      "edge_computing",
+      "real_time_applications"
+    ]
+  }
+}

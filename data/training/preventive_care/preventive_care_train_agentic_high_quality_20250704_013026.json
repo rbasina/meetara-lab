@@ -1,0 +1,44 @@
+{
+  "domain": "preventive_care",
+  "generated_at": "2025-07-04 01:30:26",
+  "total_samples_generated": 10,
+  "quality_samples_passed": 10,
+  "success_rate": 100.0,
+  "agentic_features": {
+    "crisis_intervention_enabled": true,
+    "emotional_intelligence_enabled": true,
+    "real_time_scenarios_enabled": true
+  },
+  "conversations": [
+    {
+      "text": "[Training Sample 1] Domain: preventive_care - prevention professional consultation regarding screening management and vaccination optimization."
+    },
+    {
+      "text": "[Training Sample 2] Domain: preventive_care - preventive professional consultation regarding screening management and wellness optimization."
+    },
+    {
+      "text": "[Training Sample 3] Domain: preventive_care - prevention professional consultation regarding preventive management and screening optimization."
+    },
+    {
+      "text": "[Training Sample 4] Domain: preventive_care - checkup professional consultation regarding prevention management and vaccination optimization."
+    },
+    {
+      "text": "[Training Sample 5] Domain: preventive_care - preventive professional consultation regarding preventive management and preventive optimization."
+    },
+    {
+      "text": "[Training Sample 6] Domain: preventive_care - checkup professional consultation regarding vaccination management and vaccination optimization."
+    },
+    {
+      "text": "[Training Sample 7] Domain: preventive_care - wellness professional consultation regarding wellness management and preventive optimization."
+    },
+    {
+      "text": "[Training Sample 8] Domain: preventive_care - prevention professional consultation regarding preventive management and checkup optimization."
+    },
+    {
+      "text": "[Training Sample 9] Domain: preventive_care - preventive professional consultation regarding wellness management and vaccination optimization."
+    },
+    {
+      "text": "[Training Sample 10] Domain: preventive_care - vaccination professional consultation regarding preventive management and vaccination optimization."
+    }
+  ]
+}

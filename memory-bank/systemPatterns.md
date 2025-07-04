@@ -118,17 +118,33 @@ def test_agent_all_domains(self, expected_domains: Set[str], domain_count: int):
 ### **Component Organization Pattern**
 ```
 meetara-lab/
-├── trinity-core/          # Arc Reactor Foundation
-├── intelligence-hub/      # Perplexity Intelligence  
-├── model-factory/         # Einstein Fusion
-├── cloud-training/        # GPU Orchestration
-├── config/               # Configuration Management
-├── memory-bank/          # Documentation Sync
-├── tests/                # Generalized Testing Framework
-│   ├── integration/      # Domain integration tests
-│   ├── utils/           # Reusable validation utilities
-│   └── unit/            # Component-specific tests
-└── docs/                 # Single Source of Truth
+├── trinity-core/              # Arc Reactor Foundation + Intelligence
+│   ├── intelligence/          # TARA's core intelligence modules
+│   ├── agents/               # All specialized agents
+│   ├── utils/                # Utilities and validation
+│   └── communication/        # TTS, routing, MCP protocols
+├── cloud-training/            # GPU Orchestration + Deployment
+│   ├── cost-optimization/     # Budget monitoring (consolidated)
+│   └── deployment/           # Production deployment (consolidated)
+├── model-factory/             # Einstein Fusion + Model Creation
+│   ├── training/             # Training engines
+│   ├── models/               # Model storage
+│   └── output/               # All pipeline outputs (consolidated)
+├── notebooks/                 # Cloud Integration + Connections
+│   └── connections/          # Colab connections (consolidated)
+├── tests/                    # Comprehensive Testing Framework
+│   ├── integration/          # Domain integration tests
+│   ├── intelligence/         # Intelligence tests (consolidated)
+│   ├── performance/          # Performance tests
+│   └── utils/               # Reusable validation utilities
+├── docs/                     # Single Source of Truth
+│   ├── demos/               # Demonstrations (consolidated)
+│   ├── archive/             # Archive/backup (consolidated)
+│   └── research/            # Research workspace (consolidated)
+├── config/                   # Configuration Management
+├── data/                     # Training and model data
+├── memory-bank/              # Documentation Sync
+└── scripts/                  # Utility scripts
 ```
 
 ## 🔄 Development Workflow Pattern

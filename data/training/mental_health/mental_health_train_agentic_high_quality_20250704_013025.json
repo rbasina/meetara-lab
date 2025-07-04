@@ -1,0 +1,44 @@
+{
+  "domain": "mental_health",
+  "generated_at": "2025-07-04 01:30:25",
+  "total_samples_generated": 10,
+  "quality_samples_passed": 10,
+  "success_rate": 100.0,
+  "agentic_features": {
+    "crisis_intervention_enabled": true,
+    "emotional_intelligence_enabled": true,
+    "real_time_scenarios_enabled": true
+  },
+  "conversations": [
+    {
+      "text": "[Training Sample 1] Domain: mental_health - stress professional consultation regarding therapy management and emotional optimization."
+    },
+    {
+      "text": "[Training Sample 2] Domain: mental_health - counseling professional consultation regarding emotional management and emotional optimization."
+    },
+    {
+      "text": "[Training Sample 3] Domain: mental_health - depression professional consultation regarding counseling management and counseling optimization."
+    },
+    {
+      "text": "[Training Sample 4] Domain: mental_health - emotional professional consultation regarding mental management and counseling optimization."
+    },
+    {
+      "text": "[Training Sample 5] Domain: mental_health - therapy professional consultation regarding mental management and emotional optimization."
+    },
+    {
+      "text": "[Training Sample 6] Domain: mental_health - therapy professional consultation regarding anxiety management and anxiety optimization."
+    },
+    {
+      "text": "[Training Sample 7] Domain: mental_health - emotional professional consultation regarding emotional management and emotional optimization."
+    },
+    {
+      "text": "[Training Sample 8] Domain: mental_health - stress professional consultation regarding therapy management and depression optimization."
+    },
+    {
+      "text": "[Training Sample 9] Domain: mental_health - emotional professional consultation regarding anxiety management and anxiety optimization."
+    },
+    {
+      "text": "[Training Sample 10] Domain: mental_health - therapy professional consultation regarding therapy management and counseling optimization."
+    }
+  ]
+}

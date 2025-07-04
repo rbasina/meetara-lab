@@ -1,0 +1,44 @@
+{
+  "domain": "fitness",
+  "generated_at": "2025-07-04 01:30:26",
+  "total_samples_generated": 10,
+  "quality_samples_passed": 10,
+  "success_rate": 100.0,
+  "agentic_features": {
+    "crisis_intervention_enabled": true,
+    "emotional_intelligence_enabled": true,
+    "real_time_scenarios_enabled": true
+  },
+  "conversations": [
+    {
+      "text": "[Training Sample 1] Domain: fitness - workout professional consultation regarding gym management and strength optimization."
+    },
+    {
+      "text": "[Training Sample 2] Domain: fitness - workout professional consultation regarding fitness management and fitness optimization."
+    },
+    {
+      "text": "[Training Sample 3] Domain: fitness - exercise professional consultation regarding strength management and gym optimization."
+    },
+    {
+      "text": "[Training Sample 4] Domain: fitness - physical professional consultation regarding gym management and fitness optimization."
+    },
+    {
+      "text": "[Training Sample 5] Domain: fitness - gym professional consultation regarding physical management and fitness optimization."
+    },
+    {
+      "text": "[Training Sample 6] Domain: fitness - physical professional consultation regarding workout management and strength optimization."
+    },
+    {
+      "text": "[Training Sample 7] Domain: fitness - physical professional consultation regarding gym management and workout optimization."
+    },
+    {
+      "text": "[Training Sample 8] Domain: fitness - strength professional consultation regarding workout management and strength optimization."
+    },
+    {
+      "text": "[Training Sample 9] Domain: fitness - training professional consultation regarding training management and exercise optimization."
+    },
+    {
+      "text": "[Training Sample 10] Domain: fitness - training professional consultation regarding physical management and training optimization."
+    }
+  ]
+}

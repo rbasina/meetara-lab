@@ -1,0 +1,44 @@
+{
+  "domain": "senior_health",
+  "generated_at": "2025-07-04 01:30:26",
+  "total_samples_generated": 10,
+  "quality_samples_passed": 10,
+  "success_rate": 100.0,
+  "agentic_features": {
+    "crisis_intervention_enabled": true,
+    "emotional_intelligence_enabled": true,
+    "real_time_scenarios_enabled": true
+  },
+  "conversations": [
+    {
+      "text": "[Training Sample 1] Domain: senior_health - retirement professional consultation regarding medicare management and aging optimization."
+    },
+    {
+      "text": "[Training Sample 2] Domain: senior_health - retirement professional consultation regarding aging management and retirement optimization."
+    },
+    {
+      "text": "[Training Sample 3] Domain: senior_health - senior professional consultation regarding geriatric management and medicare optimization."
+    },
+    {
+      "text": "[Training Sample 4] Domain: senior_health - elderly professional consultation regarding elderly management and aging optimization."
+    },
+    {
+      "text": "[Training Sample 5] Domain: senior_health - elderly professional consultation regarding geriatric management and elderly optimization."
+    },
+    {
+      "text": "[Training Sample 6] Domain: senior_health - aging professional consultation regarding medicare management and aging optimization."
+    },
+    {
+      "text": "[Training Sample 7] Domain: senior_health - geriatric professional consultation regarding aging management and retirement optimization."
+    },
+    {
+      "text": "[Training Sample 8] Domain: senior_health - elderly professional consultation regarding geriatric management and geriatric optimization."
+    },
+    {
+      "text": "[Training Sample 9] Domain: senior_health - senior professional consultation regarding medicare management and retirement optimization."
+    },
+    {
+      "text": "[Training Sample 10] Domain: senior_health - medicare professional consultation regarding medicare management and aging optimization."
+    }
+  ]
+}

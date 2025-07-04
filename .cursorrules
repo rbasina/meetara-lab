@@ -30,18 +30,29 @@
 ### 📁 Project Structure Standards:
 ```
 meetara-lab/
-├── trinity-core/              # Core Trinity Architecture
+├── trinity-core/              # Core Trinity Architecture + Intelligence
+│   ├── intelligence/          # TARA's core intelligence modules
+│   ├── agents/               # All specialized agents
 │   ├── tts_manager.py         # NOT enhanced_tts_manager.py
 │   ├── emotion_detector.py    # NOT enhanced_emotion_detector.py
 │   ├── intelligent_router.py  # NOT enhanced_intelligent_router.py
-│   └── agents/
-├── cloud-training/            # Multi-cloud GPU orchestration
+│   └── utils/                # Utilities and validation
+├── cloud-training/            # Multi-cloud GPU orchestration + deployment
+│   ├── cost-optimization/     # Budget monitoring (consolidated)
+│   └── deployment/           # Production deployment (consolidated)
 ├── model-factory/             # GGUF creation and optimization
-├── intelligence-hub/          # Perplexity + Einstein fusion
-├── cost-optimization/         # Budget monitoring
-├── deployment-engine/         # Production deployment
+│   └── output/               # All pipeline outputs (consolidated)
 ├── notebooks/                 # Google Colab integration
-└── research-workspace/        # Advanced research
+│   └── connections/          # Colab connections (consolidated)
+├── tests/                    # All testing
+│   └── intelligence/         # Intelligence tests (consolidated)
+├── docs/                     # All documentation
+│   ├── demos/               # Demonstrations (consolidated)
+│   └── archive/             # Archive/backup (consolidated)
+├── config/                   # Configuration files
+├── data/                     # Training and model data
+├── memory-bank/              # Memory bank files
+└── scripts/                  # Utility scripts
 ```
 
 ## 🧠 TARA UNIVERSAL MODEL INTEGRATION

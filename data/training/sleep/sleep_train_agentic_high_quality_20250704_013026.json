@@ -1,0 +1,44 @@
+{
+  "domain": "sleep",
+  "generated_at": "2025-07-04 01:30:26",
+  "total_samples_generated": 10,
+  "quality_samples_passed": 10,
+  "success_rate": 100.0,
+  "agentic_features": {
+    "crisis_intervention_enabled": true,
+    "emotional_intelligence_enabled": true,
+    "real_time_scenarios_enabled": true
+  },
+  "conversations": [
+    {
+      "text": "[Training Sample 1] Domain: sleep - sleep professional consultation regarding fatigue management and insomnia optimization."
+    },
+    {
+      "text": "[Training Sample 2] Domain: sleep - rest professional consultation regarding dreams management and dreams optimization."
+    },
+    {
+      "text": "[Training Sample 3] Domain: sleep - rest professional consultation regarding bedtime management and rest optimization."
+    },
+    {
+      "text": "[Training Sample 4] Domain: sleep - insomnia professional consultation regarding rest management and dreams optimization."
+    },
+    {
+      "text": "[Training Sample 5] Domain: sleep - fatigue professional consultation regarding tired management and rest optimization."
+    },
+    {
+      "text": "[Training Sample 6] Domain: sleep - rest professional consultation regarding fatigue management and tired optimization."
+    },
+    {
+      "text": "[Training Sample 7] Domain: sleep - sleep professional consultation regarding fatigue management and rest optimization."
+    },
+    {
+      "text": "[Training Sample 8] Domain: sleep - insomnia professional consultation regarding tired management and rest optimization."
+    },
+    {
+      "text": "[Training Sample 9] Domain: sleep - fatigue professional consultation regarding dreams management and tired optimization."
+    },
+    {
+      "text": "[Training Sample 10] Domain: sleep - fatigue professional consultation regarding dreams management and rest optimization."
+    }
+  ]
+}

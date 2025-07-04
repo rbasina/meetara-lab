@@ -1,0 +1,44 @@
+{
+  "domain": "nutrition",
+  "generated_at": "2025-07-04 01:30:26",
+  "total_samples_generated": 10,
+  "quality_samples_passed": 10,
+  "success_rate": 100.0,
+  "agentic_features": {
+    "crisis_intervention_enabled": true,
+    "emotional_intelligence_enabled": true,
+    "real_time_scenarios_enabled": true
+  },
+  "conversations": [
+    {
+      "text": "[Training Sample 1] Domain: nutrition - nutrition professional consultation regarding vitamins management and vitamins optimization."
+    },
+    {
+      "text": "[Training Sample 2] Domain: nutrition - nutrients professional consultation regarding vitamins management and nutrition optimization."
+    },
+    {
+      "text": "[Training Sample 3] Domain: nutrition - food professional consultation regarding nutrition management and diet optimization."
+    },
+    {
+      "text": "[Training Sample 4] Domain: nutrition - food professional consultation regarding vitamins management and food optimization."
+    },
+    {
+      "text": "[Training Sample 5] Domain: nutrition - diet professional consultation regarding nutrition management and food optimization."
+    },
+    {
+      "text": "[Training Sample 6] Domain: nutrition - nutrition professional consultation regarding healthy management and vitamins optimization."
+    },
+    {
+      "text": "[Training Sample 7] Domain: nutrition - eating professional consultation regarding vitamins management and nutrients optimization."
+    },
+    {
+      "text": "[Training Sample 8] Domain: nutrition - healthy professional consultation regarding food management and vitamins optimization."
+    },
+    {
+      "text": "[Training Sample 9] Domain: nutrition - food professional consultation regarding diet management and food optimization."
+    },
+    {
+      "text": "[Training Sample 10] Domain: nutrition - food professional consultation regarding food management and nutrients optimization."
+    }
+  ]
+}

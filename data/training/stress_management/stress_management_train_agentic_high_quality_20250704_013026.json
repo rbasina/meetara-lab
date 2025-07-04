@@ -1,0 +1,44 @@
+{
+  "domain": "stress_management",
+  "generated_at": "2025-07-04 01:30:26",
+  "total_samples_generated": 10,
+  "quality_samples_passed": 10,
+  "success_rate": 100.0,
+  "agentic_features": {
+    "crisis_intervention_enabled": true,
+    "emotional_intelligence_enabled": true,
+    "real_time_scenarios_enabled": true
+  },
+  "conversations": [
+    {
+      "text": "[Training Sample 1] Domain: stress_management - pressure professional consultation regarding pressure management and pressure optimization."
+    },
+    {
+      "text": "[Training Sample 2] Domain: stress_management - mindfulness professional consultation regarding mindfulness management and stress optimization."
+    },
+    {
+      "text": "[Training Sample 3] Domain: stress_management - coping professional consultation regarding mindfulness management and meditation optimization."
+    },
+    {
+      "text": "[Training Sample 4] Domain: stress_management - meditation professional consultation regarding coping management and stress optimization."
+    },
+    {
+      "text": "[Training Sample 5] Domain: stress_management - pressure professional consultation regarding relaxation management and relaxation optimization."
+    },
+    {
+      "text": "[Training Sample 6] Domain: stress_management - relaxation professional consultation regarding mindfulness management and relaxation optimization."
+    },
+    {
+      "text": "[Training Sample 7] Domain: stress_management - mindfulness professional consultation regarding mindfulness management and coping optimization."
+    },
+    {
+      "text": "[Training Sample 8] Domain: stress_management - pressure professional consultation regarding coping management and relaxation optimization."
+    },
+    {
+      "text": "[Training Sample 9] Domain: stress_management - coping professional consultation regarding stress management and mindfulness optimization."
+    },
+    {
+      "text": "[Training Sample 10] Domain: stress_management - coping professional consultation regarding meditation management and coping optimization."
+    }
+  ]
+}

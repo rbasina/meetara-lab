@@ -1,0 +1,492 @@
+{
+  "domains_processed": 12,
+  "successful_domains": 12,
+  "failed_domains": 0,
+  "deployment_ready_domains": 12,
+  "total_cost": 0.35000000000000003,
+  "total_time": 0.44855284690856934,
+  "average_speed_improvement": 37.0,
+  "budget_compliant": true,
+  "domain_results": {
+    "general_health": {
+      "domain": "general_health",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_general_health_Q4_K_M.gguf",
+        "output_filename": "meetara_general_health_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.05887246131896973,
+      "speed_improvement": 37.0
+    },
+    "mental_health": {
+      "domain": "mental_health",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_mental_health_Q4_K_M.gguf",
+        "output_filename": "meetara_mental_health_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.03479599952697754,
+      "speed_improvement": 37.0
+    },
+    "nutrition": {
+      "domain": "nutrition",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_nutrition_Q4_K_M.gguf",
+        "output_filename": "meetara_nutrition_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.02454996109008789,
+      "speed_improvement": 37.0
+    },
+    "fitness": {
+      "domain": "fitness",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_fitness_Q4_K_M.gguf",
+        "output_filename": "meetara_fitness_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.040376901626586914,
+      "speed_improvement": 37.0
+    },
+    "sleep": {
+      "domain": "sleep",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_sleep_Q4_K_M.gguf",
+        "output_filename": "meetara_sleep_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.032158851623535156,
+      "speed_improvement": 37.0
+    },
+    "stress_management": {
+      "domain": "stress_management",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_stress_management_Q4_K_M.gguf",
+        "output_filename": "meetara_stress_management_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.031662940979003906,
+      "speed_improvement": 37.0
+    },
+    "preventive_care": {
+      "domain": "preventive_care",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_preventive_care_Q4_K_M.gguf",
+        "output_filename": "meetara_preventive_care_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.050534963607788086,
+      "speed_improvement": 37.0
+    },
+    "chronic_conditions": {
+      "domain": "chronic_conditions",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_chronic_conditions_Q4_K_M.gguf",
+        "output_filename": "meetara_chronic_conditions_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.03016352653503418,
+      "speed_improvement": 37.0
+    },
+    "medication_management": {
+      "domain": "medication_management",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_medication_management_Q4_K_M.gguf",
+        "output_filename": "meetara_medication_management_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.03256416320800781,
+      "speed_improvement": 37.0
+    },
+    "emergency_care": {
+      "domain": "emergency_care",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_emergency_care_Q4_K_M.gguf",
+        "output_filename": "meetara_emergency_care_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.03303384780883789,
+      "speed_improvement": 37.0
+    },
+    "women_health": {
+      "domain": "women_health",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_women_health_Q4_K_M.gguf",
+        "output_filename": "meetara_women_health_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.03443455696105957,
+      "speed_improvement": 37.0
+    },
+    "senior_health": {
+      "domain": "senior_health",
+      "training_result": {
+        "training_completed": true,
+        "total_training_time": 300.0,
+        "steps_completed": 468,
+        "final_loss": 0.85,
+        "speed_improvement": 37.0,
+        "target_speed_improvement": 37.0,
+        "speed_target_met": true,
+        "device_used": "cuda:0",
+        "gpu_name": "Tesla T4",
+        "training_mode": "simulated"
+      },
+      "gguf_result": {
+        "success": true,
+        "output_path": "G:\\My Drive\\meetara-lab\\model-factory\\pipeline_output\\gguf_models\\meetara_senior_health_Q4_K_M.gguf",
+        "output_filename": "meetara_senior_health_Q4_K_M.gguf",
+        "conversion_time": 30.0,
+        "statistics": {
+          "input_model_size_mb": 100.0,
+          "output_model_size_mb": 8.3,
+          "compression_ratio": 12.048192771084336,
+          "validation_score": 101.2,
+          "target_size_met": true,
+          "quality_target_met": true
+        },
+        "quality_results": {
+          "quality_grade": "A",
+          "validation_score": 101.2
+        },
+        "deployment_ready": true,
+        "simulation_mode": true
+      },
+      "pipeline_success": true,
+      "deployment_ready": true,
+      "total_cost": 0.029166666666666664,
+      "total_time": 0.0369870662689209,
+      "speed_improvement": 37.0
+    }
+  }
+}
