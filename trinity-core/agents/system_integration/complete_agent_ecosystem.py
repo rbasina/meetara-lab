@@ -479,10 +479,10 @@ class CompleteAgentEcosystem:
         return "daily_life"  # Default fallback
         
     async def _save_training_data(self, domain: str, category: str, training_data: Dict[str, Any]):
-        """Save training data to files"""
+        """Save training data to files using organized folder structure"""
         
-        # Create output directory
-        output_dir = Path(f"model-factory/real_training_data/{category}")
+        # Use organized data directory structure
+        output_dir = Path(f"data/real/{category}")
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Save training data
@@ -508,8 +508,8 @@ class CompleteAgentEcosystem:
             "format": "Q4_K_M"  # TARA proven format
         }
         
-        # Save metadata
-        output_dir = Path("model-factory/trinity_gguf_models")
+        # Save metadata using organized models directory structure
+        output_dir = Path(f"models/D_domain_specific/{category}")
         output_dir.mkdir(parents=True, exist_ok=True)
         
         metadata_file = output_dir / f"{domain}_trinity_model.json"
