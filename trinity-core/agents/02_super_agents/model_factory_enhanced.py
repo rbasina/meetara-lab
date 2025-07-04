@@ -129,11 +129,27 @@ class EnhancedTrinityModelFactory:
             "trinity_optimizations": 0
         }
         
-        # Output directories
-        self.output_dir = Path("model-factory/04_output/trinity_models")
+        # Output directories (configurable)
+        self.output_dir = self._get_output_directory()
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
         logger.info("🏭 Enhanced Trinity Model Factory initialized with parallel processing")
+    
+    def _get_output_directory(self) -> Path:
+        """Get configurable output directory"""
+        # Priority order for output directory
+        if "output_directory" in self.config:
+            return Path(self.config["output_directory"])
+        
+        # Check environment variable
+        if "MEETARA_OUTPUT_DIR" in os.environ:
+            return Path(os.environ["MEETARA_OUTPUT_DIR"])
+        
+        # Get project root (3 levels up from trinity-core/agents/02_super_agents/)
+        project_root = Path(__file__).parent.parent.parent.parent
+        
+        # Default to consolidated output directory
+        return project_root / "model-factory" / "trinity_gguf_models"
     
     async def process_model_operation(self, operation_request: Dict[str, Any]) -> Dict[str, Any]:
         """Main model processing method with Trinity optimization"""
