@@ -24,7 +24,45 @@ Thumbs.db
 # Jupyter
 .ipynb_checkpoints/
 
-# Model files (large)
+# Model files (large) - NEVER commit these
 *.gguf
 *.bin
-*.safetensors 
+*.safetensors
+*.pt
+*.pth
+*.h5
+*.pkl
+*.pickle
+
+# Training data and outputs (large)
+data/models/trained/
+data/real/
+models/*/
+model-factory/trinity_gguf_models/
+model-factory/pipeline_output/
+pipeline_output/
+
+# Logs (can be large and temporary)
+logs/
+*.log
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Large datasets
+*.json.gz
+*.csv.gz
+*.parquet
+
+# Backup files
+backup/
+*.bak
+*.backup
+
+# Generated files
+*.zip
+*.tar.gz
+*.rar 
