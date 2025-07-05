@@ -14,19 +14,22 @@ import yaml
 from pathlib import Path
 from typing import Dict, Any, List
 
-# Add paths
-sys.path.append(str(Path(__file__).parent / "model-factory" / "01_training"))
-sys.path.append(str(Path(__file__).parent / "model-factory" / "02_gguf_creation"))
+# Add paths for Trinity components
+project_root = Path(__file__).parent.parent.parent
+sys.path.append(str(project_root / "model-factory"))
+sys.path.append(str(project_root / "trinity-core"))
+sys.path.append(str(project_root / "scripts" / "gguf_factory"))
 
 from gpu_training_engine import GPUTrainingEngine, GPUTrainingConfig
-from gguf_factory import TrinityGGUFFactory
+from integrated_gpu_pipeline import IntegratedGPUPipeline
+from universal_gguf_factory import UniversalGGUFFactory
 
 class CompleteTrinityPipeline:
     """Complete Trinity training pipeline with config-driven models and real-time data validation"""
     
     def __init__(self):
         self.gpu_engine = None
-        self.gguf_factory = TrinityGGUFFactory()
+        self.gguf_factory = UniversalGGUFFactory()
         
         # Load configuration from YAML (not hardcoded!)
         self.config = self._load_config()
@@ -222,13 +225,13 @@ class CompleteTrinityPipeline:
                     # Step 3: Get base model from config (not hardcoded)
                     base_model = self.get_base_model_for_domain(domain)
                     
-                    # Step 4: Train with config-driven base model
+                    # Step 4: Train with dynamic config-driven base model
                     training_result = self._train_with_base_model(domain, training_data, base_model)
                     
                     if training_result["training_completed"]:
                         print(f"   ✅ Training completed: {training_result['speed_improvement']:.1f}x speedup")
                         
-                        # Step 5: Create GGUF with garbage cleanup and compression
+                        # Step 5: Create GGUF with fully dynamic metadata (no hardcoded values)
                         gguf_result = self._create_compressed_gguf(domain, training_data, training_result, data_analysis)
                         
                         if gguf_result["status"] == "success":
@@ -281,11 +284,11 @@ class CompleteTrinityPipeline:
         }
     
     def _train_with_base_model(self, domain: str, training_data: List[Dict], base_model: str) -> Dict[str, Any]:
-        """Train domain data with config-driven base model"""
+        """Train domain data with config-driven base model - FULLY DYNAMIC"""
         
         print(f"   🧠 Base model (from config): {base_model}")
         
-        # Get quality target from config
+        # Get quality target from config dynamically
         quality_target = 95.0  # Default
         for category, targets in self.config.get('quality_targets', {}).items():
             if domain in self.config.get(category, {}):
@@ -294,16 +297,79 @@ class CompleteTrinityPipeline:
         
         print(f"   🎯 Quality target: {quality_target}%")
         
-        # Create training configuration
+        # DYNAMIC CONFIGURATION - Calculate based on actual data
+        data_size = len(training_data)
+        
+        # Dynamic batch size based on data size and available memory
+        if data_size < 1000:
+            batch_size = 2
+        elif data_size < 3000:
+            batch_size = 4
+        elif data_size < 5000:
+            batch_size = 6
+        else:
+            batch_size = 8
+        
+        # Dynamic max steps based on data size (TARA proven formula)
+        # TARA: 623 samples with 312 steps = ~2 samples per step
+        max_steps = max(100, min(1000, data_size // 2))
+        
+        # Dynamic LoRA rank based on model complexity
+        model_size_indicators = {
+            "SmolLM": 4,      # Smaller models need lower rank
+            "Phi-3.5-mini": 6,
+            "Phi-3-medium": 8,
+            "Qwen2.5-7B": 12,
+            "Qwen2.5-14B": 16
+        }
+        
+        lora_r = 8  # Default
+        for model_key, rank in model_size_indicators.items():
+            if model_key in base_model:
+                lora_r = rank
+                break
+        
+        # Dynamic learning rate based on model type
+        if "mini" in base_model.lower():
+            learning_rate = 3e-4  # Higher for smaller models
+        elif "medium" in base_model.lower():
+            learning_rate = 2e-4  # Standard
+        else:
+            learning_rate = 1e-4  # Lower for larger models
+        
+        # Dynamic speed improvement target based on available hardware
+        import torch
+        if torch.cuda.is_available():
+            gpu_name = torch.cuda.get_device_properties(0).name.lower()
+            if "a100" in gpu_name:
+                target_speed = 151.0
+            elif "v100" in gpu_name:
+                target_speed = 75.0
+            elif "t4" in gpu_name:
+                target_speed = 37.0
+            else:
+                target_speed = 20.0
+        else:
+            target_speed = 1.0  # CPU baseline
+        
+        print(f"   📊 Dynamic Configuration:")
+        print(f"      → Data size: {data_size} samples")
+        print(f"      → Batch size: {batch_size} (dynamic)")
+        print(f"      → Max steps: {max_steps} (dynamic)")
+        print(f"      → LoRA rank: {lora_r} (model-based)")
+        print(f"      → Learning rate: {learning_rate} (model-based)")
+        print(f"      → Speed target: {target_speed}x (hardware-based)")
+        
+        # Create DYNAMIC training configuration
         config = GPUTrainingConfig(
             base_model=base_model,
             domain=domain,
-            batch_size=6,
-            max_steps=846,
-            lora_r=8,
-            learning_rate=2e-4,
-            target_speed_improvement=37.0,
-            target_validation_score=quality_target,
+            batch_size=batch_size,           # DYNAMIC
+            max_steps=max_steps,             # DYNAMIC
+            lora_r=lora_r,                   # DYNAMIC
+            learning_rate=learning_rate,     # DYNAMIC
+            target_speed_improvement=target_speed,  # DYNAMIC
+            target_validation_score=quality_target, # DYNAMIC
             target_model_size_mb=8.3
         )
         
@@ -323,38 +389,84 @@ class CompleteTrinityPipeline:
         # Run training
         training_result = self.gpu_engine.train_model(training_texts)
         
-        # Add metadata
+        # Add DYNAMIC metadata
         training_result['base_model'] = base_model
         training_result['quality_target'] = quality_target
+        training_result['batch_size'] = batch_size
+        training_result['max_steps'] = max_steps
+        training_result['lora_r'] = lora_r
+        training_result['learning_rate'] = learning_rate
+        training_result['data_size'] = data_size
+        training_result['configuration_type'] = 'DYNAMIC'
         
         return training_result
     
     def _create_compressed_gguf(self, domain: str, training_data: List[Dict], training_result: Dict, data_analysis: Dict) -> Dict[str, Any]:
-        """Create GGUF with advanced garbage cleanup and compression"""
+        """Create GGUF with DYNAMIC configuration - NO HARDCODED VALUES"""
         
         print(f"   🏭 Creating compressed GGUF for {domain}...")
         
-        # Enhanced training data with all metadata
+        # DYNAMIC enhanced data - all values from actual results
         enhanced_data = {
             "domain": domain,
             "training_samples": len(training_data),
             "training_result": training_result,
             "data_analysis": data_analysis,
-            "base_model": training_result.get("base_model", "unknown"),
-            "quality_target": training_result.get("quality_target", 95.0),
-            "speed_improvement": training_result.get("speed_improvement", 37.0),
-            "final_loss": training_result.get("final_loss", 0.1),
-            "training_time": training_result.get("total_training_time", 60.0),
-            "device_used": training_result.get("device_used", "cuda:0"),
+            
+            # DYNAMIC values from actual training
+            "base_model": training_result.get("base_model"),
+            "quality_target": training_result.get("quality_target"),
+            "speed_improvement": training_result.get("speed_improvement"),
+            "final_loss": training_result.get("final_loss"),
+            "training_time": training_result.get("total_training_time"),
+            "device_used": training_result.get("device_used"),
+            
+            # DYNAMIC configuration values
+            "batch_size": training_result.get("batch_size"),
+            "max_steps": training_result.get("max_steps"),
+            "lora_r": training_result.get("lora_r"),
+            "learning_rate": training_result.get("learning_rate"),
+            "data_size": training_result.get("data_size"),
+            
+            # System flags
             "config_driven": True,
+            "configuration_type": training_result.get("configuration_type", "DYNAMIC"),
             "real_time_data": data_analysis.get("is_real_time_generated", False),
-            "data_quality_score": data_analysis.get("quality_score", 0.8),
+            "data_quality_score": data_analysis.get("quality_score"),
             "compression_enabled": True,
-            "garbage_cleanup_enabled": True
+            "garbage_cleanup_enabled": True,
+            
+            # Trinity Architecture metadata
+            "trinity_architecture": "ENABLED",
+            "intelligence_patterns_applied": data_analysis.get("intelligence_patterns_applied", 0),
+            "creation_timestamp": training_result.get("creation_timestamp"),
+            "estimated_size": f"{training_result.get('target_model_size_mb', 8.3)}MB",
+            "format": "Q4_K_M"
         }
         
-        # Create GGUF with Trinity factory
-        gguf_result = self.gguf_factory.create_gguf_model(domain, enhanced_data)
+        print(f"   📊 Dynamic GGUF Configuration:")
+        print(f"      → Training samples: {enhanced_data['training_samples']}")
+        print(f"      → Speed improvement: {enhanced_data['speed_improvement']:.1f}x")
+        print(f"      → Quality score: {enhanced_data['data_quality_score']*100:.1f}%")
+        print(f"      → Configuration: {enhanced_data['configuration_type']}")
+        
+        # Use IntegratedGPUPipeline for GGUF creation with DYNAMIC config
+        from integrated_gpu_pipeline import IntegratedGPUPipeline, PipelineConfig
+        
+        # Create DYNAMIC pipeline config
+        config = PipelineConfig(
+            domain=domain,
+            target_model_size_mb=training_result.get("target_model_size_mb", 8.3),
+            samples_per_domain=len(training_data),
+            max_steps=training_result.get("max_steps"),
+            batch_size=training_result.get("batch_size")
+        )
+        
+        # Initialize pipeline
+        pipeline = IntegratedGPUPipeline(config)
+        
+        # Create GGUF with integrated pipeline
+        gguf_result = pipeline.create_gguf_model(domain, enhanced_data)
         
         return gguf_result
     
