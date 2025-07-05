@@ -786,8 +786,17 @@ class GGUFCreatorAgent(BaseAgent):
     async def _apply_tara_compression(self, gguf_path: str, domain: str) -> str:
         """Apply TARA proven compression (from compression_utilities.py)"""
         
-        # Use TARA proven Q4_K_M quantization
-        quantization = QuantizationType.Q4_K_M
+        # Load dynamic configuration
+        config_path = Path(__file__).parent.parent.parent.parent / "config" / "trinity-config.json"
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+        
+        # Get dynamic compression settings
+        compression_config = config.get("compression_config", {})
+        default_quantization = compression_config.get("default_quantization", "Q4_K_M")
+        
+        # Use dynamic quantization from config
+        quantization = QuantizationType(default_quantization)
         compression_type = CompressionType.STANDARD
         
         # Apply compression if needed

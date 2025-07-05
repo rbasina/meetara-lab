@@ -11,6 +11,7 @@ from datetime import datetime
 from pathlib import Path
 import yaml
 import re
+from trinity_core.config_manager import get_all_domain_categories
 
 class ValidationError(Exception):
     """Custom exception for validation errors"""
@@ -277,50 +278,11 @@ class TrinityValidationUtils:
         
     def _get_domain_category(self, domain: str) -> str:
         """Get domain category for validation"""
-        # Healthcare domains
-        healthcare_domains = ["general_health", "mental_health", "nutrition", "fitness", "sleep", "stress_management", 
-                            "preventive_care", "chronic_conditions", "medication_management", "emergency_care", 
-                            "women_health", "senior_health"]
+        # SMART: Load from YAML config instead of hardcoding
+        domain_categories = get_all_domain_categories()
         
-        # Business domains
-        business_domains = ["entrepreneurship", "marketing", "sales", "customer_service", "project_management", 
-                          "team_leadership", "financial_planning", "operations", "hr_management", "strategy", 
-                          "consulting", "legal_business"]
-        
-        # Education domains
-        education_domains = ["academic_tutoring", "skill_development", "career_guidance", "exam_preparation", 
-                           "language_learning", "research_assistance", "study_techniques", "educational_technology"]
-        
-        # Creative domains
-        creative_domains = ["writing", "storytelling", "content_creation", "social_media", "design_thinking", 
-                          "photography", "music", "art_appreciation"]
-        
-        # Technology domains
-        technology_domains = ["programming", "ai_ml", "cybersecurity", "data_analysis", "tech_support", 
-                            "software_development"]
-        
-        # Daily life domains
-        daily_life_domains = ["parenting", "relationships", "personal_assistant", "communication", "home_management", 
-                            "shopping", "planning", "transportation", "time_management", "decision_making", 
-                            "conflict_resolution", "work_life_balance"]
-        
-        # Specialized domains
-        specialized_domains = ["legal", "financial", "scientific_research", "engineering"]
-        
-        if domain in healthcare_domains:
-            return "healthcare"
-        elif domain in business_domains:
-            return "business"
-        elif domain in education_domains:
-            return "education"
-        elif domain in creative_domains:
-            return "creative"
-        elif domain in technology_domains:
-            return "technology"
-        elif domain in daily_life_domains:
-            return "daily_life"
-        elif domain in specialized_domains:
-            return "specialized"
+        if domain in domain_categories:
+            return domain
         else:
             return "daily_life"  # Default category
             
@@ -478,6 +440,16 @@ class TrinityValidationUtils:
             comparison["tara_quality_ratio"] = (scores["quality_score"] / tara_quality) * 100
             
         return comparison
+
+    def get_domain_categories_for_validation(self) -> Dict[str, List[str]]:
+        """Get domain categories for validation - LOADS FROM YAML CONFIG"""
+        domain_categories = get_all_domain_categories()
+        
+        print(f"✅ Loaded {len(domain_categories)} categories from YAML config")
+        for category, domains in domain_categories.items():
+            print(f"   {category}: {len(domains)} domains")
+        
+        return domain_categories
 
 # Create global validation instance
 validation_utils = TrinityValidationUtils()

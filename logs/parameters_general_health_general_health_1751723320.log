@@ -1,0 +1,21 @@
+2025-07-05 09:48:40,811 | meetara_params_general_health_1751723320 | INFO | ⚙️ PARAMETER GENERATION
+2025-07-05 09:48:40,813 | meetara_params_general_health_1751723320 | INFO |    Domain: general_health
+2025-07-05 09:48:40,813 | meetara_params_general_health_1751723320 | INFO |    Model Tier: premium
+2025-07-05 09:48:40,813 | meetara_params_general_health_1751723320 | INFO |    Parameter Source: YAML_TIER_SPECIFIC
+2025-07-05 09:48:40,813 | meetara_params_general_health_1751723320 | INFO |    Generated Parameters:
+2025-07-05 09:48:40,814 | meetara_params_general_health_1751723320 | INFO |      batch_size: 1
+2025-07-05 09:48:40,814 | meetara_params_general_health_1751723320 | INFO |        → Memory-optimized batch size for large models
+2025-07-05 09:48:40,814 | meetara_params_general_health_1751723320 | INFO |      lora_r: 20
+2025-07-05 09:48:40,814 | meetara_params_general_health_1751723320 | INFO |        → Premium rank for highest quality
+2025-07-05 09:48:40,815 | meetara_params_general_health_1751723320 | INFO |      max_steps: 1500
+2025-07-05 09:48:40,815 | meetara_params_general_health_1751723320 | INFO |        → Premium steps for highest quality
+2025-07-05 09:48:40,816 | meetara_params_general_health_1751723320 | INFO |      learning_rate: 3e-5
+2025-07-05 09:48:40,816 | meetara_params_general_health_1751723320 | INFO |        → Optimized for premium tier
+2025-07-05 09:48:40,816 | meetara_params_general_health_1751723320 | INFO |      samples_per_domain: 15000
+2025-07-05 09:48:40,816 | meetara_params_general_health_1751723320 | INFO |        → Optimized for premium tier
+2025-07-05 09:48:40,816 | meetara_params_general_health_1751723320 | INFO |      quality_target: 99.5
+2025-07-05 09:48:40,816 | meetara_params_general_health_1751723320 | INFO |        → Optimized for premium tier
+2025-07-05 09:48:40,821 | meetara_params_general_health_1751723320 | INFO |      gradient_accumulation: 32
+2025-07-05 09:48:40,821 | meetara_params_general_health_1751723320 | INFO |        → Optimized for premium tier
+2025-07-05 09:48:40,821 | meetara_params_general_health_1751723320 | INFO |      warmup_steps: 150
+2025-07-05 09:48:40,821 | meetara_params_general_health_1751723320 | INFO |        → Optimized for premium tier

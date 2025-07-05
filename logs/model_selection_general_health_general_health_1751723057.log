@@ -1,0 +1,5 @@
+2025-07-05 09:44:17,892 | meetara_model_general_health_1751723057 | INFO | 🤖 MODEL SELECTION PROCESS
+2025-07-05 09:44:17,900 | meetara_model_general_health_1751723057 | INFO |    Domain: general_health
+2025-07-05 09:44:17,901 | meetara_model_general_health_1751723057 | INFO |    Selected Model: microsoft/Phi-3-medium-14B-instruct
+2025-07-05 09:44:17,901 | meetara_model_general_health_1751723057 | INFO |    Model Tier: premium
+2025-07-05 09:44:17,901 | meetara_model_general_health_1751723057 | INFO |    Selection Reason: Premium tier model selected for healthcare category - optimized for domain requirements

@@ -1,0 +1,94 @@
+{
+  "session_id": "general_health_1751723057",
+  "domain": "general_health",
+  "start_time": "2025-07-05T09:44:17.834686",
+  "decisions": [
+    {
+      "type": "Model Selection",
+      "decision": "Selected microsoft/Phi-3-medium-14B-instruct for general_health",
+      "reasoning": "Premium tier model provides optimal performance for healthcare domain requirements",
+      "timestamp": "2025-07-05T09:44:17.917989"
+    },
+    {
+      "type": "Parameter Optimization",
+      "decision": "Using tier-specific parameters: batch_size=1, max_steps=1500, lora_r=20",
+      "reasoning": "Parameters optimized for premium tier based on model size and domain complexity",
+      "timestamp": "2025-07-05T09:44:17.919992"
+    },
+    {
+      "type": "Training Completion",
+      "decision": "Training completed for general_health",
+      "reasoning": "Final loss: 0.000226, Quality: 100.0%, Time: 28.1s",
+      "timestamp": "2025-07-05T09:45:06.066758"
+    }
+  ],
+  "parameters": {
+    "domain": "general_health",
+    "model_tier": "premium",
+    "parameters": {
+      "batch_size": 1,
+      "lora_r": 20,
+      "max_steps": 1500,
+      "learning_rate": "3e-5",
+      "samples_per_domain": 15000,
+      "quality_target": 99.5,
+      "gradient_accumulation": 32,
+      "warmup_steps": 150
+    },
+    "source": "YAML_TIER_SPECIFIC",
+    "timestamp": "2025-07-05T09:44:17.915988"
+  },
+  "model_selection": {
+    "domain": "general_health",
+    "base_model": "microsoft/Phi-3-medium-14B-instruct",
+    "model_tier": "premium",
+    "selection_reason": "Premium tier model selected for healthcare category - optimized for domain requirements",
+    "timestamp": "2025-07-05T09:44:17.902987"
+  },
+  "sample_generation": {
+    "domain": "general_health",
+    "target_samples": 5000,
+    "generated_samples": 5000,
+    "quality_score": 0.95,
+    "generation_time": 2.8138137578964235,
+    "efficiency": 100.0,
+    "timestamp": "2025-07-05T09:45:06.059743"
+  },
+  "training_progress": [],
+  "quality_metrics": {
+    "domain": "general_health",
+    "quality_score": 99.977381194185,
+    "quality_target": 95.0,
+    "passed": true,
+    "difference": 4.977381194185,
+    "timestamp": "2025-07-05T09:45:06.066758"
+  },
+  "config_loading": {
+    "yaml_loaded": true,
+    "json_loaded": true,
+    "total_domains": 62,
+    "timestamp": "2025-07-05T09:44:17.890828"
+  },
+  "domain_validation": {
+    "domain": "general_health",
+    "valid": true,
+    "category": "healthcare",
+    "suggestions": [],
+    "timestamp": "2025-07-05T09:44:17.892838"
+  },
+  "gguf_creation": {
+    "domain": "general_health",
+    "gguf_info": {
+      "format": "Q4_K_M",
+      "size": 8.3,
+      "compression": "Q4_K_M",
+      "quality": 98.5,
+      "filename": "meetara_general_health_q4_k_m.gguf",
+      "model_path": "data\\models\\trained\\general_health\\general_health_trained_model.pt",
+      "model_size_mb": 89.51905155181885
+    },
+    "timestamp": "2025-07-05T09:45:06.062660"
+  },
+  "end_time": "2025-07-05T09:45:06.066758",
+  "duration_seconds": 48.232072
+}

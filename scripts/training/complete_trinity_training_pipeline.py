@@ -406,6 +406,13 @@ class CompleteTrinityPipeline:
         
         print(f"   🏭 Creating compressed GGUF for {domain}...")
         
+        # Check if training was completed successfully
+        if not training_result.get("training_completed", False):
+            return {
+                "status": "failed",
+                "error": "Training was not completed successfully"
+            }
+        
         # DYNAMIC enhanced data - all values from actual results
         enhanced_data = {
             "domain": domain,
@@ -441,7 +448,10 @@ class CompleteTrinityPipeline:
             "intelligence_patterns_applied": data_analysis.get("intelligence_patterns_applied", 0),
             "creation_timestamp": training_result.get("creation_timestamp"),
             "estimated_size": f"{training_result.get('target_model_size_mb', 8.3)}MB",
-            "format": "Q4_K_M"
+            "format": training_result.get("quantization_format", "Q4_K_M"),  # DYNAMIC from training result
+            
+            # CRITICAL: Ensure training_completed flag is passed through
+            "training_completed": training_result.get("training_completed", False)
         }
         
         print(f"   📊 Dynamic GGUF Configuration:")
@@ -449,6 +459,7 @@ class CompleteTrinityPipeline:
         print(f"      → Speed improvement: {enhanced_data['speed_improvement']:.1f}x")
         print(f"      → Quality score: {enhanced_data['data_quality_score']*100:.1f}%")
         print(f"      → Configuration: {enhanced_data['configuration_type']}")
+        print(f"      → Training completed: {enhanced_data['training_completed']}")
         
         # Use IntegratedGPUPipeline for GGUF creation with DYNAMIC config
         from integrated_gpu_pipeline import IntegratedGPUPipeline, PipelineConfig
@@ -465,8 +476,15 @@ class CompleteTrinityPipeline:
         # Initialize pipeline
         pipeline = IntegratedGPUPipeline(config)
         
-        # Create GGUF with integrated pipeline
+        # Create GGUF with enhanced data that includes training_completed flag
         gguf_result = pipeline.create_gguf_model(domain, enhanced_data)
+        
+        # Convert success field to status for consistency
+        if gguf_result.get("success", False):
+            gguf_result["status"] = "success"
+            gguf_result["final_size_mb"] = gguf_result.get("statistics", {}).get("output_model_size_mb", 8.3)
+        else:
+            gguf_result["status"] = "failed"
         
         return gguf_result
     

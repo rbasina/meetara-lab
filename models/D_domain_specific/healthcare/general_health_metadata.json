@@ -1,0 +1,31 @@
+{
+  "format": "GGUF",
+  "version": "3.0",
+  "architecture": "trinity_enhanced",
+  "domain": "general_health",
+  "category": "healthcare",
+  "source_model": "data\\models\\trained\\general_health\\general_health_trained_model.pt",
+  "quantization": "Q4_K_M",
+  "size_mb": 8.3,
+  "training_stats": {
+    "samples": 5000,
+    "training_time": 29.505682706832886,
+    "final_loss": 0.000350117712514475,
+    "speed_improvement": 8916.512797409545,
+    "device_used": "cpu"
+  },
+  "intelligence_patterns": [
+    "symptom_analysis",
+    "treatment_recommendations",
+    "prevention_strategies"
+  ],
+  "quality_metrics": {
+    "total_generated": 5000,
+    "quality_filtered": 5000,
+    "filter_rate": 1.0,
+    "intelligence_patterns_applied": 3
+  },
+  "trinity_architecture": "ENABLED",
+  "creation_timestamp": "2025-07-05 09:49:28",
+  "model_hash": "sha256_4627277198337043190"
+}

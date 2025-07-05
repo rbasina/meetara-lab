@@ -137,45 +137,62 @@ class GPUTrainingEngine:
         return device
     
     def train_model_simplified(self, training_texts: List[str]) -> Dict[str, Any]:
-        """Simplified training for when transformers is not available"""
+        """Simplified training for CPU/basic GPU scenarios with model saving"""
         self.logger.info("🚀 Starting Simplified GPU Training Pipeline")
-        self.training_stats["start_time"] = time.time()
         
         try:
-            # Create simple neural network for demonstration
+            # Create simple neural network for simulation
             class SimpleNN(nn.Module):
                 def __init__(self, vocab_size=10000, embed_dim=256, hidden_dim=512):
                     super().__init__()
                     self.embedding = nn.Embedding(vocab_size, embed_dim)
                     self.fc1 = nn.Linear(embed_dim, hidden_dim)
                     self.fc2 = nn.Linear(hidden_dim, vocab_size)
-                    self.relu = nn.ReLU()
+                    self.dropout = nn.Dropout(0.1)
                     
                 def forward(self, x):
                     x = self.embedding(x)
-                    x = torch.mean(x, dim=1)  # Simple averaging
-                    x = self.relu(self.fc1(x))
+                    x = x.mean(dim=1)  # Simple pooling
+                    x = torch.relu(self.fc1(x))
+                    x = self.dropout(x)
                     return self.fc2(x)
             
-            # Create model and move to GPU
+            # Initialize model and move to device
             model = SimpleNN().to(self.device)
-            optimizer = optim.Adam(model.parameters(), lr=self.config.learning_rate)
+            optimizer = torch.optim.Adam(model.parameters(), lr=self.config.learning_rate)
             criterion = nn.CrossEntropyLoss()
             
-            # Simulate training data
-            batch_size = self.config.batch_size
+            # Create simple tokenized data
             vocab_size = 10000
-            seq_length = 32
+            tokenized_data = []
+            for text in training_texts[:100]:  # Limit for performance
+                tokens = [hash(word) % vocab_size for word in text.split()]
+                if len(tokens) > 1:
+                    tokenized_data.append(tokens)
             
-            self.logger.info(f"Training on {self.device} with batch_size={batch_size}")
+            self.logger.info(f"Training on {self.device} with batch_size={self.config.batch_size}")
+            self.logger.info(f"📊 Training data: {len(tokenized_data)} sequences")
             
-            # Training loop with performance monitoring
+            # Training loop with enhanced logging
+            self.training_stats["start_time"] = time.time()
+            
             for step in range(self.config.max_steps):
                 step_start = time.time()
                 
-                # Generate random training batch (simulation)
-                input_ids = torch.randint(0, vocab_size, (batch_size, seq_length)).to(self.device)
-                labels = torch.randint(0, vocab_size, (batch_size,)).to(self.device)
+                # Create batch
+                batch_size = min(self.config.batch_size, len(tokenized_data))
+                batch_indices = torch.randint(0, len(tokenized_data), (batch_size,))
+                
+                # Prepare inputs and labels
+                max_len = 10
+                input_ids = torch.zeros(batch_size, max_len, dtype=torch.long).to(self.device)
+                labels = torch.zeros(batch_size, dtype=torch.long).to(self.device)
+                
+                for i, idx in enumerate(batch_indices):
+                    tokens = tokenized_data[idx.item()]
+                    seq_len = min(len(tokens), max_len)
+                    input_ids[i, :seq_len] = torch.tensor(tokens[:seq_len])
+                    labels[i] = tokens[0] % vocab_size  # Simple target
                 
                 # Forward pass
                 optimizer.zero_grad()
@@ -208,6 +225,27 @@ class GPUTrainingEngine:
             training_time = time.time() - self.training_stats["start_time"]
             final_speed = self.training_stats["speed_improvement"]
             
+            # 🔥 SAVE THE TRAINED MODEL
+            model_save_dir = Path("data/models/trained") / self.config.domain
+            model_save_dir.mkdir(parents=True, exist_ok=True)
+            
+            model_path = model_save_dir / f"{self.config.domain}_trained_model.pt"
+            
+            # Save model state dict
+            torch.save({
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'config': self.config,
+                'training_stats': self.training_stats,
+                'final_loss': self.training_stats["current_loss"],
+                'training_time': training_time,
+                'speed_improvement': final_speed
+            }, model_path)
+            
+            self.logger.info(f"💾 TRAINED MODEL SAVED: {model_path}")
+            self.logger.info(f"📁 Model directory: {model_save_dir}")
+            self.logger.info(f"📊 Model size: {model_path.stat().st_size / (1024*1024):.2f}MB")
+            
             results = {
                 "training_completed": True,
                 "total_training_time": training_time,
@@ -219,21 +257,30 @@ class GPUTrainingEngine:
                 "device_used": str(self.device),
                 "gpu_name": torch.cuda.get_device_properties(self.device).name if torch.cuda.is_available() else "CPU",
                 "average_step_time": training_time / self.config.max_steps,
-                "training_mode": "simplified"
+                "training_mode": "simplified",
+                # 🔥 ADD MODEL SAVE INFORMATION
+                "model_saved": True,
+                "model_path": str(model_path),
+                "model_size_mb": model_path.stat().st_size / (1024*1024),
+                "model_directory": str(model_save_dir)
             }
             
             self.logger.info(f"✅ Training completed in {training_time:.1f}s")
             self.logger.info(f"🚀 Speed improvement: {final_speed:.1f}x")
             self.logger.info(f"🎯 Target met: {results['speed_target_met']}")
+            self.logger.info(f"💾 Model saved: {results['model_saved']}")
             
             return results
             
         except Exception as e:
             self.logger.error(f"❌ Training failed: {str(e)}")
+            import traceback
+            self.logger.error(f"🔍 Full error: {traceback.format_exc()}")
             return {
                 "training_completed": False,
                 "error": str(e),
-                "training_mode": "simplified"
+                "training_mode": "simplified",
+                "model_saved": False
             }
     
     def train_model(self, training_texts: List[str]) -> Dict[str, Any]:

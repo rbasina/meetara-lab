@@ -108,8 +108,8 @@ class IntegratedGPUPipeline:
         output_path.mkdir(parents=True, exist_ok=True)
         self.logger.info(f"📁 Output directory: {output_path.absolute()}")
         
-        # Create GGUF models directory
-        self.gguf_models_dir = output_path / "gguf_models"
+        # Create GGUF models directory - Use existing models structure
+        self.gguf_models_dir = self.project_root / "models" / "gguf" / "development"
         self.gguf_models_dir.mkdir(parents=True, exist_ok=True)
         self.logger.info(f"📁 GGUF models directory: {self.gguf_models_dir.absolute()}")
         

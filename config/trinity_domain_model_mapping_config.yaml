@@ -162,18 +162,97 @@ verified_licenses:
   "Qwen/Qwen2.5-7B-Instruct": "Apache-2.0"
   "Qwen/Qwen2.5-14B-Instruct": "Apache-2.0"
 
-# QUALITY-FOCUSED TARA PROVEN PARAMETERS
+# ENHANCED MODEL-SPECIFIC TARA PROVEN PARAMETERS
 tara_proven_params:
-  batch_size: 2                     # TARA proven - stable for quality
-  lora_r: 8                         # TARA proven  
-  max_steps: 846                    # TARA proven
-  learning_rate: 1e-4               # TARA proven
+  # Global defaults
   sequence_length: 64               # TARA proven - memory efficient
   base_model_fallback: "microsoft/Phi-3.5-mini-instruct"  # 🔄 UPGRADED fallback
   validation_target: 101.0          # 101% validation scores
   output_format: "Q4_K_M"           # TARA proven compression
   target_size_mb: 8.3               # TARA proven size
   quality_focused_training: true    # 🆕 Quality optimizations enabled
+
+# MODEL TIER SPECIFIC PARAMETERS - OPTIMIZED FOR EACH MODEL SIZE
+model_tier_params:
+  lightning:  # 1.7B models
+    batch_size: 8                   # Higher batch for small models
+    lora_r: 4                       # Lower rank for efficiency
+    max_steps: 500                  # Fewer steps needed
+    learning_rate: 2e-4             # Higher LR for fast convergence
+    gradient_accumulation: 1        # No accumulation needed
+    warmup_steps: 50                # Quick warmup
+    
+  fast:      # 3.8B models  
+    batch_size: 4                   # Balanced batch size
+    lora_r: 6                       # Moderate rank
+    max_steps: 650                  # Moderate steps
+    learning_rate: 1.5e-4           # Balanced learning rate
+    gradient_accumulation: 2        # Light accumulation
+    warmup_steps: 65                # Moderate warmup
+    
+  balanced:  # 7B models
+    batch_size: 2                   # Standard TARA proven
+    lora_r: 8                       # Standard TARA proven
+    max_steps: 846                  # Standard TARA proven
+    learning_rate: 1e-4             # Standard TARA proven
+    gradient_accumulation: 4        # Standard accumulation
+    warmup_steps: 84                # 10% of max_steps
+    
+  quality:   # 14B models (4k context)
+    batch_size: 1                   # Lower batch for large models
+    lora_r: 12                      # Higher rank for quality
+    max_steps: 1000                 # More steps for quality
+    learning_rate: 8e-5             # Lower LR for stability
+    gradient_accumulation: 8        # Higher accumulation
+    warmup_steps: 100               # Longer warmup
+    
+  expert:    # 14B models (expert)
+    batch_size: 1                   # Memory optimized
+    lora_r: 16                      # Highest rank for expertise
+    max_steps: 1200                 # Most steps for expertise
+    learning_rate: 5e-5             # Lowest LR for precision
+    gradient_accumulation: 16       # Maximum accumulation
+    warmup_steps: 120               # Extended warmup
+    
+  premium:   # 14B models (premium)
+    batch_size: 1                   # Memory optimized
+    lora_r: 20                      # Maximum rank for premium
+    max_steps: 1500                 # Maximum steps for premium
+    learning_rate: 3e-5             # Ultra-low LR for stability
+    gradient_accumulation: 32       # Maximum accumulation
+    warmup_steps: 150               # Maximum warmup
+
+# SAMPLE GENERATION PARAMETERS BY MODEL TIER
+sample_generation_params:
+  lightning:
+    samples_per_domain: 2000        # Fewer samples for fast models
+    quality_threshold: 0.85         # Lower threshold for speed
+    generation_batch_size: 50       # Larger batches
+    
+  fast:
+    samples_per_domain: 3000        # Moderate samples
+    quality_threshold: 0.90         # Moderate threshold
+    generation_batch_size: 40       # Moderate batches
+    
+  balanced:
+    samples_per_domain: 5000        # Standard TARA proven
+    quality_threshold: 0.95         # High threshold
+    generation_batch_size: 30       # Balanced batches
+    
+  quality:
+    samples_per_domain: 7000        # More samples for quality
+    quality_threshold: 0.97         # Higher threshold
+    generation_batch_size: 20       # Smaller batches for quality
+    
+  expert:
+    samples_per_domain: 10000       # Maximum samples for expertise
+    quality_threshold: 0.98         # Expert threshold
+    generation_batch_size: 15       # Expert batch size
+    
+  premium:
+    samples_per_domain: 15000       # Premium sample count
+    quality_threshold: 0.99         # Premium threshold
+    generation_batch_size: 10       # Premium batch size
 
 # DOMAIN-SPECIFIC QUALITY METRICS
 quality_targets:

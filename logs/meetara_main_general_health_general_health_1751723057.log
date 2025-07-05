@@ -1,0 +1,56 @@
+2025-07-05 09:44:17,880 | meetara_main_general_health_1751723057 | INFO | ================================================================================
+2025-07-05 09:44:17,884 | meetara_main_general_health_1751723057 | INFO | 🚀 MEETARA LAB TRAINING SESSION STARTED
+2025-07-05 09:44:17,884 | meetara_main_general_health_1751723057 | INFO | 📋 Session ID: general_health_1751723057
+2025-07-05 09:44:17,885 | meetara_main_general_health_1751723057 | INFO | 🎯 Domain: general_health
+2025-07-05 09:44:17,885 | meetara_main_general_health_1751723057 | INFO | ⏰ Start Time: 2025-07-05 09:44:17.834686
+2025-07-05 09:44:17,886 | meetara_main_general_health_1751723057 | INFO | ================================================================================
+2025-07-05 09:44:17,887 | meetara_main_general_health_1751723057 | INFO | 📊 CONFIGURATION LOADING
+2025-07-05 09:44:17,887 | meetara_main_general_health_1751723057 | INFO |    YAML Config: ✅ Loaded
+2025-07-05 09:44:17,888 | meetara_main_general_health_1751723057 | INFO |    JSON Config: ✅ Loaded
+2025-07-05 09:44:17,888 | meetara_main_general_health_1751723057 | INFO |    Total Domains: 62
+2025-07-05 09:44:17,892 | meetara_main_general_health_1751723057 | INFO | ✅ Domain 'general_health' validated successfully
+2025-07-05 09:44:17,892 | meetara_main_general_health_1751723057 | INFO |    Category: healthcare
+2025-07-05 09:44:17,902 | meetara_main_general_health_1751723057 | INFO | 🤖 Model Selected: microsoft/Phi-3-medium-14B-instruct (premium) for general_health
+2025-07-05 09:44:17,912 | meetara_main_general_health_1751723057 | INFO | ⚙️ Parameters generated for general_health (premium)
+2025-07-05 09:44:17,913 | meetara_main_general_health_1751723057 | INFO |    Batch size: 1
+2025-07-05 09:44:17,914 | meetara_main_general_health_1751723057 | INFO |    LoRA rank: 20
+2025-07-05 09:44:17,914 | meetara_main_general_health_1751723057 | INFO |    Max steps: 1500
+2025-07-05 09:44:17,915 | meetara_main_general_health_1751723057 | INFO |    Learning rate: 3e-5
+2025-07-05 09:44:17,916 | meetara_main_general_health_1751723057 | INFO | 🧠 DECISION: Model Selection
+2025-07-05 09:44:17,916 | meetara_main_general_health_1751723057 | INFO |    Decision: Selected microsoft/Phi-3-medium-14B-instruct for general_health
+2025-07-05 09:44:17,917 | meetara_main_general_health_1751723057 | INFO |    Reasoning: Premium tier model provides optimal performance for healthcare domain requirements
+2025-07-05 09:44:17,917 | meetara_main_general_health_1751723057 | INFO | 🧠 DECISION: Parameter Optimization
+2025-07-05 09:44:17,918 | meetara_main_general_health_1751723057 | INFO |    Decision: Using tier-specific parameters: batch_size=1, max_steps=1500, lora_r=20
+2025-07-05 09:44:17,918 | meetara_main_general_health_1751723057 | INFO |    Reasoning: Parameters optimized for premium tier based on model size and domain complexity
+2025-07-05 09:45:06,043 | meetara_main_general_health_1751723057 | INFO | 📝 SAMPLE GENERATION
+2025-07-05 09:45:06,043 | meetara_main_general_health_1751723057 | INFO |    Domain: general_health
+2025-07-05 09:45:06,043 | meetara_main_general_health_1751723057 | INFO |    Target Samples: 5,000
+2025-07-05 09:45:06,043 | meetara_main_general_health_1751723057 | INFO |    Generated Samples: 5,000
+2025-07-05 09:45:06,043 | meetara_main_general_health_1751723057 | INFO |    Quality Score: 95.00%
+2025-07-05 09:45:06,043 | meetara_main_general_health_1751723057 | INFO |    Generation Time: 2.81s
+2025-07-05 09:45:06,059 | meetara_main_general_health_1751723057 | INFO |    Generation Efficiency: 100.0%
+2025-07-05 09:45:06,059 | meetara_main_general_health_1751723057 | INFO | 📦 GGUF CREATION
+2025-07-05 09:45:06,060 | meetara_main_general_health_1751723057 | INFO |    Domain: general_health
+2025-07-05 09:45:06,060 | meetara_main_general_health_1751723057 | INFO |    Format: Q4_K_M
+2025-07-05 09:45:06,060 | meetara_main_general_health_1751723057 | INFO |    Size: 8.3MB
+2025-07-05 09:45:06,062 | meetara_main_general_health_1751723057 | INFO |    Compression: Q4_K_M
+2025-07-05 09:45:06,062 | meetara_main_general_health_1751723057 | INFO |    Quality: 98.5%
+2025-07-05 09:45:06,062 | meetara_main_general_health_1751723057 | INFO |    Filename: meetara_general_health_q4_k_m.gguf
+2025-07-05 09:45:06,062 | meetara_main_general_health_1751723057 | INFO | 🔍 QUALITY VALIDATION: ✅ PASSED
+2025-07-05 09:45:06,062 | meetara_main_general_health_1751723057 | INFO |    Domain: general_health
+2025-07-05 09:45:06,062 | meetara_main_general_health_1751723057 | INFO |    Quality Score: 100.0%
+2025-07-05 09:45:06,062 | meetara_main_general_health_1751723057 | INFO |    Quality Target: 95.0%
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO |    Difference: +5.0%
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | 🧠 DECISION: Training Completion
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO |    Decision: Training completed for general_health
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO |    Reasoning: Final loss: 0.000226, Quality: 100.0%, Time: 28.1s
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | ================================================================================
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | TRAINING SESSION COMPLETED
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | Session ID: general_health_1751723057
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | Domain: general_health
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | Duration: 0:00:48.232072
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | End Time: 2025-07-05 09:45:06.066758
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | Samples Generated: 5,000
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | Final Quality: 100.0%
+2025-07-05 09:45:06,066 | meetara_main_general_health_1751723057 | INFO | ================================================================================
+2025-07-05 09:45:06,084 | meetara_main_general_health_1751723057 | INFO | Session data saved to: logs\session_summary_general_health_general_health_1751723057.json
