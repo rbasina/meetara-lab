@@ -30,9 +30,15 @@
     "context_awareness": true,
     "adaptive_routing": true
   },
-  "model_tier_mappings": {
+  "multi_base_models": {
     "lightning": {
-      "model_path": "microsoft/Phi-3.5-mini-instruct",
+      "model_path": "HuggingFaceTB/SmolLM2-1.7B",
+      "parameters": "1.7B",
+      "license": "Apache-2.0",
+      "quantization": {
+        "A_universal_full": "Q2_K",
+        "B_universal_lite": "Q4_K_M"
+      },
       "cost_per_hour": 0.25,
       "recommended_gpu": "T4",
       "batch_size": 8,
@@ -40,7 +46,13 @@
       "performance_tier": "lightning"
     },
     "fast": {
-      "model_path": "microsoft/Phi-3.5-mini-instruct", 
+      "model_path": "microsoft/Phi-3.5-mini-instruct",
+      "parameters": "3.8B",
+      "license": "MIT",
+      "quantization": {
+        "A_universal_full": "Q2_K",
+        "B_universal_lite": "Q4_K_M"
+      },
       "cost_per_hour": 0.50,
       "recommended_gpu": "T4",
       "batch_size": 6,
@@ -48,7 +60,13 @@
       "performance_tier": "fast"
     },
     "balanced": {
-      "model_path": "microsoft/Phi-3.5-mini-instruct",
+      "model_path": "Qwen/Qwen2.5-7B-Instruct",
+      "parameters": "7B",
+      "license": "Apache-2.0",
+      "quantization": {
+        "A_universal_full": "Q2_K",
+        "B_universal_lite": "Q4_K_M"
+      },
       "cost_per_hour": 1.00,
       "recommended_gpu": "V100",
       "batch_size": 4,
@@ -56,22 +74,109 @@
       "performance_tier": "balanced"
     },
     "quality": {
-      "model_path": "microsoft/Phi-3.5-mini-instruct",
+      "model_path": "microsoft/Phi-3-medium-4k-instruct",
+      "parameters": "14B",
+      "license": "MIT",
+      "quantization": {
+        "A_universal_full": "Q2_K",
+        "B_universal_lite": "Q4_K_M"
+      },
       "cost_per_hour": 1.50,
       "recommended_gpu": "A100",
       "batch_size": 2,
       "sequence_length": 1024,
       "performance_tier": "quality"
+    },
+    "expert": {
+      "model_path": "Qwen/Qwen2.5-14B-Instruct",
+      "parameters": "14B",
+      "license": "Apache-2.0",
+      "quantization": {
+        "A_universal_full": "Q2_K",
+        "B_universal_lite": "Q4_K_M"
+      },
+      "cost_per_hour": 2.00,
+      "recommended_gpu": "A100",
+      "batch_size": 2,
+      "sequence_length": 1024,
+      "performance_tier": "expert"
+    },
+    "premium": {
+      "model_path": "microsoft/Phi-3-medium-14B-instruct",
+      "parameters": "14B",
+      "license": "MIT",
+      "quantization": {
+        "A_universal_full": "Q2_K",
+        "B_universal_lite": "Q4_K_M"
+      },
+      "cost_per_hour": 2.50,
+      "recommended_gpu": "A100",
+      "batch_size": 2,
+      "sequence_length": 1024,
+      "performance_tier": "premium"
+    }
+  },
+  "universal_model_architecture": {
+    "A_universal_full": {
+      "target_size_gb": 7.78,
+      "runtime_memory_gb": 1.9,
+      "quantization": "Q2_K",
+      "components": {
+        "base_models": {
+          "size_gb": 7.28,
+          "count": 6,
+          "quantization": "Q2_K"
+        },
+        "domain_adapters": {
+          "size_mb": 300,
+          "count": 64
+        },
+        "enhanced_tts": {
+          "size_mb": 100
+        },
+        "roberta_emotion": {
+          "size_mb": 80
+        },
+        "trinity_router": {
+          "size_mb": 20
+        }
+      }
+    },
+    "B_universal_lite": {
+      "target_size_mb": 815,
+      "runtime_memory_mb": 815,
+      "quantization": "Q4_K_M",
+      "components": {
+        "essential_base_ingredients": {
+          "size_mb": 315,
+          "tokenizer_vocab": 100,
+          "core_patterns": 115,
+          "language_fundamentals": 100
+        },
+        "domain_knowledge": {
+          "size_mb": 350,
+          "count": 64
+        },
+        "enhanced_tts": {
+          "size_mb": 100
+        },
+        "roberta_emotion": {
+          "size_mb": 80
+        },
+        "enhanced_router": {
+          "size_mb": 20
+        }
+      }
     }
   },
   "category_model_mappings": {
-    "healthcare": "quality",
-    "specialized": "quality",
-    "business": "balanced",
-    "education": "balanced",
-    "technology": "balanced",
-    "daily_life": "fast",
-    "creative": "lightning"
+    "healthcare": "premium",
+    "specialized": "premium",
+    "business": "expert",
+    "education": "expert",
+    "technology": "expert",
+    "daily_life": "quality",
+    "creative": "quality"
   },
   "trinity_architecture": {
     "version": "3.0",
@@ -83,94 +188,101 @@
     "quantization_levels": [
       {
         "type": "Q2_K",
-        "size_mb": 0.03,
-        "description": "Ultra-compressed (30KB)",
-        "use_cases": ["mobile", "edge", "ultra_fast"]
+        "compression_ratio": 0.93,
+        "quality_retention": 0.82,
+        "description": "Ultra-compressed for A_universal_full",
+        "use_cases": ["A_universal_full", "mobile", "edge"]
       },
       {
         "type": "Q4_K_M", 
-        "size_mb": 8.3,
-        "description": "Standard (8.3MB)",
-        "use_cases": ["production", "balanced", "default"]
+        "compression_ratio": 0.86,
+        "quality_retention": 0.92,
+        "description": "Standard for B_universal_lite and domains",
+        "use_cases": ["B_universal_lite", "production", "balanced", "default"]
       },
       {
         "type": "Q5_K_S",
-        "size_mb": 0.1,
-        "description": "High-quality compressed (100KB)",
+        "compression_ratio": 0.82,
+        "quality_retention": 0.94,
+        "description": "High-quality for research",
         "use_cases": ["quality", "server", "research"]
       }
     ],
     "default_quantization": "Q4_K_M",
     "compression_types": ["standard", "sparse", "hybrid", "distilled"],
     "target_sizes": {
-      "mobile": 0.03,
-      "edge": 0.1,
-      "standard": 8.3,
-      "server": 25.0,
-      "research": 100.0
+      "A_universal_full": 7.78,
+      "B_universal_lite": 0.815,
+      "domain_specific": 0.0083
     }
   },
   "model_tiers": {
     "tier_1": {
-      "models": ["microsoft/DialoGPT-small", "microsoft/DialoGPT-medium"],
+      "models": ["HuggingFaceTB/SmolLM2-1.7B"],
       "lora_r": 4,
-      "learning_rate": 0.0001,
+      "learning_rate": 0.0002,
       "max_steps": 500
     },
     "tier_2": {
-      "models": ["microsoft/DialoGPT-medium", "microsoft/Phi-3.5-mini-instruct"],
+      "models": ["microsoft/Phi-3.5-mini-instruct"],
       "lora_r": 6,
-      "learning_rate": 0.0003,
-      "max_steps": 1000
+      "learning_rate": 0.00015,
+      "max_steps": 650
     },
     "tier_3": {
-      "models": ["microsoft/Phi-3.5-mini-instruct", "microsoft/DialoGPT-large"],
+      "models": ["Qwen/Qwen2.5-7B-Instruct"],
       "lora_r": 8,
-      "learning_rate": 0.0005,
-      "max_steps": 1500
+      "learning_rate": 0.0001,
+      "max_steps": 846
+    },
+    "tier_4": {
+      "models": ["microsoft/Phi-3-medium-4k-instruct", "Qwen/Qwen2.5-14B-Instruct", "microsoft/Phi-3-medium-14B-instruct"],
+      "lora_r": 8,
+      "learning_rate": 0.00008,
+      "max_steps": 1000
     }
   },
   "domain_categories": {
     "healthcare": {
       "domains": ["general_health", "mental_health", "nutrition", "fitness", "sleep", "stress_management", "preventive_care", "chronic_conditions", "medication_management", "emergency_care", "women_health", "senior_health"],
-      "base_model": "microsoft/Phi-3.5-mini-instruct",
-      "tier": "tier_2",
+      "base_model": "microsoft/Phi-3-medium-14B-instruct",
+      "tier": "tier_4",
       "intelligence_patterns": ["symptom_analysis", "treatment_recommendations", "prevention_strategies"]
     },
     "daily_life": {
       "domains": ["parenting", "relationships", "personal_assistant", "communication", "home_management", "shopping", "planning", "transportation", "time_management", "decision_making", "conflict_resolution", "work_life_balance"],
-      "base_model": "microsoft/DialoGPT-medium",
-      "tier": "tier_1",
+      "base_model": "microsoft/Phi-3-medium-4k-instruct",
+      "tier": "tier_4",
       "intelligence_patterns": ["daily_planning", "relationship_advice", "problem_solving"]
     },
     "business": {
       "domains": ["entrepreneurship", "marketing", "sales", "customer_service", "project_management", "team_leadership", "financial_planning", "operations", "hr_management", "strategy", "consulting", "legal_business"],
-      "base_model": "microsoft/Phi-3.5-mini-instruct",
-      "tier": "tier_3",
+      "base_model": "Qwen/Qwen2.5-14B-Instruct",
+      "tier": "tier_4",
       "intelligence_patterns": ["strategic_analysis", "decision_support", "process_optimization"]
     },
     "education": {
       "domains": ["academic_tutoring", "skill_development", "career_guidance", "exam_preparation", "language_learning", "research_assistance", "study_techniques", "educational_technology"],
-      "base_model": "microsoft/DialoGPT-medium",
-      "tier": "tier_2",
+      "base_model": "Qwen/Qwen2.5-14B-Instruct",
+      "tier": "tier_4",
       "intelligence_patterns": ["learning_assessment", "knowledge_transfer", "skill_building"]
     },
     "creative": {
       "domains": ["writing", "storytelling", "content_creation", "social_media", "design_thinking", "photography", "music", "art_appreciation"],
-      "base_model": "microsoft/DialoGPT-medium",
-      "tier": "tier_1",
+      "base_model": "microsoft/Phi-3-medium-4k-instruct",
+      "tier": "tier_4",
       "intelligence_patterns": ["creative_inspiration", "content_generation", "artistic_guidance"]
     },
     "technology": {
       "domains": ["programming", "ai_ml", "cybersecurity", "data_analysis", "tech_support", "software_development"],
-      "base_model": "microsoft/Phi-3.5-mini-instruct",
-      "tier": "tier_3",
+      "base_model": "Qwen/Qwen2.5-14B-Instruct",
+      "tier": "tier_4",
       "intelligence_patterns": ["technical_analysis", "problem_solving", "code_optimization"]
     },
     "specialized": {
       "domains": ["legal", "financial", "scientific_research", "engineering"],
-      "base_model": "microsoft/Phi-3.5-mini-instruct",
-      "tier": "tier_3",
+      "base_model": "microsoft/Phi-3-medium-14B-instruct",
+      "tier": "tier_4",
       "intelligence_patterns": ["expert_analysis", "compliance_checking", "specialized_reasoning"]
     }
   }
