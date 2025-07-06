@@ -4,15 +4,15 @@
   "architecture": "trinity_enhanced",
   "domain": "general_health",
   "category": "healthcare",
-  "source_model": "data\\models\\trained\\general_health\\general_health_trained_model.pt",
+  "source_model": "data/models/trained/general_health/general_health_trained_model.pt",
   "quantization": "Q4_K_M",
   "size_mb": 8.3,
   "training_stats": {
     "samples": 5000,
-    "training_time": 29.505682706832886,
-    "final_loss": 0.000350117712514475,
-    "speed_improvement": 8916.512797409545,
-    "device_used": "cpu"
+    "training_time": 5.035645961761475,
+    "final_loss": 0.0001523628452559933,
+    "speed_improvement": 140961.4742933452,
+    "device_used": "cuda:0"
   },
   "intelligence_patterns": [
     "symptom_analysis",
@@ -26,6 +26,6 @@
     "intelligence_patterns_applied": 3
   },
   "trinity_architecture": "ENABLED",
-  "creation_timestamp": "2025-07-05 09:49:28",
-  "model_hash": "sha256_4627277198337043190"
+  "creation_timestamp": "2025-07-05 15:18:35",
+  "model_hash": "sha256_3286044013955763544"
 }

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeeTARA Lab - Trinity Model Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .milestone-banner {
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .milestone-banner h2 {
+            margin-bottom: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .input-group button:hover {
+            transform: translateY(-2px);
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .model-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .model-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .model-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .model-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .model-specs {
+            font-size: 0.9em;
+            color: #666;
+            text-align: right;
+        }
+
+        .response-area {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .loading {
+            color: #667eea;
+            font-style: italic;
+        }
+
+        .response-meta {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .full-model { border-left: 4px solid #e74c3c; }
+        .lite-model { border-left: 4px solid #2ecc71; }
+        .category-model { border-left: 4px solid #3498db; }
+
+        .performance-indicator {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .fast { background: #2ecc71; color: white; }
+        .balanced { background: #f39c12; color: white; }
+        .comprehensive { background: #e74c3c; color: white; }
+
+        @media (max-width: 768px) {
+            .models-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 MeeTARA Lab - Trinity Model Comparison</h1>
+        <p>Experience the power of Trinity Architecture: Full vs Lite vs Category models</p>
+    </div>
+
+    <div class="milestone-banner">
+        <h2>🎉 July 5th Milestone Achievement</h2>
+        <p>100% Success Rate • 64 Domains • 99.94% Quality Score • 320,000 Training Samples</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>⚡ 20-100x</h3>
+            <p>Faster Training</p>
+        </div>
+        <div class="stat-card">
+            <h3>🎯 99.94%</h3>
+            <p>Quality Score</p>
+        </div>
+        <div class="stat-card">
+            <h3>📊 64/64</h3>
+            <p>Domains Success</p>
+        </div>
+        <div class="stat-card">
+            <h3>🏭 320K</h3>
+            <p>Training Samples</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="Enter your question or request..." 
+                       value="What are the symptoms of anxiety and how can I manage them?">
+                <button onclick="processQuery()">🚀 Compare Models</button>
+            </div>
+        </div>
+
+        <div class="models-grid">
+            <!-- Full Model Card -->
+            <div class="model-card full-model">
+                <div class="model-header">
+                    <div class="model-title">
+                        🏢 Full Model
+                        <span class="performance-indicator comprehensive">Comprehensive</span>
+                    </div>
+                    <div class="model-specs">
+                        185-285MB<br>
+                        0.208s avg
+                    </div>
+                </div>
+                <div class="response-area" id="fullResponse">
+                    Click "Compare Models" to see Full model response...
+                </div>
+                <div class="response-meta" id="fullMeta"></div>
+            </div>
+
+            <!-- Lite Model Card -->
+            <div class="model-card lite-model">
+                <div class="model-header">
+                    <div class="model-title">
+                        ⚡ Lite Model
+                        <span class="performance-indicator fast">Fast</span>
+                    </div>
+                    <div class="model-specs">
+                        3.5-8.5MB<br>
+                        0.057s avg
+                    </div>
+                </div>
+                <div class="response-area" id="liteResponse">
+                    Click "Compare Models" to see Lite model response...
+                </div>
+                <div class="response-meta" id="liteMeta"></div>
+            </div>
+
+            <!-- Category Model Card -->
+            <div class="model-card category-model">
+                <div class="model-header">
+                    <div class="model-title">
+                        🎯 Category Model
+                        <span class="performance-indicator balanced">Balanced</span>
+                    </div>
+                    <div class="model-specs">
+                        82-146MB<br>
+                        0.109s avg
+                    </div>
+                </div>
+                <div class="response-area" id="categoryResponse">
+                    Click "Compare Models" to see Category model response...
+                </div>
+                <div class="response-meta" id="categoryMeta"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample responses based on the testing data
+        const sampleResponses = {
+            full: {
+                "anxiety": {
+                    response: `🧠 COMPREHENSIVE ANXIETY ANALYSIS & MANAGEMENT GUIDE
+
+SYMPTOMS IDENTIFICATION:
+• Physical: Rapid heartbeat, sweating, trembling, shortness of breath, chest tightness
+• Emotional: Excessive worry, fear, restlessness, irritability, feeling overwhelmed
+• Cognitive: Racing thoughts, difficulty concentrating, catastrophic thinking
+• Behavioral: Avoidance, restlessness, sleep disturbances, appetite changes
+
+EVIDENCE-BASED MANAGEMENT STRATEGIES:
+
+1. IMMEDIATE TECHNIQUES (0-5 minutes):
+   • 4-7-8 Breathing: Inhale 4, hold 7, exhale 8
+   • Progressive muscle relaxation
+   • Grounding: 5-4-3-2-1 sensory technique
+
+2. SHORT-TERM STRATEGIES (Daily):
+   • Regular exercise (30 min/day reduces anxiety by 40%)
+   • Mindfulness meditation (10-20 min/day)
+   • Limit caffeine and alcohol
+   • Maintain consistent sleep schedule
+
+3. LONG-TERM APPROACHES:
+   • Cognitive Behavioral Therapy (CBT) - 60-80% effective
+   • Exposure therapy for specific phobias
+   • Lifestyle modifications: diet, exercise, social support
+
+WHEN TO SEEK PROFESSIONAL HELP:
+• Symptoms persist >6 months
+• Interfering with daily functioning
+• Panic attacks or severe physical symptoms
+• Thoughts of self-harm
+
+🎭 Voice Category: Therapeutic
+🎯 Emotion Detected: Concerned
+🔊 TTS Profile: Calm, professional, empathetic`,
+                    responseTime: "0.208s",
+                    domain: "Healthcare - Mental Health",
+                    voiceCategory: "Therapeutic",
+                    emotion: "Concerned"
+                }
+            },
+            lite: {
+                "anxiety": {
+                    response: `⚡ QUICK ANXIETY HELP
+
+COMMON SYMPTOMS:
+• Fast heartbeat, sweating
+• Worry, fear, restlessness
+• Racing thoughts
+• Sleep problems
+
+IMMEDIATE HELP:
+• Deep breathing (4-7-8 method)
+• Ground yourself: name 5 things you see
+• Progressive muscle relaxation
+
+DAILY MANAGEMENT:
+• Exercise 30 min/day
+• Limit caffeine
+• Regular sleep schedule
+• Mindfulness apps
+
+SEEK HELP IF:
+• Symptoms last >6 months
+• Affects daily life
+• Panic attacks occur
+
+🎭 Voice: Therapeutic
+🎯 Emotion: Concerned`,
+                    responseTime: "0.057s",
+                    domain: "Healthcare - Mental Health",
+                    voiceCategory: "Therapeutic",
+                    emotion: "Concerned"
+                }
+            },
+            category: {
+                "anxiety": {
+                    response: `🏥 HEALTHCARE SPECIALIST - ANXIETY MANAGEMENT
+
+SYMPTOM ASSESSMENT:
+• Physical: Rapid pulse, sweating, trembling, breathing difficulties
+• Psychological: Excessive worry, fear, restlessness, concentration issues
+• Behavioral: Avoidance patterns, sleep disruption, appetite changes
+
+EVIDENCE-BASED INTERVENTIONS:
+
+IMMEDIATE RELIEF (0-10 minutes):
+• Box breathing technique (4-4-4-4 pattern)
+• Progressive muscle relaxation starting with feet
+• 5-4-3-2-1 grounding exercise
+
+STRUCTURED DAILY MANAGEMENT:
+• Morning routine with 10-minute mindfulness
+• Regular aerobic exercise (proven 40% anxiety reduction)
+• Caffeine limitation (<200mg daily)
+• Consistent sleep hygiene (7-9 hours)
+
+THERAPEUTIC APPROACHES:
+• CBT techniques for thought challenging
+• Exposure therapy for specific triggers
+• Mindfulness-based stress reduction (MBSR)
+
+PROFESSIONAL CONSULTATION INDICATORS:
+• GAD-7 score >10 (moderate-severe anxiety)
+• Functional impairment in work/relationships
+• Comorbid depression symptoms
+• Substance use as coping mechanism
+
+🎭 Voice Category: Therapeutic (Healthcare Specialist)
+🎯 Emotion Analysis: Concerned/Supportive
+🔊 TTS Configuration: Professional, empathetic, moderate pace`,
+                    responseTime: "0.109s",
+                    domain: "Healthcare - Mental Health Specialist",
+                    voiceCategory: "Therapeutic",
+                    emotion: "Concerned/Supportive"
+                }
+            }
+        };
+
+        function processQuery() {
+            const query = document.getElementById('userInput').value.toLowerCase();
+            const startTime = Date.now();
+            
+            // Show loading states
+            document.getElementById('fullResponse').innerHTML = '<div class="loading">🏢 Full Model processing...</div>';
+            document.getElementById('liteResponse').innerHTML = '<div class="loading">⚡ Lite Model processing...</div>';
+            document.getElementById('categoryResponse').innerHTML = '<div class="loading">🎯 Category Model processing...</div>';
+            
+            // Simulate different response times
+            setTimeout(() => {
+                displayResponse('lite', query);
+            }, 57);
+            
+            setTimeout(() => {
+                displayResponse('category', query);
+            }, 109);
+            
+            setTimeout(() => {
+                displayResponse('full', query);
+            }, 208);
+        }
+
+        function displayResponse(modelType, query) {
+            let responseData;
+            
+            // Determine response based on query content
+            if (query.includes('anxiety') || query.includes('stress') || query.includes('worry')) {
+                responseData = sampleResponses[modelType]['anxiety'];
+            } else {
+                // Default response for other queries
+                responseData = {
+                    response: `${getModelEmoji(modelType)} ${getModelName(modelType)} Response\n\nProcessing your query: "${query}"\n\nThis is a simulated response showing how the ${getModelName(modelType)} would handle your request with appropriate domain expertise and voice characteristics.\n\n🎭 Voice Category: ${getDefaultVoice(query)}\n🎯 Emotion: ${getDefaultEmotion(query)}`,
+                    responseTime: getDefaultResponseTime(modelType),
+                    domain: getDomainFromQuery(query),
+                    voiceCategory: getDefaultVoice(query),
+                    emotion: getDefaultEmotion(query)
+                };
+            }
+            
+            // Display response
+            document.getElementById(`${modelType}Response`).innerHTML = responseData.response;
+            document.getElementById(`${modelType}Meta`).innerHTML = 
+                `⏱️ Response Time: ${responseData.responseTime} | 🎯 Domain: ${responseData.domain} | 🎭 Voice: ${responseData.voiceCategory} | 😊 Emotion: ${responseData.emotion}`;
+        }
+
+        function getModelEmoji(modelType) {
+            const emojis = { full: '🏢', lite: '⚡', category: '🎯' };
+            return emojis[modelType];
+        }
+
+        function getModelName(modelType) {
+            const names = { full: 'Full Model', lite: 'Lite Model', category: 'Category Model' };
+            return names[modelType];
+        }
+
+        function getDefaultResponseTime(modelType) {
+            const times = { full: '0.208s', lite: '0.057s', category: '0.109s' };
+            return times[modelType];
+        }
+
+        function getDomainFromQuery(query) {
+            if (query.includes('health') || query.includes('medical') || query.includes('anxiety')) return 'Healthcare';
+            if (query.includes('business') || query.includes('work') || query.includes('management')) return 'Business';
+            if (query.includes('learn') || query.includes('study') || query.includes('education')) return 'Education';
+            if (query.includes('code') || query.includes('programming') || query.includes('tech')) return 'Technology';
+            if (query.includes('art') || query.includes('creative') || query.includes('design')) return 'Creative';
+            return 'General';
+        }
+
+        function getDefaultVoice(query) {
+            if (query.includes('health') || query.includes('anxiety') || query.includes('medical')) return 'Therapeutic';
+            if (query.includes('business') || query.includes('work')) return 'Professional';
+            if (query.includes('learn') || query.includes('study')) return 'Educational';
+            if (query.includes('art') || query.includes('creative')) return 'Creative';
+            if (query.includes('relax') || query.includes('meditation')) return 'Meditative';
+            return 'Casual';
+        }
+
+        function getDefaultEmotion(query) {
+            if (query.includes('anxiety') || query.includes('stress') || query.includes('worry')) return 'Concerned';
+            if (query.includes('emergency') || query.includes('urgent')) return 'Urgent';
+            if (query.includes('creative') || query.includes('art')) return 'Enthusiastic';
+            if (query.includes('business') || query.includes('analysis')) return 'Analytical';
+            return 'Supportive';
+        }
+
+        // Auto-process the default query on page load
+        window.addEventListener('load', function() {
+            setTimeout(processQuery, 1000);
+        });
+    </script>
+</body>
+</html> 
