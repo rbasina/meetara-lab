@@ -533,33 +533,63 @@ class TrinityKnowledgeTransfer:
     async def _identify_target_domains(self, source_domain: str, intelligence: Dict[str, Any]) -> List[str]:
         """Identify target domains for knowledge transfer"""
         
-        # Use intelligence to identify related domains
-        predictions = intelligence.get("predictions", {})
         related_domains = []
         
-        # Check for domain relationships in predictions
-        if predictions.get("next_likely_questions"):
-            for question in predictions["next_likely_questions"]:
-                # Simple domain extraction (in production, use more sophisticated NLP)
-                if "health" in question.lower():
-                    related_domains.append("health")
-                elif "business" in question.lower():
-                    related_domains.append("business")
-                elif "education" in question.lower():
-                    related_domains.append("education")
-        
-        # Default related domains based on source
-        domain_relationships = {
-            "health": ["wellness", "psychology", "nutrition"],
-            "business": ["finance", "management", "marketing"],
-            "education": ["training", "development", "research"],
-            "technology": ["programming", "ai", "data_science"]
-        }
+        # Load domain relationships from config
+        domain_relationships = self._load_domain_relationships_from_config()
         
         if source_domain in domain_relationships:
             related_domains.extend(domain_relationships[source_domain])
         
         return list(set(related_domains))[:5]  # Limit to 5 related domains
+    
+    def _load_domain_relationships_from_config(self) -> Dict[str, List[str]]:
+        """Load domain relationships from config file"""
+        try:
+            config_path = Path("config/trinity-config.json")
+            if not config_path.exists():
+                logger.warning("⚠️ Config file not found, using fallback domain relationships")
+                return self._get_fallback_domain_relationships()
+            
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            # For now, derive relationships from domain keywords
+            domain_keywords = config.get("domain_keywords", {})
+            
+            if not domain_keywords:
+                logger.warning("⚠️ domain_keywords not found in config, using fallback")
+                return self._get_fallback_domain_relationships()
+            
+            # Create relationships based on keyword overlap
+            domain_relationships = {}
+            for category, keywords in domain_keywords.items():
+                # Find related categories based on keyword similarity
+                related_categories = []
+                for other_category, other_keywords in domain_keywords.items():
+                    if other_category != category:
+                        # Check for keyword overlap
+                        overlap = set(keywords).intersection(set(other_keywords))
+                        if len(overlap) > 0:
+                            related_categories.append(other_category)
+                
+                domain_relationships[category] = related_categories[:3]  # Limit to 3 related
+            
+            logger.info(f"✅ Loaded domain relationships from config: {len(domain_relationships)} categories")
+            return domain_relationships
+            
+        except Exception as e:
+            logger.error(f"❌ Error loading domain relationships from config: {e}")
+            return self._get_fallback_domain_relationships()
+    
+    def _get_fallback_domain_relationships(self) -> Dict[str, List[str]]:
+        """Get fallback domain relationships if config loading fails"""
+        return {
+            "health": ["wellness", "psychology", "nutrition"],
+            "business": ["finance", "management", "marketing"],
+            "education": ["training", "development", "research"],
+            "technology": ["programming", "ai", "data_science"]
+        }
     
     async def _extract_transferable_knowledge(self, source_domain: str, target_domains: List[str]) -> List[Dict[str, Any]]:
         """Extract knowledge that can be transferred between domains"""

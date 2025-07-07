@@ -1,0 +1,243 @@
+{
+  "translation_config": {
+    "name": "MeeTARA Lab Translation Factory",
+    "version": "1.0.0",
+    "description": "Hybrid online/offline translation with expandable language support + quantization",
+    "created_at": "2025-01-07T00:00:00Z"
+  },
+  
+  "online_service": {
+    "provider": "azure",
+    "azure_config": {
+      "endpoint": "https://api.cognitive.microsofttranslator.com",
+      "region": "global",
+      "free_tier_limit": 2000000,
+      "api_version": "3.0"
+    },
+    "google_config": {
+      "service": "googletrans",
+      "free_tier_limit": 500000,
+      "fallback": true
+    }
+  },
+  
+  "supported_languages": {
+    "hi": {
+      "name": "Hindi",
+      "native_name": "हिन्दी",
+      "offline_supported": true,
+      "model_name": "Helsinki-NLP/opus-mt-hi-en",
+      "reverse_model": "Helsinki-NLP/opus-mt-en-hi",
+      "model_size_mb": 290,
+      "quality_score": 0.85,
+      "priority": 1,
+      "voice_support": true,
+      "cultural_adaptation": true
+    },
+    "te": {
+      "name": "Telugu",
+      "native_name": "తెలుగు",
+      "offline_supported": true,
+      "model_name": "Helsinki-NLP/opus-mt-te-en",
+      "reverse_model": "Helsinki-NLP/opus-mt-en-te",
+      "model_size_mb": 290,
+      "quality_score": 0.83,
+      "priority": 2,
+      "voice_support": true,
+      "cultural_adaptation": true
+    },
+    "ta": {
+      "name": "Tamil",
+      "native_name": "தமிழ்",
+      "offline_supported": true,
+      "model_name": "Helsinki-NLP/opus-mt-ta-en",
+      "reverse_model": "Helsinki-NLP/opus-mt-en-ta",
+      "model_size_mb": 290,
+      "quality_score": 0.82,
+      "priority": 3,
+      "voice_support": true,
+      "cultural_adaptation": true,
+      "enabled": false
+    },
+    "kn": {
+      "name": "Kannada",
+      "native_name": "ಕನ್ನಡ",
+      "offline_supported": true,
+      "model_name": "Helsinki-NLP/opus-mt-kn-en",
+      "reverse_model": "Helsinki-NLP/opus-mt-en-kn",
+      "model_size_mb": 290,
+      "quality_score": 0.80,
+      "priority": 4,
+      "voice_support": true,
+      "cultural_adaptation": true,
+      "enabled": false
+    },
+    "en": {
+      "name": "English",
+      "native_name": "English",
+      "offline_supported": true,
+      "model_name": null,
+      "model_size_mb": 0,
+      "quality_score": 1.0,
+      "priority": 0,
+      "voice_support": true,
+      "cultural_adaptation": false
+    }
+  },
+  
+  "quantization_strategies": {
+    "Q4_K_M": {
+      "name": "Balanced Quality/Size",
+      "description": "Recommended for most use cases",
+      "size_reduction": 0.75,
+      "quality_retention": 0.95,
+      "speed_improvement": 3.5,
+      "memory_usage": "Low",
+      "recommended": true
+    },
+    "Q2_K": {
+      "name": "Maximum Compression",
+      "description": "Smallest size, good for mobile",
+      "size_reduction": 0.85,
+      "quality_retention": 0.90,
+      "speed_improvement": 5.0,
+      "memory_usage": "Very Low",
+      "recommended": false
+    },
+    "Q8_0": {
+      "name": "High Quality",
+      "description": "Best quality, larger size",
+      "size_reduction": 0.50,
+      "quality_retention": 0.99,
+      "speed_improvement": 2.0,
+      "memory_usage": "Medium",
+      "recommended": false
+    }
+  },
+  
+  "translation_pipeline": {
+    "flow": "Any Language → English → GGUF Processing → Regional Language → User",
+    "bridge_language": "en",
+    "default_strategy": "hybrid",
+    "fallback_strategy": "offline",
+    "timeout_seconds": 30,
+    "max_text_length": 5000,
+    "batch_size": 32
+  },
+  
+  "hybrid_settings": {
+    "online_preferred": true,
+    "online_timeout_ms": 5000,
+    "offline_fallback": true,
+    "cache_translations": true,
+    "cache_duration_hours": 24,
+    "quality_threshold": 0.8
+  },
+  
+  "model_paths": {
+    "base_models_dir": "models/translation_models",
+    "quantized_models_dir": "models/translation_models/quantized",
+    "cache_dir": "models/translation_models/cache",
+    "bundles_dir": "models/translation_models/bundles",
+    "speech_models_pattern": "models/{variant}/speech_models/translation/"
+  },
+  
+  "language_management": {
+    "auto_download": true,
+    "auto_quantize": true,
+    "update_speech_models": true,
+    "backup_before_update": true,
+    "validate_after_update": true
+  },
+  
+  "performance_targets": {
+    "translation_time_ms": {
+      "online": 2000,
+      "offline": 1000,
+      "quantized": 500
+    },
+    "quality_scores": {
+      "online": 0.95,
+      "offline": 0.85,
+      "quantized": 0.80
+    },
+    "memory_usage_mb": {
+      "online": 50,
+      "offline": 300,
+      "quantized": 150
+    }
+  },
+  
+  "trinity_integration": {
+    "arc_reactor": {
+      "efficiency_target": 0.90,
+      "seamless_switching": true,
+      "auto_optimization": true
+    },
+    "perplexity_intelligence": {
+      "context_aware_routing": true,
+      "quality_assessment": true,
+      "language_detection": true
+    },
+    "einstein_fusion": {
+      "capability_amplification": 5.04,
+      "hybrid_optimization": true,
+      "multi_strategy_fusion": true
+    }
+  },
+  
+  "speech_integration": {
+    "voice_input_languages": ["hi", "te", "en"],
+    "voice_output_languages": ["hi", "te", "en"],
+    "asr_integration": true,
+    "tts_integration": true,
+    "emotion_preservation": true,
+    "cultural_voice_mapping": {
+      "hi": {"tone": "warm", "pace": "natural", "accent": "neutral"},
+      "te": {"tone": "melodic", "pace": "rhythmic", "accent": "regional"},
+      "ta": {"tone": "classical", "pace": "measured", "accent": "traditional"},
+      "kn": {"tone": "gentle", "pace": "flowing", "accent": "regional"},
+      "en": {"tone": "clear", "pace": "professional", "accent": "international"}
+    }
+  },
+  
+  "production_settings": {
+    "max_concurrent_translations": 10,
+    "rate_limiting": {
+      "requests_per_minute": 100,
+      "burst_limit": 20
+    },
+    "monitoring": {
+      "track_performance": true,
+      "log_translations": false,
+      "quality_metrics": true
+    },
+    "security": {
+      "input_validation": true,
+      "output_sanitization": true,
+      "privacy_mode": true
+    }
+  },
+  
+  "language_bundles": {
+    "current_bundle": {
+      "name": "Hindi-Telugu Translation Bundle",
+      "languages": ["hi", "te"],
+      "quantization": "Q4_K_M",
+      "estimated_size_mb": 146,
+      "quality_retention": 0.95,
+      "offline_capable": true,
+      "internet_required": false
+    },
+    "future_bundles": {
+      "indian_languages_full": {
+        "name": "Complete Indian Languages Bundle",
+        "languages": ["hi", "te", "ta", "kn"],
+        "quantization": "Q4_K_M",
+        "estimated_size_mb": 292,
+        "quality_retention": 0.95,
+        "offline_capable": true
+      }
+    }
+  }
+} 

@@ -1,0 +1,69 @@
+{
+  "meetara_gguf_factory": {
+    "version": "3.0",
+    "created": "2025-01-07",
+    "purpose": "Optimized GGUF models for TARA to serve humans"
+  },
+  "model_variants": {
+    "success": true,
+    "variants": {
+      "A_universal_full": {
+        "file": "G:\\My Drive\\meetara-lab\\models\\A_universal_full\\meetara_a_universal_full.gguf",
+        "size_mb": 3500.0,
+        "source": "base_models",
+        "base_model_used": "G:\\My Drive\\meetara-lab\\models\\base_models\\Qwen_Qwen2.5-14B-Instruct_Q2_K.gguf"
+      },
+      "B_universal_lite": {
+        "file": "G:\\My Drive\\meetara-lab\\models\\B_universal_lite\\meetara_b_universal_lite.gguf",
+        "size_mb": 800.0,
+        "source": "base_model_plus_domains",
+        "optimization": "lightweight_universal",
+        "base_model_used": "G:\\My Drive\\meetara-lab\\models\\base_models\\microsoft_Phi-3.5-mini-instruct_Q2_K.gguf",
+        "domains_included": 62,
+        "domain_categories": 7
+      },
+      "C_category_specific": {
+        "file": "G:\\My Drive\\meetara-lab\\models\\C_category_specific\\meetara_c_category_specific.gguf",
+        "size_mb": 8.3,
+        "source": "domain_models",
+        "category": "healthcare",
+        "source_model": "G:\\My Drive\\meetara-lab\\models\\D_domain_specific\\healthcare\\meetara_sleep_Q4_K_M.gguf"
+      }
+    },
+    "source_models": 62,
+    "total_variants": 3
+  },
+  "speech_models": {
+    "success": true,
+    "location": "G:\\My Drive\\meetara-lab\\models\\speech_models",
+    "components": [
+      "emotion_detection",
+      "voice_synthesis",
+      "smart_routing",
+      "translation"
+    ],
+    "total_size_mb": 740
+  },
+  "translation": {
+    "success": true,
+    "location": "G:\\My Drive\\meetara-lab\\models\\speech_models\\translation",
+    "languages": [
+      "hi",
+      "te",
+      "en"
+    ],
+    "total_size_mb": 155
+  },
+  "garbage_collection": {
+    "objects_collected": 231,
+    "objects_before": 11010,
+    "objects_after": 10697,
+    "temp_files_cleaned": 0
+  },
+  "summary": {
+    "total_models": 3,
+    "speech_components": 4,
+    "translation_languages": 3,
+    "optimization": "Enhanced for human service"
+  }
+}

@@ -149,8 +149,43 @@ class KnowledgeTransferAgent(BaseAgent):
         
     def _initialize_domain_keywords(self):
         """Initialize domain-specific keywords for pattern recognition"""
-        # Define keywords per category
-        category_keywords = {
+        
+        # Load keywords from config
+        domain_keywords = self._load_domain_keywords_from_config()
+        
+        # Map keywords to all domains in each category
+        for category, domains in self.domain_mapping.items():
+            keywords = domain_keywords.get(category, [category])
+            for domain in domains:
+                self.domain_keywords[domain] = keywords + [domain.replace('_', ' ')]
+    
+    def _load_domain_keywords_from_config(self) -> Dict[str, List[str]]:
+        """Load domain keywords from config file"""
+        try:
+            config_path = Path("config/trinity-config.json")
+            if not config_path.exists():
+                logger.warning("⚠️ Config file not found, using fallback keywords")
+                return self._get_fallback_domain_keywords()
+            
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            domain_keywords = config.get("domain_keywords", {})
+            
+            if not domain_keywords:
+                logger.warning("⚠️ domain_keywords not found in config, using fallback")
+                return self._get_fallback_domain_keywords()
+            
+            logger.info(f"✅ Loaded domain keywords from config: {len(domain_keywords)} categories")
+            return domain_keywords
+            
+        except Exception as e:
+            logger.error(f"❌ Error loading domain keywords from config: {e}")
+            return self._get_fallback_domain_keywords()
+    
+    def _get_fallback_domain_keywords(self) -> Dict[str, List[str]]:
+        """Get fallback domain keywords if config loading fails"""
+        return {
             "healthcare": ["health", "medical", "treatment", "diagnosis", "symptom", "patient", "therapy", "clinical"],
             "business": ["business", "strategy", "management", "growth", "profit", "market", "revenue", "client"],
             "education": ["learn", "study", "education", "knowledge", "skill", "teaching", "student", "course"],
@@ -159,13 +194,52 @@ class KnowledgeTransferAgent(BaseAgent):
             "daily_life": ["daily", "personal", "family", "home", "relationship", "lifestyle", "routine", "social"],
             "specialized": ["legal", "financial", "scientific", "research", "analysis", "professional", "expert", "regulation"]
         }
+    
+    def _get_domain_category(self, domain: str) -> str:
+        """Get category for a domain using config-based mapping"""
+        domain_mapping = self._load_domain_mapping_from_config()
         
-        # Map keywords to all domains in each category
-        for category, domains in self.domain_mapping.items():
-            keywords = category_keywords.get(category, [category])
-            for domain in domains:
-                self.domain_keywords[domain] = keywords + [domain.replace('_', ' ')]
-                
+        for category, domains in domain_mapping.items():
+            if domain in domains:
+                return category
+        return "general"
+    
+    def _load_domain_mapping_from_config(self) -> Dict[str, List[str]]:
+        """Load domain mapping from config file"""
+        try:
+            config_path = Path("config/trinity-config.json")
+            if not config_path.exists():
+                logger.warning("⚠️ Config file not found, using fallback domain mapping")
+                return self._get_fallback_domain_mapping()
+            
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            domain_mapping = config.get("domain_mapping", {})
+            
+            if not domain_mapping:
+                logger.warning("⚠️ domain_mapping not found in config, using fallback")
+                return self._get_fallback_domain_mapping()
+            
+            logger.info(f"✅ Loaded domain mapping from config: {len(domain_mapping)} categories")
+            return domain_mapping
+            
+        except Exception as e:
+            logger.error(f"❌ Error loading domain mapping from config: {e}")
+            return self._get_fallback_domain_mapping()
+    
+    def _get_fallback_domain_mapping(self) -> Dict[str, List[str]]:
+        """Get fallback domain mapping if config loading fails"""
+        return {
+            "healthcare": ["general_health", "mental_health", "nutrition", "fitness", "sleep", "stress_management", "preventive_care", "chronic_conditions", "medication_management", "emergency_care", "women_health", "senior_health"],
+            "daily_life": ["parenting", "relationships", "personal_assistant", "communication", "home_management", "shopping", "planning", "transportation", "time_management", "decision_making", "conflict_resolution", "work_life_balance"],
+            "business": ["entrepreneurship", "marketing", "sales", "customer_service", "project_management", "team_leadership", "financial_planning", "operations", "hr_management", "strategy", "consulting", "legal_business"],
+            "education": ["academic_tutoring", "skill_development", "career_guidance", "exam_preparation", "language_learning", "research_assistance", "study_techniques", "educational_technology"],
+            "creative": ["writing", "storytelling", "content_creation", "social_media", "design_thinking", "photography", "music", "art_appreciation"],
+            "technology": ["programming", "ai_ml", "cybersecurity", "data_analysis", "tech_support", "software_development"],
+            "specialized": ["legal", "financial", "scientific_research", "engineering"]
+        }
+    
     def _initialize_domain_compatibility(self):
         """Initialize domain compatibility matrix for knowledge transfer"""
         # Category-based compatibility scores
@@ -510,85 +584,17 @@ class KnowledgeTransferAgent(BaseAgent):
         if hasattr(self, 'domain_keywords') and domain.lower() in self.domain_keywords:
             relevant_keywords = self.domain_keywords[domain.lower()]
         else:
-            # Fallback domain-specific analysis (expanded for all 62 domains)
-            domain_keywords = {
-                # Healthcare domains
-                "general_health": ["health", "medical", "wellness", "symptoms", "diagnosis", "treatment"],
-                "mental_health": ["mental", "psychological", "emotional", "therapy", "counseling", "mood"],
-                "nutrition": ["nutrition", "diet", "food", "vitamins", "minerals", "eating", "healthy"],
-                "fitness": ["fitness", "exercise", "workout", "training", "physical", "strength"],
-                "sleep": ["sleep", "rest", "insomnia", "dreams", "bedtime", "circadian"],
-                "stress_management": ["stress", "anxiety", "relaxation", "coping", "mindfulness", "calm"],
-                "preventive_care": ["prevention", "screening", "checkup", "vaccination", "immunization"],
-                "chronic_conditions": ["chronic", "diabetes", "hypertension", "arthritis", "management"],
-                "medication_management": ["medication", "drugs", "prescription", "dosage", "side effects"],
-                "emergency_care": ["emergency", "urgent", "trauma", "first aid", "critical"],
-                "women_health": ["women", "pregnancy", "reproductive", "gynecology", "maternal"],
-                "senior_health": ["senior", "elderly", "aging", "geriatric", "older adults"],
-                
-                # Daily Life domains
-                "parenting": ["parenting", "children", "kids", "family", "discipline", "development"],
-                "relationships": ["relationship", "marriage", "dating", "communication", "love"],
-                "personal_assistant": ["schedule", "organize", "planning", "reminders", "tasks"],
-                "communication": ["communication", "conversation", "speaking", "listening", "social"],
-                "home_management": ["home", "household", "cleaning", "maintenance", "organization"],
-                "shopping": ["shopping", "buying", "purchases", "deals", "products", "budget"],
-                "planning": ["planning", "goals", "objectives", "strategy", "timeline", "schedule"],
-                "transportation": ["transportation", "travel", "commute", "driving", "public transport"],
-                "time_management": ["time", "productivity", "efficiency", "scheduling", "priorities"],
-                "decision_making": ["decision", "choice", "options", "analysis", "judgment"],
-                "conflict_resolution": ["conflict", "dispute", "resolution", "mediation", "negotiation"],
-                "work_life_balance": ["work", "life", "balance", "career", "personal", "harmony"],
-                
-                # Business domains
-                "entrepreneurship": ["entrepreneur", "startup", "business", "innovation", "venture"],
-                "marketing": ["marketing", "advertising", "promotion", "brand", "customers"],
-                "sales": ["sales", "selling", "revenue", "customers", "deals", "negotiation"],
-                "customer_service": ["customer", "service", "support", "satisfaction", "complaints"],
-                "project_management": ["project", "management", "timeline", "resources", "deliverables"],
-                "team_leadership": ["leadership", "team", "management", "motivation", "delegation"],
-                "financial_planning": ["financial", "money", "investment", "budget", "planning"],
-                "operations": ["operations", "processes", "efficiency", "workflow", "systems"],
-                "hr_management": ["human resources", "hiring", "employees", "performance", "training"],
-                "strategy": ["strategy", "planning", "competitive", "analysis", "growth"],
-                "consulting": ["consulting", "advice", "expertise", "recommendations", "solutions"],
-                "legal_business": ["legal", "compliance", "contracts", "regulations", "business law"],
-                
-                # Education domains
-                "academic_tutoring": ["tutoring", "academic", "subjects", "learning", "teaching"],
-                "skill_development": ["skills", "development", "training", "competency", "improvement"],
-                "career_guidance": ["career", "job", "profession", "guidance", "counseling"],
-                "exam_preparation": ["exam", "test", "preparation", "study", "assessment"],
-                "language_learning": ["language", "learning", "vocabulary", "grammar", "fluency"],
-                "research_assistance": ["research", "analysis", "sources", "methodology", "data"],
-                "study_techniques": ["study", "learning", "memory", "techniques", "methods"],
-                "educational_technology": ["education", "technology", "digital", "online", "tools"],
-                
-                # Creative domains
-                "writing": ["writing", "content", "creative", "storytelling", "narrative"],
-                "storytelling": ["story", "narrative", "plot", "characters", "creative"],
-                "content_creation": ["content", "creation", "digital", "media", "publishing"],
-                "social_media": ["social", "media", "platforms", "engagement", "content"],
-                "design_thinking": ["design", "thinking", "innovation", "creativity", "problem solving"],
-                "photography": ["photography", "visual", "images", "composition", "lighting"],
-                "music": ["music", "sound", "composition", "rhythm", "melody", "harmony"],
-                "art_appreciation": ["art", "appreciation", "aesthetics", "culture", "creativity"],
-                
-                # Technology domains
-                "programming": ["programming", "code", "software", "development", "algorithms"],
-                "ai_ml": ["artificial intelligence", "machine learning", "AI", "ML", "algorithms"],
-                "cybersecurity": ["security", "cyber", "protection", "threats", "privacy"],
-                "data_analysis": ["data", "analysis", "statistics", "insights", "visualization"],
-                "tech_support": ["technical", "support", "troubleshooting", "help", "assistance"],
-                "software_development": ["software", "development", "programming", "applications"],
-                
-                # Specialized domains
-                "legal": ["legal", "law", "attorney", "court", "regulations", "compliance"],
-                "financial": ["financial", "money", "investment", "banking", "economics"],
-                "scientific_research": ["science", "research", "methodology", "experiments", "data"],
-                "engineering": ["engineering", "technical", "design", "systems", "solutions"]
-            }
-            relevant_keywords = domain_keywords.get(domain.lower(), [domain.lower().replace('_', ' ')])
+            # Load domain keywords from config
+            domain_keywords = self._load_domain_keywords_from_config()
+            
+            # Get domain category first
+            domain_category = self._get_domain_category(domain)
+            
+            # Get keywords for the domain category
+            if domain_category in domain_keywords:
+                relevant_keywords = domain_keywords[domain_category]
+            else:
+                relevant_keywords = [domain.lower().replace('_', ' ')]
         
         domain_relevance = sum(1 for keyword in relevant_keywords if keyword in assistant_msg.lower())
         

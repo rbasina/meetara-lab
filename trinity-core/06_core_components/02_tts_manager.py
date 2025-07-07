@@ -22,49 +22,86 @@ class EnhancedTTSManager(BaseAgent):
     def __init__(self, mcp=None):
         super().__init__(AgentType.TTS_MANAGER, mcp)
         
-        # Voice categories from proven TARA configuration
+        # Enhanced voice categories aligned with 7 domain categories
         self.voice_categories = {
-            "meditative": {
-                "description": "Calm, soothing, mindfulness-focused",
+            "healthcare": {
+                "description": "Medical professional, reassuring, precise",
                 "edge_voices": ["en-US-JennyNeural", "en-GB-LibbyNeural"],
-                "pyttsx3_rate": 150,
-                "emotional_tone": "peaceful",
-                "domains": ["stress_management", "sleep", "mental_health"]
+                "pyttsx3_rate": 155,
+                "emotional_tone": "reassuring",
+                "authority_level": 0.90,
+                "empathy_level": 0.95,
+                "precision_level": 0.98,
+                "domains": ["general_health", "mental_health", "nutrition", "fitness", 
+                           "sleep", "stress_management", "preventive_care", "chronic_conditions",
+                           "medication_management", "emergency_care", "women_health", "senior_health"]
             },
-            "therapeutic": {
-                "description": "Warm, empathetic, healing-oriented",
+            "daily_life": {
+                "description": "Friendly, approachable, helpful assistant",
                 "edge_voices": ["en-US-AriaNeural", "en-AU-NatashaNeural"],
-                "pyttsx3_rate": 160,
-                "emotional_tone": "compassionate",
-                "domains": ["mental_health", "chronic_conditions", "emotional_support"]
-            },
-            "professional": {
-                "description": "Clear, confident, business-oriented",
-                "edge_voices": ["en-US-GuyNeural", "en-GB-RyanNeural"],
-                "pyttsx3_rate": 180,
-                "emotional_tone": "authoritative",
-                "domains": ["business", "legal", "financial", "consulting"]
-            },
-            "educational": {
-                "description": "Engaging, clear, learning-focused",
-                "edge_voices": ["en-US-MonicaNeural", "en-CA-ClaraNeural"],
                 "pyttsx3_rate": 170,
+                "emotional_tone": "friendly",
+                "authority_level": 0.70,
+                "empathy_level": 0.85,
+                "precision_level": 0.80,
+                "domains": ["parenting", "relationships", "personal_assistant", "communication",
+                           "home_management", "shopping", "planning", "transportation",
+                           "time_management", "decision_making", "conflict_resolution", "work_life_balance"]
+            },
+            "business": {
+                "description": "Professional, confident, strategic",
+                "edge_voices": ["en-US-GuyNeural", "en-GB-RyanNeural"],
+                "pyttsx3_rate": 175,
+                "emotional_tone": "authoritative",
+                "authority_level": 0.95,
+                "empathy_level": 0.65,
+                "precision_level": 0.92,
+                "domains": ["entrepreneurship", "marketing", "sales", "customer_service",
+                           "project_management", "team_leadership", "financial_planning", "operations",
+                           "hr_management", "strategy", "consulting", "legal_business"]
+            },
+            "education": {
+                "description": "Patient, encouraging, knowledgeable teacher",
+                "edge_voices": ["en-US-MonicaNeural", "en-CA-ClaraNeural"],
+                "pyttsx3_rate": 165,
                 "emotional_tone": "encouraging",
-                "domains": ["education", "academic_tutoring", "research_assistance"]
+                "authority_level": 0.80,
+                "empathy_level": 0.90,
+                "precision_level": 0.88,
+                "domains": ["academic_tutoring", "skill_development", "career_guidance", "exam_preparation",
+                           "language_learning", "research_assistance", "study_techniques", "educational_technology"]
             },
             "creative": {
-                "description": "Expressive, dynamic, inspiration-focused",
+                "description": "Expressive, inspiring, dynamic",
                 "edge_voices": ["en-US-SaraNeural", "en-AU-WilliamNeural"],
-                "pyttsx3_rate": 175,
+                "pyttsx3_rate": 180,
                 "emotional_tone": "enthusiastic",
-                "domains": ["creative", "writing", "storytelling", "design_thinking"]
+                "authority_level": 0.75,
+                "empathy_level": 0.80,
+                "precision_level": 0.75,
+                "domains": ["writing", "storytelling", "content_creation", "social_media",
+                           "design_thinking", "photography", "music", "art_appreciation"]
             },
-            "technical": {
-                "description": "Precise, methodical, expertise-focused",
+            "technology": {
+                "description": "Precise, methodical, expert technical guide",
                 "edge_voices": ["en-US-JasonNeural", "en-GB-ThomasNeural"],
-                "pyttsx3_rate": 165,
+                "pyttsx3_rate": 160,
                 "emotional_tone": "analytical",
-                "domains": ["technology", "programming", "cybersecurity", "engineering"]
+                "authority_level": 0.90,
+                "empathy_level": 0.60,
+                "precision_level": 0.95,
+                "domains": ["programming", "ai_ml", "cybersecurity", "data_analysis",
+                           "tech_support", "software_development"]
+            },
+            "specialized": {
+                "description": "Expert authority, highly precise, professional",
+                "edge_voices": ["en-US-BrianNeural", "en-GB-AbbyNeural"],
+                "pyttsx3_rate": 150,
+                "emotional_tone": "authoritative",
+                "authority_level": 0.98,
+                "empathy_level": 0.70,
+                "precision_level": 0.99,
+                "domains": ["legal", "financial", "scientific_research", "engineering"]
             }
         }
         
@@ -141,19 +178,21 @@ class EnhancedTTSManager(BaseAgent):
         
         for domain in all_domains:
             if domain not in mapping:
-                # Default mapping logic
+                # Default mapping logic updated for 7 categories
                 if "health" in domain or "medical" in domain:
-                    mapping[domain] = "therapeutic"
+                    mapping[domain] = "healthcare"
                 elif "business" in domain or "professional" in domain:
-                    mapping[domain] = "professional"  
+                    mapping[domain] = "business"  
                 elif "education" in domain or "learning" in domain:
-                    mapping[domain] = "educational"
+                    mapping[domain] = "education"
                 elif "creative" in domain or "art" in domain:
                     mapping[domain] = "creative"
                 elif "tech" in domain or "programming" in domain:
-                    mapping[domain] = "technical"
+                    mapping[domain] = "technology"
+                elif "legal" in domain or "financial" in domain or "research" in domain:
+                    mapping[domain] = "specialized"
                 else:
-                    mapping[domain] = "professional"  # Default fallback
+                    mapping[domain] = "daily_life"  # Default fallback to daily_life
                     
         return mapping
         
@@ -220,7 +259,7 @@ class EnhancedTTSManager(BaseAgent):
         """Select optimal voice category using Perplexity intelligence"""
         
         # Get base category from domain mapping
-        base_category = self.domain_voice_mapping.get(domain, "professional")
+        base_category = self.domain_voice_mapping.get(domain, "business")
         
         if not emotional_context or not self.trinity_enhancements["perplexity_context_aware"]:
             return base_category
@@ -229,16 +268,16 @@ class EnhancedTTSManager(BaseAgent):
         emotion = emotional_context.get("detected_emotion", "neutral")
         intensity = emotional_context.get("intensity", 0.5)
         
-        # Emotion-based category adjustments
+        # Emotion-based category adjustments updated for 7 categories
         emotion_adjustments = {
-            "stress": "meditative",
-            "anxiety": "therapeutic", 
-            "sadness": "therapeutic",
-            "anger": "meditative",
+            "stress": "healthcare",
+            "anxiety": "healthcare", 
+            "sadness": "healthcare",
+            "anger": "healthcare",
             "joy": "creative",
             "excitement": "creative",
-            "fear": "therapeutic",
-            "confusion": "educational"
+            "fear": "healthcare",
+            "confusion": "education"
         }
         
         if emotion in emotion_adjustments and intensity > 0.6:
