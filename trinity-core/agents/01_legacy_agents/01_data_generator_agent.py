@@ -595,36 +595,50 @@ class TARARealTimeScenarioEngine:
         return f"This topic relates to {domain_expert.get('expertise_level', 'professional')} knowledge and requires careful consideration."
     
     def _get_domain_category(self, domain: str) -> str:
-        """Get domain category for crisis scenario mapping"""
-        healthcare_domains = [
-            "general_health", "mental_health", "nutrition", "fitness", "sleep",
-            "stress_management", "preventive_care", "chronic_conditions",
-            "medication_management", "emergency_care", "women_health", "senior_health"
-        ]
+        """Get category for a domain using config-based mapping"""
         
-        business_domains = [
-            "entrepreneurship", "marketing", "sales", "customer_service",
-            "project_management", "team_leadership", "financial_planning",
-            "operations", "hr_management", "strategy", "consulting", "legal_business"
-        ]
+        # Load domain keywords from config to determine category
+        domain_keywords = self._load_domain_keywords_from_config()
         
-        tech_domains = [
-            "programming", "ai_ml", "cybersecurity", "data_analysis",
-            "tech_support", "software_development"
-        ]
-        
-        if domain in healthcare_domains:
-            return "healthcare"
-        elif domain in business_domains:
-            return "business"
-        elif domain in tech_domains:
-            return "cybersecurity"
-        elif "legal" in domain:
-            return "legal"
-        elif "financial" in domain:
-            return "financial"
-        else:
-            return "general"
+        # Check which category this domain belongs to
+        for category, keywords in domain_keywords.items():
+            if any(keyword in domain.lower() for keyword in keywords):
+                return category
+                
+        return "business"  # Default category
+    
+    def _load_domain_keywords_from_config(self) -> Dict[str, List[str]]:
+        """Load domain keywords from config file"""
+        try:
+            config_path = Path("config/trinity-config.json")
+            if not config_path.exists():
+                logger.warning("⚠️ Config file not found, using fallback keywords")
+                return self._get_fallback_domain_keywords()
+            
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            domain_keywords = config.get("domain_keywords", {})
+            
+            if not domain_keywords:
+                logger.warning("⚠️ domain_keywords not found in config, using fallback")
+                return self._get_fallback_domain_keywords()
+            
+            logger.info(f"✅ Loaded domain keywords from config: {len(domain_keywords)} categories")
+            return domain_keywords
+            
+        except Exception as e:
+            logger.error(f"❌ Error loading domain keywords from config: {e}")
+            return self._get_fallback_domain_keywords()
+    
+    def _get_fallback_domain_keywords(self) -> Dict[str, List[str]]:
+        """Get fallback domain keywords if config loading fails"""
+        return {
+            "healthcare": ["health", "medical", "medicine", "doctor", "nurse", "therapy"],
+            "business": ["business", "management", "strategy", "leadership", "startup"],
+            "education": ["learn", "study", "teach", "education", "school", "university"],
+            "daily_life": ["personal", "family", "home", "relationship", "lifestyle"]
+        }
     
     def get_real_time_scenarios(self, domain: str, scenario_type: str = "general", 
                                urgency_level: str = "medium", emotion: str = "neutral") -> List[str]:
@@ -1281,22 +1295,51 @@ What specific aspect of {specialization} in {domain} would you like to explore f
         ]
         
     def _get_domain_category(self, domain: str) -> str:
-        """Get the category for a specific domain"""
+        """Get category for a domain using config-based mapping"""
         
-        # Simple mapping - could be enhanced with config file
-        domain_mappings = {
-            "healthcare": ["health", "medical", "medicine", "doctor", "nurse", "therapy"],
-            "finance": ["money", "investment", "budget", "financial", "banking", "insurance"],
-            "education": ["learn", "study", "teach", "education", "school", "university"],
-            "business": ["business", "management", "strategy", "leadership", "startup"]
-        }
+        # Load domain keywords from config to determine category
+        domain_keywords = self._load_domain_keywords_from_config()
         
-        for category, keywords in domain_mappings.items():
+        # Check which category this domain belongs to
+        for category, keywords in domain_keywords.items():
             if any(keyword in domain.lower() for keyword in keywords):
                 return category
                 
         return "business"  # Default category
-        
+    
+    def _load_domain_keywords_from_config(self) -> Dict[str, List[str]]:
+        """Load domain keywords from config file"""
+        try:
+            config_path = Path("config/trinity-config.json")
+            if not config_path.exists():
+                logger.warning("⚠️ Config file not found, using fallback keywords")
+                return self._get_fallback_domain_keywords()
+            
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            domain_keywords = config.get("domain_keywords", {})
+            
+            if not domain_keywords:
+                logger.warning("⚠️ domain_keywords not found in config, using fallback")
+                return self._get_fallback_domain_keywords()
+            
+            logger.info(f"✅ Loaded domain keywords from config: {len(domain_keywords)} categories")
+            return domain_keywords
+            
+        except Exception as e:
+            logger.error(f"❌ Error loading domain keywords from config: {e}")
+            return self._get_fallback_domain_keywords()
+    
+    def _get_fallback_domain_keywords(self) -> Dict[str, List[str]]:
+        """Get fallback domain keywords if config loading fails"""
+        return {
+            "healthcare": ["health", "medical", "medicine", "doctor", "nurse", "therapy"],
+            "business": ["business", "management", "strategy", "leadership", "startup"],
+            "education": ["learn", "study", "teach", "education", "school", "university"],
+            "daily_life": ["personal", "family", "home", "relationship", "lifestyle"]
+        }
+    
     async def _calculate_conversation_quality(self, conversation: List[Dict[str, str]], 
                                             domain: str, is_crisis: bool) -> float:
         """Calculate quality score for a conversation"""

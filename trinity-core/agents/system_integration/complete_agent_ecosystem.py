@@ -235,37 +235,8 @@ class RealDataGenerator:
     async def _generate_single_sample(self, domain: str, category: str, intelligence: Dict[str, Any], index: int) -> Dict[str, Any]:
         """Generate a single training sample with intelligence patterns"""
         
-        # Domain-specific prompts and responses
-        domain_prompts = {
-            "parenting": [
-                "How do I handle a toddler's tantrum in public?",
-                "What's the best bedtime routine for a 3-year-old?",
-                "How can I teach my child to share toys?",
-                "My child is a picky eater, what should I do?",
-                "How do I set appropriate screen time limits?"
-            ],
-            "communication": [
-                "How can I improve my active listening skills?",
-                "What makes a presentation more engaging?",
-                "How do I handle difficult conversations at work?",
-                "What are the keys to effective teamwork?",
-                "How can I become more confident in public speaking?"
-            ],
-            "general_health": [
-                "What are the signs of vitamin D deficiency?",
-                "How much exercise do I need for good health?",
-                "What foods boost immune system function?",
-                "How can I improve my sleep quality?",
-                "What are healthy ways to manage stress?"
-            ],
-            "programming": [
-                "How do I optimize database queries for better performance?",
-                "What's the best way to handle errors in Python?",
-                "How do I implement proper code testing?",
-                "What are the principles of clean code?",
-                "How do I debug complex software issues?"
-            ]
-        }
+        # Load domain-specific prompts from config
+        domain_prompts = self._load_domain_prompts_from_config()
         
         # Get domain-specific prompts or generate generic ones
         prompts = domain_prompts.get(domain, [
@@ -295,6 +266,63 @@ class RealDataGenerator:
         }
         
         return sample
+        
+    def _load_domain_prompts_from_config(self) -> Dict[str, List[str]]:
+        """Load domain prompts from config file"""
+        try:
+            config_path = Path("config/trinity-config.json")
+            if not config_path.exists():
+                logger.warning("⚠️ Config file not found, using fallback prompts")
+                return self._get_fallback_domain_prompts()
+            
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            domain_test_prompts = config.get("domain_test_prompts", {})
+            
+            if not domain_test_prompts:
+                logger.warning("⚠️ domain_test_prompts not found in config, using fallback")
+                return self._get_fallback_domain_prompts()
+            
+            logger.info(f"✅ Loaded domain prompts from config: {len(domain_test_prompts)} categories")
+            return domain_test_prompts
+            
+        except Exception as e:
+            logger.error(f"❌ Error loading domain prompts from config: {e}")
+            return self._get_fallback_domain_prompts()
+    
+    def _get_fallback_domain_prompts(self) -> Dict[str, List[str]]:
+        """Get fallback domain prompts if config loading fails"""
+        return {
+            "parenting": [
+                "How do I handle a toddler's tantrum in public?",
+                "What's the best bedtime routine for a 3-year-old?",
+                "How can I teach my child to share toys?",
+                "My child is a picky eater, what should I do?",
+                "How do I set appropriate screen time limits?"
+            ],
+            "communication": [
+                "How can I improve my active listening skills?",
+                "What makes a presentation more engaging?",
+                "How do I handle difficult conversations at work?",
+                "What are the keys to effective teamwork?",
+                "How can I become more confident in public speaking?"
+            ],
+            "general_health": [
+                "What are the signs of vitamin D deficiency?",
+                "How much exercise do I need for good health?",
+                "What foods boost immune system function?",
+                "How can I improve my sleep quality?",
+                "What are healthy ways to manage stress?"
+            ],
+            "programming": [
+                "How do I optimize database queries for better performance?",
+                "What's the best way to handle errors in Python?",
+                "How do I implement proper code testing?",
+                "What are the principles of clean code?",
+                "How do I debug complex software issues?"
+            ]
+        }
         
     async def _generate_intelligent_response(self, prompt: str, domain: str, category: str, intelligence: Dict[str, Any]) -> str:
         """Generate intelligent response based on patterns and expertise level"""
