@@ -32,39 +32,8 @@ class CrossDomainAgent(BaseAgent):
             "response_synthesis_method": "weighted_fusion"  # Method for combining responses
         }
         
-        # Domain detection patterns
-        self.domain_patterns = {
-            "healthcare": {
-                "keywords": ["health", "medical", "doctor", "hospital", "medicine", "treatment", "diagnosis", "symptom", "patient"],
-                "phrases": ["medical condition", "health issue", "see a doctor", "medical advice", "health concern"],
-                "context_indicators": ["pain", "illness", "recovery", "medication", "therapy"]
-            },
-            "finance": {
-                "keywords": ["money", "finance", "investment", "budget", "savings", "loan", "credit", "debt", "income"],
-                "phrases": ["financial planning", "investment strategy", "save money", "financial advice", "budget planning"],
-                "context_indicators": ["dollars", "cost", "price", "afford", "expense"]
-            },
-            "education": {
-                "keywords": ["learn", "study", "education", "school", "university", "course", "knowledge", "skill", "training"],
-                "phrases": ["learning process", "study guide", "educational resource", "skill development", "knowledge base"],
-                "context_indicators": ["teach", "understand", "practice", "homework", "exam"]
-            },
-            "business": {
-                "keywords": ["business", "company", "management", "strategy", "marketing", "sales", "profit", "growth", "leadership"],
-                "phrases": ["business strategy", "market analysis", "company growth", "business plan", "team management"],
-                "context_indicators": ["employees", "customers", "revenue", "competition", "market"]
-            },
-            "legal": {
-                "keywords": ["legal", "law", "lawyer", "court", "contract", "rights", "lawsuit", "attorney", "litigation"],
-                "phrases": ["legal advice", "legal issue", "court case", "legal rights", "contract review"],
-                "context_indicators": ["sue", "legal", "attorney", "court", "settlement"]
-            },
-            "mental_health": {
-                "keywords": ["stress", "anxiety", "depression", "mental", "therapy", "counseling", "psychology", "emotional"],
-                "phrases": ["mental health", "emotional support", "feeling anxious", "mental wellness", "psychological help"],
-                "context_indicators": ["worried", "stressed", "anxious", "depressed", "overwhelmed"]
-            }
-        }
+        # Load domain detection patterns from config
+        self.domain_patterns = self._load_domain_patterns_from_config()
         
         # Response fusion strategies
         self.fusion_strategies = {
@@ -727,6 +696,64 @@ class CrossDomainAgent(BaseAgent):
                 
         except Exception as e:
             print(f"⚠️ Could not save intelligence data: {e}")
+
+    def _load_domain_patterns_from_config(self) -> Dict[str, Dict[str, List[str]]]:
+        """Load domain patterns from config file"""
+        try:
+            config_path = Path("config/trinity-config.json")
+            if not config_path.exists():
+                logger.warning("⚠️ Config file not found, using fallback patterns")
+                return self._get_fallback_domain_patterns()
+            
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            domain_keywords = config.get("domain_keywords", {})
+            
+            if not domain_keywords:
+                logger.warning("⚠️ domain_keywords not found in config, using fallback")
+                return self._get_fallback_domain_patterns()
+            
+            # Convert config keywords to patterns format
+            domain_patterns = {}
+            for category, keywords in domain_keywords.items():
+                domain_patterns[category] = {
+                    "keywords": keywords,
+                    "phrases": [f"{category} advice", f"{category} help", f"{category} support"],
+                    "context_indicators": keywords[:5]  # Use first 5 keywords as context indicators
+                }
+            
+            logger.info(f"✅ Loaded domain patterns from config: {len(domain_patterns)} categories")
+            return domain_patterns
+            
+        except Exception as e:
+            logger.error(f"❌ Error loading domain patterns from config: {e}")
+            return self._get_fallback_domain_patterns()
+    
+    def _get_fallback_domain_patterns(self) -> Dict[str, Dict[str, List[str]]]:
+        """Get fallback domain patterns if config loading fails"""
+        return {
+            "healthcare": {
+                "keywords": ["health", "medical", "doctor", "hospital", "medicine", "treatment", "diagnosis", "symptom", "patient"],
+                "phrases": ["medical condition", "health issue", "see a doctor", "medical advice", "health concern"],
+                "context_indicators": ["pain", "illness", "recovery", "medication", "therapy"]
+            },
+            "business": {
+                "keywords": ["business", "company", "management", "strategy", "marketing", "sales", "profit", "growth", "leadership"],
+                "phrases": ["business strategy", "market analysis", "company growth", "business plan", "team management"],
+                "context_indicators": ["employees", "customers", "revenue", "competition", "market"]
+            },
+            "education": {
+                "keywords": ["learn", "study", "education", "school", "university", "course", "knowledge", "skill", "training"],
+                "phrases": ["learning process", "study guide", "educational resource", "skill development", "knowledge base"],
+                "context_indicators": ["teach", "understand", "practice", "homework", "exam"]
+            },
+            "daily_life": {
+                "keywords": ["personal", "family", "home", "relationship", "lifestyle", "routine", "social"],
+                "phrases": ["daily life", "personal help", "family advice", "home management", "lifestyle tips"],
+                "context_indicators": ["personal", "family", "home", "daily", "routine"]
+            }
+        }
 
 # Global instance
 cross_domain_agent = CrossDomainAgent() 

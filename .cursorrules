@@ -19,6 +19,8 @@
 - Use clear, descriptive class names: `TTSManager`, `EmotionDetector`, `TrainingConductor`
 - Keep function names action-oriented: `detect_emotion()`, `generate_voice()`, `create_gguf()`
 - Use consistent file organization by feature category
+- test scripts should be created in test folder anif its  temporary  can be deleted after successful validation
+- validation scripts should be created in validation folder and can be deleted after successful validation
 
 ### ❌ DON'T:
 - Prefix files with "enhanced_" (everything is enhanced by default)

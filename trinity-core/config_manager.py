@@ -2,13 +2,14 @@
 """
 Trinity Configuration Manager - SMART YAML-Based Configuration
 Eliminates ALL hardcoded values by loading from trinity_domain_model_mapping_config.yaml
+Enhanced with Multi-Base Model Architecture Support
 """
 
 import json
 import yaml
 import logging
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass
 
 @dataclass
@@ -35,6 +36,27 @@ class DomainCategory:
     tier: str
     intelligence_patterns: List[str]
 
+@dataclass
+class MultiBaseModel:
+    """Multi-base model configuration with quantization support"""
+    model_path: str
+    parameters: str
+    license: str
+    quantization: Dict[str, str]
+    cost_per_hour: float
+    recommended_gpu: str
+    batch_size: int
+    sequence_length: int
+    performance_tier: str
+
+@dataclass
+class UniversalModelArchitecture:
+    """Universal model architecture configuration"""
+    target_size: float
+    runtime_memory: float
+    quantization: str
+    components: Dict[str, Any]
+
 class SmartTrinityConfigManager:
     """INTELLIGENT configuration manager that loads ALL settings from YAML"""
     
@@ -52,6 +74,10 @@ class SmartTrinityConfigManager:
         self._domain_cache = {}
         self._model_cache = {}
         self._category_cache = {}
+        
+        # Multi-base model support
+        self._multi_base_models = self._load_multi_base_models()
+        self._universal_architectures = self._load_universal_architectures()
     
     def _setup_logging(self) -> logging.Logger:
         """Setup logging"""
@@ -608,6 +634,145 @@ class SmartTrinityConfigManager:
         explanations["base_model"] = f"Model '{base_model}' selected for {tier} tier performance in {config['category']} category"
         
         return explanations
+
+    def _load_multi_base_models(self) -> Dict[str, MultiBaseModel]:
+        """Load multi-base model configurations"""
+        multi_base_models = {}
+        
+        if "multi_base_models" in self.json_config:
+            for tier, config in self.json_config["multi_base_models"].items():
+                multi_base_models[tier] = MultiBaseModel(
+                    model_path=config["model_path"],
+                    parameters=config["parameters"],
+                    license=config["license"],
+                    quantization=config["quantization"],
+                    cost_per_hour=config["cost_per_hour"],
+                    recommended_gpu=config["recommended_gpu"],
+                    batch_size=config["batch_size"],
+                    sequence_length=config["sequence_length"],
+                    performance_tier=config["performance_tier"]
+                )
+        
+        return multi_base_models
+    
+    def _load_universal_architectures(self) -> Dict[str, UniversalModelArchitecture]:
+        """Load universal model architecture configurations"""
+        architectures = {}
+        
+        if "universal_model_architecture" in self.json_config:
+            for arch_type, config in self.json_config["universal_model_architecture"].items():
+                if arch_type == "A_universal_full":
+                    target_size = config["target_size_gb"]
+                    runtime_memory = config["runtime_memory_gb"]
+                else:
+                    target_size = config["target_size_mb"] / 1000.0  # Convert to GB
+                    runtime_memory = config["runtime_memory_mb"] / 1000.0  # Convert to GB
+                
+                architectures[arch_type] = UniversalModelArchitecture(
+                    target_size=target_size,
+                    runtime_memory=runtime_memory,
+                    quantization=config["quantization"],
+                    components=config["components"]
+                )
+        
+        return architectures
+    
+    def get_multi_base_models(self) -> Dict[str, MultiBaseModel]:
+        """Get all multi-base model configurations"""
+        return self._multi_base_models
+    
+    def get_multi_base_model(self, tier: str) -> Optional[MultiBaseModel]:
+        """Get specific multi-base model configuration"""
+        return self._multi_base_models.get(tier)
+    
+    def get_universal_architecture(self, arch_type: str) -> Optional[UniversalModelArchitecture]:
+        """Get universal model architecture configuration"""
+        return self._universal_architectures.get(arch_type)
+    
+    def get_quantization_for_model_and_architecture(self, tier: str, arch_type: str) -> Optional[str]:
+        """Get quantization setting for specific model tier and architecture type"""
+        model = self.get_multi_base_model(tier)
+        if model and arch_type in model.quantization:
+            return model.quantization[arch_type]
+        return None
+    
+    def get_base_model_for_domain_with_quantization(self, domain: str, arch_type: str = "A_universal_full") -> Tuple[str, str]:
+        """Get base model and quantization for domain and architecture type"""
+        # Get the base model from existing logic
+        base_model = self.get_base_model_for_domain(domain)
+        
+        # Find the tier for this model
+        tier = None
+        for tier_name, model_config in self._multi_base_models.items():
+            if model_config.model_path == base_model:
+                tier = tier_name
+                break
+        
+        if tier:
+            quantization = self.get_quantization_for_model_and_architecture(tier, arch_type)
+            return base_model, quantization or "Q4_K_M"
+        
+        return base_model, "Q4_K_M"  # Default quantization
+    
+    def get_all_base_models_for_architecture(self, arch_type: str) -> List[Tuple[str, str, str]]:
+        """Get all base models with their quantization for specific architecture type"""
+        results = []
+        
+        for tier, model_config in self._multi_base_models.items():
+            quantization = model_config.quantization.get(arch_type, "Q4_K_M")
+            results.append((tier, model_config.model_path, quantization))
+        
+        return results
+    
+    def get_model_output_path(self, domain: str, arch_type: str) -> Path:
+        """Get intelligent output path for model based on domain and architecture"""
+        base_path = Path(__file__).parent.parent / "models"
+        
+        # Get category for domain
+        category = self.get_category_for_domain(domain)
+        
+        if arch_type == "A_universal_full":
+            return base_path / "A_universal_full" / f"{domain}.gguf"
+        elif arch_type == "B_universal_lite":
+            return base_path / "B_universal_lite" / f"{domain}.gguf"
+        elif arch_type == "C_category_specific":
+            return base_path / "C_category_specific" / category / f"{domain}.gguf"
+        else:  # D_domain_specific
+            return base_path / "D_domain_specific" / category / f"{domain}.gguf"
+    
+    def get_training_config_for_domain_with_quantization(self, domain: str, arch_type: str = "A_universal_full") -> Dict[str, Any]:
+        """Get complete training configuration for domain with quantization support"""
+        # Get base training config
+        base_config = self.get_training_config_for_domain(domain)
+        
+        # Add multi-base model and quantization settings
+        base_model, quantization = self.get_base_model_for_domain_with_quantization(domain, arch_type)
+        
+        # Get model tier configuration
+        tier = None
+        for tier_name, model_config in self._multi_base_models.items():
+            if model_config.model_path == base_model:
+                tier = tier_name
+                break
+        
+        if tier:
+            model_config = self._multi_base_models[tier]
+            base_config.update({
+                "multi_base_model": {
+                    "tier": tier,
+                    "model_path": model_config.model_path,
+                    "parameters": model_config.parameters,
+                    "license": model_config.license,
+                    "quantization": quantization,
+                    "recommended_gpu": model_config.recommended_gpu,
+                    "batch_size": model_config.batch_size,
+                    "sequence_length": model_config.sequence_length
+                },
+                "architecture_type": arch_type,
+                "output_path": str(self.get_model_output_path(domain, arch_type))
+            })
+        
+        return base_config
 
 # Global smart instance
 smart_config_manager = SmartTrinityConfigManager()
