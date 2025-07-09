@@ -1,3 +1,14 @@
+# ******************************************************************************
+# ** WARNING: THIS SCRIPT IS ARCHIVED AND OUTDATED **
+# ******************************************************************************
+# This script is from a previous version of the MeeTARA Lab codebase.
+# It references a deleted configuration file and has been replaced by the 
+# unified 'config/trinity_config.yaml'.
+#
+# DO NOT USE THIS SCRIPT. It is preserved for historical reference only.
+# Refer to 'cloud-training/production_launcher.py' for the modern approach.
+# ******************************************************************************
+
 # =============================================================================
 # 🚀 MeeTARA Lab - Flexible Colab Training Pipeline
 # Single Domain | Multiple Domains | All Domains
@@ -116,7 +127,7 @@ else:
 get_ipython().run_line_magic('cd', 'meetara-lab')
 
 # Load cloud-optimized domain mapping
-with open('config/trinity_domain_model_mapping_config.yaml', 'r') as f:
+with open('config/trinity_config.yaml', 'r') as f:
     DOMAIN_CONFIG = yaml.safe_load(f)
 
 # Extract all domains with their models
@@ -541,3 +552,20 @@ print(f"✅ Contains {len(successful_models)} trained domain models")
 print(f"💰 Total training cost: ${total_cost:.2f}")
 print(f"⚡ Speed improvement: {SPEED_FACTOR} faster than CPU")
 print(f"\n🏆 Ready to deploy to your MeeTARA application!") 
+
+class FlexibleTrainingPipeline:
+    """Flexible training pipeline for single/multiple/all domains"""
+    
+    def __init__(self):
+        # This now points to the unified config, but a better approach
+        # would be to use the SmartTrinityConfigManager.
+        self.config_path = "config/trinity_config.yaml"
+        self.load_configuration()
+        self.setup_gpu_environment()
+
+    def load_configuration(self):
+        """Load domain mapping and training configuration"""
+        print("📋 Loading unified domain mapping...")
+        
+        with open(self.config_path, 'r') as f:
+            # ... existing code ...

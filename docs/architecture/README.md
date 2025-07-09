@@ -42,7 +42,7 @@ flowchart TD
 ### Component Hierarchy
 ```
 meetara-lab/
-├── trinity-core/              # Foundation Components
+├── trinity_core/              # Foundation Components
 │   ├── tts_manager.py         # Voice synthesis system
 │   ├── emotion_detector.py    # Emotion analysis
 │   ├── intelligent_router.py  # Request routing

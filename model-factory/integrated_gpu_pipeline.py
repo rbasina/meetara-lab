@@ -11,6 +11,7 @@ import time
 import yaml
 import logging
 import argparse
+import asyncio
 from pathlib import Path
 from typing import Dict, Any, List
 from dataclasses import dataclass
@@ -28,14 +29,14 @@ try:
 except ImportError:
     GGUF_FACTORY_AVAILABLE = False
 
-# Add trinity-core to path for domain integration
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "trinity-core"))
+# Add trinity_core to path for domain integration
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "trinity_core"))
 
 try:
-    from domain_integration import DomainIntegration
-    DOMAIN_INTEGRATION_AVAILABLE = True
+    from trinity_core.core_components.config_manager import SmartTrinityConfigManager
+    CONFIG_MANAGER_AVAILABLE = True
 except ImportError:
-    DOMAIN_INTEGRATION_AVAILABLE = False
+    CONFIG_MANAGER_AVAILABLE = False
 
 @dataclass
 class PipelineConfig:
@@ -89,8 +90,17 @@ class IntegratedGPUPipeline:
         # Get project root for absolute paths
         self.project_root = Path(__file__).parent.parent.parent
         
-        # Load domain configuration from YAML
-        self.domain_config = self._load_domain_config()
+        # Load domain configuration using the centralized manager
+        if CONFIG_MANAGER_AVAILABLE:
+            try:
+                self.config_manager = SmartTrinityConfigManager()
+                self.logger.info("✅ Centralized SmartTrinityConfigManager loaded successfully.")
+            except (FileNotFoundError, ValueError) as e:
+                self.logger.error(f"❌ Failed to load SmartTrinityConfigManager: {e}")
+                self.config_manager = None
+        else:
+            self.logger.error("❌ SmartTrinityConfigManager could not be imported.")
+            self.config_manager = None
         
         self.pipeline_stats = {
             "domains_processed": 0,
@@ -123,53 +133,30 @@ class IntegratedGPUPipeline:
         logger = logging.getLogger(__name__)
         return logger
     
-    def _load_domain_config(self) -> Dict[str, Any]:
-        """Load domain configuration from YAML file"""
-        config_path = self.project_root / "config" / "trinity_domain_model_mapping_config.yaml"
-        
-        try:
-            with open(config_path, 'r', encoding='utf-8') as f:
-                config = yaml.safe_load(f)
-                self.logger.info(f"✅ Loaded domain config from: {config_path}")
-                return config
-        except Exception as e:
-            self.logger.error(f"❌ Failed to load domain config from {config_path}: {e}")
-            return {}
-    
     def get_domains_for_category(self, category: str) -> List[str]:
-        """Get all domains for a specific category from YAML config"""
-        if self.domain_config and category in self.domain_config:
-            domains = list(self.domain_config[category].keys())
-            self.logger.info(f"📋 Loaded {len(domains)} domains for '{category}' from config")
+        """Get all domains for a specific category from the config manager."""
+        if self.config_manager:
+            all_categories = self.config_manager.get_all_domain_categories()
+            domains = all_categories.get(category, [])
+            if domains:
+                self.logger.info(f"📋 Loaded {len(domains)} domains for '{category}' from config manager.")
+            else:
+                self.logger.warning(f"❌ Category '{category}' not found in domain config.")
             return domains
-        else:
-            self.logger.warning(f"❌ Category '{category}' not found in domain config")
-            return []
+        
+        self.logger.error("❌ Config manager not available.")
+        return []
     
     def get_all_domains(self) -> Dict[str, List[str]]:
-        """Get all domains organized by category from YAML config"""
-        if not self.domain_config:
-            self.logger.error("❌ No domain config loaded")
-            return {}
+        """Get all domains organized by category from the config manager."""
+        if self.config_manager:
+            all_domains = self.config_manager.get_all_domain_categories()
+            total_domains = self.config_manager.get_total_domain_count()
+            self.logger.info(f"📋 Loaded {total_domains} total domains across {len(all_domains)} categories from config manager.")
+            return all_domains
         
-        # Extract domain categories (skip metadata sections)
-        skip_sections = {
-            'version', 'description', 'last_updated', 'model_tiers', 
-            'quality_reasoning', 'gpu_configs', 'cost_estimates', 
-            'verified_licenses', 'tara_proven_params', 'quality_targets', 
-            'reliability_features'
-        }
-        
-        all_domains = {}
-        for key, value in self.domain_config.items():
-            if key not in skip_sections and isinstance(value, dict):
-                # Check if this looks like a domain category (has domain mappings)
-                if any(isinstance(v, str) for v in value.values()):
-                    all_domains[key] = list(value.keys())
-        
-        total_domains = sum(len(domains) for domains in all_domains.values())
-        self.logger.info(f"📋 Loaded {total_domains} total domains across {len(all_domains)} categories from config")
-        return all_domains
+        self.logger.error("❌ No domain config loaded, config manager is not available.")
+        return {}
     
     def _get_domain_keywords(self, domain: str) -> List[str]:
         """Get domain-specific keywords dynamically"""

@@ -52,13 +52,13 @@
 ### 🔧 Technical Implementation
 
 #### Core Files Enhanced:
-1. **`trinity-core/config_manager.py`**
+1. **`trinity_core/config_manager.py`**
    - Smart YAML configuration loading
    - Multi-encoding support (utf-8, utf-8-sig, cp1252, latin-1)
    - Manual YAML parsing fallback
    - Parameter decision explanations
 
-2. **`trinity-core/agents/smart_agent_system.py`**
+2. **`trinity_core/agents/smart_agent_system.py`**
    - SmartIntelligentAgent base class
    - SmartDomainAgent for domain operations
    - SmartTrainingAgent for training orchestration
@@ -70,6 +70,12 @@
 - `get_training_config_for_domain()` - Complete config from YAML
 - `get_tara_proven_params()` - TARA parameters from YAML
 - `explain_parameter_decisions()` - Parameter reasoning
+
+#### Deprecated (for reference):
+*   `get_all_domain_categories()` - This old method has been replaced by logic that processes the `get_all_domains_flat()` output.
+
+### Key Learnings
+*   The unified YAML file is the single source of truth. No more hardcoded fallbacks.
 
 ### 🧹 Cleanup Completed
 - ✅ Removed test files with hardcoded values
@@ -130,3 +136,26 @@ The smart agent system is now ready to deliver intelligent GGUF files to the Mee
 **Agents are now super intelligent and configuration-driven!**
 **NO hardcoded values anywhere in the system!**
 **Ready for production deployment to MeeTARA frontend!** 
+
+## Code Integration Examples
+
+### Old Way (Legacy)
+```python
+from trinity_core.config_manager import get_all_domain_categories # Old and busted
+
+domains = get_all_domain_categories()["healthcare"]  # Relied on old structure
+```
+
+### New Way (Trinity Standard)
+```python
+from trinity_core.core_components.config_manager import SmartTrinityConfigManager
+
+manager = SmartTrinityConfigManager()
+all_domains = manager.get_all_domains_flat()
+
+# Get all healthcare domains
+healthcare_domains = [
+    domain for domain, details in all_domains.items() 
+    if details.get("category") == "healthcare"
+]
+``` 

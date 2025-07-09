@@ -263,7 +263,7 @@ edge_config = {
 ## 📖 Additional Resources
 
 - **Enhanced GGUF Factory**: `model-factory/enhanced_gguf_factory.py`
-- **Trinity Architecture**: `trinity-core/ENHANCED_TRINITY_ARCHITECTURE.md` 
+- **Trinity Architecture**: `trinity_core/ENHANCED_TRINITY_ARCHITECTURE.md` 
 - **Usage Guide**: Auto-generated after creation
 - **Results Analysis**: `results/lightweight_models/`
 

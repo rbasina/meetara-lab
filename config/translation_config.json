@@ -34,18 +34,6 @@
       "voice_support": true,
       "cultural_adaptation": true
     },
-    "te": {
-      "name": "Telugu",
-      "native_name": "తెలుగు",
-      "offline_supported": true,
-      "model_name": "Helsinki-NLP/opus-mt-te-en",
-      "reverse_model": "Helsinki-NLP/opus-mt-en-te",
-      "model_size_mb": 290,
-      "quality_score": 0.83,
-      "priority": 2,
-      "voice_support": true,
-      "cultural_adaptation": true
-    },
     "ta": {
       "name": "Tamil",
       "native_name": "தமிழ்",
@@ -187,14 +175,13 @@
   },
   
   "speech_integration": {
-    "voice_input_languages": ["hi", "te", "en"],
-    "voice_output_languages": ["hi", "te", "en"],
+    "voice_input_languages": ["hi", "en"],
+    "voice_output_languages": ["hi", "en"],
     "asr_integration": true,
     "tts_integration": true,
     "emotion_preservation": true,
     "cultural_voice_mapping": {
       "hi": {"tone": "warm", "pace": "natural", "accent": "neutral"},
-      "te": {"tone": "melodic", "pace": "rhythmic", "accent": "regional"},
       "ta": {"tone": "classical", "pace": "measured", "accent": "traditional"},
       "kn": {"tone": "gentle", "pace": "flowing", "accent": "regional"},
       "en": {"tone": "clear", "pace": "professional", "accent": "international"}
@@ -221,10 +208,10 @@
   
   "language_bundles": {
     "current_bundle": {
-      "name": "Hindi-Telugu Translation Bundle",
-      "languages": ["hi", "te"],
+      "name": "Hindi Translation Bundle",
+      "languages": ["hi"],
       "quantization": "Q4_K_M",
-      "estimated_size_mb": 146,
+      "estimated_size_mb": 73,
       "quality_retention": 0.95,
       "offline_capable": true,
       "internet_required": false
@@ -232,9 +219,9 @@
     "future_bundles": {
       "indian_languages_full": {
         "name": "Complete Indian Languages Bundle",
-        "languages": ["hi", "te", "ta", "kn"],
+        "languages": ["hi", "ta", "kn"],
         "quantization": "Q4_K_M",
-        "estimated_size_mb": 292,
+        "estimated_size_mb": 219,
         "quality_retention": 0.95,
         "offline_capable": true
       }

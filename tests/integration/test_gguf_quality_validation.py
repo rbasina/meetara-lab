@@ -13,10 +13,10 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 import logging
 
-# Add trinity-core to path
-sys.path.append(str(Path(__file__).parent.parent.parent / "trinity-core"))
+# Add trinity_core to path
+sys.path.append(str(Path(__file__).parent.parent.parent / "trinity_core"))
 
-from agents.super_agents.model_factory import model_factory
+from agents.model_factory import model_factory
 from config_manager import get_config_manager
 
 # Setup logging

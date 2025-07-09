@@ -30,7 +30,7 @@ try:
     from trinity_core.agents.model_factory import model_factory
     from trinity_core.agents.lightweight_mcp_v2 import lightweight_mcp
     from cloud_training.production_launcher import TrinityProductionLauncher
-    from trinity_core.domain_integration import get_all_domains, get_domain_categories
+    from trinity_core.core_components.domain_integration import get_all_domains, get_domain_categories
     
     TRINITY_AVAILABLE = True
     logger.info("✅ Trinity Architecture components imported successfully")

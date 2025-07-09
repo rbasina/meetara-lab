@@ -75,7 +75,7 @@ meetara-lab/
 │   ├── techContext.md
 │   └── progress.md
 │
-├── trinity-core/                   # Trinity Architecture core
+├── trinity_core/                   # Trinity Architecture core
 │   ├── agents/                     # All agent components
 │   │   ├── 01_legacy_agents/       # Legacy agent implementations
 │   │   ├── 02_super_agents/        # Trinity Super-Agents ⭐

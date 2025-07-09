@@ -14,7 +14,7 @@ import json
 # Add paths for Trinity components
 project_root = Path(__file__).parent.parent.parent
 sys.path.extend([
-    str(project_root / "trinity-core"),
+    str(project_root / "trinity_core"),
     str(project_root / "intelligence-hub"),
     str(project_root / "model-factory"),
     str(project_root / "cloud-training")

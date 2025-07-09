@@ -15,7 +15,7 @@
 
 ### ✅ DO:
 - Use standard script names: `tts_manager.py`, `emotion_detector.py`, `intelligent_router.py`
-- Follow project structure: `trinity-core/`, `cloud-training/`, `model-factory/`
+- Follow project structure: `trinity_core/`, `cloud-training/`, `model-factory/`
 - Use clear, descriptive class names: `TTSManager`, `EmotionDetector`, `TrainingConductor`
 - Keep function names action-oriented: `detect_emotion()`, `generate_voice()`, `create_gguf()`
 - Use consistent file organization by feature category
@@ -32,7 +32,7 @@
 ### 📁 Project Structure Standards:
 ```
 meetara-lab/
-├── trinity-core/              # Core Trinity Architecture + Intelligence
+├── trinity_core/              # Core Trinity Architecture + Intelligence
 │   ├── intelligence/          # TARA's core intelligence modules
 │   ├── agents/               # All specialized agents
 │   ├── tts_manager.py         # NOT enhanced_tts_manager.py
@@ -60,16 +60,16 @@ meetara-lab/
 ## 🧠 TARA UNIVERSAL MODEL INTEGRATION
 
 ### Preserve ALL 10 Enhanced Feature Categories:
-1. **TTS Manager** → `trinity-core/tts_manager.py`
-2. **Emotion Detection** → `trinity-core/emotion_detector.py` 
-3. **Intelligent Router** → `trinity-core/intelligent_router.py`
+1. **TTS Manager** → `trinity_core/tts_manager.py`
+2. **Emotion Detection** → `trinity_core/emotion_detector.py` 
+3. **Intelligent Router** → `trinity_core/intelligent_router.py`
 4. **Universal GGUF Factory** → `model-factory/gguf_factory.py`
 5. **Training Orchestrator** → `cloud-training/training_orchestrator.py`
 6. **Monitoring & Recovery** → `cloud-training/monitoring_system.py`
-7. **Security & Privacy** → `trinity-core/security_manager.py`
+7. **Security & Privacy** → `trinity_core/security_manager.py`
 8. **Domain Experts** → `intelligence-hub/domain_experts.py`
-9. **Utilities & Validation** → `trinity-core/validation_utils.py`
-10. **Configuration Management** → `trinity-core/config_manager.py`
+9. **Utilities & Validation** → `trinity_core/validation_utils.py`
+10. **Configuration Management** → `trinity_core/config_manager.py`
 
 ## ⚡ Cloud Amplification Requirements
 - **Speed Target**: 20-100x faster than current CPU training (302s/step → 3-15s/step)

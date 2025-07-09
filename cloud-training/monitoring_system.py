@@ -13,10 +13,10 @@ from pathlib import Path
 from dataclasses import dataclass
 from enum import Enum
 
-# Import trinity-core components
+# Import trinity_core components
 import sys
-sys.path.append('../trinity-core')
-from agents.mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage
+sys.path.append('../trinity_core')
+from trinity_core.agents.coordination.lightweight_mcp_v2 import BaseAgent, AgentType, MessageType, MCPMessage
 
 class ServiceStatus(Enum):
     HEALTHY = "healthy"

@@ -85,7 +85,7 @@ Cloud GPU Training      Universal Knowledge   Local PII Storage
 
 ### **Trinity Core - 100% Operational:**
 ```
-trinity-core/
+trinity_core/
 ├── 06_core_components/          # ✅ All 7 components working
 ├── agents/02_super_agents/      # ✅ Intelligence Hub, Trinity Conductor, Model Factory
 ├── 05_intelligence_layer/       # ✅ Complete psychological understanding

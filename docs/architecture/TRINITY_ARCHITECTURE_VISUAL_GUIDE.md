@@ -386,7 +386,7 @@ Step 5: Response (Total: 0.208s)
 
 The Trinity Architecture is implemented across multiple components:
 
-- **Trinity Core**: `trinity-core/` - Core intelligence and routing
+- **Trinity Core**: `trinity_core/` - Core intelligence and routing
 - **Model Factory**: `model-factory/` - GGUF creation and optimization
 - **Cloud Training**: `cloud-training/` - Multi-cloud GPU orchestration
 - **Intelligence Hub**: `intelligence-hub/` - Domain expertise and patterns

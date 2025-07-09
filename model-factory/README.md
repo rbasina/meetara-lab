@@ -413,34 +413,13 @@ python 01_training/gpu_training_engine.py --domain healthcare --gpu-type auto
 
 ## 🔧 Configuration
 
-All configurations are centralized in `config/trinity-config.json` with domain-specific mappings in `config/trinity_domain_model_mapping_config.yaml`.
+All configurations are centralized in `config/trinity_config.yaml`.
+This file serves as the single source of truth for all training parameters,
+model tiers, and domain-to-model mappings.
+
+The factory's intelligence comes from its ability to interpret this configuration
 
 ## 🧪 Testing
 
 Run comprehensive tests:
-```bash
-cd ../tests
-python run_all_tests.py --model-factory
 ```
-
-## 📈 Monitoring
-
-Real-time monitoring available through:
-- Training progress tracking
-- Cost monitoring with auto-shutdown
-- Quality validation reports
-- Performance analytics dashboard
-
-## 🔄 Execution Flow
-
-1. **Training Phase**: `01_training/gpu_training_engine.py`
-2. **GGUF Creation**: `02_gguf_creation/gguf_factory.py`
-3. **Integration**: `03_integration/master_pipeline.py`
-4. **Output**: `04_output/trinity_gguf_models/`
-
-## 📋 Legacy Files Cleanup
-
-The following redundant files have been removed:
-- `meetara_super_intelligent_gguf_factory.py` → merged into `02_gguf_creation/gguf_factory.py`
-- `integrated_gpu_pipeline.py` → moved to `03_integration/master_pipeline.py`
-- Scattered output directories → consolidated in `04_output/` 

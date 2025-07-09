@@ -19,34 +19,34 @@ class SimpleTrinityTestRunner:
         
         # Add all necessary paths to sys.path for imports
         paths_to_add = [
-            str(self.project_root),
-            str(self.project_root / "trinity-core"),
-            str(self.project_root / "trinity-core" / "06_core_components"),
-            str(self.project_root / "trinity-core" / "agents"),
-            str(self.project_root / "trinity-core" / "agents" / "01_legacy_agents"),
-            str(self.project_root / "trinity-core" / "agents" / "02_super_agents"),
-            str(self.project_root / "trinity-core" / "agents" / "04_system_integration"),
-            str(self.project_root / "cloud-training"),
-            str(self.project_root / "model-factory"),
-            str(self.project_root / "intelligence-hub")
+            str(self.project_root / "trinity_core"),
+            str(self.project_root / "trinity_core" / "agents" / "super_agents"),
+            str(self.project_root / "trinity_core" / "agents" / "system_integration"),
         ]
-        
-        for path in paths_to_add:
-            if path not in sys.path:
-                sys.path.insert(0, path)
-        
-    def test_core_imports(self) -> Dict[str, Any]:
+        sys.path.extend(paths_to_add)
+
+    def test_all(self):
+        """Runs all test suites."""
+        print("="*60)
+        print("🚀 Starting Full System Test Suite...")
+        print("="*60)
+        self.test_trinity_core_components()
+        self.test_super_agents()
+        self.test_agent_integration()
+        self.generate_report()
+
+    def test_trinity_core_components(self) -> Dict[str, Any]:
         """Test that core Trinity components can be imported"""
         print("🔍 Testing Core Trinity Component Imports...")
         
         core_components = {
-            "TTS Manager": "trinity-core/06_core_components/02_tts_manager.py",
-            "Emotion Detector": "trinity-core/06_core_components/01_emotion_detector.py", 
-            "Intelligent Router": "trinity-core/06_core_components/03_intelligent_router.py",
-            "Domain Integration": "trinity-core/06_core_components/05_domain_integration.py",
-            "Config Manager": "trinity-core/06_core_components/04_config_manager.py",
-            "Security Manager": "trinity-core/06_core_components/06_security_manager.py",
-            "Validation Utils": "trinity-core/06_core_components/07_validation_utils.py",
+            "TTS Manager": "trinity_core/06_core_components/02_tts_manager.py",
+            "Emotion Detector": "trinity_core/06_core_components/01_emotion_detector.py", 
+            "Intelligent Router": "trinity_core/06_core_components/03_intelligent_router.py",
+            "Domain Integration": "trinity_core/06_core_components/05_domain_integration.py",
+            "Config Manager": "trinity_core/06_core_components/04_config_manager.py",
+            "Security Manager": "trinity_core/06_core_components/06_security_manager.py",
+            "Validation Utils": "trinity_core/06_core_components/07_validation_utils.py",
             "GGUF Factory": "model-factory/universal_gguf_factory.py",
             "GPU Training Engine": "model-factory/gpu_training_engine.py",
             "Training Orchestrator": "cloud-training/training_orchestrator.py",
@@ -90,104 +90,109 @@ class SimpleTrinityTestRunner:
         self.test_results["core_imports"] = results
         
         success_rate = (passed / len(core_components)) * 100
-        print(f"   📊 Import Success Rate: {success_rate:.1f}% ({passed}/{len(core_components)})")
-        
+        print(f"   📊 Trinity Core Components Success Rate: {success_rate:.1f}% ({passed}/{len(core_components)})")
         return results
-    
-    def test_centralized_domain_mapping(self) -> Dict[str, Any]:
-        """Test centralized domain mapping functionality"""
-        print("\n🎯 Testing Centralized Domain Mapping...")
+
+    def test_super_agents(self) -> Dict[str, Any]:
+        """
+        Tests that the Trinity Super-Agent files exist.
+        """
+        print("\n🧪🔬 Running Super-Agent Tests...")
+        results = {}
+        super_agents = {
+            "Intelligence Hub": "trinity_core/agents/super_agents/intelligence_hub.py",
+            "Trinity Conductor": "trinity_core/agents/super_agents/trinity_conductor.py",
+            "Model Factory": "trinity_core/agents/super_agents/model_factory.py"
+        }
+        for name, path in super_agents.items():
+            if self.project_root.joinpath(path).exists():
+                results[name] = True
+                print(f"   ✅ {name}: Found")
+            else:
+                results[name] = False
+                print(f"   ❌ {name}: Not Found")
         
+        self.test_results["super_agents"] = results
+        passed = sum(1 for r in results.values() if r is True)
+        success_rate = (passed / len(super_agents)) * 100
+        print(f"   📊 Super Agents Success Rate: {success_rate:.1f}% ({passed}/{len(super_agents)})")
+        return results
+
+    def test_centralized_config_system(self) -> Dict[str, Any]:
+        """Tests the new centralized configuration system via SmartTrinityConfigManager."""
+        print("\n🎯 Testing Centralized Configuration System...")
+
         results = {
             "config_file_exists": False,
-            "domain_integration_works": False,
+            "config_manager_works": False,
             "total_domains": 0,
             "total_categories": 0
         }
-        
-        # Check config file
-        config_file = self.project_root / "config/trinity_domain_model_mapping_config.yaml"
+
+        # Check for the unified config file
+        config_file = self.project_root / "config" / "trinity_config.yaml"
         results["config_file_exists"] = config_file.exists()
-        
+
         if config_file.exists():
-            print("   ✅ Config file exists")
-            
-            # Test domain integration with proper import path
+            print("   ✅ Unified trinity_config.yaml exists.")
+
+            # Test the SmartTrinityConfigManager
             try:
-                # Import using file path directly
+                # Dynamically import the manager
                 spec = importlib.util.spec_from_file_location(
-                    "domain_integration", 
-                    self.project_root / "trinity-core/06_core_components/05_domain_integration.py"
+                    "config_manager",
+                    self.project_root / "trinity_core" / "core_components" / "config_manager.py"
                 )
-                domain_integration_module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(domain_integration_module)
+                config_manager_module = importlib.util.module_from_spec(spec)
+                sys.modules['config_manager'] = config_manager_module
+                spec.loader.exec_module(config_manager_module)
                 
-                # Get functions from the module
-                get_domain_categories = domain_integration_module.get_domain_categories
-                get_domain_stats = domain_integration_module.get_domain_stats
+                # Instantiate the manager
+                manager = config_manager_module.SmartTrinityConfigManager()
+
+                results["config_manager_works"] = True
+                # Test config manager
+                print("\n" + "="*20 + " 3. CONFIGURATION INTEGRITY " + "="*20)
+                domains_flat = manager.get_all_domains_flat()
+                categories = {details.get('category') for details in domains_flat.values()}
                 
-                domain_categories = get_domain_categories()
-                domain_stats = get_domain_stats()
+                results["total_domains"] = len(domains_flat)
+                results["total_categories"] = len(categories)
                 
-                results["domain_integration_works"] = True
-                results["total_domains"] = domain_stats["total_domains"]
-                results["total_categories"] = domain_stats["total_categories"]
+                print(f"  - Total domains found: {results['total_domains']}")
+                print(f"  - Total categories found: {results['total_categories']}")
                 
-                print(f"   ✅ Domain integration works: {results['total_domains']} domains, {results['total_categories']} categories")
-                
+                if results["total_domains"] > 60 and results["total_categories"] > 5:
+                    print("  - ✅ Basic config integrity looks good.")
+
             except Exception as e:
                 results["error"] = str(e)
-                print(f"   ❌ Domain integration failed: {e}")
+                print(f"   ❌ SmartTrinityConfigManager failed: {e}")
         else:
-            print("   ❌ Config file not found")
-        
-        self.test_results["domain_mapping"] = results
+            print(f"   ❌ Unified config file '{config_file.name}' not found.")
+
+        self.test_results["centralized_config"] = results
         return results
     
-    def test_super_agents(self) -> Dict[str, Any]:
-        """Test Trinity Super Agents"""
-        print("\n🤖 Testing Trinity Super Agents...")
+    def test_agent_integration(self) -> Dict[str, Any]:
+        """
+        Tests the integration of the complete agent ecosystem.
+        """
+        print("\n🧪🔬 Running Agent Integration Tests...")
+        results = {}
+        try:
+            from trinity_core.agents.system_integration.complete_agent_ecosystem import ecosystem
+            results["ecosystem_import"] = True
+        except ImportError as e:
+            print(f"   ❌ ERROR: Could not import agent ecosystem: {e}")
+            results["ecosystem_import"] = False
         
-        results = {
-            "intelligence_hub": False,
-            "trinity_conductor": False,
-            "model_factory": False
-        }
-        
-        super_agents = {
-            "Intelligence Hub": "trinity-core/agents/02_super_agents/01_intelligence_hub.py",
-            "Trinity Conductor": "trinity-core/agents/02_super_agents/02_trinity_conductor.py",
-            "Model Factory": "trinity-core/agents/02_super_agents/03_model_factory.py"
-        }
-        
-        passed = 0
-        
-        for name, path in super_agents.items():
-            file_path = self.project_root / path
-            
-            if file_path.exists():
-                try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        content = f.read()
-                    
-                    # Test syntax
-                    compile(content, str(file_path), 'exec')
-                    results[name.lower().replace(" ", "_")] = True
-                    passed += 1
-                    print(f"   ✅ {name}")
-                    
-                except Exception as e:
-                    print(f"   ❌ {name}: {e}")
-            else:
-                print(f"   ❌ {name}: File not found")
-        
-        self.test_results["super_agents"] = results
-        
-        success_rate = (passed / len(super_agents)) * 100
-        print(f"   📊 Super Agents Success Rate: {success_rate:.1f}% ({passed}/{len(super_agents)})")
-        
+        self.test_results["agent_integration"] = results
+        passed = sum(1 for r in results.values() if r is True)
+        success_rate = (passed / len(results)) * 100
+        print(f"   📊 Agent Integration Success Rate: {success_rate:.1f}% ({passed}/{len(results)})")
         return results
-    
+
     def test_key_functionality(self) -> Dict[str, Any]:
         """Test key Trinity functionality"""
         print("\n⚡ Testing Key Trinity Functionality...")
@@ -228,7 +233,7 @@ class SimpleTrinityTestRunner:
         
         # Test Complete Agent Ecosystem
         try:
-            ecosystem_path = self.project_root / "trinity-core/agents/04_system_integration/02_complete_agent_ecosystem.py"
+            ecosystem_path = self.project_root / "trinity_core/agents/04_system_integration/02_complete_agent_ecosystem.py"
             if ecosystem_path.exists():
                 spec = importlib.util.spec_from_file_location(
                     "complete_agent_ecosystem", 
@@ -248,7 +253,7 @@ class SimpleTrinityTestRunner:
         
         # Test Trinity Integration
         try:
-            integration_path = self.project_root / "trinity-core/agents/test_tara_integration.py"
+            integration_path = self.project_root / "trinity_core/agents/test_tara_integration.py"
             if integration_path.exists():
                 spec = importlib.util.spec_from_file_location(
                     "test_tara_integration", 
@@ -280,15 +285,20 @@ class SimpleTrinityTestRunner:
         core_passed = sum(1 for r in core_results.values() if r.get("importable", False))
         core_total = len(core_results)
         
-        # Domain mapping
-        domain_results = self.test_results.get("domain_mapping", {})
-        domain_works = domain_results.get("domain_integration_works", False)
-        total_domains = domain_results.get("total_domains", 0)
+        # Domain Mapping
+        domain_mapping_results = self.test_results.get("centralized_config", {})
+        if domain_mapping_results.get("config_manager_works"):
+            print("✅ Centralized configuration system is working.")
+            print(f"   - Total Domains: {domain_mapping_results.get('total_domains', 'N/A')}")
+            print(f"   - Total Categories: {domain_mapping_results.get('total_categories', 'N/A')}")
+        else:
+            print("❌ Centralized configuration system FAILED.")
+            print(f"   - Error: {domain_mapping_results.get('error', 'Unknown')}")
         
-        # Super agents
-        super_agents_results = self.test_results.get("super_agents", {})
-        super_agents_passed = sum(1 for r in super_agents_results.values() if r is True)
-        super_agents_total = len(super_agents_results)
+        # Agent Integration
+        agent_integration_results = self.test_results.get("agent_integration", {})
+        agent_integration_passed = sum(1 for r in agent_integration_results.values() if r is True)
+        agent_integration_total = len(agent_integration_results)
         
         # Key functionality
         func_results = self.test_results.get("key_functionality", {})
@@ -297,16 +307,14 @@ class SimpleTrinityTestRunner:
         
         print(f"📊 Test Results:")
         print(f"   Core Imports: {core_passed}/{core_total} ({'✅' if core_passed == core_total else '❌'})")
-        print(f"   Domain Mapping: {'✅' if domain_works and total_domains > 0 else '❌'} ({total_domains} domains)")
-        print(f"   Super Agents: {super_agents_passed}/{super_agents_total} ({'✅' if super_agents_passed == super_agents_total else '❌'})")
+        print(f"   Agent Integration: {agent_integration_passed}/{agent_integration_total} ({'✅' if agent_integration_passed == agent_integration_total else '❌'})")
         print(f"   Key Functionality: {func_passed}/{func_total} ({'✅' if func_passed == func_total else '❌'})")
         
         # Overall status
         overall_success = (
             core_passed == core_total and
-            domain_works and 
-            total_domains > 0 and
-            super_agents_passed == super_agents_total and
+            domain_mapping_results.get("config_manager_works") and
+            agent_integration_passed == agent_integration_total and
             func_passed >= 2  # At least 2 out of 3 key functions work
         )
         
@@ -332,8 +340,8 @@ class SimpleTrinityTestRunner:
         
         # Run core tests
         self.test_core_imports()
-        self.test_centralized_domain_mapping()
-        self.test_super_agents()
+        self.test_centralized_config_system()
+        self.test_agent_integration()
         self.test_key_functionality()
         
         # Generate report

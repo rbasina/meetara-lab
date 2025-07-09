@@ -17,10 +17,10 @@ G:\My Drive\meetara-lab\
 
 # Key files for Colab:
 - config/trinity_domain_model_mapping_config.yaml  # Domain mappings
-- config/trinity-config.json                       # Compression settings
-- trinity-core/config_manager.py                   # Smart config system
-- trinity-core/agents/smart_agent_system.py        # Intelligent agents
-- cloud-training/production_launcher.py            # Production launcher
+- config/trinity_config.yaml                       # Unified training and model configuration.
+- trinity_core/config_manager.py                   # Smart config system
+- trinity_core/agents/smart_agent_system.py        # Intelligent agents
+- cloud-training/production_launcher.py            # Main script to run training.
 ```
 
 ### 2. Colab Setup Commands
@@ -38,7 +38,7 @@ os.chdir('/content/drive/MyDrive/meetara-lab')
 
 # Cell 4: Test configuration system
 import sys
-sys.path.append('trinity-core')
+sys.path.append('trinity_core')
 from config_manager import get_config_manager
 
 config = get_config_manager()

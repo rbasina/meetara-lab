@@ -20,7 +20,7 @@ def main():
     # Check directory structure (go up one level since we're in tests folder now)
     project_root = Path.cwd().parent if Path.cwd().name == "tests" else Path.cwd()
     dirs_to_check = [
-        "trinity-core", "intelligence-hub", "model-factory",
+        "trinity_core", "intelligence-hub", "model-factory",
         "cloud-training", "notebooks", "memory-bank", "tests"
     ]
     
@@ -46,9 +46,9 @@ def main():
     
     # Check Trinity components
     trinity_files = [
-        "trinity-core/tts_manager.py",
-        "trinity-core/emotion_detector.py",
-        "trinity-core/intelligent_router.py",
+        "trinity_core/tts_manager.py",
+        "trinity_core/emotion_detector.py",
+        "trinity_core/intelligent_router.py",
         "intelligence-hub/domain_experts.py",
         "model-factory/gguf_factory.py"
     ]
@@ -61,7 +61,7 @@ def main():
         print(f"   {status} {file_name} ({size} bytes)")
     
     # Count total Trinity components
-    trinity_core = project_root / "trinity-core"
+    trinity_core = project_root / "trinity_core"
     if trinity_core.exists():
         py_files = list(trinity_core.glob("*.py"))
         print(f"\n🎯 Trinity Core: {len(py_files)} Python files")

@@ -16,10 +16,10 @@ from dataclasses import dataclass, field
 from datetime import datetime
 import numpy as np
 
-# Trinity-core integration
+# Trinity_core integration
 import sys
-sys.path.append('../trinity-core')
-from agents.mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage
+sys.path.append('../trinity_core')
+from trinity_core.agents.coordination.lightweight_mcp_v2 import BaseAgent, AgentType, MessageType, MCPMessage
 
 # === TARA UNIVERSAL MODEL INTEGRATION ===
 # Import real TARA data system instead of using synthetic templates

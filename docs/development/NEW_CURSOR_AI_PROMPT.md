@@ -252,7 +252,7 @@ advantages:
 ```
 
 ## Current Status
-- MeeTARA Lab structure created: trinity-core/, cloud-training/, model-factory/, intelligence-hub/, deployment-engine/, notebooks/, cost-optimization/, research-workspace/
+- MeeTARA Lab structure created: trinity_core/, cloud-training/, model-factory/, intelligence-hub/, deployment-engine/, notebooks/, cost-optimization/, research-workspace/
 - Existing TARA project has 6 successful models trained, currently running batch2 daily life training
 - GGUF creation pipeline exists and works - need to accelerate it with GPU cloud training
 - **ALL ENHANCED FEATURES MUST BE PRESERVED AND ENHANCED**
@@ -287,7 +287,7 @@ Create Google Colab Pro+ optimized GGUF factory that's 20-100x faster than curre
 
 ## Immediate Tasks
 1. Read memory-bank files to understand current GGUF factory context and ALL FEATURES
-2. Create trinity-core/ components leveraging existing successful GGUF patterns + ALL FEATURES
+2. Create trinity_core/ components leveraging existing successful GGUF patterns + ALL FEATURES
 3. Build cloud-training/ GPU orchestrator based on existing pipeline but GPU-accelerated + ALL FEATURES
 4. Create notebooks/ for Google Colab GGUF training + ALL FEATURES
 5. Implement cost-optimization/ monitoring for efficient GGUF production + ALL FEATURES

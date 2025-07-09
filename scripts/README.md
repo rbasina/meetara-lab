@@ -62,10 +62,9 @@ python 03_utilities/system_status.py
 
 ## 🔧 Configuration
 
-Scripts use centralized configuration from:
-- `config/trinity-config.json` - Main system configuration
-- `config/trinity_domain_model_mapping_config.yaml` - Domain mappings
-- `config/safety-first-domain-mapping.yaml` - Safety configurations
+All scripts that require configuration are designed to use the centralized
+`SmartTrinityConfigManager`, which reads from the unified `config/trinity_config.yaml`.
+This ensures consistency across all automated tasks.
 
 ## 📈 Monitoring
 

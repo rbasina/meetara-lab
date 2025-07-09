@@ -13,14 +13,14 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 from pathlib import Path
 
-# Import trinity-core components using a more robust approach
+# Import trinity_core components using a more robust approach
 import sys
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
 # Import centralized domain mapping
 try:
-    from trinity_core.domain_integration import (
+    from trinity_core.core_components.domain_integration import (
         domain_integration,
         get_domain_categories, 
         get_all_domains, 
@@ -31,8 +31,8 @@ try:
     print("✅ Successfully imported centralized domain integration")
 except ImportError:
     # Fallback import for different environments
-    sys.path.append(str(project_root / "trinity-core"))
-    from domain_integration import (
+    sys.path.append(str(project_root / "trinity_core"))
+    from trinity_core.core_components.domain_integration import (
         domain_integration,
         get_domain_categories, 
         get_all_domains, 
@@ -43,7 +43,7 @@ except ImportError:
     print("✅ Successfully imported domain integration (fallback)")
 
 # Dynamically import mcp_protocol from the agents directory
-mcp_protocol_path = project_root / "trinity-core" / "agents" / "mcp_protocol.py"
+mcp_protocol_path = project_root / "trinity_core" / "agents" / "mcp_protocol.py"
 if mcp_protocol_path.exists():
     spec = importlib.util.spec_from_file_location("mcp_protocol", mcp_protocol_path)
     mcp_protocol_module = importlib.util.module_from_spec(spec)

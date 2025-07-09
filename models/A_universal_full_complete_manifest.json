@@ -1,0 +1,66 @@
+{
+  "model_type": "A_universal_full",
+  "architecture": "Multi-base model with domain specialization",
+  "total_size_gb": 27.33,
+  "components": {
+    "base_models": {
+      "count": 11,
+      "quantization": "Q3_K_M",
+      "models": [
+        {
+          "file": "HuggingFaceTB_SmolLM2-1.7B_Q2_K.gguf",
+          "size_mb": 500.0
+        },
+        {
+          "file": "Qwen_Qwen2.5-7B-Instruct_Q2_K.gguf",
+          "size_mb": 2000.0
+        },
+        {
+          "file": "microsoft_Phi-3-medium-4k-instruct_Q2_K.gguf",
+          "size_mb": 1500.0
+        },
+        {
+          "file": "Qwen_Qwen2.5-14B-Instruct_Q2_K.gguf",
+          "size_mb": 3500.0
+        },
+        {
+          "file": "microsoft_Phi-3-medium-14B-instruct_Q2_K.gguf",
+          "size_mb": 3000.0
+        },
+        {
+          "file": "HuggingFaceTB_SmolLM2-1.7B_Q3_K_M.gguf",
+          "size_mb": 750.0
+        },
+        {
+          "file": "microsoft_Phi-3.5-mini-instruct_Q3_K_M.gguf",
+          "size_mb": 1200.0
+        },
+        {
+          "file": "Qwen_Qwen2.5-7B-Instruct_Q3_K_M.gguf",
+          "size_mb": 3000.0
+        },
+        {
+          "file": "microsoft_Phi-3-medium-4k-instruct_Q3_K_M.gguf",
+          "size_mb": 2250.0
+        },
+        {
+          "file": "Qwen_Qwen2.5-14B-Instruct_Q3_K_M.gguf",
+          "size_mb": 5250.0
+        },
+        {
+          "file": "microsoft_Phi-3-medium-14B-instruct_Q3_K_M.gguf",
+          "size_mb": 4500.0
+        }
+      ],
+      "total_size_gb": 26.81
+    },
+    "domain_models": {
+      "count": 64,
+      "quantization": "Q4_K_M",
+      "size_per_model_mb": 8.3,
+      "total_size_mb": 531.2
+    }
+  },
+  "status": "Base models downloaded",
+  "next_step": "Merge base models with domain models"
+}

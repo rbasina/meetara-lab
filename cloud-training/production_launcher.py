@@ -1,115 +1,105 @@
 #!/usr/bin/env python3
 """
-MeeTARA Lab - Real Trinity Production Launcher
-Triggers Trinity Super-Agent Flow with Intelligence Hub and Real Data Generation
+MeeTARA Lab - Trinity Production Launcher
+This is the single entry point for launching REAL training sessions.
+It uses the complete Trinity Super-Agent ecosystem.
 WITH COMPREHENSIVE INTELLIGENT LOGGING
 """
-
+import os
+import sys
 import asyncio
 import argparse
-import sys
-import os
-import time
 from pathlib import Path
+from dataclasses import dataclass
+import time
+from datetime import datetime
 
-# Add trinity-core to path
-current_dir = Path.cwd()
-sys.path.append(str(current_dir / 'trinity-core'))
-sys.path.append(str(current_dir))
+# -- Set up the Python path --
+# This is the crucial part. It adds the project's root directory to the Python path.
+# This allows modules like 'trinity_core' to be found from within this script.
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
 
-# Import Trinity Super-Agent Ecosystem
-try:
-    from agents.system_integration.complete_agent_ecosystem import CompleteAgentEcosystem
-    TRINITY_AVAILABLE = True
-    print("✅ Trinity Super-Agent Ecosystem imported successfully")
-except ImportError as e:
-    print(f"⚠️ Trinity import failed: {e}")
-    print("📁 Available files:")
-    trinity_path = current_dir / 'trinity-core' / 'agents'
-    if trinity_path.exists():
-        for item in trinity_path.rglob('*.py'):
-            print(f"   {item}")
-    TRINITY_AVAILABLE = False
+from trinity_core.agents.system_integration.complete_agent_ecosystem import CompleteAgentEcosystem
+from trinity_core.core_components.config_manager import SmartTrinityConfigManager
+from trinity_core.intelligent_logger import IntelligentLogger
+
+# -- Set up the Python path --
+# This ensures that all project modules can be imported correctly from this entry point.
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+sys.path.insert(0, str(project_root / "model-factory"))
+sys.path.insert(0, str(project_root / "trinity_core"))
+sys.path.insert(0, str(project_root / "scripts" / "training"))
 
 # Import Intelligent Logging System
 try:
-    from intelligent_logger import get_logger
-    from config_manager import get_config_manager
+    from trinity_core.intelligent_logger import get_logger
     LOGGING_AVAILABLE = True
     print("✅ Intelligent Logging System imported successfully")
 except ImportError as e:
     print(f"⚠️ Intelligent Logging import failed: {e}")
     LOGGING_AVAILABLE = False
 
+INTELLIGENT_LOGGING_AVAILABLE = True
+
+@dataclass
+class TrainingResult:
+    """Class to hold training result information"""
+    status: str
+    message: str
+    results: dict = None
+
 class RealTrinityProductionLauncher:
-    """
-    Real Trinity Production Launcher
-    Triggers Intelligence Hub and Complete Agent Ecosystem
-    WITH COMPREHENSIVE INTELLIGENT LOGGING
-    """
+    """The main class for launching and managing the Trinity training ecosystem."""
     
     def __init__(self):
-        self.trinity_ecosystem = None
+        """Initialize the launcher, including the complete agent ecosystem."""
+        self.trinity_ecosystem = CompleteAgentEcosystem()
+        self.simulation = False  # Ensure attribute is initialized
         self.logger = None
         self.config_manager = None
         self.session_start_time = time.time()
         
         # Initialize Trinity ecosystem
-        if TRINITY_AVAILABLE:
-            self.trinity_ecosystem = CompleteAgentEcosystem()
-            print("🚀 Trinity Super-Agent Ecosystem initialized")
-            print("   → Intelligence Hub: ACTIVE")
-            print("   → Data Generator Agent: ACTIVE") 
-            print("   → Training Orchestrator: ACTIVE")
-            print("   → Quality Assurance: ACTIVE")
-        else:
-            print("⚠️ Trinity ecosystem not available, using fallback")
+        self.trinity_ecosystem = CompleteAgentEcosystem()
         
-        # Initialize intelligent logging and config
-        if LOGGING_AVAILABLE:
-            self.config_manager = get_config_manager()
-            print("✅ Configuration Manager initialized")
+        try:
+            # Initialize intelligent logging and config
+            self.config_manager = SmartTrinityConfigManager()
+            self.logger = IntelligentLogger(domain="trinity_session") # Initialize main session logger
             print("📊 Intelligent Logging System ready")
-        else:
-            print("⚠️ Intelligent logging not available")
+        except Exception as e:
+            print(f"⚠️ Intelligent logging not available: {e}")
             
-    def _initialize_domain_logging(self, domain: str):
-        """Initialize logging for specific domain"""
-        if not LOGGING_AVAILABLE:
-            return None
-            
-        # Get domain-specific logger
-        logger = get_logger(domain)
-        
-        # Log configuration loading
-        validation = self.config_manager.validate_configuration()
-        logger.log_config_loading(
-            yaml_loaded=validation["yaml_loaded"],
-            json_loaded=validation["json_loaded"],
-            total_domains=validation["total_domains"]
-        )
-        
-        # Log domain validation
-        is_valid = self.config_manager.validate_domain(domain)
-        category = self.config_manager.get_category_for_domain(domain)
-        
-        logger.log_domain_validation(
-            domain=domain,
-            is_valid=is_valid,
-            category=category,
-            suggestions=[] if is_valid else ["Check domain spelling", "Use --help for available domains"]
-        )
-        
-        if is_valid:
-            # Get domain configuration
-            domain_config = self.config_manager.get_training_config_for_domain(domain)
+    def _initialize_domain_logging(self, domain):
+        """Initializes the intelligent logger for a specific domain."""
+        try:
+            domain_config = self.config_manager.get_tara_proven_params(domain)
+            session_id = f"{domain}_{int(time.time())}"
+
+            logger = IntelligentLogger(
+                domain=domain,
+                session_id=session_id,
+                start_time=datetime.now().isoformat(),
+                is_simulation=self.simulation,
+                total_domains_in_config=len(self.config_manager.get_all_domains_flat()),
+                is_valid=True,  # If we got this far, it's valid
+                category=domain_config.get("category", "N/A"),
+                model_tier=domain_config.get("model_tier", "N/A"),
+                base_model=domain_config.get("base_model", "N/A"),
+                sample_count=domain_config["sample_count"],
+                max_steps=domain_config["max_steps"],
+                num_epochs=domain_config.get("num_epochs", "N/A"),
+                learning_rate=domain_config["learning_rate"],
+            )
             
             # Log model selection
             logger.log_model_selection(
                 domain=domain,
                 base_model=domain_config["base_model"],
                 model_tier=domain_config["model_tier"],
-                selection_reason=f"{domain_config['model_tier'].title()} tier model selected for {category} category - optimized for domain requirements"
+                selection_reason=f"{domain_config['model_tier'].title()} tier model selected for {domain_config.get('category', 'unknown')} category - optimized for domain requirements"
             )
             
             # Log parameter generation
@@ -121,8 +111,8 @@ class RealTrinityProductionLauncher:
                     "lora_r": domain_config["lora_r"],
                     "max_steps": domain_config["max_steps"],
                     "learning_rate": domain_config["learning_rate"],
-                    "samples_per_domain": domain_config["samples_per_domain"],
-                    "quality_target": domain_config["quality_target"],
+                    "sample_count": domain_config["sample_count"],
+                    "quality_target": domain_config["validation_target"],
                     "gradient_accumulation": domain_config.get("gradient_accumulation", 4),
                     "warmup_steps": domain_config.get("warmup_steps", 84)
                 },
@@ -133,7 +123,7 @@ class RealTrinityProductionLauncher:
             logger.log_decision(
                 decision_type="Model Selection",
                 decision=f"Selected {domain_config['base_model']} for {domain}",
-                reasoning=f"{domain_config['model_tier'].title()} tier model provides optimal performance for {category} domain requirements"
+                reasoning=f"{domain_config['model_tier'].title()} tier model provides optimal performance for {domain_config.get('category', 'unknown')} domain requirements"
             )
             
             logger.log_decision(
@@ -142,7 +132,11 @@ class RealTrinityProductionLauncher:
                 reasoning=f"Parameters optimized for {domain_config['model_tier']} tier based on model size and domain complexity"
             )
         
-        return logger
+            return logger
+            
+        except (ValueError, KeyError) as e:
+            print(f"❌ Error initializing logger for domain '{domain}': {e}")
+            return None
         
     def _log_training_progress(self, logger, domain: str, step: int, total_steps: int, loss: float, speed: float):
         """Log training progress"""
@@ -170,60 +164,68 @@ class RealTrinityProductionLauncher:
             return
             
         # Log sample generation (from training result)
-        samples_generated = training_result.get('data_size', 5000)
-        generation_time = training_result.get('total_training_time', 0) * 0.1  # Estimate 10% for data gen
+        samples_generated = training_result.get('samples_generated', 0)
+        generation_time = training_result.get('total_time_seconds', 0) * 0.1  # Estimate 10% for data gen
         
         logger.log_sample_generation(
             domain=domain,
             target_samples=samples_generated,
             generated_samples=samples_generated,
-            quality_score=0.95,  # Estimate from successful training
+            quality_score=0.95,  # This could also be dynamic if available
             generation_time=generation_time
         )
         
-        # Log GGUF creation (if successful)
-        if training_result.get('model_saved', False):
-            logger.log_gguf_creation(
-                domain=domain,
-                gguf_info={
-                    "format": "Q4_K_M",
-                    "size": 8.3,
-                    "compression": "Q4_K_M",
-                    "quality": 98.5,
-                    "filename": f"meetara_{domain}_q4_k_m.gguf",
-                    "model_path": training_result.get('model_path', 'N/A'),
-                    "model_size_mb": training_result.get('model_size_mb', 0)
+        # Log GGUF creation for each variant produced
+        model_variants = training_result.get("model_variants_created", [])
+        if not model_variants:
+            logger.warning(f"No model variants found in the result for domain {domain}.")
+
+        for variant in model_variants:
+            if variant.get("status") == "success":
+                # Extract real data from the variant result
+                gguf_info = {
+                    "format": variant.get("quantization_used", "UNKNOWN"),
+                    "size": variant.get("model_size_mb", 0),
+                    "compression": variant.get("quantization_used", "UNKNOWN"),
+                    "quality": variant.get("configuration_used", {}).get("metadata", {}).get("data_analysis", {}).get("quality_score", 0) * 100,
+                    "filename": Path(variant.get("output_path", "")).name,
+                    "model_path": variant.get("output_path", "N/A"),
+                    "model_size_mb": variant.get("model_size_mb", 0)
                 }
+                logger.log_gguf_creation(domain=domain, gguf_info=gguf_info)
+
+        # Log quality validation - this could be made more sophisticated
+        # For now, we'll use the quality from the first successful variant
+        successful_variants = [v for v in model_variants if v.get("status") == "success"]
+        if successful_variants:
+            first_variant = successful_variants[0]
+            quality_score = first_variant.get("configuration_used", {}).get("metadata", {}).get("data_analysis", {}).get("quality_score", 0) * 100
+            target_quality = 95.0 # This could also be dynamic from config
+            
+            logger.log_quality_validation(
+                domain=domain,
+                quality_score=quality_score,
+                quality_target=target_quality,
+                passed=quality_score >= target_quality
             )
-        
-        # Log quality validation
-        final_loss = training_result.get('final_loss', 1.0)
-        quality_score = max(90.0, min(100.0, (1.0 - final_loss) * 100))
-        target_quality = 95.0
-        
-        logger.log_quality_validation(
-            domain=domain,
-            quality_score=quality_score,
-            quality_target=target_quality,
-            passed=quality_score >= target_quality
-        )
-        
-        # Log final decisions
-        logger.log_decision(
-            decision_type="Training Completion",
-            decision=f"Training completed for {domain}",
-            reasoning=f"Final loss: {final_loss:.6f}, Quality: {quality_score:.1f}%, Time: {training_result.get('total_training_time', 0):.1f}s"
-        )
-        
+            
+            # Log final decisions
+            logger.log_decision(
+                decision_type="Training Completion",
+                decision=f"Training completed for {domain}",
+                reasoning=f"Final quality: {quality_score:.1f}%, Time: {training_result.get('total_time_seconds', 0):.1f}s, Variants: {len(successful_variants)}"
+            )
+
         # Complete session
         logger.log_session_summary()
             
-    async def launch_trinity_training(self, category: str = None, domains: list = None):
+    async def launch_trinity_training(self, category: str = None, domains: list = None, simulation: bool = False):
         """Launch real Trinity training with Intelligence Hub and Comprehensive Logging"""
-        
-        if not TRINITY_AVAILABLE or not self.trinity_ecosystem:
-            print("❌ Trinity ecosystem not available")
-            return {"status": "error", "message": "Trinity not available"}
+        self.simulation = simulation  # Set simulation status for the instance
+
+        if not LOGGING_AVAILABLE or not self.logger:
+            print("❌ Intelligent logging not available")
+            return TrainingResult(status="error", message="Intelligent logging not available")
             
         print(f"\n🚀 LAUNCHING TRINITY SUPER-AGENT TRAINING WITH INTELLIGENT LOGGING")
         print("="*70)
@@ -233,6 +235,10 @@ class RealTrinityProductionLauncher:
         print("🔍 Quality Assurance: Setting up validation pipelines...")
         print("📊 Intelligent Logging: Capturing all decisions and processes...")
         print("="*70)
+        
+        # Add simulation status to the log
+        if simulation:
+            print("🚦 RUNNING IN SIMULATION MODE - NO REAL TRAINING WILL OCCUR")
         
         # Determine domains to train
         if category:
@@ -258,7 +264,10 @@ class RealTrinityProductionLauncher:
         
         # Launch Trinity ecosystem training
         print(f"\n🚀 Launching Trinity ecosystem training...")
-        result = await self.trinity_ecosystem.coordinate_complete_training(domains_to_train)
+        result = await self.trinity_ecosystem.coordinate_complete_training(
+            domains_to_train=domains_to_train,
+            simulation=simulation
+        )
         
         # Log training results
         if result and result.get('results'):
@@ -325,37 +334,62 @@ class RealTrinityProductionLauncher:
         return domain_mapping.get(category, [])
 
 async def main():
-    """Main entry point for Trinity Production Launcher"""
+    """Main function to run the Trinity Production Launcher"""
+    parser = argparse.ArgumentParser(
+        description="Launch real Trinity training sessions with the Super-Agent ecosystem.",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
     
-    parser = argparse.ArgumentParser(description="MeeTARA Lab - Real Trinity Production Launcher")
-    parser.add_argument("--category", type=str, help="Train specific category (healthcare, daily_life, business, etc.)")
-    parser.add_argument("--domains", nargs='+', help="Train specific domains")
-    parser.add_argument("--all", action="store_true", help="Train all 62 domains")
+    # Group for domain selection
+    domain_group = parser.add_mutually_exclusive_group(required=True)
+    domain_group.add_argument(
+        '--category', 
+        type=str, 
+        help="Train all domains in a specific category (e.g., 'healthcare')"
+    )
+    domain_group.add_argument(
+        '--domains', 
+        nargs='+', 
+        help="Train a specific list of domains (e.g., 'symptom_checker' 'financial_advisor')"
+    )
+    domain_group.add_argument(
+        '--all', 
+        action='store_true', 
+        help="Train all 62 domains"
+    )
     
+    # Simulation flag
+    parser.add_argument(
+        '--simulation', 
+        action='store_true', 
+        help="Run in simulation mode (generates artifacts but no real training)"
+    )
+
     args = parser.parse_args()
     
-    # Initialize Trinity launcher
     launcher = RealTrinityProductionLauncher()
     
+    # Determine domains to run
     if args.category:
-        result = await launcher.launch_trinity_training(category=args.category)
+        domains_to_run = launcher._get_domains_for_category(args.category)
+        print(f"🎯 Training category: {args.category.upper()}")
+        print(f"   → Domains: {domains_to_run}")
     elif args.domains:
-        result = await launcher.launch_trinity_training(domains=args.domains)
+        domains_to_run = args.domains
+        print(f"🎯 Training specific domains: {domains_to_run}")
     elif args.all:
-        result = await launcher.launch_trinity_training()
+        domains_to_run = launcher.config_manager.get_all_domains_flat() if launcher.config_manager else []
+        print("🌍 Training ALL 62 domains across 7 categories")
     else:
-        print("🚀 MeeTARA Lab - Trinity Production Launcher")
-        print("\nUsage:")
-        print("  python production_launcher.py --category daily_life")
-        print("  python production_launcher.py --category healthcare")
-        print("  python production_launcher.py --domains parenting communication")
-        print("  python production_launcher.py --all")
-        print("\nAvailable categories:")
-        print("  healthcare, daily_life, business, education, creative, technology, specialized")
+        # This case should not be reached due to the mutually exclusive group
+        print("❌ Please specify --category, --domains, or --all.")
         return
-    
-    print(f"\n🎉 Trinity Training Complete!")
-    print(f"Result: {result}")
+
+    await launcher.launch_trinity_training(
+        category=args.category, 
+        domains=domains_to_run,
+        simulation=args.simulation
+    )
 
 if __name__ == "__main__":
     asyncio.run(main())

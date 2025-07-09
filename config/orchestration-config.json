@@ -1,0 +1,38 @@
+{
+    "version": "2.1-unified",
+    "description": "Orchestration config for the Trinity Super Agent system. This now points to the single source of truth for all domain and model mappings.",
+    "domain_mappings_source": "config/trinity_config.yaml",
+    "agents": [
+        {
+            "name": "trinity_conductor",
+            "source": "trinity_core.agents.trinity_conductor.TrinityConductor",
+            "description": "Master orchestrator for the entire training pipeline.",
+            "dependencies": [
+                "trinity_data_generator",
+                "intelligent_model_factory"
+            ]
+        },
+        {
+            "name": "trinity_data_generator",
+            "source": "trinity_core.agents.trinity_data_generator.TrinityDataGenerator",
+            "description": "Generates high-quality training data based on dynamic tier settings.",
+            "dependencies": []
+        },
+        {
+            "name": "intelligent_model_factory",
+            "source": "trinity_core.agents.intelligent_model_factory.IntelligentModelFactory",
+            "description": "Creates and quantizes GGUF models using proven parameters.",
+            "dependencies": []
+        }
+    ],
+    "pipeline_flow": [
+        "trinity_data_generator",
+        "intelligent_model_factory",
+        "trinity_conductor"
+    ],
+    "error_handling": {
+        "max_retries": 2,
+        "retry_delay_seconds": 60,
+        "fallback_strategy": "log_and_skip"
+    }
+} 

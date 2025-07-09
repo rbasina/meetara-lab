@@ -17,80 +17,34 @@ import argparse
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
+# Import the centralized config manager
+from trinity_core.core_components.config_manager import SmartTrinityConfigManager
+
 print(f"🚀 MeeTARA Lab - Simple Production Launcher")
 print(f"📁 Project root: {project_root}")
 
-def load_domain_config():
-    """Load domain configuration from YAML file"""
-    config_path = project_root / "config" / "trinity_domain_model_mapping_config.yaml"
-    
-    try:
-        with open(config_path, 'r', encoding='utf-8') as f:
-            config = yaml.safe_load(f)
-            print(f"✅ Loaded domain config from: {config_path}")
-            return config
-    except Exception as e:
-        print(f"❌ Failed to load domain config from {config_path}: {e}")
-        return {}
-
-def get_domain_categories_from_config(config: Dict[str, Any]) -> Dict[str, List[str]]:
-    """Extract domain categories from config"""
-    if not config:
-        return {}
-    
-    # Extract domain categories (skip metadata sections)
-    skip_sections = {
-        'version', 'description', 'last_updated', 'model_tiers', 
-        'quality_reasoning', 'gpu_configs', 'cost_estimates', 
-        'verified_licenses', 'tara_proven_params', 'quality_targets', 
-        'reliability_features'
-    }
-    
-    all_domains = {}
-    for key, value in config.items():
-        if key not in skip_sections and isinstance(value, dict):
-            # Check if this looks like a domain category (has domain mappings)
-            if any(isinstance(v, str) for v in value.values()):
-                all_domains[key] = list(value.keys())
-    
-    total_domains = sum(len(domains) for domains in all_domains.values())
-    print(f"📋 Loaded {total_domains} total domains across {len(all_domains)} categories from config")
-    return all_domains
-
 class SimpleProductionLauncher:
-    """Simple Production Launcher for Super Agent Testing"""
-    
-    def __init__(self, simulation: bool = True):
-        self.simulation = simulation
-        self.domain_config = load_domain_config()
-        self.domains = get_domain_categories_from_config(self.domain_config)
+    """A simplified production launcher for quick, non-agent-based training runs."""
+    def __init__(self, domain: str = None, category: str = None, all_domains: bool = False):
+        self.config_manager = SmartTrinityConfigManager()
+        self.domains_to_train = self._resolve_domains(domain, category, all_domains)
+
+    def _resolve_domains(self, domain, category, all_flag):
+        """Resolves which domains to train based on the provided flags."""
+        if domain:
+            return [domain] if self.config_manager.get_tara_proven_params(domain) else []
         
-        self.start_time = time.time()
-        self.budget_limit = 50.0
-        self.current_cost = 0.0
+        all_domains = self.config_manager.get_all_domains_flat()
+        if category:
+            return [d for d, details in all_domains.items() if details.get('category') == category]
         
-        # Performance metrics
-        self.metrics = {
-            "total_domains_processed": 0,
-            "successful_domains": 0,
-            "failed_domains": 0,
-            "total_cost": 0.0,
-            "total_training_time": 0.0,
-            "performance_improvement": 37.0,  # Trinity Architecture provides 37x improvement
-            "coordination_efficiency": 8.5,   # Trinity provides 8.5x coordination efficiency
-            "intelligence_insights": 0
-        }
-        
-        # Create output directories
-        self.output_dir = project_root / "model-factory" / "trinity_gguf_models"
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        
-        print(f"📁 Output directory: {self.output_dir}")
-        print(f"💰 Budget limit: ${self.budget_limit:.2f}")
-        print(f"🎯 Mode: {'Simulation' if self.simulation else 'Production'}")
-        
-    async def run_super_agent_test(self, target_category: str = None, max_domains: int = None) -> Dict[str, Any]:
-        """Run comprehensive super agent production test"""
+        if all_flag:
+            return list(all_domains.keys())
+            
+        return []
+
+    async def launch(self):
+        """Launches the training process for the specified domains."""
         
         print(f"\n🦾 Starting Super Agent Production Test")
         print(f"   🧠 Trinity Architecture: ENABLED")
@@ -299,7 +253,7 @@ class SimpleProductionLauncher:
             "trinity_architecture": "enabled",
             "performance_optimization": "37x improvement",
             "coordination_efficiency": "8.5x improvement",
-            "domain_config_loaded": bool(self.domain_config),
+            "domain_config_loaded": bool(self.config_manager),
             "total_domains_available": sum(len(domains) for domains in self.domains.values()),
             "total_categories": len(self.domains),
             "budget_limit": self.budget_limit,

@@ -93,7 +93,7 @@ meetara-lab/
 │   ├── C_category_specific/  # 🏥 8.3MB healthcare specialist
 │   ├── speech_models/        # 🎤 740MB enhancement layer
 │   └── comprehensive_manifest.json
-├── trinity-core/             # 🧠 Core intelligence + agents
+├── trinity_core/             # 🧠 Core intelligence + agents
 ├── cloud-training/           # ☁️ GPU orchestration + deployment
 ├── model-factory/            # 🏭 Model creation + training
 ├── scripts/gguf_factory/     # 🛠️ Universal model factory
