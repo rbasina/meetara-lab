@@ -16,7 +16,7 @@ import logging
 
 # --- Super Agent Imports ---
 from trinity_core.agents.trinity_conductor import trinity_conductor
-from trinity_core.agents.intelligence_hub import intelligence_hub
+from trinity_core.agents.intelligence_hub import TrinityIntelligenceHub # Corrected import to class
 from trinity_core.agents.model_factory import IntelligentModelFactory
 from trinity_core.core_components.domain_integration import (
     get_all_domains,
@@ -52,7 +52,7 @@ class CompleteAgentEcosystem:
         self.initialization_time = datetime.now()
         
         # --- Initialize Super Agents ---
-        self.intelligence_hub = intelligence_hub
+        self.intelligence_hub = TrinityIntelligenceHub() # Instantiate the class
         self.trinity_conductor = trinity_conductor
         self.model_factory = IntelligentModelFactory()
         
@@ -61,7 +61,7 @@ class CompleteAgentEcosystem:
         logger.info(f"   → Trinity Conductor: ACTIVE")
         logger.info(f"   → Model Factory: ACTIVE")
         
-    async def coordinate_complete_training(self, domains_to_train: List[str] = None, simulation: bool = False) -> Dict[str, Any]:
+    async def coordinate_complete_training(self, domains_to_train: List[str] = None, simulation: bool = False, generate_synthetic: bool = False) -> Dict[str, Any]:
         """Coordinate complete training for all domains with Super-Agent flow"""
         
         if domains_to_train is None:
@@ -83,16 +83,12 @@ class CompleteAgentEcosystem:
         }
         
         # The Trinity Conductor now orchestrates the main training flow.
-        # We need to pass the simulation flag to it.
-        # For now, we'll assume the conductor passes this down to the model factory.
-        
-        # This is a conceptual change, as the conductor itself doesn't have the simulation
-        # flag yet. We'll add it there next. The main goal here is to get the results
-        # from the model factory.
+        # We need to pass the simulation and generate_synthetic flags to it.
 
         conductor_results = await self.trinity_conductor.orchestrate_intelligent_training(
             target_domains=domains_to_train,
-            training_mode="simulation" if simulation else "optimized"
+            training_mode="simulation" if simulation else "optimized",
+            generate_synthetic=generate_synthetic # Pass the new flag here
         )
         
         # Process results from the conductor

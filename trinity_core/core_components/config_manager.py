@@ -125,13 +125,20 @@ class SmartTrinityConfigManager:
             return self._domain_cache[domain_name]
 
         for category_name, category_config in self._domain_config.items():
+            logging.debug(f"ConfigManager: Checking category '{category_name}' for domain '{domain_name}'")
             domains = category_config.get('domains', {})
             if domain_name in domains:
                 domain_entry = domains[domain_name] or {}  # Ensure it's a dict even if null
+                logging.debug(f"ConfigManager: Found domain '{domain_name}' in category '{category_name}'. Entry: {domain_entry}")
 
                 # Determine base_model and tier_name with proper fallbacks
                 base_model = domain_entry.get('base_model', category_config.get('base_model'))
                 tier_name = domain_entry.get('category_tier', category_config.get('category_tier'))
+                
+                # Retrieve generate_synthetic_data with fallback hierarchy
+                generate_synthetic = domain_entry.get('generate_synthetic_data', 
+                                                    category_config.get('generate_synthetic_data', 
+                                                                        self._global_params.get('generate_synthetic_data', False)))
 
                 if not base_model:
                     raise ValueError(f"Configuration error: Base model not specified for domain '{domain_name}' or its category '{category_name}'.")
@@ -142,7 +149,8 @@ class SmartTrinityConfigManager:
                 self._domain_cache[domain_name] = {
                     'base_model': base_model,
                     'tier_name': tier_name,
-                    'category': category_name
+                    'category': category_name,
+                    'generate_synthetic_data': generate_synthetic # Add the new flag
                 }
                 return self._domain_cache[domain_name]
 
@@ -173,7 +181,15 @@ class SmartTrinityConfigManager:
         tier-specific, and domain-specific settings, including dynamic max_steps calculation.
         """
         domain_details = self._get_domain_details(domain_name)
-        tier_name = domain_details['tier_name']
+
+        if domain_details is None:
+            raise ValueError(f"Domain details for '{domain_name}' could not be retrieved from configuration. Received None.")
+
+        try:
+            tier_name = domain_details['tier_name']
+        except KeyError as e:
+            raise ValueError(f"Configuration error: 'tier_name' missing in domain details for '{domain_name}'. Error: {e}")
+
         tier_config = self.get_model_tier_config(tier_name)
 
         # Start with global defaults

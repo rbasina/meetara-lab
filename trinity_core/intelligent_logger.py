@@ -21,8 +21,15 @@ class IntelligentLogger:
         self.start_time = kwargs.get("start_time", datetime.now().isoformat())
         self.is_simulation = kwargs.get("is_simulation", False)
         
-        # Create logs directory for the specific domain
-        self.logs_dir = Path("logs") / self.domain
+        # Determine the base logs directory based on simulation flag
+        base_logs_dir = Path("logs")
+        if self.is_simulation:
+            final_logs_base = base_logs_dir / "dev"
+        else:
+            final_logs_base = base_logs_dir / "production"
+
+        # Create logs directory for the specific domain within the dev/production structure
+        self.logs_dir = final_logs_base / self.domain
         self.logs_dir.mkdir(parents=True, exist_ok=True)
         
         # Setup different log files
@@ -45,15 +52,15 @@ class IntelligentLogger:
         
         self.log_session_start()
         # Log config details immediately after session start
-        self.log_config_loading(
-            yaml_loaded=True, 
-            total_domains=kwargs.get("total_domains_in_config", 0)
-        )
-        self.log_domain_validation(
-            domain=self.domain,
-            is_valid=kwargs.get("is_valid", False),
-            category=kwargs.get("category", "N/A")
-        )
+        # self.log_config_loading(
+        #     yaml_loaded=True, 
+        #     total_domains=kwargs.get("total_domains_in_config", 0)
+        # )
+        # self.log_domain_validation(
+        #     domain=self.domain,
+        #     is_valid=kwargs.get("is_valid", False),
+        #     category=kwargs.get("category", "N/A")
+        # )
     
     def setup_loggers(self, log_level: str):
         """Setup multiple loggers for different purposes"""
@@ -148,6 +155,16 @@ class IntelligentLogger:
             "timestamp": datetime.now().isoformat()
         }
     
+    def log_system_initialized(self, system_name: str = "MeeTARA Lab System"):
+        """Log that the overall system has been initialized."""
+        self.main_logger.info("✨ SYSTEM INITIALIZATION COMPLETE")
+        self.main_logger.info(f"   {system_name} has been successfully initialized.")
+        self.main_logger.info("--------------------------------------------------------------------------------")
+        self.session_data["system_initialized"] = {
+            "system_name": system_name,
+            "timestamp": datetime.now().isoformat()
+        }
+
     def log_model_selection(self, domain: str, base_model: str, model_tier: str, selection_reason: str):
         """Log detailed model selection process"""
         self.model_logger.info("🤖 MODEL SELECTION PROCESS")
@@ -218,6 +235,17 @@ class IntelligentLogger:
             "timestamp": datetime.now().isoformat()
         }
     
+    def log_training_start(self, domains_to_process: List[str]):
+        """Log the start of the overall training process."""
+        self.main_logger.info("")
+        self.main_logger.info("🚀 TRAINING ORCHESTRATION INITIATED")
+        self.main_logger.info(f"   Domains to process: {', '.join(domains_to_process)}")
+        self.main_logger.info("--------------------------------------------------------------------------------")
+        self.session_data["training_start"] = {
+            "domains_to_process": domains_to_process,
+            "timestamp": datetime.now().isoformat()
+        }
+
     def log_training_step(self, step: int, loss: float, accuracy: float = None, learning_rate: float = None):
         """Log individual training steps"""
         if step % 100 == 0:  # Log every 100 steps
@@ -250,55 +278,128 @@ class IntelligentLogger:
         }
     
     def log_quality_validation(self, domain: str, quality_score: float, quality_target: float, passed: bool):
-        """Log quality validation results"""
-        status = "✅ PASSED" if passed else "❌ FAILED"
-        self.main_logger.info(f"🔍 QUALITY VALIDATION: {status}")
-        self.main_logger.info(f"   Domain: {domain}")
-        self.main_logger.info(f"   Quality Score: {quality_score:.1f}%")
-        self.main_logger.info(f"   Quality Target: {quality_target:.1f}%")
-        self.main_logger.info(f"   Difference: {quality_score - quality_target:+.1f}%")
+        """Log quality validation of generated data or trained models."""
+        if passed:
+            self.main_logger.info(f"✅ Quality validation passed for {domain}. Score: {quality_score:.2%}")
+        else:
+            self.main_logger.warning(f"❌ Quality validation failed for {domain}. Score: {quality_score:.2%}")
         
-        self.session_data["quality_metrics"] = {
-            "domain": domain,
+        self.session_data["quality_metrics"][domain] = {
             "quality_score": quality_score,
             "quality_target": quality_target,
             "passed": passed,
-            "difference": quality_score - quality_target,
             "timestamp": datetime.now().isoformat()
         }
-    
+
+    def log_training_completed(self, overall_results: Dict[str, Any]):
+        """Log the completion of the overall training process."""
+        self.main_logger.info("")
+        self.main_logger.info("✅ TRAINING ORCHESTRATION COMPLETED")
+        self.main_logger.info(f"   Overall Success: {overall_results.get('overall_success', False)}")
+        self.main_logger.info(f"   Total Domains Processed: {overall_results.get('total_domains_processed', 0)}")
+        self.main_logger.info(f"   Successful Domains: {overall_results.get('successful_domains_count', 0)}")
+        self.main_logger.info(f"   Failed Domains: {overall_results.get('failed_domains_count', 0)}")
+        self.main_logger.info(f"   Total Processing Time: {overall_results.get('total_processing_time_seconds', 0.0):.2f}s")
+        self.main_logger.info("--------------------------------------------------------------------------------")
+        self.session_data["training_completion"] = {
+            "overall_success": overall_results.get('overall_success'),
+            "total_domains_processed": overall_results.get('total_domains_processed'),
+            "successful_domains_count": overall_results.get('successful_domains_count'),
+            "failed_domains_count": overall_results.get('failed_domains_count'),
+            "total_processing_time_seconds": overall_results.get('total_processing_time_seconds'),
+            "timestamp": datetime.now().isoformat()
+        }
+
+    def log_comprehensive_summary(self, overall_results: Dict[str, Any]):
+        """Log a comprehensive summary of the entire training session."""
+        self.main_logger.info("")
+        self.main_logger.info("📊 COMPREHENSIVE SESSION SUMMARY")
+        self.main_logger.info("--------------------------------------------------------------------------------")
+
+        # Performance Metrics Summary
+        optimization_gains = overall_results.get("optimization_gains", {})
+        self.main_logger.info("🚀 Performance Metrics:")
+        self.main_logger.info(f"   Speed Improvement: {optimization_gains.get('speed_improvement', 'N/A')}")
+        self.main_logger.info(f"   Success Rate: {optimization_gains.get('success_rate', 0.0):.2%}")
+        self.main_logger.info(f"   Baseline Time: {optimization_gains.get('baseline_time', 'N/A')}s")
+        self.main_logger.info(f"   Optimized Time: {optimization_gains.get('optimized_time', 'N/A'):.2f}s")
+        self.main_logger.info(f"   Time Saved: {optimization_gains.get('time_saved', 'N/A'):.2f}s")
+
+        # Quality Validation Summary
+        quality_validation = overall_results.get("overall_quality_validation", {})
+        self.main_logger.info("\n⭐ Quality Validation:")
+        self.main_logger.info(f"   Total Domains: {quality_validation.get('total_domains', 0)}")
+        self.main_logger.info(f"   Successful Domains: {quality_validation.get('successful_domains', 0)}")
+        self.main_logger.info(f"   Failed Domains: {quality_validation.get('failed_domains', 0)}")
+        
+        self.main_logger.info("\n💡 Optimization Applied:")
+        for opt in quality_validation.get("optimization_applied", []):
+            self.main_logger.info(f"   - {opt}")
+        
+        self.main_logger.info("\n🎯 Recommendations:")
+        for rec in quality_validation.get("recommendations", []):
+            self.main_logger.info(f"   - {rec}")
+
+        self.main_logger.info("\n📈 Domain Breakdown (Success/Failure):")
+        for domain_name in overall_results.get("domain_breakdown", {}).get("successful_domains", []):
+            self.main_logger.info(f"   ✅ {domain_name}")
+        for domain_name in overall_results.get("domain_breakdown", {}).get("failed_domains", []):
+            self.main_logger.info(f"   ❌ {domain_name}")
+        
+        self.main_logger.info("--------------------------------------------------------------------------------")
+        self.session_data["comprehensive_summary"] = overall_results
+
     def log_session_summary(self):
-        """Log comprehensive session summary"""
-        end_time = datetime.now()
-        duration = end_time - self.start_time
+        """Log overall session summary from stored session_data"""
+        self.main_logger.info("\n" + "="*80)
+        self.main_logger.info(f"✨ MEETARA LAB SESSION SUMMARY - ID: {self.session_id}")
+        self.main_logger.info(f"⏰ End Time: {datetime.now().isoformat()}")
         
-        self.main_logger.info("="*80)
-        self.main_logger.info("TRAINING SESSION COMPLETED")
-        self.main_logger.info(f"Session ID: {self.session_id}")
-        self.main_logger.info(f"Domain: {self.domain}")
-        self.main_logger.info(f"Duration: {duration}")
-        self.main_logger.info(f"End Time: {end_time}")
+        total_processing_time = 0.0
+        if "training_completion" in self.session_data and "total_processing_time_seconds" in self.session_data["training_completion"]:
+            total_processing_time = self.session_data["training_completion"]["total_processing_time_seconds"]
+        self.main_logger.info(f"⏱️ Total Session Duration: {total_processing_time:.2f} seconds")
         
-        # Summary statistics
-        if self.session_data.get("sample_generation"):
-            samples = self.session_data["sample_generation"]
-            self.main_logger.info(f"Samples Generated: {samples.get('generated_samples', 0):,}")
+        total_domains_in_config = self.session_data.get("config_loading", {}).get("total_domains", "N/A")
+        self.main_logger.info(f"📊 Total Domains in Config: {total_domains_in_config}")
         
-        if self.session_data.get("quality_metrics"):
-            quality = self.session_data["quality_metrics"]
-            self.main_logger.info(f"Final Quality: {quality.get('quality_score', 0):.1f}%")
+        successful_domains = self.session_data.get("training_completion", {}).get("successful_domains_count", "N/A")
+        self.main_logger.info(f"✅ Successful Domains: {successful_domains}")
         
-        self.main_logger.info("="*80)
+        failed_domains = self.session_data.get("training_completion", {}).get("failed_domains_count", "N/A")
+        self.main_logger.info(f"❌ Failed Domains: {failed_domains}")
         
-        # Save session data to JSON
-        self.session_data["end_time"] = end_time.isoformat()
-        self.session_data["duration_seconds"] = duration.total_seconds()
+        overall_success = self.session_data.get("training_completion", {}).get("overall_success", "N/A")
+        self.main_logger.info(f"🚀 Overall Success: {overall_success}")
         
-        session_file = self.logs_dir / f"session_summary_{self.domain}_{self.session_id}.json"
-        with open(session_file, 'w', encoding='utf-8') as f:
-            json.dump(self.session_data, f, indent=2, default=str)
-        
-        self.main_logger.info(f"Session data saved to: {session_file}")
+        self.main_logger.info("\nDetailed domain breakdown:")
+        domain_breakdown = self.session_data.get("comprehensive_summary", {}).get("domain_breakdown", {})
+        if domain_breakdown:
+            for domain_type, domains_list in domain_breakdown.items():
+                if domains_list:
+                    self.main_logger.info(f"  - {domain_type.replace('_', ' ').title()}:")
+                    for domain_name in domains_list:
+                        self.main_logger.info(f"    • {domain_name}")
+        else:
+            self.main_logger.info("  No detailed domain breakdown available.")
+
+        self.main_logger.info("\nOptimization Summary:")
+        optimization_applied = self.session_data.get("comprehensive_summary", {}).get("overall_quality_validation", {}).get("optimization_applied", [])
+        if optimization_applied:
+            for opt in optimization_applied:
+                self.main_logger.info(f"  - {opt}")
+        else:
+            self.main_logger.info("  No specific optimizations logged.")
+
+        recommendations = self.session_data.get("comprehensive_summary", {}).get("overall_quality_validation", {}).get("recommendations", [])
+        if recommendations:
+            self.main_logger.info("\nRecommendations:")
+            for rec in recommendations:
+                self.main_logger.info(f"  - {rec}")
+        else:
+            self.main_logger.info("  No specific recommendations logged.")
+
+        self.main_logger.info("\nEnd of Session Summary" + "\n" + "="*80)
     
     def _explain_parameter_choice(self, param: str, value: Any, model_tier: str) -> str:
         """Explain why a specific parameter value was chosen"""

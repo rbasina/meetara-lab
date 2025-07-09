@@ -12,7 +12,7 @@ import os
 import shutil
 import time
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, List
 from datetime import datetime
 import asyncio
 
@@ -61,7 +61,7 @@ class QuantizationAndCleanupAgent:
         else:
             logger.info(f"✅ LLaMA.cpp quantizer found at: {self.quantize_executable}")
 
-    async def process_and_finalize_model(self, raw_model_path: str, domain: str, model_size_mb: float, architecture_type: str) -> Dict[str, Any]:
+    async def process_and_finalize_model(self, raw_model_path: str, domain: str, model_size_mb: float, architecture_type: str, is_simulation: bool) -> Dict[str, Any]:
         """
         Processes the raw model, quantizes, compresses, and cleans up.
         Returns the path to the final GGUF file and metadata.
@@ -69,31 +69,32 @@ class QuantizationAndCleanupAgent:
         start_time = time.time()
         logger.info(f"Starting post-processing for raw model: {raw_model_path} for domain {domain}")
 
-        final_gguf_path = None
+        final_gguf_paths = []
         try:
             # Step 1: Simulate garbage collection (e.g., deleting temporary training files)
             await self._perform_garbage_collection(raw_model_path)
 
-            # Step 2: Determine optimal quantization and compression strategy
-            quantization_strategy = self._determine_optimal_quantization(model_size_mb, domain, architecture_type)
+            # Step 2: Determine optimal quantization and compression strategy (now a list of strategies)
+            # For now, we will use a predefined list of quantization strategies
+            quantization_strategies = ["Q2_K", "Q4_K_M", "Q5_K_M", "Q8_0"]
             compression_strategy = self._determine_optimal_compression(model_size_mb, domain, architecture_type)
 
-            # Step 3: Perform GGUF conversion and quantization
-            final_gguf_path = await self._perform_gguf_conversion_and_quantization(
-                raw_model_path, domain, quantization_strategy, compression_strategy, model_size_mb, architecture_type
+            # Step 3: Perform GGUF conversion and quantization for each strategy
+            final_gguf_paths = await self._perform_gguf_conversion_and_quantization(
+                raw_model_path, domain, quantization_strategies, compression_strategy, model_size_mb, architecture_type, is_simulation
             )
 
             # Step 4: Final cleanup of raw model (optional, but good practice)
             # shutil.rmtree(Path(raw_model_path).parent) # Uncomment for aggressive cleanup
 
             total_processing_time = time.time() - start_time
-            logger.info(f"✅ Model finalization complete for {domain}. GGUF at: {final_gguf_path}. Time: {total_processing_time:.2f}s")
+            logger.info(f"✅ Model finalization complete for {domain}. GGUF paths: {final_gguf_paths}. Time: {total_processing_time:.2f}s")
 
             return {
                 "status": "success",
                 "domain": domain,
-                "final_gguf_path": str(final_gguf_path),
-                "quantization_applied": quantization_strategy,
+                "final_gguf_paths": [str(p) for p in final_gguf_paths],
+                "quantization_applied": quantization_strategies, # Now lists all applied strategies
                 "compression_applied": compression_strategy,
                 "processing_time_seconds": total_processing_time,
                 "metadata": {
@@ -141,54 +142,61 @@ class QuantizationAndCleanupAgent:
         return "gzip" # Common and efficient
 
     async def _perform_gguf_conversion_and_quantization(self, raw_model_path: str, domain: str, 
-                                                      quantization_strategy: str, compression_strategy: str, 
-                                                      model_size_mb: float, architecture_type: str) -> Path:
+                                                      quantization_strategies: List[str], compression_strategy: str, 
+                                                      model_size_mb: float, architecture_type: str, is_simulation: bool) -> List[Path]:
         """
-        Performs (or simulates) the GGUF conversion and quantization using llama.cpp tools.
+        Performs (or simulates) the GGUF conversion and quantization using llama.cpp tools for multiple quantization strategies.
         """
-        project_root = Path(__file__).resolve().parents[3] # meetara-lab root
+        project_root = Path(__file__).resolve().parents[2] # Corrected: meetara-lab root
         
         # Get domain category from config manager
         domain_details = self.config_manager._get_domain_details(domain)
         category = domain_details.get("category", "unknown_category")
 
-        final_output_dir = project_root / "models" / "dev" / category / domain
-        final_output_dir.mkdir(parents=True, exist_ok=True)
+        # Determine the base output directory based on simulation flag
+        base_output_dir = project_root / "models"
+        if is_simulation:
+            final_output_base = base_output_dir / "dev"
+        else:
+            final_output_base = base_output_dir / "production"
+
+        final_output_dir_base = final_output_base / "D_domain_specific" / category / domain
+        final_output_dir_base.mkdir(parents=True, exist_ok=True)
+        
+        generated_gguf_paths = []
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        final_gguf_filename = f"{domain}_{timestamp}_{quantization_strategy}.gguf"
-        final_gguf_path = final_output_dir / final_gguf_filename
 
-        if self.llama_cpp_path and self.converter_script.exists() and self.quantize_executable.exists():
-            logger.info(f"Converting {raw_model_path} to GGUF using {self.converter_script}...")
-            # --- Real Conversion Simulation --- #
-            # In a real scenario, you'd execute: 
-            # subprocess.run([str(self.converter_script), raw_model_path, final_gguf_path], check=True)
-            # For now, simulate by creating a dummy file
-            simulated_intermediate_gguf = final_output_dir / f"temp_converted_{timestamp}.gguf"
-            with open(simulated_intermediate_gguf, 'wb') as f:
-                f.write(os.urandom(int(model_size_mb * 0.8 * 1024 * 1024))) # Simulate some size reduction
-            logger.info(f"Simulated conversion to intermediate GGUF: {simulated_intermediate_gguf}")
+        for quant_strategy in quantization_strategies:
+            final_gguf_filename = f"{domain}_{timestamp}_{quant_strategy}.gguf"
+            final_gguf_path = final_output_dir_base / final_gguf_filename
 
-            logger.info(f"Quantizing to {quantization_strategy} using {self.quantize_executable}...")
-            # --- Real Quantization Simulation --- #
-            # In a real scenario, you'd execute: 
-            # subprocess.run([str(self.quantize_executable), str(simulated_intermediate_gguf), str(final_gguf_path), quantization_strategy], check=True)
-            # For now, simulate by copying and resizing the dummy
-            shutil.copy(simulated_intermediate_gguf, final_gguf_path)
-            with open(final_gguf_path, 'wb') as f:
-                f.write(os.urandom(int(model_size_mb * 0.5 * 1024 * 1024))) # Simulate further size reduction
-            logger.info(f"Simulated quantization complete. Final GGUF: {final_gguf_path}")
-            os.remove(simulated_intermediate_gguf) # Clean up intermediate
+            if self.llama_cpp_path and self.converter_script.exists() and self.quantize_executable.exists():
+                logger.info(f"Converting {raw_model_path} to GGUF using {self.converter_script} for {quant_strategy}...")
+                # --- Real Conversion Simulation --- #
+                simulated_intermediate_gguf = final_output_dir_base / f"temp_converted_{timestamp}_{quant_strategy}.gguf"
+                with open(simulated_intermediate_gguf, 'wb') as f:
+                    f.write(os.urandom(int(model_size_mb * 0.8 * 1024 * 1024))) # Simulate some size reduction
+                logger.info(f"Simulated conversion to intermediate GGUF for {quant_strategy}: {simulated_intermediate_gguf}")
 
-        else:
-            logger.warning("⚠️ LLaMA.cpp tools not fully available. Simulating GGUF conversion and quantization.")
-            # Simulate final GGUF creation if tools are not found
-            with open(final_gguf_path, 'wb') as f:
-                f.write(os.urandom(int(model_size_mb * 0.6 * 1024 * 1024))) # Simulate final size
+                logger.info(f"Quantizing to {quant_strategy} using {self.quantize_executable}...")
+                # --- Real Quantization Simulation --- #
+                shutil.copy(simulated_intermediate_gguf, final_gguf_path)
+                with open(final_gguf_path, 'wb') as f:
+                    f.write(os.urandom(int(model_size_mb * 0.5 * 1024 * 1024))) # Simulate further size reduction
+                logger.info(f"Simulated quantization complete for {quant_strategy}. Final GGUF: {final_gguf_path}")
+                os.remove(simulated_intermediate_gguf) # Clean up intermediate
+
+            else:
+                logger.warning(f"⚠️ LLaMA.cpp tools not fully available. Simulating GGUF creation for {quant_strategy}.")
+                # Simulate final GGUF creation if tools are not found
+                with open(final_gguf_path, 'wb') as f:
+                    f.write(os.urandom(int(model_size_mb * 0.6 * 1024 * 1024))) # Simulate final size
+            
+            generated_gguf_paths.append(final_gguf_path)
 
         await asyncio.sleep(0.5) # Simulate some work
-        return final_gguf_path
+        return generated_gguf_paths
 
 # Singleton instance for global access
 quantization_and_cleanup_agent = QuantizationAndCleanupAgent() 

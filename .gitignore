@@ -106,3 +106,6 @@ test_gguf_compatibility.py
 # Generated output files
 quantization_demo_results.json
 training_results_analysis.csv 
+
+data/production/
+data/training/ 

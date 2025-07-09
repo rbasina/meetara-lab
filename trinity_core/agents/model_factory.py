@@ -66,6 +66,8 @@ class IntelligentModelFactory:
         try:
             domain = request.get("domain", "unknown")
             training_data = request.get("training_data", []) # Assume raw data or path
+            is_simulation = request.get("simulation", False) # Get simulation flag from request
+            category = request.get("category", "unknown_category") # Get category from request
             
             # --- Simplified Intelligent Analysis and Decision Making ---
             # In this simplified version, we directly use learned/default configs.
@@ -79,7 +81,7 @@ class IntelligentModelFactory:
             # In a real scenario, this would involve calling a training engine (e.g., Hugging Face Trainer)
             # and saving the trained model in a format like PyTorch .bin or TensorFlow .ckpt
             
-            raw_model_path = self._generate_raw_model_path(domain, target_size_mb)
+            raw_model_path = self._generate_raw_model_path(domain, target_size_mb, is_simulation, category) # Pass is_simulation and category
             raw_model_path.parent.mkdir(parents=True, exist_ok=True)
             
             # Simulate creating a dummy raw model file
@@ -97,7 +99,7 @@ class IntelligentModelFactory:
                 "simulated_quality_score": max(self.learned_config["quality"]["min_quality_threshold"], simulated_quality), # Ensure minimum quality
                 "metadata": {
                     "timestamp": datetime.now().isoformat(),
-                    "training_simulated": True,
+                    "training_simulated": is_simulation, # Reflect actual simulation status
                     "output_format": "raw_model_artifact" # Explicitly state raw output
                 }
             }
@@ -111,10 +113,19 @@ class IntelligentModelFactory:
             logger.error(f"❌ Raw model generation failed for {domain}: {e}")
             return {"error": f"Raw model generation failed: {str(e)}"}
 
-    def _generate_raw_model_path(self, domain: str, size_mb: float) -> Path:
+    def _generate_raw_model_path(self, domain: str, size_mb: float, is_simulation: bool, category: str) -> Path:
         """Generates a unique path for the raw model artifact."""
-        project_root = Path(__file__).resolve().parents[3] # meetara-lab root
-        output_dir = project_root / "model-factory" / "raw_models" / domain
+        # Get the base model factory directory from the config
+        data_trained_base_dir = Path(self.config_manager.get_config_dict()["paths"]["data_trained_base_dir"])
+
+        # Determine the final output base based on simulation flag
+        if is_simulation:
+            final_output_base = data_trained_base_dir / "dev"
+        else:
+            final_output_base = data_trained_base_dir / "production"
+
+        # Construct the full path: models/{dev|production}/trained/<category>/<domain>/
+        output_dir = final_output_base / "trained" / category / domain
         
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{domain}_raw_{timestamp}_{size_mb:.1f}MB.bin" # .bin for raw PyTorch/TF model
@@ -131,6 +142,7 @@ class IntelligentModelFactory:
             domain = request.get("domain")
             category = request.get("category")
             architecture_type_str = request.get("architecture_type")
+            is_simulation = request.get("simulation", False) # Get simulation flag from request
             
             if not domain:
                 return {"error": "Domain is required for multi-base model creation"}
@@ -151,7 +163,7 @@ class IntelligentModelFactory:
             # This would involve sophisticated logic to combine base models and domain data.
             # For this simplified factory, we simulate the output of a raw model.
             
-            raw_model_path = self._generate_raw_model_path(domain, target_size_gb * 1024) # Convert GB to MB for path name
+            raw_model_path = self._generate_raw_model_path(domain, target_size_gb * 1024, is_simulation, category) # Pass is_simulation and category
             raw_model_path.parent.mkdir(parents=True, exist_ok=True)
             
             # Simulate creating a dummy raw model file
@@ -171,7 +183,7 @@ class IntelligentModelFactory:
                 "simulated_quality_score": simulated_quality,
                 "metadata": {
                     "timestamp": datetime.now().isoformat(),
-                    "training_simulated": True,
+                    "training_simulated": is_simulation, # Reflect actual simulation status
                     "output_format": "raw_multi_base_model_artifact"
                 }
             }

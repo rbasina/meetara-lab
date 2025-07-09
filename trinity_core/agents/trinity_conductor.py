@@ -31,6 +31,13 @@ from .model_factory import model_factory
 from .quantization_and_cleanup_agent import quantization_and_cleanup_agent
 from .intelligence_hub import TrinityIntelligenceHub
 from trinity_core.core_components.config_manager import SmartTrinityConfigManager
+from trinity_core.agents.knowledge_transfer import TrinityKnowledgeTransfer
+from trinity_core.agents.domain_router import TrinityDomainRouter
+from trinity_core.agents.quantization_and_cleanup_agent import QuantizationAndCleanupAgent
+
+# New imports for data validation
+# Removed sys.path.append as it's now in production_launcher.py
+from validate_training_data import validate_domain_data, print_validation_results
 
 @dataclass
 class DomainBatch:
@@ -64,9 +71,11 @@ class TrinityPrimaryConductor:
     """
     
     def __init__(self, config: Dict[str, Any] = None):
-        self.config = config or {}
-        self.mcp = LightweightMCPv2()
+        # Initialize config_manager first to load the config
         self.config_manager = SmartTrinityConfigManager()
+        # Now, get the actual loaded config from the config_manager
+        self.config = self.config_manager.get_config_dict()
+        self.mcp = LightweightMCPv2()
         
         # Load domain configuration using the manager
         self.all_domains = self.config_manager.get_all_domains_flat()
@@ -131,7 +140,7 @@ class TrinityPrimaryConductor:
         self.intelligence_hub = TrinityIntelligenceHub(self.config_manager)
         self.data_generator = self.intelligence_hub.data_generator
         self.knowledge_transfer = self.intelligence_hub.knowledge_transfer
-        self.quantization_cleanup_agent = quantization_and_cleanup_agent # New agent
+        self.quantization_cleanup_agent = QuantizationAndCleanupAgent() # Corrected class name
         self.config_manager = SmartTrinityConfigManager()
         
         logger.info(f"🎯 Trinity Conductor initialized for {len(self.all_domains)} domains")
@@ -294,7 +303,8 @@ class TrinityPrimaryConductor:
                         raw_model_path=raw_model_path,
                         domain=domain,
                         model_size_mb=model_size_mb,
-                        architecture_type=architecture_type
+                        architecture_type=architecture_type,
+                        is_simulation=False # Always False for finalization
                     )
                     finalized_domain_results[domain] = {
                         "raw_model_result": result,
@@ -316,115 +326,186 @@ class TrinityPrimaryConductor:
         return finalized_domain_results
 
     async def _process_domain_optimized(self, domain: str, category: str, 
-                                      allocation: Dict[str, Any], simulation: bool = False) -> Dict[str, Any]:
+                                      allocation: Dict[str, Any], simulation: bool = False, 
+                                      generate_synthetic: bool = False) -> Dict[str, Any]: # Added generate_synthetic
         """
-        Processes a single domain, orchestrating data generation and raw model creation.
-        Quantization and final GGUF creation are now handled by a separate agent.
+        Processes a single domain, coordinating data generation, model training,
+        and quality assurance with Trinity optimization.
         """
-        start_time = time.time()
-        domain_config = self.config_manager.get_tara_proven_params(domain)
-        base_model = domain_config.get("base_model")
-        architecture_type = domain_config.get("model_tier", "D_DOMAIN_SPECIFIC") # Assuming tier maps to arch type for now
-
-        logger.info(f"Processing domain: {domain} in {category} category (Mode: {"Simulation" if simulation else "Optimized"})")
+        logger.info(f"✨ Starting optimized processing for domain: {domain} (Category: {category})")
+        domain_start_time = time.time()
+        
+        domain_result = {
+            "domain": domain,
+            "category": category,
+            "success": False,
+            "error": None,
+            "stage_results": {}
+        }
 
         try:
-            # Step 1: Generate data (remains the same)
-            data_generation_result = await self.intelligence_hub.generate_data_for_domain(
+            # Stage 1: Intelligent Data Generation
+            logger.info(f"  📊 Stage 1: Generating intelligent data for {domain}...")
+            # Pass the generate_synthetic flag to the data generator
+            data_result = await self.intelligence_hub.generate_data_for_domain(
                 domain=domain,
-                sample_count=domain_config.get("sample_count", 100),
-                quality_target=domain_config.get("validation_target", 0.95),
-                simulation=simulation
+                sample_count=self.config_manager.get_tara_proven_params(domain).get("sample_count"),
+                quality_target=self.quality_thresholds.get(category, {}).get("min_score", 0.0) / 100,
+                simulation=simulation,
+                generate_synthetic=generate_synthetic # Pass the flag here
             )
-
-            logger.info(f"Data generation result for {domain}: {data_generation_result}")
-
-            if not data_generation_result.get("success", False):
-                logger.error(f"Data generation failed for {domain}: {data_generation_result.get('message', 'Unknown error')}")
-                return {"domain": domain, "status": "failed", "reason": "data_generation_failed", "error": data_generation_result.get('message', 'No message provided')}
-        
-            # Step 2: Create raw model using the streamlined model_factory
-            raw_model_request = {
-                "domain": domain,
-                "category": category,
-                "training_data": data_generation_result.get("output_path", []), # Pass path or simulated data
-                "architecture_type": architecture_type,
-                "target_size_mb": domain_config.get("target_size_mb", 8.3) # Pass target size from config
-            }
             
-            if "universal" in architecture_type.lower() or "universal" in base_model.lower():
-                model_creation_result = await self.model_factory.create_multi_base_model(raw_model_request)
-                # Model size will be in GB for multi-base models
-                model_size_mb = model_creation_result.get("model_size_gb", 0.0) * 1024 
-            else: 
-                model_creation_result = await self.model_factory.create_intelligent_model(raw_model_request)
-                # Model size will be in MB for intelligent models
-                model_size_mb = model_creation_result.get("model_size_mb", 0.0)
+            domain_result["stage_results"]["data_generation"] = data_result
+            if not data_result["success"]:
+                domain_result["error"] = f"Data generation failed: {data_result.get('error', 'Unknown error')}"
+                return domain_result
 
-            if model_creation_result.get("status") != "success":
-                logger.error(f"Raw model creation failed for {domain}: {model_creation_result.get('error')}")
-                return {"domain": domain, "status": "failed", "reason": "raw_model_creation_failed"}
+            # Extract the path to the raw structured data for validation
+            raw_structured_data_path = data_result.get("source_path") 
+            if not raw_structured_data_path:
+                domain_result["error"] = "Path to raw structured data not found in data_result."
+                logger.error(domain_result["error"])
+                return domain_result
 
-            processing_time = time.time() - start_time
-            self.context.performance_metrics[domain].append(processing_time)
-            self.context.quality_scores[domain] = model_creation_result.get("simulated_quality_score", 0.0)
+            # Stage 1.5: Data Validation
+            logger.info(f"  ✅ Stage 1.5: Validating raw data for {domain} at {raw_structured_data_path}...")
+            validation_outcome = validate_domain_data(raw_structured_data_path, domain)
+            print_validation_results(validation_outcome, domain) # Print results to console
 
-            logger.info(f"Finished raw model processing for {domain}. Time: {processing_time:.2f}s")
+            domain_result["stage_results"]["raw_data_validation"] = validation_outcome
+            if validation_outcome.get("validation_score", 0) < self.quality_thresholds.get(category, {}).get("min_score", 0) / 100:
+                domain_result["error"] = f"Raw data validation failed for {domain}: Score {validation_outcome.get('validation_score', 0):.2%}"
+                logger.error(domain_result["error"])
+                return domain_result
+
+            training_examples = data_result.get("training_examples", [])
+            if not training_examples:
+                domain_result["error"] = f"No training examples received for {domain} after generation/cleaning."
+                return domain_result
+
+            # Step 2.1: Retrieve domain-specific model details and parameters
+            # This now gets all relevant params including base model, tier, etc.
+            domain_model_details = self.config_manager.get_tara_proven_params(domain)
             
-            return {
-                "domain": domain,
-                "status": "success",
-                "raw_model_path": model_creation_result.get("raw_model_path"),
-                "model_size_mb": model_size_mb,
-                "architecture_type": architecture_type,
-                "processing_time": processing_time,
-                "simulated_quality_score": model_creation_result.get("simulated_quality_score"),
-                "metadata": model_creation_result.get("metadata")
-            }
+            # Extract necessary details from domain_model_details
+            base_model = domain_model_details.get('base_model')
+            model_tier = domain_model_details.get('model_tier')
+            category = domain_model_details.get('category')
+            
+            if not all([base_model, model_tier, category]):
+                raise ValueError(f"Missing essential configuration details for domain {domain}. "
+                                   f"Base Model: {base_model}, Model Tier: {model_tier}, Category: {category}")
 
+            # Stage 2: Model Training and Optimization
+            logger.info(f"  🧠 Stage 2: Training model for {domain} with {len(training_examples)} samples...")
+            
+            # Determine the base model output directory based on simulation status
+            model_factory_base_dir = Path(self.config["paths"]["model_factory_base_dir"])
+            if simulation:
+                model_output_base_dir = model_factory_base_dir / "dev"
+            else:
+                model_output_base_dir = model_factory_base_dir / "production"
+
+            # Construct the full path: models/{dev|production}/trained/<category>/<domain>/
+            final_model_output_dir = model_output_base_dir / "trained" / category / domain
+
+            # Ensure the directory exists before passing it
+            final_model_output_dir.mkdir(parents=True, exist_ok=True)
+
+            training_request = {
+                "domain": domain,
+                "training_data": data_result["training_examples"],
+                "is_simulation": simulation,  # Pass the simulation status to the ModelFactory
+                "category": category,  # Pass the category to the ModelFactory
+                "output_dir": str(final_model_output_dir) # Pass the dynamically determined output directory
+            }
+            logger.info(f"   Calling Model Factory for {domain}. Output directory: {final_model_output_dir}")
+            model_result = await self.model_factory.create_intelligent_model(training_request)
+            
+            domain_result["stage_results"]["model_training"] = model_result
+            if model_result.get("status") != "success":
+                domain_result["error"] = f"Model training failed: {model_result.get('error', 'Unknown error')}"
+                return domain_result
+
+            # Stage 3: Quantization and Cleanup (moved here for clarity)
+            logger.info(f"  📦 Stage 3: Quantizing and cleaning up model for {domain}...")
+            cleanup_result = await self.quantization_cleanup_agent.process_and_finalize_model(
+                domain=domain,
+                raw_model_path=model_result["raw_model_path"], # Pass the raw model path from model_result
+                model_size_mb=model_result["model_size_mb"],
+                architecture_type="domain_specific", # Assuming domain_specific for now, can be dynamic
+                is_simulation=simulation # Pass simulation flag
+            )
+            
+            domain_result["stage_results"]["quantization_cleanup"] = cleanup_result
+            if cleanup_result.get("status") != "success":
+                domain_result["error"] = f"Quantization and cleanup failed: {cleanup_result.get('error', 'Unknown error')}"
+                return domain_result
+            
+            # Stage 4: Quality Validation and Optimization Suggestions
+            logger.info(f"  ✅ Stage 4: Validating quality for {domain}...")
+            validation_result = await self._validate_and_optimize_results(domain, category, model_result)
+            domain_result["stage_results"]["quality_validation"] = validation_result
+            if not validation_result["success"] and self.quality_thresholds.get(category, {}).get("safety_critical", False):
+                domain_result["error"] = f"Quality validation failed for safety-critical domain: {domain}"
+                return domain_result
+
+            domain_result["success"] = True
+            
+        except ValueError as ve:
+            logger.error(f"❌ Configuration error for domain {domain}: {ve}")
+            domain_result["error"] = f"Configuration error: {ve}"
+        except FileNotFoundError as fnfe:
+            logger.error(f"❌ File not found error for domain {domain}: {fnfe}")
+            domain_result["error"] = f"File not found: {fnfe}"
         except Exception as e:
-            logger.error(f"An unexpected error occurred while processing {domain}: {e}")
-            self.context.failed_domains.add(domain)
-            return {"domain": domain, "status": "failed", "error": str(e)}
+            logger.error(f"❌ An unexpected error occurred during processing for domain {domain}: {e}", exc_info=True)
+            domain_result["error"] = f"Unexpected error: {e}"
+        finally:
+            domain_result["processing_time"] = time.time() - domain_start_time
+            logger.info(f"🏁 Finished processing for domain: {domain} (Success: {domain_result['success']}) in {domain_result['processing_time']:.2f} seconds.")
+            self.context.training_history.append(domain_result)
+            if domain_result["success"]:
+                self.context.completed_domains.add(domain)
+            else:
+                self.context.failed_domains.add(domain)
+        return domain_result
     
-    async def _validate_and_optimize_results(self, training_results: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate results and apply optimization strategies"""
-        logger.info(f"🔍 Validating and optimizing results")
-        
-        validation_results = {
-            "total_domains": 0,
-            "successful_domains": 0,
-            "failed_domains": 0,
-            "quality_distribution": {},
-            "optimization_applied": [],
-            "recommendations": []
-        }
-        
-        for batch_id, batch_result in training_results.items():
-            if batch_result.get("status") == "success":
-                validation_results["successful_domains"] += len(batch_result["successful_domains"])
-                validation_results["failed_domains"] += len(batch_result["failed_domains"])
-                
-                # Analyze quality scores
-                for domain, score in batch_result["quality_scores"].items():
-                    category = self._get_domain_category(domain)
-                    if category not in validation_results["quality_distribution"]:
-                        validation_results["quality_distribution"][category] = []
-                    validation_results["quality_distribution"][category].append(score)
-        
-        validation_results["total_domains"] = validation_results["successful_domains"] + validation_results["failed_domains"]
-        
-        # Apply optimization strategies
+    async def _validate_and_optimize_results(self, domain: str, category: str, model_result: Dict[str, Any]) -> Dict[str, Any]:
+        """Validates a single domain's model results and provides optimization suggestions."""
+        logger.info(f"🔍 Validating and optimizing results for domain: {domain}")
+
+        simulated_quality_score = model_result.get("simulated_quality_score", 0.0)
+        # Get the required quality target for this category
+        quality_target_percent = self.quality_thresholds.get(category, {}).get("min_score", 0.0)
+        quality_target_decimal = quality_target_percent / 100.0
+
+        # Determine if quality validation passed
+        passed_quality_validation = simulated_quality_score >= quality_target_decimal
+
+        # Collect optimization strategies (can be more dynamic later)
         optimization_strategies = [
             "Intelligent batching applied",
             "Predictive resource allocation used",
             "Parallel processing optimized",
             "Quality thresholds maintained"
         ]
-        
-        validation_results["optimization_applied"] = optimization_strategies
-        
-        return validation_results
+
+        # Generate recommendations based on quality score
+        recommendations = []
+        if not passed_quality_validation:
+            recommendations.append(f"Model quality ({simulated_quality_score:.2%}) is below target ({quality_target_decimal:.2%}). Consider reviewing training data or model parameters.")
+        else:
+            recommendations.append("Model quality meets or exceeds target. Continue monitoring performance.")
+
+        return {
+            "success": passed_quality_validation,
+            "domain": domain,
+            "quality_score": simulated_quality_score,
+            "quality_target": quality_target_decimal,
+            "optimization_applied": optimization_strategies,
+            "recommendations": recommendations
+        }
     
     def _calculate_optimization_gains(self, results: Dict[str, Any], total_time: float) -> Dict[str, Any]:
         """Calculate optimization gains compared to baseline"""
@@ -445,6 +526,53 @@ class TrinityPrimaryConductor:
             "time_saved": baseline_total_time - total_time
         }
     
+    async def _perform_overall_session_validation(self, overall_training_results: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Performs overall session quality validation and gathers optimization suggestions
+        based on aggregated results from all processed domains.
+        """
+        logger.info(f"🔍 Performing overall session validation and optimization insights...")
+
+        successful_domains = overall_training_results.get("successful_domains", [])
+        failed_domains = overall_training_results.get("failed_domains", [])
+        quality_scores = overall_training_results.get("quality_scores", {})
+        
+        total_domains_processed = len(successful_domains) + len(failed_domains)
+
+        # Aggregate quality distribution by category
+        quality_distribution = {}
+        for domain, score in quality_scores.items():
+            category = self._get_domain_category(domain)
+            if category not in quality_distribution:
+                quality_distribution[category] = []
+            quality_distribution[category].append(score)
+
+        # Overall optimization strategies (can be more dynamic)
+        overall_optimization_applied = [
+            "Session-level intelligent batching confirmed",
+            "Overall predictive resource allocation utilized",
+            "Parallel processing across domains optimized",
+            "Consolidated quality thresholds maintained"
+        ]
+
+        # Overall recommendations based on session success/failure
+        overall_recommendations = []
+        if total_domains_processed > 0 and len(failed_domains) > 0:
+            overall_recommendations.append(f"Some domains ({len(failed_domains)} out of {total_domains_processed}) failed. Review individual domain logs for specific errors.")
+        elif total_domains_processed > 0 and len(successful_domains) == total_domains_processed:
+            overall_recommendations.append("All domains processed successfully. Consider scaling up or diversifying data sources.")
+        else:
+            overall_recommendations.append("Session completed with mixed results. Analyze domain-specific outcomes.")
+
+        return {
+            "total_domains": total_domains_processed,
+            "successful_domains": len(successful_domains),
+            "failed_domains": len(failed_domains),
+            "quality_distribution": quality_distribution,
+            "optimization_applied": overall_optimization_applied,
+            "recommendations": overall_recommendations
+        }
+
     def _get_domain_category(self, domain: str) -> str:
         """Helper to get the category for a given domain."""
         # This can be made more efficient by creating a reverse map at startup
@@ -501,74 +629,119 @@ class TrinityPrimaryConductor:
         }
 
     async def orchestrate_intelligent_training(self, target_domains: List[str] = None, 
-                                             training_mode: str = "optimized") -> Dict[str, Any]:
+                                             training_mode: str = "optimized", 
+                                             simulation: bool = False, # Existing parameter
+                                             generate_synthetic: bool = False) -> Dict[str, Any]: # Added generate_synthetic
         """
-        Main orchestration method with intelligent coordination
-        Replaces heavy MCP message passing with direct async coordination
+        Orchestrates the end-to-end intelligent training pipeline.
+        
+        Args:
+            target_domains (List[str], optional): List of specific domains to train. Defaults to all domains.
+            training_mode (str, optional): "optimized" or "basic". Defaults to "optimized".
+            simulation (bool, optional): If True, runs in simulation mode, generating simulated data and saving to dev/.
+            generate_synthetic (bool, optional): If True, generates synthetically realistic data instead of loading real data.
+
+        Returns:
+            Dict[str, Any]: Overall training results and performance metrics.
         """
+        logger.info("🚀 Starting Trinity Intelligent Training Orchestration...")
         start_time = time.time()
-                
-        # Determine target domains
-        domains_to_process = target_domains or self.all_domains
-        
-        logger.info(f"🚀 Starting Trinity Conductor orchestration")
-        logger.info(f"   → Target domains: {len(domains_to_process)}")
-        logger.info(f"   → Training mode: {training_mode}")
-        
-        try:
-            # Phase 1: Intelligent batch creation (replaces sequential processing)
-            batches = await self._create_intelligent_batches(domains_to_process, training_mode)
-            
-            # Phase 2: Predictive resource allocation (replaces static allocation)
-            resource_plan = await self._allocate_resources_predictively(batches)
-            
-            # Phase 3: Parallel batch execution (replaces sequential domain processing)
-            simulation_mode = training_mode == "simulation"
-            batch_training_results = await self._execute_parallel_batches(batches, resource_plan, simulation_mode)
 
-            # Flatten results to be domain-centric
-            domain_training_results = {}
-            for batch_result in batch_training_results.values():
-                if batch_result.get("domain_details"):
-                    domain_training_results.update(batch_result["domain_details"])
-            
-            # IMPORTANT: Now, after batch execution, call the new agent for quantization/cleanup
-            finalized_results = await self._finalize_models_post_training(domain_training_results)
+        domains_to_train = target_domains if target_domains else self.all_domains
+        if not domains_to_train:
+            logger.error("❌ No domains configured for training. Please check trinity_config.yaml.")
+            return {"success": False, "error": "No domains to train."}
 
-            # Phase 4: Quality validation and optimization (integrated approach)
-            final_summary = await self._validate_and_optimize_results(batch_training_results)
-            
-            # Update performance metrics
-            total_time = time.time() - start_time
-            self.performance_tracker["coordination_times"].append(total_time)
-            
-            # Calculate optimization gains
-            optimization_gains = self._calculate_optimization_gains(final_summary, total_time)
-            
-            logger.info(f"✅ Trinity Conductor orchestration complete")
-            logger.info(f"   → Total time: {total_time:.2f}s")
-            logger.info(f"   → Optimization gains: {optimization_gains['speed_improvement']}")
-            logger.info(f"   → Success rate: {optimization_gains['success_rate']:.1f}%")
-            
-            return {
-                "status": "success",
-                "total_time": total_time,
-                "domains_processed": len(domains_to_process),
-                "batches_executed": len(batches),
-                "optimization_gains": optimization_gains,
-                "training_results": domain_training_results,
-                "summary": final_summary,
-                "context": self.context,
-                "performance_metrics": self.performance_tracker
-            }
-            
-        except Exception as e:
-            logger.error(f"❌ Trinity Conductor orchestration failed: {e}")
-            return {
-                "status": "error",
-                "error": str(e),
-                "context": self.context
-            }
+        logger.info(f"Configured to train {len(domains_to_train)} domains in {training_mode} mode.")
+        if simulation:
+            logger.info("Simulation mode is ENABLED. Data will be simulated and models saved to dev/.")
+        if generate_synthetic:
+            logger.info("Synthetic data generation is ENABLED. Data will be generated synthetically.")
+
+        # Stage 1: Intelligent Batch Creation
+        logger.info("✨ Stage 1: Creating intelligent training batches...")
+        # Pass simulation flag to batch creation if it influences batch characteristics
+        batches = await self._create_intelligent_batches(domains_to_train, training_mode)
+        if not batches:
+            logger.error("❌ No batches created. Training cannot proceed.")
+            return {"success": False, "error": "No batches created."}
+
+        logger.info(f"Generated {len(batches)} intelligent batches.")
+
+        # Stage 2: Predictive Resource Allocation (Simulated)
+        logger.info("⚡ Stage 2: Performing predictive resource allocation...")
+        resource_plan = await self._allocate_resources_predictively(batches)
+        logger.info(f"Resource plan generated: {json.dumps(resource_plan, indent=2)}")
+
+        # Stage 3: Parallel Batch Execution with Trinity Optimization
+        logger.info("🚀 Stage 3: Executing parallel training batches...")
+        
+        # Prepare tasks for parallel execution
+        tasks = []
+        for batch in batches:
+            for domain in batch.domains:
+                category = self._get_domain_category(domain)
+                # Pass both simulation and generate_synthetic flags
+                tasks.append(self._process_domain_optimized(
+                    domain=domain,
+                    category=category,
+                    allocation=resource_plan.get(batch.batch_id, {}),
+                    simulation=simulation,
+                    generate_synthetic=generate_synthetic # Pass the flag here
+                ))
+        
+        # Execute all domain processing tasks in parallel
+        processed_domain_results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Process results
+        training_results = defaultdict(lambda: {"successful_domains": [], "failed_domains": [], "quality_scores": {}})
+        for result in processed_domain_results:
+            if isinstance(result, Exception):
+                logger.error(f"❌ An error occurred during domain processing: {result}")
+                # This means a domain processing task failed before returning a structured result
+                # We need to extract the domain from the exception if possible, or mark as unknown failure
+                # For now, just log the error and continue.
+                continue
+
+            domain = result.get("domain", "unknown_domain")
+            if result["success"]:
+                training_results["overall"]["successful_domains"].append(domain)
+                if "quality_validation" in result["stage_results"] and "overall_quality_score" in result["stage_results"]["quality_validation"]:
+                    training_results["overall"]["quality_scores"][domain] = result["stage_results"]["quality_validation"]["overall_quality_score"]
+            else:
+                training_results["overall"]["failed_domains"].append(domain)
+                logger.error(f"❌ Domain {domain} failed processing: {result.get('error', 'Unknown error')}")
+
+        # Stage 4: Finalization (Model Cleanup and GGUF Conversion)
+        logger.info("📦 Stage 4: Finalizing models and performing cleanup...")
+        # The finalization now happens within _process_domain_optimized via quantization_cleanup_agent
+        # This stage will primarily aggregate results and perform overall sanity checks
+        
+        # Stage 5: Overall Quality Validation and Optimization Suggestions
+        logger.info("✅ Stage 5: Performing overall quality validation and providing optimization suggestions...")
+        overall_validation = await self._perform_overall_session_validation(training_results["overall"]) # Changed call
+        
+        end_time = time.time()
+        total_processing_time = end_time - start_time
+        
+        # Calculate optimization gains
+        optimization_gains = self._calculate_optimization_gains(overall_validation, total_processing_time)
+        
+        final_report = {
+            "overall_success": len(training_results["overall"]["successful_domains"]) == len(domains_to_train),
+            "total_domains_processed": len(domains_to_train),
+            "successful_domains_count": len(training_results["overall"]["successful_domains"]),
+            "failed_domains_count": len(training_results["overall"]["failed_domains"]),
+            "total_processing_time_seconds": total_processing_time,
+            "optimization_gains": optimization_gains,
+            "overall_quality_validation": overall_validation,
+            "domain_breakdown": training_results["overall"], # Detailed breakdown of success/failure per domain
+            "training_history_log": self.context.training_history # Full log of each domain's processing
+        }
+
+        logger.info("🏁 Trinity Intelligent Training Orchestration COMPLETED.")
+        logger.info(json.dumps(final_report, indent=2))
+        return final_report
 
 # Singleton instance for global access
 trinity_conductor = TrinityPrimaryConductor() 

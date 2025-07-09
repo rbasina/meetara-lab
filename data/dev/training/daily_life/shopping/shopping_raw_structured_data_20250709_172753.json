@@ -1,0 +1,2002 @@
+[
+  {
+    "conversation_id": "ae3924cb-3da5-48bd-9a29-f8e5cf22093b",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "322fd3e5-05c5-45c7-bbfa-e2189160b5f6",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "d86c75e9-10ff-4b8d-aa72-9b6afcaaf808",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "907a990c-9cf5-422f-a7c9-ca9816bb668b",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "e1509ce1-dd43-4a22-89b5-4a10a29d334b",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "1d24127e-94d1-4da2-9bcf-a0c372b54f21",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "077758dd-e21c-4ec0-af9a-967047c0a7ae",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "f43c1be1-33ee-41cc-8c57-484f4b5d077d",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "edcdd557-540e-4944-aa13-9c51c1b5f702",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "2fef4309-f87b-4bcb-940f-736f1e2a7810",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "324540ca-af30-453d-b812-b63633b2962e",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "289ab59f-5ea6-48f2-b1eb-6b02569c12d0",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "42bd4200-4f7a-46b9-a4ec-0d608f4a7a90",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "402951a4-4785-488e-8718-8af6b45e2738",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "75cf4cb8-9e19-4f03-8d95-b5608c0b0608",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "afe30f41-78e9-456c-a34c-d01c2e6f024a",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "c78b3834-d25f-4fa7-9b15-387821ab0dbb",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "112eb7e4-6d62-4fc1-980f-d989965367d3",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "c23382ea-9610-4a2d-a88f-0d5e0396108e",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "f5a5bc93-60a7-4b1b-bacf-09b51a642ae0",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "ba8cad09-2d1b-484e-9199-ab2e79a88cf2",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "64159d28-3029-4852-adc0-d54c3eceea88",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "62923cb8-d6ac-4ee6-b5eb-1e0c9b192a32",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "112257f6-6e76-44c7-82a5-f83efa14e444",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "17530b6d-6c57-49d6-b6d8-c7ca6978507f",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "c6992653-bd09-49d4-be08-88ab2f5391c8",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "e5fb8210-30c9-42a2-bab4-22934fb98d68",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "f66590be-cddf-4bb4-bfd9-a7e7b95ae2c6",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "49fbb50e-8138-47ba-b6af-606e7a327990",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "ddfc62f9-6efa-40b4-8ea6-db1847ea5869",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "a17888ed-0a36-4d05-b8f3-13ecc335f9d3",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "862a081f-9ef8-425a-b871-9d6bbf00fd6d",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "89856426-003c-4356-bd7b-44e1be62b7c1",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "f92a4f70-5185-47c1-85ab-b8fa28b05382",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "586ee441-45f8-4a74-812a-8cb857312538",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "21889cf9-4b0c-418c-adc0-329bdb8843fa",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "f0f9fe04-72ae-457d-bb7d-b4c79e8ff525",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "c2dfd6e7-d293-487d-b0ba-2620fe11324c",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "9151de41-b67c-4319-a866-9c718bec35a8",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "936325cf-1ab7-461a-bdeb-e5b4ea5a28bc",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "c91899a3-53c2-4ea2-9d8e-332307d425bc",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "b86b6f05-cfd8-410f-a2f1-48b5a8bd8d06",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "e10a02a9-4f01-44b0-a7c7-012cfdc3bef3",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "cdbb935b-8302-4923-a1a4-4785473a63e3",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "3e470157-ba5b-4e11-9b10-b57620f2123c",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "4cc63ed9-c265-41c8-8c34-14648dea24ea",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "adc239a0-4eab-47eb-88c0-9fb8f3c4ae4e",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "de437e88-b66a-4483-9fe9-f0711557de6d",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "3d286a73-e0de-4fe1-b2cc-16efbbcc7d33",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "32e618e5-e8aa-4213-a0b4-5ec397418d07",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "e7a236b7-2ae7-4b98-abfb-a73397ced2e6",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "aaf971da-dea4-4fd4-a770-36a1cdd28597",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "8522b5a0-eae6-4ba2-8788-1b02891f326d",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "025e0b58-9031-4231-8833-03d6371d54ea",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "5d523328-d685-47e4-8fd2-f0578d86b007",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "771471bf-7c30-4016-8f4b-25f3d8bb67a2",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "9ac08241-c3aa-4d5e-bf4b-8dd8679e7b18",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "5f004173-26b2-4efa-b2f9-4423fa8a41b6",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "5ef36d57-0b87-4e6f-a02f-14fc0a6d8586",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "bd8027fa-d085-4922-9120-5481e19dedfa",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "e983cf0c-8298-42d6-add5-c53afa785757",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "b17fb1e9-0c57-4ead-b1ec-aa85e17a5649",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "fb7ebf1c-eaad-4bee-93c8-0367e9b069e2",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "e471e441-2465-4d78-8525-5228ff4d3ee9",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "40427fd9-2214-4314-b219-eae9a3403308",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "4cf335eb-f86f-4200-85b4-56160524cc61",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "b8caf939-4a74-462c-8b35-13970f768eda",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "7e8bdb8d-d584-4dd3-933d-35b8eff75849",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "95b8c622-27e6-4451-b295-431647b682c6",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "3c035538-7800-464f-84a9-78f9f23962c9",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "4faa07ba-c342-42b0-a6ae-dc465ac51932",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "9199fa60-e617-47e2-890e-2560ca2ce4b7",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "1139d04e-a00b-4e25-b8cd-4785684f2c41",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "c6044bad-139f-46ac-a3ce-a5cc41e2a38d",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "db9080b9-c374-4963-8a94-d863d502ccbf",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "91fd0018-9696-4bf6-ba7d-7696b690208b",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "7bbc11a5-7de7-41f1-980e-d6e725b4513f",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "e8b19637-75e2-44ae-9572-d0abaa6a7f2e",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "6438da0c-e840-47a5-9a3f-7456cefadebb",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "3ae91457-f095-4725-a8fb-d57e42664836",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "3a6e4573-b6fd-47a6-9239-e988605a7c75",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "9c1bea47-b366-4121-b403-23f9155cd733",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "c05c5f07-7103-4ccc-bdde-31ad490716f8",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "276747ea-4a37-4fb9-8e9b-01ec42d55e3a",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "3fc157b0-f30d-4642-b510-3c104004965d",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "d4ac5a37-d032-4314-98d6-a19f56b16763",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "a63136a1-941b-4a78-be4a-cfc78e3808ac",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "5c9662db-4429-4e0b-ac2e-4e698597e43b",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "b1169079-ddf6-4457-b40b-f1d748c355d7",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "51c5a02a-507b-4466-bc27-d353d252d190",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "5c45cca4-d877-409b-a38e-eedb7e7db806",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "c9d4cf9e-8ed7-4618-8c6e-68a368ba3955",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "768b349d-209a-43a3-9463-1546b835811d",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "90922f1a-0910-4674-b7ba-e6756832136f",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "b8b92fa8-aa7e-4b75-81ce-ad2b2d6b1a8e",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "bf694ff3-0a15-4dd5-8809-4e4e7f4ad6c7",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "e395a8c8-3caf-4024-8b51-35e7a6fbda27",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "49173bd2-bc69-4fec-81e1-4d73ad879721",
+    "domain": "shopping",
+    "scenario": "return_policy",
+    "primary_emotion": "frustrated",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to return an item I bought last week. What's your return policy?",
+        "emotion": "frustrated",
+        "intent": "return_policy_query"
+      },
+      {
+        "role": "assistant",
+        "content": "Our return policy allows returns within 30 days with a valid receipt. Was the item faulty or simply unwanted?",
+        "domain": "shopping",
+        "response_pattern": "policy_and_inquiry"
+      }
+    ]
+  },
+  {
+    "conversation_id": "77aa6d6d-f756-4625-b4c7-093a1c34cc4c",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  },
+  {
+    "conversation_id": "2afec042-6c31-440a-8cfa-74772f3afa9c",
+    "domain": "shopping",
+    "scenario": "product_inquiry",
+    "primary_emotion": "interested",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Do you have the new XYZ smartphone in stock?",
+        "emotion": "interested",
+        "intent": "product_availability"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, the XYZ smartphone is currently in stock. Would you like to know about its features or pricing?",
+        "domain": "shopping",
+        "response_pattern": "confirm_and_offer"
+      }
+    ]
+  }
+]
