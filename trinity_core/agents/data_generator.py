@@ -258,7 +258,7 @@ class TrinityDataGenerator:
         # ===== SPACE TECHNOLOGY DOMAINS =====
 
         # Space Research Domain Templates
-        self.domain_templates["space_research"] = {
+        self.domain_templates["space_technology"] = {
             "scenarios": [
                 "propulsion_research", "exoplanet_studies", "ai_space_analysis",
                 "materials_research", "gravitational_waves", "cosmology_studies",
@@ -3328,6 +3328,386 @@ class TrinityDataGenerator:
             "trinity_phase": "einstein_fusion",
             "emotional_intelligence": True,
             "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Crisis Management Domain Templates
+        self.domain_templates["crisis_management"] = {
+            "scenarios": [
+                "crisis_assessment", "emergency_response", "communication_strategies",
+                "resource_coordination", "stakeholder_management", "recovery_planning",
+                "crisis_prevention", "decision_making", "team_coordination",
+                "public_relations", "legal_considerations", "psychological_support"
+            ],
+            "user_intents": [
+                "crisis_assessment", "emergency_response", "communication_strategies",
+                "resource_coordination", "stakeholder_management", "recovery_planning",
+                "crisis_prevention", "decision_making", "team_coordination",
+                "public_relations", "legal_considerations", "psychological_support"
+            ],
+            "conversation_starters": [
+                "I'm dealing with a crisis at work but I don't know how to respond effectively. How do I manage the situation?",
+                "I need to communicate with stakeholders during a crisis but I don't know what to say. How do I handle crisis communication?",
+                "I'm trying to coordinate resources during an emergency but I'm overwhelmed. How do I organize crisis response?",
+                "I need to make quick decisions during a crisis but I'm afraid of making mistakes. How do I think clearly under pressure?",
+                "I want to prevent future crises but I don't know how to identify risks. How do I develop crisis prevention strategies?",
+                "I'm leading a team through a crisis but I don't know how to keep them focused. How do I maintain team coordination?",
+                "I need to manage public relations during a crisis but I don't know how to handle media. How do I control the narrative?",
+                "I'm trying to recover from a crisis but I don't know where to start. How do I plan for recovery?",
+                "I need to provide psychological support during a crisis but I don't know how. How do I help people cope?",
+                "I'm dealing with legal issues during a crisis but I don't know the implications. How do I handle legal considerations?"
+            ],
+            "response_patterns": [
+                "crisis_assessment", "emergency_response", "communication_strategies",
+                "resource_coordination", "stakeholder_management", "recovery_planning",
+                "crisis_prevention", "decision_making", "team_coordination",
+                "public_relations", "legal_considerations", "psychological_support"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Disaster Preparedness Domain Templates
+        self.domain_templates["disaster_preparedness"] = {
+            "scenarios": [
+                "emergency_planning", "supply_preparation", "evacuation_strategies",
+                "communication_plans", "shelter_preparation", "first_aid_training",
+                "risk_assessment", "community_preparedness", "family_planning",
+                "business_continuity", "recovery_strategies", "preparedness_education"
+            ],
+            "user_intents": [
+                "emergency_planning", "supply_preparation", "evacuation_strategies",
+                "communication_plans", "shelter_preparation", "first_aid_training",
+                "risk_assessment", "community_preparedness", "family_planning",
+                "business_continuity", "recovery_strategies", "preparedness_education"
+            ],
+            "conversation_starters": [
+                "I want to prepare for natural disasters but I don't know where to start. How do I create an emergency plan?",
+                "I need to prepare emergency supplies but I don't know what to include. How do I build a disaster kit?",
+                "I want to create an evacuation plan for my family but I don't know how. How do I develop evacuation strategies?",
+                "I need to prepare my business for disasters but I don't know how. How do I create business continuity plans?",
+                "I want to learn first aid but I don't know where to get training. How do I prepare for medical emergencies?",
+                "I'm trying to assess disaster risks in my area but I don't know how. How do I evaluate potential threats?",
+                "I want to help my community prepare for disasters but I don't know how. How do I organize community preparedness?",
+                "I need to prepare my home for emergencies but I don't know what to do. How do I make my home disaster-ready?",
+                "I want to create a communication plan for emergencies but I don't know how. How do I ensure family contact?",
+                "I'm trying to prepare for different types of disasters but I get overwhelmed. How do I prioritize preparedness?"
+            ],
+            "response_patterns": [
+                "emergency_planning", "supply_preparation", "evacuation_strategies",
+                "communication_plans", "shelter_preparation", "first_aid_training",
+                "risk_assessment", "community_preparedness", "family_planning",
+                "business_continuity", "recovery_strategies", "preparedness_education"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Emergency Response Domain Templates
+        self.domain_templates["emergency_response"] = {
+            "scenarios": [
+                "emergency_assessment", "response_coordination", "medical_emergencies",
+                "fire_emergencies", "natural_disasters", "security_incidents",
+                "evacuation_procedures", "emergency_communication", "resource_deployment",
+                "situation_management", "recovery_operations", "emergency_training"
+            ],
+            "user_intents": [
+                "emergency_assessment", "response_coordination", "medical_emergencies",
+                "fire_emergencies", "natural_disasters", "security_incidents",
+                "evacuation_procedures", "emergency_communication", "resource_deployment",
+                "situation_management", "recovery_operations", "emergency_training"
+            ],
+            "conversation_starters": [
+                "I'm dealing with a medical emergency but I don't know how to respond. How do I provide emergency medical care?",
+                "I need to evacuate a building during an emergency but I don't know the procedures. How do I coordinate evacuation?",
+                "I'm trying to coordinate emergency response but I'm overwhelmed. How do I manage emergency operations?",
+                "I need to communicate during an emergency but I don't know what to say. How do I provide clear emergency information?",
+                "I'm dealing with a fire emergency but I don't know the safety procedures. How do I respond to fire incidents?",
+                "I need to deploy resources during an emergency but I don't know how. How do I allocate emergency resources?",
+                "I'm trying to manage a security incident but I don't know the protocols. How do I handle security emergencies?",
+                "I need to assess an emergency situation but I don't know how. How do I evaluate emergency conditions?",
+                "I'm trying to coordinate with emergency services but I don't know how. How do I work with first responders?",
+                "I need to train people for emergency response but I don't know how. How do I develop emergency training programs?"
+            ],
+            "response_patterns": [
+                "emergency_assessment", "response_coordination", "medical_emergencies",
+                "fire_emergencies", "natural_disasters", "security_incidents",
+                "evacuation_procedures", "emergency_communication", "resource_deployment",
+                "situation_management", "recovery_operations", "emergency_training"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Safety Security Domain Templates
+        self.domain_templates["safety_security"] = {
+            "scenarios": [
+                "personal_safety", "workplace_security", "cybersecurity",
+                "physical_security", "travel_safety", "home_security",
+                "data_protection", "access_control", "surveillance_systems",
+                "incident_response", "security_assessment", "safety_training"
+            ],
+            "user_intents": [
+                "personal_safety", "workplace_security", "cybersecurity",
+                "physical_security", "travel_safety", "home_security",
+                "data_protection", "access_control", "surveillance_systems",
+                "incident_response", "security_assessment", "safety_training"
+            ],
+            "conversation_starters": [
+                "I want to improve my personal safety but I don't know where to start. How do I develop safety awareness?",
+                "I'm trying to secure my workplace but I don't know what measures to implement. How do I assess workplace security?",
+                "I want to protect my digital information but I don't know how. How do I implement cybersecurity measures?",
+                "I need to secure my home but I don't know what systems to install. How do I choose home security options?",
+                "I'm traveling to a new place and I want to stay safe. How do I research travel safety?",
+                "I want to protect my data but I don't know how to implement security measures. How do I secure sensitive information?",
+                "I need to control access to my property but I don't know what systems to use. How do I implement access control?",
+                "I'm trying to assess security risks but I don't know how. How do I conduct security assessments?",
+                "I want to install surveillance systems but I don't know what to choose. How do I select security cameras?",
+                "I need to train my team on safety procedures but I don't know how. How do I develop safety training programs?"
+            ],
+            "response_patterns": [
+                "personal_safety", "workplace_security", "cybersecurity",
+                "physical_security", "travel_safety", "home_security",
+                "data_protection", "access_control", "surveillance_systems",
+                "incident_response", "security_assessment", "safety_training"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Aeronautics Domain Templates
+        self.domain_templates["aeronautics"] = {
+            "scenarios": [
+                "aviation_technology", "flight_operations", "aircraft_maintenance",
+                "air_traffic_control", "aviation_safety", "aerospace_engineering",
+                "flight_training", "aviation_regulations", "aircraft_design",
+                "aviation_management", "flight_planning", "aviation_research"
+            ],
+            "user_intents": [
+                "aviation_technology", "flight_operations", "aircraft_maintenance",
+                "air_traffic_control", "aviation_safety", "aerospace_engineering",
+                "flight_training", "aviation_regulations", "aircraft_design",
+                "aviation_management", "flight_planning", "aviation_research"
+            ],
+            "conversation_starters": [
+                "I want to learn about aviation technology but I don't know where to start. How do I understand aircraft systems?",
+                "I'm interested in flight operations but I don't know the procedures. How do I learn about flight planning?",
+                "I want to understand aircraft maintenance but I don't know the requirements. How do I learn maintenance procedures?",
+                "I'm trying to understand air traffic control but I find it complex. How do I learn about ATC operations?",
+                "I want to improve aviation safety but I don't know the protocols. How do I implement safety measures?",
+                "I'm interested in aerospace engineering but I don't know the principles. How do I understand aircraft design?",
+                "I want to pursue flight training but I don't know the requirements. How do I start pilot training?",
+                "I need to understand aviation regulations but I find them confusing. How do I navigate aviation laws?",
+                "I want to design aircraft but I don't know the engineering principles. How do I learn aircraft design?",
+                "I'm trying to manage aviation operations but I don't know the procedures. How do I coordinate flight operations?"
+            ],
+            "response_patterns": [
+                "aviation_technology", "flight_operations", "aircraft_maintenance",
+                "air_traffic_control", "aviation_safety", "aerospace_engineering",
+                "flight_training", "aviation_regulations", "aircraft_design",
+                "aviation_management", "flight_planning", "aviation_research"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Automobile Domain Templates
+        self.domain_templates["automobile"] = {
+            "scenarios": [
+                "vehicle_technology", "automotive_engineering", "vehicle_maintenance",
+                "driving_safety", "automotive_design", "vehicle_diagnostics",
+                "automotive_industry", "vehicle_performance", "automotive_regulations",
+                "vehicle_economics", "automotive_research", "vehicle_innovation"
+            ],
+            "user_intents": [
+                "vehicle_technology", "automotive_engineering", "vehicle_maintenance",
+                "driving_safety", "automotive_design", "vehicle_diagnostics",
+                "automotive_industry", "vehicle_performance", "automotive_regulations",
+                "vehicle_economics", "automotive_research", "vehicle_innovation"
+            ],
+            "conversation_starters": [
+                "I want to understand vehicle technology but I don't know where to start. How do I learn about automotive systems?",
+                "I'm trying to maintain my car but I don't know the procedures. How do I perform basic vehicle maintenance?",
+                "I want to improve driving safety but I don't know the techniques. How do I develop safe driving habits?",
+                "I'm interested in automotive engineering but I don't know the principles. How do I understand vehicle design?",
+                "I need to diagnose vehicle problems but I don't know how. How do I troubleshoot automotive issues?",
+                "I want to understand the automotive industry but I don't know the structure. How do I learn about the industry?",
+                "I'm trying to improve vehicle performance but I don't know how. How do I optimize automotive systems?",
+                "I need to understand automotive regulations but I find them confusing. How do I navigate vehicle laws?",
+                "I want to research automotive technology but I don't know where to look. How do I find automotive information?",
+                "I'm trying to innovate in automotive design but I don't know the process. How do I develop vehicle innovations?"
+            ],
+            "response_patterns": [
+                "vehicle_technology", "automotive_engineering", "vehicle_maintenance",
+                "driving_safety", "automotive_design", "vehicle_diagnostics",
+                "automotive_industry", "vehicle_performance", "automotive_regulations",
+                "vehicle_economics", "automotive_research", "vehicle_innovation"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Space Technology Domain Templates
+        self.domain_templates["space_technology"] = {
+            "scenarios": [
+                "spacecraft_design", "satellite_technology", "space_exploration",
+                "rocket_propulsion", "space_systems", "astronautical_engineering",
+                "space_missions", "space_research", "space_industry",
+                "space_regulations", "space_innovation", "space_safety"
+            ],
+            "user_intents": [
+                "spacecraft_design", "satellite_technology", "space_exploration",
+                "rocket_propulsion", "space_systems", "astronautical_engineering",
+                "space_missions", "space_research", "space_industry",
+                "space_regulations", "space_innovation", "space_safety"
+            ],
+            "conversation_starters": [
+                "I want to understand space technology but I don't know where to start. How do I learn about spacecraft systems?",
+                "I'm interested in satellite technology but I don't know the principles. How do I understand satellite operations?",
+                "I want to learn about space exploration but I don't know the missions. How do I understand space programs?",
+                "I'm trying to understand rocket propulsion but I find it complex. How do I learn about propulsion systems?",
+                "I want to work in the space industry but I don't know the opportunities. How do I enter the space sector?",
+                "I'm interested in astronautical engineering but I don't know the requirements. How do I pursue space engineering?",
+                "I want to understand space missions but I don't know the planning process. How do I learn about mission design?",
+                "I'm trying to research space technology but I don't know where to look. How do I find space information?",
+                "I want to innovate in space technology but I don't know the process. How do I develop space innovations?",
+                "I need to understand space regulations but I find them confusing. How do I navigate space laws?"
+            ],
+            "response_patterns": [
+                "spacecraft_design", "satellite_technology", "space_exploration",
+                "rocket_propulsion", "space_systems", "astronautical_engineering",
+                "space_missions", "space_research", "space_industry",
+                "space_regulations", "space_innovation", "space_safety"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Agriculture Domain Templates
+        self.domain_templates["agriculture"] = {
+            "scenarios": [
+                "crop_management", "livestock_management", "soil_health",
+                "agricultural_technology", "sustainable_farming", "agricultural_economics",
+                "pest_management", "irrigation_systems", "agricultural_policy",
+                "farm_management", "agricultural_research", "food_production"
+            ],
+            "user_intents": [
+                "crop_management", "livestock_management", "soil_health",
+                "agricultural_technology", "sustainable_farming", "agricultural_economics",
+                "pest_management", "irrigation_systems", "agricultural_policy",
+                "farm_management", "agricultural_research", "food_production"
+            ],
+            "conversation_starters": [
+                "I want to start farming but I don't know where to begin. How do I develop agricultural skills?",
+                "I'm trying to manage my crops but I don't know the best practices. How do I optimize crop production?",
+                "I want to raise livestock but I don't know the requirements. How do I manage animal health and welfare?",
+                "I'm trying to improve soil health but I don't know how. How do I maintain soil fertility?",
+                "I want to use agricultural technology but I don't know what's available. How do I implement smart farming?",
+                "I'm trying to practice sustainable farming but I don't know the methods. How do I reduce environmental impact?",
+                "I want to manage pests naturally but I don't know the techniques. How do I control pests without chemicals?",
+                "I need to set up irrigation but I don't know the systems. How do I design efficient irrigation?",
+                "I want to understand agricultural economics but I don't know the factors. How do I analyze farm profitability?",
+                "I'm trying to research agricultural methods but I don't know where to look. How do I find farming information?"
+            ],
+            "response_patterns": [
+                "crop_management", "livestock_management", "soil_health",
+                "agricultural_technology", "sustainable_farming", "agricultural_economics",
+                "pest_management", "irrigation_systems", "agricultural_policy",
+                "farm_management", "agricultural_research", "food_production"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Manufacturing Domain Templates
+        self.domain_templates["manufacturing"] = {
+            "scenarios": [
+                "production_processes", "quality_control", "manufacturing_technology",
+                "supply_chain_management", "lean_manufacturing", "industrial_engineering",
+                "equipment_maintenance", "safety_procedures", "manufacturing_automation",
+                "process_optimization", "manufacturing_management", "industrial_research"
+            ],
+            "user_intents": [
+                "production_processes", "quality_control", "manufacturing_technology",
+                "supply_chain_management", "lean_manufacturing", "industrial_engineering",
+                "equipment_maintenance", "safety_procedures", "manufacturing_automation",
+                "process_optimization", "manufacturing_management", "industrial_research"
+            ],
+            "conversation_starters": [
+                "I want to improve production processes but I don't know how. How do I optimize manufacturing efficiency?",
+                "I'm trying to implement quality control but I don't know the methods. How do I ensure product quality?",
+                "I want to use manufacturing technology but I don't know what's available. How do I implement automation?",
+                "I'm trying to manage my supply chain but I don't know the strategies. How do I optimize supply chain operations?",
+                "I want to implement lean manufacturing but I don't know the principles. How do I reduce waste in production?",
+                "I'm trying to maintain equipment but I don't know the procedures. How do I develop maintenance programs?",
+                "I want to improve safety in manufacturing but I don't know the protocols. How do I implement safety measures?",
+                "I'm trying to optimize manufacturing processes but I don't know how. How do I improve production efficiency?",
+                "I want to manage manufacturing operations but I don't know the techniques. How do I coordinate production activities?",
+                "I'm trying to research manufacturing methods but I don't know where to look. How do I find manufacturing information?"
+            ],
+            "response_patterns": [
+                "production_processes", "quality_control", "manufacturing_technology",
+                "supply_chain_management", "lean_manufacturing", "industrial_engineering",
+                "equipment_maintenance", "safety_procedures", "manufacturing_automation",
+                "process_optimization", "manufacturing_management", "industrial_research"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Travel Tourism Domain Templates
+        self.domain_templates["travel_tourism"] = {
+            "scenarios": [
+                "travel_planning", "destination_research", "accommodation_booking",
+                "transportation_arrangements", "cultural_experiences", "travel_safety",
+                "budget_management", "travel_insurance", "sustainable_tourism",
+                "travel_technology", "tourist_services", "travel_consultation"
+            ],
+            "user_intents": [
+                "travel_planning", "destination_research", "accommodation_booking",
+                "transportation_arrangements", "cultural_experiences", "travel_safety",
+                "budget_management", "travel_insurance", "sustainable_tourism",
+                "travel_technology", "tourist_services", "travel_consultation"
+            ],
+            "conversation_starters": [
+                "I want to plan a trip but I don't know where to start. How do I create a comprehensive travel plan?",
+                "I'm trying to research destinations but I don't know what to look for. How do I evaluate travel destinations?",
+                "I want to book accommodation but I don't know how to choose. How do I find the best places to stay?",
+                "I'm trying to arrange transportation but I don't know the options. How do I plan travel logistics?",
+                "I want to experience local culture but I don't know how to connect. How do I have authentic cultural experiences?",
+                "I'm traveling to a new place and I want to stay safe. How do I research travel safety?",
+                "I want to manage my travel budget but I don't know how. How do I plan affordable travel?",
+                "I need travel insurance but I don't know what to buy. How do I choose the right coverage?",
+                "I want to practice sustainable tourism but I don't know how. How do I travel responsibly?",
+                "I'm trying to use travel technology but I don't know what apps to use. How do I leverage travel apps?"
+            ],
+            "response_patterns": [
+                "travel_planning", "destination_research", "accommodation_booking",
+                "transportation_arrangements", "cultural_experiences", "travel_safety",
+                "budget_management", "travel_insurance", "sustainable_tourism",
+                "travel_technology", "tourist_services", "travel_consultation"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
             "professional_boundaries": True
         }
 
