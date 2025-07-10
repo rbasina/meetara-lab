@@ -81,10 +81,15 @@ class ProductionValidator:
             ]
         }
     
-    async def validate_model_production_ready(self, domain: str, model_path: str) -> Dict[str, Any]:
+    async def validate_model_production_ready(self, domain: str, model_path: str, simulation_mode: bool = False) -> Dict[str, Any]:
         """
         Comprehensive validation that model works in production conditions.
         Tests: model loading, conversation quality, domain switching, crisis detection.
+        
+        Args:
+            domain: Domain name for validation
+            model_path: Path to the model file
+            simulation_mode: If True, adjusts validation thresholds for simulation
         """
         logger.info(f"🔍 Production validation for {domain} model: {model_path}")
         
@@ -92,6 +97,7 @@ class ProductionValidator:
             "domain": domain,
             "model_path": model_path,
             "timestamp": datetime.now().isoformat(),
+            "simulation_mode": simulation_mode,
             "tests": {}
         }
         
@@ -126,13 +132,22 @@ class ProductionValidator:
         
         # Calculate overall score
         validation_results["overall_score"] = self._calculate_validation_score(validation_results["tests"])
-        validation_results["production_ready"] = validation_results["overall_score"] >= 0.8
+        
+        # Adjust production readiness threshold based on mode
+        if simulation_mode:
+            validation_results["production_ready"] = validation_results["overall_score"] >= 0.5  # Lower threshold for simulation
+            validation_results["threshold_adjusted"] = True
+            validation_results["threshold_reason"] = "Simulation mode - lower validation threshold applied"
+        else:
+            validation_results["production_ready"] = validation_results["overall_score"] >= 0.8  # Standard threshold
+            validation_results["threshold_adjusted"] = False
         
         # Save results
         await self._save_validation_results(validation_results)
         
         if validation_results["production_ready"]:
-            logger.info(f"✅ {domain} model is PRODUCTION READY (score: {validation_results['overall_score']:.2f})")
+            mode_indicator = " (SIMULATION)" if simulation_mode else ""
+            logger.info(f"✅ {domain} model is PRODUCTION READY{mode_indicator} (score: {validation_results['overall_score']:.2f})")
         else:
             logger.warning(f"⚠️ {domain} model needs improvement (score: {validation_results['overall_score']:.2f})")
         

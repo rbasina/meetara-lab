@@ -701,8 +701,8 @@ class TrinityDataGenerator:
             "professional_boundaries": True
         }
 
-        # Fitness Domain Templates (Rich Multi-Scenario Format)
-        self.domain_templates["fitness"] = {
+        # Fitness Healthcare Domain Templates (Rich Multi-Scenario Format)
+        self.domain_templates["fitness_healthcare"] = {
             "scenarios": [
                 "workout_planning", "exercise_guidance", "injury_prevention",
                 "rehabilitation", "strength_training", "cardio_fitness",
@@ -2344,7 +2344,7 @@ class TrinityDataGenerator:
         }
 
         # Language Learning Domain Templates
-        self.domain_templates["language_learning"] = {
+        self.domain_templates["language_learning_education"] = {
             "scenarios": [
                 "immersion_techniques", "grammar_learning", "vocabulary_building",
                 "pronunciation_practice", "conversation_skills", "cultural_understanding",
@@ -2381,7 +2381,87 @@ class TrinityDataGenerator:
             "professional_boundaries": True
         }
 
+        # Language Learning Professional Domain Templates
+        self.domain_templates["language_learning_professional"] = {
+            "scenarios": [
+                "business_communication", "professional_vocabulary", "presentation_skills",
+                "negotiation_language", "email_writing", "meeting_communication",
+                "cross_cultural_communication", "industry_terminology", "client_interaction",
+                "team_collaboration", "leadership_communication", "networking_skills"
+            ],
+            "user_intents": [
+                "business_communication_help", "professional_vocabulary", "presentation_skills",
+                "negotiation_language", "email_writing_help", "meeting_communication",
+                "cross_cultural_communication", "industry_terminology", "client_interaction",
+                "team_collaboration", "leadership_communication", "networking_skills"
+            ],
+            "conversation_starters": [
+                "I need to give a presentation in English but I'm not confident. How can I improve?",
+                "I'm negotiating with international clients and need help with business language.",
+                "I write emails to colleagues but they seem too informal. How do I make them more professional?",
+                "I have a meeting with foreign partners and I'm worried about miscommunication.",
+                "I need to learn industry-specific terminology for my new job. Where do I start?",
+                "I'm leading a multicultural team and need help with cross-cultural communication.",
+                "I want to network at conferences but I'm shy about speaking in English.",
+                "I need to write a professional report but I'm not sure about the tone.",
+                "I'm interviewing for a job and need help with interview language.",
+                "I work with international clients and need to improve my communication skills.",
+                "I'm giving a training session and need help with instructional language.",
+                "I need to write a business proposal but I'm not confident about the language."
+            ],
+            "response_patterns": [
+                "business_communication_guidance", "professional_vocabulary_help", "presentation_skills_support",
+                "negotiation_language_guidance", "email_writing_assistance", "meeting_communication_help",
+                "cross_cultural_communication_guidance", "industry_terminology_help", "client_interaction_support",
+                "team_collaboration_guidance", "leadership_communication_help", "networking_skills_support"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "crisis_intervention": False,
+            "emotional_intelligence": True,
+            "professional_boundaries": True
+        }
+
         # Research Assistance Domain Templates
+        # Academic Tutoring Research Domain Templates
+        self.domain_templates["academic_tutoring_research"] = {
+            "scenarios": [
+                "research_methodology", "academic_writing", "data_analysis",
+                "literature_review", "experimental_design", "statistical_analysis",
+                "research_ethics", "peer_review", "academic_publishing",
+                "collaborative_research", "funding_applications", "research_presentation"
+            ],
+            "user_intents": [
+                "research_guidance", "academic_writing_help", "data_analysis_support",
+                "literature_review_help", "experimental_design", "statistical_analysis",
+                "research_ethics_guidance", "peer_review_help", "publishing_guidance",
+                "collaboration_support", "funding_help", "presentation_guidance"
+            ],
+            "conversation_starters": [
+                "I'm struggling with my research methodology. How do I design a robust study?",
+                "I need help writing my academic paper. The structure is confusing me.",
+                "I have data but don't know how to analyze it properly. Can you guide me?",
+                "I'm doing a literature review but finding too many sources. How do I organize this?",
+                "I need to design an experiment but I'm not sure about the controls. Any advice?",
+                "I have statistical data but I'm not sure which tests to use. Can you help?",
+                "I'm concerned about research ethics in my study. What should I consider?",
+                "I received peer review comments that are harsh. How do I respond professionally?",
+                "I want to publish my research but don't know where to submit. Any suggestions?",
+                "I'm collaborating with researchers from different fields. How do we align our methods?",
+                "I need to apply for research funding but the application is complex. Any tips?",
+                "I have to present my research at a conference. How do I make it engaging?"
+            ],
+            "response_patterns": [
+                "research_methodology_guidance", "academic_writing_support", "data_analysis_help",
+                "literature_review_assistance", "experimental_design_guidance", "statistical_analysis_help",
+                "research_ethics_guidance", "peer_review_support", "publishing_guidance",
+                "collaboration_advice", "funding_application_help", "presentation_guidance"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "crisis_intervention": False,
+            "emotional_intelligence": True,
+            "professional_boundaries": True
+        }
+
         self.domain_templates["research_assistance"] = {
             "scenarios": [
                 "research_methodology", "literature_review", "data_collection",
@@ -2587,7 +2667,7 @@ class TrinityDataGenerator:
             ],
             "conversation_starters": [
                 "I want to create content for my business but I don't know what to post. How do I develop a content strategy?",
-                "I'm trying to grow my social media following but my content isn't engaging. How do I create better content?",
+                "I'm trying to increase engagement on my posts but I'm not getting likes or comments. How do I create better content?",
                 "I want to start a YouTube channel but I don't know what content to make. How do I find my niche?",
                 "I'm creating content for multiple platforms but I'm overwhelmed. How do I manage my content calendar?",
                 "I want to create content that converts but I don't know how to measure success. What metrics should I track?",
@@ -3711,6 +3791,238 @@ class TrinityDataGenerator:
             "professional_boundaries": True
         }
 
+    def _create_domain_expert_agent(self, domain: str) -> Dict[str, Any]:
+        """
+        Create a domain expert agent with Trinity Architecture enhancements.
+        """
+        # Get domain template
+        domain_template = self.domain_templates.get(domain, {})
+        
+        # Create expert agent with Trinity features
+        expert_agent = {
+            "domain": domain,
+            "crisis_intervention": domain_template.get("crisis_intervention", False),
+            "emotional_intelligence": domain_template.get("emotional_intelligence", True),
+            "professional_boundaries": domain_template.get("professional_boundaries", True),
+            "trinity_phase": domain_template.get("trinity_phase", "arc_reactor"),
+            "scenarios": domain_template.get("scenarios", []),
+            "response_patterns": domain_template.get("response_patterns", []),
+            "conversation_starters": domain_template.get("conversation_starters", [])
+        }
+        
+        return expert_agent
+
+    def generate_domain_data(self, domain: str, samples_per_domain: int = 5000) -> Dict[str, Any]:
+        """
+        Generate comprehensive training data for a specific domain with Trinity Architecture enhancements.
+        Includes emotion/context learning, intelligent routing, and robust data generation.
+        """
+        logger.info(f"🎯 Generating intelligent training data for domain: {domain}")
+        start_time = time.time()
+        
+        try:
+            # Get domain configuration
+            domain_details = self.config_manager._get_domain_details(domain)
+            category = domain_details.get('category', 'general')
+            
+            # Initialize domain expert agent for enhanced data generation
+            domain_expert = self._create_domain_expert_agent(domain)
+            
+            # Get domain templates with Trinity enhancements
+            domain_config = self.domain_templates.get(domain, {})
+            if not domain_config:
+                logger.warning(f"⚠️ No templates found for domain {domain}, using default templates")
+                domain_config = self._get_default_domain_config(domain)
+            
+            # Analyze urgency patterns and domain criticality
+            urgency_score = self._analyze_urgency_patterns(domain_config.get('conversation_starters', []))
+            domain_criticality = self._detect_domain_criticality(domain)
+            user_intent_urgency = self._analyze_user_intent_urgency(domain_config.get('user_intents', []))
+            
+            # Calculate dynamic real-time ratio based on Trinity Architecture
+            realtime_ratio = self._calculate_dynamic_ratio(urgency_score, domain_criticality, user_intent_urgency)
+            
+            # Generate blended conversations with emotion/context learning
+            blended_data = self._generate_blended_conversation(domain, domain_config)
+            
+            # Split data by urgency for optimal training
+            urgent_starters, general_starters = self._split_starters_by_urgency(
+                domain_config.get('conversation_starters', []), realtime_ratio
+            )
+            
+            # Generate real-time scenarios with crisis intervention
+            realtime_data = self._generate_realtime_conversation(domain, urgent_starters, domain_expert)
+            
+            # Generate general scenarios with emotional intelligence
+            general_data = self._generate_general_conversation(domain, general_starters, domain_expert)
+            
+            # Combine all data with intelligent routing
+            conversations = realtime_data.get('conversations', []) + general_data.get('conversations', [])
+            emotion_labels = realtime_data.get('emotion_labels', []) + general_data.get('emotion_labels', [])
+            context_labels = realtime_data.get('context_labels', []) + general_data.get('context_labels', [])
+            urgency_scores = realtime_data.get('urgency_scores', []) + general_data.get('urgency_scores', [])
+            
+            combined_data = {
+                "domain": domain,
+                "category": category,
+                "total_samples": len(conversations),
+                "realtime_samples": len(realtime_data.get('conversations', [])),
+                "general_samples": len(general_data.get('conversations', [])),
+                "conversations": conversations,
+                "emotion_labels": emotion_labels,
+                "context_labels": context_labels,
+                "urgency_scores": urgency_scores,
+                "trinity_enhancements": {
+                    "crisis_intervention": domain_config.get('crisis_intervention', False),
+                    "emotional_intelligence": domain_config.get('emotional_intelligence', True),
+                    "professional_boundaries": domain_config.get('professional_boundaries', True),
+                    "realtime_ratio": realtime_ratio,
+                    "domain_criticality": domain_criticality,
+                    "urgency_score": urgency_score
+                },
+                "quality_metrics": {
+                    "diversity_score": self._calculate_diversity_score(conversations),
+                    "emotion_coverage": self._calculate_emotion_coverage(emotion_labels),
+                    "context_coverage": self._calculate_context_coverage(context_labels),
+                    "urgency_distribution": self._calculate_urgency_distribution(urgency_scores)
+                }
+            }
+            
+            # Save data to appropriate directory structure
+            output_path = self._save_domain_data(domain, category, combined_data)
+            
+            processing_time = time.time() - start_time
+            
+            result = {
+                "status": "success",
+                "domain": domain,
+                "category": category,
+                "total_samples": combined_data["total_samples"],
+                "output_path": str(output_path),
+                "processing_time": processing_time,
+                "trinity_enhancements": combined_data["trinity_enhancements"],
+                "quality_metrics": combined_data["quality_metrics"],
+                "metadata": {
+                    "timestamp": datetime.now().isoformat(),
+                    "domain_expert_used": domain_expert.get('name', 'default'),
+                    "templates_loaded": len(self.domain_templates),
+                    "emotion_context_learning": True,
+                    "intelligent_routing": True
+                }
+            }
+            
+            logger.info(f"✅ Generated {combined_data['total_samples']} samples for {domain} in {processing_time:.2f}s")
+            logger.info(f"   → Real-time ratio: {realtime_ratio:.2%}, Criticality: {domain_criticality:.2f}")
+            logger.info(f"   → Quality metrics: Diversity={combined_data['quality_metrics']['diversity_score']:.2f}")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"❌ Data generation failed for domain {domain}: {e}")
+            return {
+                "status": "error",
+                "domain": domain,
+                "error": str(e),
+                "processing_time": time.time() - start_time
+            }
+
+    def _get_default_domain_config(self, domain: str) -> Dict[str, Any]:
+        """Get default domain configuration when templates are not available."""
+        return {
+            "scenarios": ["general_inquiry", "problem_solving", "guidance"],
+            "user_intents": ["information_seeking", "problem_solving", "guidance_request"],
+            "conversation_starters": [
+                f"I need help with {domain}.",
+                f"Can you provide guidance on {domain}?",
+                f"What should I know about {domain}?"
+            ],
+            "response_patterns": ["helpful_guidance", "problem_solving", "information_provision"],
+            "crisis_intervention": False,
+            "emotional_intelligence": True,
+            "professional_boundaries": True
+        }
+
+    def _calculate_diversity_score(self, conversations: List[Dict]) -> float:
+        """Calculate diversity score of generated conversations."""
+        if not conversations:
+            return 0.0
+        
+        unique_scenarios = set()
+        unique_emotions = set()
+        unique_contexts = set()
+        
+        for conv in conversations:
+            unique_scenarios.add(conv.get('scenario', ''))
+            unique_emotions.add(conv.get('emotion', ''))
+            unique_contexts.add(conv.get('context', ''))
+        
+        total_possible = len(conversations) * 3  # scenarios, emotions, contexts
+        actual_unique = len(unique_scenarios) + len(unique_emotions) + len(unique_contexts)
+        
+        return min(1.0, actual_unique / total_possible)
+
+    def _calculate_emotion_coverage(self, emotion_labels: List[str]) -> float:
+        """Calculate emotion coverage in generated data."""
+        if not emotion_labels:
+            return 0.0
+        
+        unique_emotions = set(emotion_labels)
+        target_emotions = {'happy', 'sad', 'angry', 'anxious', 'neutral', 'excited', 'worried', 'confident'}
+        
+        return len(unique_emotions.intersection(target_emotions)) / len(target_emotions)
+
+    def _calculate_context_coverage(self, context_labels: List[str]) -> float:
+        """Calculate context coverage in generated data."""
+        if not context_labels:
+            return 0.0
+        
+        unique_contexts = set(context_labels)
+        return min(1.0, len(unique_contexts) / 10)  # Assume 10 is good context diversity
+
+    def _calculate_urgency_distribution(self, urgency_scores: List[float]) -> float:
+        """Calculate urgency distribution balance."""
+        if not urgency_scores:
+            return 0.0
+        
+        high_urgency = sum(1 for score in urgency_scores if score > 0.7)
+        medium_urgency = sum(1 for score in urgency_scores if 0.3 <= score <= 0.7)
+        low_urgency = sum(1 for score in urgency_scores if score < 0.3)
+        
+        total = len(urgency_scores)
+        if total == 0:
+            return 0.0
+        
+        # Ideal distribution: 20% high, 50% medium, 30% low
+        ideal_high = total * 0.2
+        ideal_medium = total * 0.5
+        ideal_low = total * 0.3
+        
+        high_diff = abs(high_urgency - ideal_high) / ideal_high
+        medium_diff = abs(medium_urgency - ideal_medium) / ideal_medium
+        low_diff = abs(low_urgency - ideal_low) / ideal_low
+        
+        return 1.0 - (high_diff + medium_diff + low_diff) / 3
+
+    def _save_domain_data(self, domain: str, category: str, data: Dict[str, Any]) -> Path:
+        """Save domain data to the appropriate directory structure."""
+        # Get base directory from config
+        config = self.config_manager.get_config_dict()
+        data_base_dir = Path(config.get("paths", {}).get("data_training_base_dir", "data/training"))
+        
+        # Create directory structure: data/training/{category}/{domain}/
+        output_dir = data_base_dir / category / domain
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Save data with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_file = output_dir / f"{domain}_training_data_{timestamp}.json"
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"💾 Saved training data to: {output_file}")
+        return output_file
+
     def _analyze_urgency_patterns(self, conversation_starters: List[str]) -> float:
         """
         Analyze urgency patterns in conversation starters for Trinity Architecture.
@@ -3888,204 +4200,6 @@ class TrinityDataGenerator:
                    f"intent: {user_intent_urgency:.3f}, final ratio: {final_ratio:.3f}")
         
         return final_ratio
-
-    def _create_domain_expert_agent(self, domain: str) -> Dict[str, Any]:
-        """
-        Create domain expert agent with Trinity Architecture enhancements.
-        """
-        domain_expert = {
-            "domain": domain,
-            "expertise_level": "trinity_enhanced",
-            "capabilities": [],
-            "response_patterns": [],
-            "crisis_intervention": False,
-            "emotional_intelligence": False,
-            "trinity_phase": "arc_reactor_foundation"
-        }
-        
-        # general_health domain experts (all 12 domains)
-        if domain == "general_health":
-            domain_expert.update({
-                "capabilities": ["medical guidance", "health information", "wellness support", "crisis intervention"],
-                "response_patterns": ["empathic_validation", "medical_disclaimer", "professional_referral", "crisis_intervention"],
-                "crisis_intervention": True,
-                "emotional_intelligence": True,
-                "trinity_phase": "einstein_fusion",
-                "safety_level": "maximum",
-                "privacy_level": "maximum"
-            })
-        
-        elif domain == "mental_health":
-            domain_expert.update({
-                "capabilities": ["emotional support", "crisis intervention", "therapeutic guidance", "mental wellness"],
-                "response_patterns": ["therapeutic_validation", "crisis_intervention", "professional_referral", "emotional_support"],
-                "crisis_intervention": True,
-                "emotional_intelligence": True,
-                "trinity_phase": "einstein_fusion",
-                "safety_level": "maximum",
-                "privacy_level": "maximum"
-            })
-        
-        elif domain == "nutrition":
-            domain_expert.update({
-                "capabilities": ["dietary guidance", "nutritional science", "meal planning", "health optimization"],
-                "response_patterns": ["nutritional_guidance", "dietary_advice", "meal_planning", "health_optimization"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "perplexity_intelligence",
-                "safety_level": "high",
-                "privacy_level": "standard"
-            })
-        
-        elif domain == "fitness":
-            domain_expert.update({
-                "capabilities": ["exercise guidance", "workout planning", "physical wellness", "fitness optimization"],
-                "response_patterns": ["exercise_guidance", "workout_planning", "fitness_advice", "physical_wellness"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "arc_reactor_foundation",
-                "safety_level": "medium",
-                "privacy_level": "standard"
-            })
-        
-        elif domain == "sleep":
-            domain_expert.update({
-                "capabilities": ["sleep hygiene", "sleep optimization", "rest quality", "sleep science"],
-                "response_patterns": ["sleep_guidance", "sleep_hygiene", "rest_optimization", "sleep_science"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "perplexity_intelligence",
-                "safety_level": "medium",
-                "privacy_level": "standard"
-            })
-        
-        elif domain == "stress_management":
-            domain_expert.update({
-                "capabilities": ["stress reduction", "crisis intervention", "emotional support", "wellness guidance"],
-                "response_patterns": ["stress_guidance", "crisis_intervention", "emotional_support", "wellness_advice"],
-                "crisis_intervention": True,
-                "emotional_intelligence": True,
-                "trinity_phase": "einstein_fusion",
-                "safety_level": "maximum",
-                "privacy_level": "maximum"
-            })
-        
-        elif domain == "preventive_care":
-            domain_expert.update({
-                "capabilities": ["health screening", "preventive medicine", "wellness planning", "health optimization"],
-                "response_patterns": ["preventive_guidance", "health_screening", "wellness_planning", "health_optimization"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "perplexity_intelligence",
-                "safety_level": "high",
-                "privacy_level": "standard"
-            })
-        
-        elif domain == "chronic_conditions":
-            domain_expert.update({
-                "capabilities": ["condition management", "lifestyle adaptation", "medical guidance", "support coordination"],
-                "response_patterns": ["condition_guidance", "lifestyle_advice", "medical_support", "coordination_help"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "perplexity_intelligence",
-                "safety_level": "high",
-                "privacy_level": "maximum"
-            })
-        
-        elif domain == "medication_management":
-            domain_expert.update({
-                "capabilities": ["medication safety", "adherence support", "drug interactions", "pharmaceutical guidance"],
-                "response_patterns": ["safety_guidance", "adherence_support", "interaction_check", "pharmaceutical_advice"],
-                "crisis_intervention": True,
-                "emotional_intelligence": True,
-                "trinity_phase": "einstein_fusion",
-                "safety_level": "maximum",
-                "privacy_level": "maximum"
-            })
-        
-        elif domain == "emergency_care":
-            domain_expert.update({
-                "capabilities": ["emergency response", "first aid", "crisis intervention", "safety protocols"],
-                "response_patterns": ["emergency_guidance", "first_aid", "crisis_intervention", "safety_protocols"],
-                "crisis_intervention": True,
-                "emotional_intelligence": True,
-                "trinity_phase": "einstein_fusion",
-                "safety_level": "maximum",
-                "privacy_level": "maximum"
-            })
-        
-        elif domain == "women_health":
-            domain_expert.update({
-                "capabilities": ["reproductive health", "pregnancy support", "women's wellness", "specialized care"],
-                "response_patterns": ["reproductive_guidance", "pregnancy_support", "women_wellness", "specialized_care"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "perplexity_intelligence",
-                "safety_level": "high",
-                "privacy_level": "maximum"
-            })
-        
-        elif domain == "senior_health":
-            domain_expert.update({
-                "capabilities": ["aging wellness", "mobility support", "senior care", "age-specific guidance"],
-                "response_patterns": ["aging_guidance", "mobility_support", "senior_care", "age_specific_advice"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "perplexity_intelligence",
-                "safety_level": "high",
-                "privacy_level": "standard"
-            })
-        
-        # Business domain expert
-        elif domain == "business":
-            domain_expert.update({
-                "capabilities": ["strategic planning", "professional development", "market analysis", "leadership guidance"],
-                "response_patterns": ["strategic_analysis", "professional_guidance", "market_insights", "leadership_coaching"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "perplexity_intelligence",
-                "safety_level": "high",
-                "privacy_level": "standard"
-            })
-        
-        # Education domain expert
-        elif domain == "education":
-            domain_expert.update({
-                "capabilities": ["learning assistance", "academic guidance", "skill development", "educational support"],
-                "response_patterns": ["educational_guidance", "learning_support", "academic_advice", "skill_development"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "perplexity_intelligence",
-                "safety_level": "medium",
-                "privacy_level": "standard"
-            })
-        
-        # Creative domain expert
-        elif domain == "creative":
-            domain_expert.update({
-                "capabilities": ["creative guidance", "artistic support", "inspiration", "creative collaboration"],
-                "response_patterns": ["creative_inspiration", "artistic_guidance", "creative_support", "collaboration"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "arc_reactor_foundation",
-                "safety_level": "low",
-                "privacy_level": "standard"
-            })
-        
-        # Default domain expert
-        else:
-            domain_expert.update({
-                "capabilities": ["general guidance", "information support", "problem solving"],
-                "response_patterns": ["general_guidance", "information_provision", "problem_solving"],
-                "crisis_intervention": False,
-                "emotional_intelligence": True,
-                "trinity_phase": "arc_reactor_foundation",
-                "safety_level": "medium",
-                "privacy_level": "standard"
-            })
-        
-        logger.info(f"Trinity Architecture: Created domain expert for '{domain}' with {domain_expert['trinity_phase']} phase")
-        return domain_expert
 
     def _generate_blended_conversation(self, domain: str, domain_config: Dict) -> Dict[str, Any]:
         """
@@ -4440,36 +4554,99 @@ class TrinityDataGenerator:
         
         return followup_response
 
-    def generate_all_domains(self, samples_per_domain: int = 1000) -> Dict[str, str]:
-        """
-        Generate data for all domains with Trinity Architecture enhancements.
-        """
-        domains = ["general_health", "mental_health", "business", "education", "creative"]
-        results = {}
+    def _get_default_domain_config(self, domain: str) -> Dict[str, Any]:
+        """Get default domain configuration when templates are not available."""
+        return {
+            "scenarios": ["general_inquiry", "problem_solving", "guidance"],
+            "user_intents": ["information_seeking", "problem_solving", "guidance_request"],
+            "conversation_starters": [
+                f"I need help with {domain}.",
+                f"Can you provide guidance on {domain}?",
+                f"What should I know about {domain}?"
+            ],
+            "response_patterns": ["helpful_guidance", "problem_solving", "information_provision"],
+            "crisis_intervention": False,
+            "emotional_intelligence": True,
+            "professional_boundaries": True
+        }
+
+    def _calculate_diversity_score(self, conversations: List[Dict]) -> float:
+        """Calculate diversity score of generated conversations."""
+        if not conversations:
+            return 0.0
         
-        for domain in domains:
-            logger.info(f"Trinity Architecture: Generating {samples_per_domain} samples for {domain}")
-            
-            # Create domain config
-            domain_config = {
-                "conversation_starters": [f"I need help with {domain}"],
-                "user_intents": ["general_inquiry"]
-            }
-            
-            # Generate conversations
-            conversations = []
-            for i in range(samples_per_domain):
-                conversation = self._generate_blended_conversation(domain, domain_config)
-                conversations.append(conversation)
-            
-            # Save to file
-            output_path = f"data/training/{domain}_trinity_enhanced_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            
-            with open(output_path, 'w', encoding='utf-8') as f:
-                json.dump(conversations, f, ensure_ascii=False, indent=2)
-            
-            results[domain] = output_path
-            logger.info(f"Trinity Architecture: Generated {len(conversations)} conversations for {domain}")
+        unique_scenarios = set()
+        unique_emotions = set()
+        unique_contexts = set()
         
-        return results 
+        for conv in conversations:
+            unique_scenarios.add(conv.get('scenario', ''))
+            unique_emotions.add(conv.get('emotion', ''))
+            unique_contexts.add(conv.get('context', ''))
+        
+        total_possible = len(conversations) * 3  # scenarios, emotions, contexts
+        actual_unique = len(unique_scenarios) + len(unique_emotions) + len(unique_contexts)
+        
+        return min(1.0, actual_unique / total_possible)
+
+    def _calculate_emotion_coverage(self, emotion_labels: List[str]) -> float:
+        """Calculate emotion coverage in generated data."""
+        if not emotion_labels:
+            return 0.0
+        
+        unique_emotions = set(emotion_labels)
+        target_emotions = {'happy', 'sad', 'angry', 'anxious', 'neutral', 'excited', 'worried', 'confident'}
+        
+        return len(unique_emotions.intersection(target_emotions)) / len(target_emotions)
+
+    def _calculate_context_coverage(self, context_labels: List[str]) -> float:
+        """Calculate context coverage in generated data."""
+        if not context_labels:
+            return 0.0
+        
+        unique_contexts = set(context_labels)
+        return min(1.0, len(unique_contexts) / 10)  # Assume 10 is good context diversity
+
+    def _calculate_urgency_distribution(self, urgency_scores: List[float]) -> float:
+        """Calculate urgency distribution balance."""
+        if not urgency_scores:
+            return 0.0
+        
+        high_urgency = sum(1 for score in urgency_scores if score > 0.7)
+        medium_urgency = sum(1 for score in urgency_scores if 0.3 <= score <= 0.7)
+        low_urgency = sum(1 for score in urgency_scores if score < 0.3)
+        
+        total = len(urgency_scores)
+        if total == 0:
+            return 0.0
+        
+        # Ideal distribution: 20% high, 50% medium, 30% low
+        ideal_high = total * 0.2
+        ideal_medium = total * 0.5
+        ideal_low = total * 0.3
+        
+        high_diff = abs(high_urgency - ideal_high) / ideal_high
+        medium_diff = abs(medium_urgency - ideal_medium) / ideal_medium
+        low_diff = abs(low_urgency - ideal_low) / ideal_low
+        
+        return 1.0 - (high_diff + medium_diff + low_diff) / 3
+
+    def _save_domain_data(self, domain: str, category: str, data: Dict[str, Any]) -> Path:
+        """Save domain data to the appropriate directory structure."""
+        # Get base directory from config
+        config = self.config_manager.get_config_dict()
+        data_base_dir = Path(config.get("paths", {}).get("data_training_base_dir", "data/training"))
+        
+        # Create directory structure: data/training/{category}/{domain}/
+        output_dir = data_base_dir / category / domain
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Save data with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_file = output_dir / f"{domain}_training_data_{timestamp}.json"
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"💾 Saved training data to: {output_file}")
+        return output_file

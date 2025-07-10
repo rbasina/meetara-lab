@@ -1,0 +1,25 @@
+{
+  "domain": "academic_tutoring",
+  "category": "education",
+  "total_samples": 0,
+  "realtime_samples": 0,
+  "general_samples": 0,
+  "conversations": [],
+  "emotion_labels": [],
+  "context_labels": [],
+  "urgency_scores": [],
+  "trinity_enhancements": {
+    "crisis_intervention": false,
+    "emotional_intelligence": true,
+    "professional_boundaries": true,
+    "realtime_ratio": 0.62309375,
+    "domain_criticality": 0.45,
+    "urgency_score": 0.049999999999999996
+  },
+  "quality_metrics": {
+    "diversity_score": 0.0,
+    "emotion_coverage": 0.0,
+    "context_coverage": 0.0,
+    "urgency_distribution": 0.0
+  }
+}

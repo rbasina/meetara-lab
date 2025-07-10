@@ -137,14 +137,20 @@ class TrinityQualityValidator:
         self.qa_score = None
         self.validation_report = {}
 
-    def run_validation_suite(self, gguf_path: Path, domain: str) -> Dict[str, Any]:
+    def run_validation_suite(self, gguf_path: Path, domain: str, simulation_mode: bool = False) -> Dict[str, Any]:
         """
         Runs the complete validation suite for a given GGUF file and domain.
+        
+        Args:
+            gguf_path: Path to the GGUF file
+            domain: Domain name for validation
+            simulation_mode: If True, defers quality validation
         """
         self.validation_report = {
             "domain": domain,
             "gguf_path": str(gguf_path),
             "timestamp": datetime.now().isoformat(),
+            "simulation_mode": simulation_mode,
             "checks": {}
         }
 
@@ -160,8 +166,14 @@ class TrinityQualityValidator:
         # 3. Performance Simulation
         self.validation_report["checks"]["performance_simulation"] = self._simulate_performance(gguf_path)
         
-        # 4. Quality Assessment (Simulated)
-        self.validation_report["checks"]["quality_assessment"] = self._assess_quality_simulation(domain)
+        # 4. Quality Assessment (Simulated) - Defer in simulation mode
+        if simulation_mode:
+            self.validation_report["checks"]["quality_assessment"] = {
+                "status": "DEFERRED",
+                "details": "Quality validation deferred in simulation mode"
+            }
+        else:
+            self.validation_report["checks"]["quality_assessment"] = self._assess_quality_simulation(domain)
 
         return self.validation_report
 

@@ -128,7 +128,15 @@ class SmartTrinityConfigManager:
             logging.debug(f"ConfigManager: Checking category '{category_name}' for domain '{domain_name}'")
             domains = category_config.get('domains', {})
             if domain_name in domains:
-                domain_entry = domains[domain_name] or {}  # Ensure it's a dict even if null
+                domain_entry = domains[domain_name]
+                
+                # Handle both string and dict domain entries
+                if isinstance(domain_entry, str):
+                    # If domain entry is a string (base model), create a dict
+                    domain_entry = {"base_model": domain_entry}
+                elif domain_entry is None:
+                    domain_entry = {}
+                
                 logging.debug(f"ConfigManager: Found domain '{domain_name}' in category '{category_name}'. Entry: {domain_entry}")
 
                 # Determine tier_name from domain_entry or category_config
