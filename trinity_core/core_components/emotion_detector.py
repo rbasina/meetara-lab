@@ -31,7 +31,7 @@ class EnhancedEmotionDetector:
         
         # Professional context analysis
         self.professional_contexts = {
-            "healthcare": {
+            "general_health": {
                 "critical_emotions": ["anxiety", "fear", "sadness", "anger"],
                 "therapeutic_responses": True,
                 "empathy_level": "high",
@@ -65,8 +65,45 @@ class EnhancedEmotionDetector:
             "complex": ["surprise", "confusion", "mixed", "conflicted"]
         }
         
-        # Multi-domain emotion mapping
-        self.domain_emotion_patterns = self._create_domain_emotion_patterns()
+        # Domain-specific emotion patterns (enhanced from TARA)
+        self.domain_emotion_patterns = {
+            "general_health": {
+                "primary_emotions": ["anxiety", "fear", "concern", "relief", "hope"],
+                "secondary_emotions": ["uncertainty", "vulnerability", "trust", "gratitude"],
+                "intensity_thresholds": {"high": 0.8, "medium": 0.5, "low": 0.3},
+                "context_keywords": ["symptom", "pain", "doctor", "treatment", "diagnosis"],
+                "crisis_indicators": ["emergency", "urgent", "critical", "severe", "dying"],
+                "professional_boundaries": True,
+                "crisis_intervention": True
+            },
+            "business": {
+                "primary_emotions": ["confidence", "pressure", "determination", "concern"],
+                "secondary_emotions": ["uncertainty", "vulnerability", "trust", "gratitude"],
+                "intensity_thresholds": {"high": 0.8, "medium": 0.5, "low": 0.3},
+                "context_keywords": ["project", "deadline", "budget", "team", "client"],
+                "crisis_indicators": ["emergency", "urgent", "critical", "severe", "dying"],
+                "professional_boundaries": True,
+                "crisis_intervention": True
+            },
+            "education": {
+                "primary_emotions": ["confusion", "frustration", "anxiety"],
+                "secondary_emotions": ["uncertainty", "vulnerability", "trust", "gratitude"],
+                "intensity_thresholds": {"high": 0.8, "medium": 0.5, "low": 0.3},
+                "context_keywords": ["assignment", "test", "homework", "lecture", "class"],
+                "crisis_indicators": ["emergency", "urgent", "critical", "severe", "dying"],
+                "professional_boundaries": True,
+                "crisis_intervention": True
+            },
+            "personal": {
+                "primary_emotions": ["sadness", "anger", "fear", "loneliness"],
+                "secondary_emotions": ["uncertainty", "vulnerability", "trust", "gratitude"],
+                "intensity_thresholds": {"high": 0.8, "medium": 0.5, "low": 0.3},
+                "context_keywords": ["relationship", "work", "family", "friend", "self"],
+                "crisis_indicators": ["emergency", "urgent", "critical", "severe", "dying"],
+                "professional_boundaries": True,
+                "crisis_intervention": True
+            }
+        }
         
         # Trinity enhancements
         self.trinity_enhancements = {
@@ -303,11 +340,11 @@ class EnhancedEmotionDetector:
                                   context: Dict[str, Any] = None) -> Dict[str, Any]:
         """Apply domain-specific context to emotion analysis"""
         
-        domain_patterns = self.domain_emotion_patterns.get(domain, [])
+        domain_patterns = self.domain_emotion_patterns.get(domain, {})
         primary_emotion = emotions["primary_emotion"]
         
         # Check if emotion fits domain patterns
-        domain_relevance = 1.0 if primary_emotion in domain_patterns else 0.7
+        domain_relevance = 1.0 if primary_emotion in domain_patterns["primary_emotions"] else 0.7
         
         # Apply context adjustments
         intensity_adjustment = 1.0
@@ -382,7 +419,7 @@ class EnhancedEmotionDetector:
         # Get domain-specific professional context
         domain_category = "personal"  # Default
         if domain in ["general_health", "mental_health", "chronic_conditions"]:
-            domain_category = "healthcare"
+            domain_category = "general_health"
         elif domain in ["leadership", "customer_service", "sales", "project_management"]:
             domain_category = "business"
         elif domain in ["academic_tutoring", "exam_preparation", "skill_development"]:
@@ -400,7 +437,7 @@ class EnhancedEmotionDetector:
         recommendations = []
         
         if intervention_required:
-            if domain_category == "healthcare":
+            if domain_category == "general_health":
                 recommendations.append("Consider therapeutic response approach")
                 recommendations.append("Monitor for escalation patterns")
             elif domain_category == "business":
@@ -455,7 +492,7 @@ class EnhancedEmotionDetector:
             
         # Domain-specific recommendations
         domain_specific = {
-            "mental_health": ["Validate feelings", "Avoid giving medical advice", "Suggest professional resources"],
+            "general_health": ["Validate feelings", "Avoid giving medical advice", "Suggest professional resources"],
             "parenting": ["Acknowledge parenting challenges", "Offer practical support", "Normalize struggles"],
             "work_life_balance": ["Recognize stress", "Suggest balance strategies", "Validate challenges"]
         }

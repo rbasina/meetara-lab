@@ -24,7 +24,7 @@ class EnhancedTTSManager(BaseAgent):
         
         # Enhanced voice categories aligned with 7 domain categories
         self.voice_categories = {
-            "healthcare": {
+            "general_health": {
                 "description": "Medical professional, reassuring, precise",
                 "edge_voices": ["en-US-JennyNeural", "en-GB-LibbyNeural"],
                 "pyttsx3_rate": 155,
@@ -180,7 +180,7 @@ class EnhancedTTSManager(BaseAgent):
             if domain not in mapping:
                 # Default mapping logic updated for 7 categories
                 if "health" in domain or "medical" in domain:
-                    mapping[domain] = "healthcare"
+                    mapping[domain] = "general_health"
                 elif "business" in domain or "professional" in domain:
                     mapping[domain] = "business"  
                 elif "education" in domain or "learning" in domain:
@@ -270,13 +270,13 @@ class EnhancedTTSManager(BaseAgent):
         
         # Emotion-based category adjustments updated for 7 categories
         emotion_adjustments = {
-            "stress": "healthcare",
-            "anxiety": "healthcare", 
-            "sadness": "healthcare",
-            "anger": "healthcare",
+            "stress": "general_health",
+            "anxiety": "general_health", 
+            "sadness": "general_health",
+            "anger": "general_health",
             "joy": "creative",
             "excitement": "creative",
-            "fear": "healthcare",
+            "fear": "general_health",
             "confusion": "education"
         }
         

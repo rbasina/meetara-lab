@@ -90,13 +90,24 @@ class TrinityPrimaryConductor:
         
         # Intelligent batching configuration
         self.batch_config = {
-            "healthcare": {"parallel_capacity": 4, "priority": 3, "tier": "quality"},
-            "specialized": {"parallel_capacity": 2, "priority": 3, "tier": "quality"},
+            "general_health": {"parallel_capacity": 4, "priority": 3, "tier": "quality"},
+            "mental_health": {"parallel_capacity": 4, "priority": 3, "tier": "quality"},
             "business": {"parallel_capacity": 4, "priority": 2, "tier": "balanced"},
             "education": {"parallel_capacity": 4, "priority": 2, "tier": "balanced"},
+            "creative": {"parallel_capacity": 8, "priority": 1, "tier": "lightning"},
             "technology": {"parallel_capacity": 3, "priority": 2, "tier": "balanced"},
-            "daily_life": {"parallel_capacity": 6, "priority": 1, "tier": "fast"},
-            "creative": {"parallel_capacity": 8, "priority": 1, "tier": "lightning"}
+            "daily_life": {"parallel_capacity": 6, "priority": 1, "tier": "fast"}
+        }
+        
+        # Domain-specific resource allocation
+        self.domain_resources = {
+            "general_health": {"parallel_capacity": 4, "priority": 3, "tier": "quality"},
+            "mental_health": {"parallel_capacity": 4, "priority": 3, "tier": "quality"},
+            "business": {"parallel_capacity": 3, "priority": 2, "tier": "balanced"},
+            "education": {"parallel_capacity": 3, "priority": 2, "tier": "balanced"},
+            "creative": {"parallel_capacity": 2, "priority": 1, "tier": "fast"},
+            "technology": {"parallel_capacity": 3, "priority": 2, "tier": "balanced"},
+            "daily_life": {"parallel_capacity": 2, "priority": 1, "tier": "fast"}
         }
         
         # Resource optimization configuration
@@ -110,13 +121,13 @@ class TrinityPrimaryConductor:
         
         # Quality assurance thresholds
         self.quality_thresholds = {
-            "healthcare": {"min_score": 95, "safety_critical": True},
-            "specialized": {"min_score": 92, "safety_critical": True},
+            "general_health": {"min_score": 95, "safety_critical": True},
+            "mental_health": {"min_score": 92, "safety_critical": True},
             "business": {"min_score": 88, "safety_critical": False},
             "education": {"min_score": 87, "safety_critical": False},
+            "creative": {"min_score": 82, "safety_critical": False},
             "technology": {"min_score": 87, "safety_critical": False},
-            "daily_life": {"min_score": 85, "safety_critical": False},
-            "creative": {"min_score": 82, "safety_critical": False}
+            "daily_life": {"min_score": 85, "safety_critical": False}
         }
         
         # Performance tracking
@@ -596,13 +607,13 @@ class TrinityPrimaryConductor:
     def _get_gpu_requirements(self, category: str, training_mode: str) -> Dict[str, Any]:
         """Get GPU requirements for a category"""
         gpu_mapping = {
-            "healthcare": {"type": "V100", "memory": "16GB", "cores": 5120},
-            "specialized": {"type": "A100", "memory": "40GB", "cores": 6912},
+            "general_health": {"type": "V100", "memory": "16GB", "cores": 5120},
+            "mental_health": {"type": "A100", "memory": "40GB", "cores": 6912},
             "business": {"type": "V100", "memory": "16GB", "cores": 5120},
             "education": {"type": "V100", "memory": "16GB", "cores": 5120},
+            "creative": {"type": "T4", "memory": "16GB", "cores": 2560},
             "technology": {"type": "V100", "memory": "16GB", "cores": 5120},
-            "daily_life": {"type": "T4", "memory": "16GB", "cores": 2560},
-            "creative": {"type": "T4", "memory": "16GB", "cores": 2560}
+            "daily_life": {"type": "T4", "memory": "16GB", "cores": 2560}
         }
         return gpu_mapping.get(category, gpu_mapping["business"])
     

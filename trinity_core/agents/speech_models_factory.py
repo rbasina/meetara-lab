@@ -61,7 +61,7 @@ class SpeechModelType(Enum):
 
 class VoiceCategory(Enum):
     """Voice categories for domain-specific profiles"""
-    HEALTHCARE = "healthcare"
+    HEALTHCARE = "general_health"
     DAILY_LIFE = "daily_life"
     BUSINESS = "business"
     EDUCATION = "education"
@@ -137,7 +137,7 @@ class SpeechModelsFactory:
                 "ser_model": "speechbrain/emotion-recognition-wav2vec2-IEMOCAP"
             },
             "voice_categories": {
-                "healthcare": {"tone": "reassuring", "pace": "measured", "empathy": "high"},
+                "general_health": {"tone": "reassuring", "pace": "measured", "empathy": "high"},
                 "daily_life": {"tone": "friendly", "pace": "natural", "empathy": "medium"},
                 "business": {"tone": "professional", "pace": "confident", "empathy": "low"},
                 "education": {"tone": "encouraging", "pace": "clear", "empathy": "high"},
@@ -162,7 +162,7 @@ class SpeechModelsFactory:
         """Initialize voice profile intelligence"""
         return {
             "edge_tts_voices": {
-                "healthcare": ["en-US-JennyNeural", "en-GB-LibbyNeural"],
+                "general_health": ["en-US-JennyNeural", "en-GB-LibbyNeural"],
                 "daily_life": ["en-US-AriaNeural", "en-AU-NatashaNeural"],
                 "business": ["en-US-GuyNeural", "en-GB-RyanNeural"],
                 "education": ["en-US-MonicaNeural", "en-CA-ClaraNeural"],
@@ -171,7 +171,7 @@ class SpeechModelsFactory:
                 "specialized": ["en-US-BrianNeural", "en-GB-AbbyNeural"]
             },
             "pyttsx3_settings": {
-                "healthcare": {"rate": 155, "volume": 0.9},
+                "general_health": {"rate": 155, "volume": 0.9},
                 "daily_life": {"rate": 170, "volume": 0.8},
                 "business": {"rate": 175, "volume": 0.9},
                 "education": {"rate": 165, "volume": 0.8},
@@ -197,14 +197,14 @@ class SpeechModelsFactory:
                 "confidence_scoring": True
             },
             "emotional_routing": {
-                "stress": "healthcare",
-                "anxiety": "healthcare",
+                "stress": "general_health",
+                "anxiety": "general_health",
                 "confusion": "education",
                 "excitement": "creative",
                 "professional": "business"
             },
             "fallback_chains": {
-                "healthcare": ["daily_life", "education"],
+                "general_health": ["daily_life", "education"],
                 "daily_life": ["business", "education"],
                 "business": ["daily_life", "specialized"],
                 "education": ["daily_life", "creative"],

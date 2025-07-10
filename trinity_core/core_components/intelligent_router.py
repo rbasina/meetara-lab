@@ -53,6 +53,18 @@ class IntelligentRouter:
             "quality_assurance": True
         }
         
+        # Domain-specific keywords for intelligent routing
+        self.domain_keywords = {
+            "general_health": ["health", "medical", "doctor", "symptom", "treatment", "medicine", "anxiety", "depression"],
+            "mental_health": ["therapy", "counseling", "anxiety", "depression", "trauma", "stress", "mental"],
+            "business": ["business", "company", "strategy", "marketing", "sales", "management", "entrepreneur"],
+            "education": ["education", "learning", "teaching", "student", "school", "academic", "study"],
+            "creative": ["creative", "art", "writing", "design", "music", "photography", "inspiration"],
+            "technology": ["technology", "programming", "software", "ai", "machine learning", "data"],
+            "daily_life": ["personal", "relationship", "family", "home", "lifestyle", "routine"],
+            "specialized": ["legal", "financial", "scientific", "engineering", "research", "expert"]
+        }
+        
         print(f"✅ Intelligent Router initialized")
         print(f"   → Total domains: {len(get_all_domains())}")
         print(f"   → Categories: {len(self.domain_categories)}")
