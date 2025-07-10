@@ -2229,6 +2229,1108 @@ class TrinityDataGenerator:
             "criticality_level": "maximum"
         }
 
+        # Skill Development Domain Templates
+        self.domain_templates["skill_development"] = {
+            "scenarios": [
+                "learning_strategies", "skill_assessment", "training_methods",
+                "competency_building", "performance_improvement", "skill_transfer",
+                "continuous_learning", "skill_gap_analysis", "development_planning",
+                "mentorship_guidance", "certification_preparation", "skill_validation"
+            ],
+            "user_intents": [
+                "learning_strategies", "skill_assessment", "training_methods",
+                "competency_building", "performance_improvement", "skill_transfer",
+                "continuous_learning", "skill_gap_analysis", "development_planning",
+                "mentorship_guidance", "certification_preparation", "skill_validation"
+            ],
+            "conversation_starters": [
+                "I want to develop new skills for my career but I don't know where to start. How do I identify what skills I need?",
+                "I'm trying to learn a new programming language but I'm struggling. What's the best way to approach skill development?",
+                "I need to improve my public speaking skills for work. How can I practice and develop this skill effectively?",
+                "I want to learn a new language but I don't have much time. What are the most efficient learning strategies?",
+                "I'm trying to develop leadership skills but I'm not sure what competencies I need. How do I assess my current level?",
+                "I want to transfer my skills to a new industry. How do I identify which skills are transferable?",
+                "I'm preparing for a certification exam. What's the best way to study and retain the information?",
+                "I want to develop technical skills but I learn better through hands-on experience. How can I find practical learning opportunities?",
+                "I'm trying to improve my writing skills for professional communication. What exercises can help me develop this skill?",
+                "I want to develop project management skills but I don't have formal training. How can I learn on the job?"
+            ],
+            "response_patterns": [
+                "learning_strategies", "skill_assessment", "training_methods",
+                "competency_building", "performance_improvement", "skill_transfer",
+                "continuous_learning", "skill_gap_analysis", "development_planning",
+                "mentorship_guidance", "certification_preparation", "skill_validation"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Career Guidance Domain Templates
+        self.domain_templates["career_guidance"] = {
+            "scenarios": [
+                "career_planning", "job_search_strategies", "resume_development",
+                "interview_preparation", "career_transition", "professional_development",
+                "industry_analysis", "salary_negotiation", "networking_strategies",
+                "workplace_navigation", "career_crisis", "professional_branding"
+            ],
+            "user_intents": [
+                "career_planning", "job_search_strategies", "resume_development",
+                "interview_preparation", "career_transition", "professional_development",
+                "industry_analysis", "salary_negotiation", "networking_strategies",
+                "workplace_navigation", "career_crisis", "professional_branding"
+            ],
+            "conversation_starters": [
+                "I'm stuck in a dead-end job and I don't know how to advance my career. How do I plan for a better future?",
+                "I want to change careers but I'm afraid of starting over. How do I transition to a new field?",
+                "I've been unemployed for months and I'm losing hope. How do I improve my job search strategy?",
+                "I have an important interview tomorrow and I'm nervous. How can I prepare effectively?",
+                "My resume isn't getting me interviews. How do I make it stand out to employers?",
+                "I want to negotiate a higher salary but I'm afraid of losing my job. How do I approach this conversation?",
+                "I'm being passed over for promotions and I don't know why. How do I advocate for myself?",
+                "I want to work in a different industry but I don't know how to break in. How do I network effectively?",
+                "I'm dealing with a toxic work environment but I need the income. How do I navigate this situation?",
+                "I want to start my own business but I'm afraid of failure. How do I know if I'm ready?"
+            ],
+            "response_patterns": [
+                "career_planning", "job_search_strategies", "resume_development",
+                "interview_preparation", "career_transition", "professional_development",
+                "industry_analysis", "salary_negotiation", "networking_strategies",
+                "workplace_navigation", "career_crisis", "professional_branding"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Exam Preparation Domain Templates
+        self.domain_templates["exam_preparation"] = {
+            "scenarios": [
+                "study_planning", "test_strategies", "anxiety_management",
+                "time_management", "content_review", "practice_testing",
+                "memory_techniques", "focus_improvement", "stress_reduction",
+                "exam_day_preparation", "performance_optimization", "recovery_strategies"
+            ],
+            "user_intents": [
+                "study_planning", "test_strategies", "anxiety_management",
+                "time_management", "content_review", "practice_testing",
+                "memory_techniques", "focus_improvement", "stress_reduction",
+                "exam_day_preparation", "performance_optimization", "recovery_strategies"
+            ],
+            "conversation_starters": [
+                "I have a major exam in two weeks and I'm completely overwhelmed. How do I create an effective study plan?",
+                "I get terrible test anxiety and I always perform poorly even when I know the material. How can I manage this?",
+                "I'm studying for a professional certification but I can't seem to retain the information. What study techniques work best?",
+                "I have multiple exams coming up and I don't know how to prioritize my studying. How do I manage my time effectively?",
+                "I'm taking an online exam and I'm worried about technical issues. How do I prepare for exam day?",
+                "I keep making careless mistakes on tests even though I know the material. How can I improve my test-taking skills?",
+                "I'm studying for a standardized test but my scores aren't improving. What strategies should I try?",
+                "I have a final exam that determines my entire grade. How do I prepare when I'm so stressed?",
+                "I'm taking an exam in a subject I struggle with. How do I build confidence and improve my performance?",
+                "I need to pass this exam to keep my job. How do I stay motivated and focused under pressure?"
+            ],
+            "response_patterns": [
+                "study_planning", "test_strategies", "anxiety_management",
+                "time_management", "content_review", "practice_testing",
+                "memory_techniques", "focus_improvement", "stress_reduction",
+                "exam_day_preparation", "performance_optimization", "recovery_strategies"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Language Learning Domain Templates
+        self.domain_templates["language_learning"] = {
+            "scenarios": [
+                "immersion_techniques", "grammar_learning", "vocabulary_building",
+                "pronunciation_practice", "conversation_skills", "cultural_understanding",
+                "learning_motivation", "progress_tracking", "resource_selection",
+                "practice_strategies", "confidence_building", "fluency_development"
+            ],
+            "user_intents": [
+                "immersion_techniques", "grammar_learning", "vocabulary_building",
+                "pronunciation_practice", "conversation_skills", "cultural_understanding",
+                "learning_motivation", "progress_tracking", "resource_selection",
+                "practice_strategies", "confidence_building", "fluency_development"
+            ],
+            "conversation_starters": [
+                "I'm trying to learn a new language but I'm embarrassed to speak it. How do I build confidence?",
+                "I've been studying a language for months but I still can't have a conversation. What am I doing wrong?",
+                "I want to learn a language quickly for an upcoming trip. What's the most efficient approach?",
+                "I'm struggling with grammar rules and I keep making mistakes. How do I improve my understanding?",
+                "I want to practice speaking but I don't have anyone to talk to. How can I practice on my own?",
+                "I'm learning a language for work but I'm afraid of making mistakes in front of colleagues. How do I overcome this?",
+                "I want to understand the culture behind the language I'm learning. How do I incorporate cultural learning?",
+                "I'm losing motivation to continue learning. How do I stay engaged and motivated?",
+                "I want to improve my pronunciation but I don't know how to practice. What techniques work best?",
+                "I'm trying to learn multiple languages at once. Is this a good idea or should I focus on one?"
+            ],
+            "response_patterns": [
+                "immersion_techniques", "grammar_learning", "vocabulary_building",
+                "pronunciation_practice", "conversation_skills", "cultural_understanding",
+                "learning_motivation", "progress_tracking", "resource_selection",
+                "practice_strategies", "confidence_building", "fluency_development"
+            ],
+            "trinity_phase": "arc_reactor_foundation",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Research Assistance Domain Templates
+        self.domain_templates["research_assistance"] = {
+            "scenarios": [
+                "research_methodology", "literature_review", "data_collection",
+                "analysis_techniques", "citation_management", "research_ethics",
+                "academic_writing", "peer_review", "publication_strategies",
+                "funding_applications", "collaboration_management", "research_integrity"
+            ],
+            "user_intents": [
+                "research_methodology", "literature_review", "data_collection",
+                "analysis_techniques", "citation_management", "research_ethics",
+                "academic_writing", "peer_review", "publication_strategies",
+                "funding_applications", "collaboration_management", "research_integrity"
+            ],
+            "conversation_starters": [
+                "I need to conduct research for my thesis but I don't know where to start. How do I develop a research methodology?",
+                "I'm writing a literature review but I'm overwhelmed by all the sources. How do I organize and synthesize the information?",
+                "I'm collecting data for my research but I'm not sure if my methods are ethical. How do I ensure I'm following proper guidelines?",
+                "I need to analyze my research data but I don't know which statistical methods to use. How do I choose the right approach?",
+                "I'm trying to publish my research but I keep getting rejected. How do I improve my chances of acceptance?",
+                "I need to apply for research funding but I don't know how to write a compelling proposal. What should I include?",
+                "I'm collaborating with other researchers but we're having conflicts. How do I manage research partnerships effectively?",
+                "I found errors in my research data. How do I handle this ethically and professionally?",
+                "I'm conducting research in a sensitive area and I'm concerned about participant privacy. How do I protect their rights?",
+                "I want to make my research more accessible to the public. How do I communicate complex findings clearly?"
+            ],
+            "response_patterns": [
+                "research_methodology", "literature_review", "data_collection",
+                "analysis_techniques", "citation_management", "research_ethics",
+                "academic_writing", "peer_review", "publication_strategies",
+                "funding_applications", "collaboration_management", "research_integrity"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Study Techniques Domain Templates
+        self.domain_templates["study_techniques"] = {
+            "scenarios": [
+                "active_learning", "memory_techniques", "note_taking_strategies",
+                "time_management", "focus_improvement", "comprehension_techniques",
+                "retention_strategies", "motivation_maintenance", "stress_management",
+                "learning_environment", "study_group_techniques", "self_assessment"
+            ],
+            "user_intents": [
+                "active_learning", "memory_techniques", "note_taking_strategies",
+                "time_management", "focus_improvement", "comprehension_techniques",
+                "retention_strategies", "motivation_maintenance", "stress_management",
+                "learning_environment", "study_group_techniques", "self_assessment"
+            ],
+            "conversation_starters": [
+                "I study for hours but I can't seem to retain the information. What study techniques actually work?",
+                "I get easily distracted when studying and I can't focus. How do I improve my concentration?",
+                "I'm trying to learn complex material but I don't know how to take effective notes. What strategies work best?",
+                "I have a lot of material to cover but limited time. How do I study efficiently?",
+                "I'm studying with a group but we're not being productive. How do we make our study sessions more effective?",
+                "I keep forgetting what I learned the day before. How do I improve my memory retention?",
+                "I'm studying for a difficult subject and I'm getting frustrated. How do I stay motivated?",
+                "I want to study more effectively but I don't know where to start. How do I develop good study habits?",
+                "I'm trying to understand complex concepts but I'm struggling. How do I improve my comprehension?",
+                "I need to study for multiple subjects at once. How do I balance my time and energy?"
+            ],
+            "response_patterns": [
+                "active_learning", "memory_techniques", "note_taking_strategies",
+                "time_management", "focus_improvement", "comprehension_techniques",
+                "retention_strategies", "motivation_maintenance", "stress_management",
+                "learning_environment", "study_group_techniques", "self_assessment"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Educational Technology Domain Templates
+        self.domain_templates["educational_technology"] = {
+            "scenarios": [
+                "digital_learning_tools", "online_education", "adaptive_learning",
+                "educational_apps", "virtual_classrooms", "learning_management_systems",
+                "educational_gaming", "accessibility_technology", "data_analytics",
+                "personalized_learning", "collaborative_tools", "technology_integration"
+            ],
+            "user_intents": [
+                "digital_learning_tools", "online_education", "adaptive_learning",
+                "educational_apps", "virtual_classrooms", "learning_management_systems",
+                "educational_gaming", "accessibility_technology", "data_analytics",
+                "personalized_learning", "collaborative_tools", "technology_integration"
+            ],
+            "conversation_starters": [
+                "I want to use technology to improve my teaching but I don't know which tools to choose. What are the best educational apps?",
+                "I'm teaching online for the first time and I'm struggling with the technology. How do I create engaging virtual lessons?",
+                "I want to make my lessons more interactive using technology. What tools can help me engage my students?",
+                "I'm trying to use educational technology but my students have different access levels. How do I ensure equity?",
+                "I want to track my students' progress using technology. What learning management systems work best?",
+                "I'm trying to incorporate educational games into my lessons. How do I choose appropriate games for learning?",
+                "I have students with disabilities and I want to use technology to support them. What accessibility tools are available?",
+                "I want to personalize learning for each student using technology. How do I implement adaptive learning?",
+                "I'm trying to use data analytics to improve my teaching. How do I interpret student performance data?",
+                "I want to collaborate with other teachers using technology. What tools facilitate professional collaboration?"
+            ],
+            "response_patterns": [
+                "digital_learning_tools", "online_education", "adaptive_learning",
+                "educational_apps", "virtual_classrooms", "learning_management_systems",
+                "educational_gaming", "accessibility_technology", "data_analytics",
+                "personalized_learning", "collaborative_tools", "technology_integration"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Writing Domain Templates
+        self.domain_templates["writing"] = {
+            "scenarios": [
+                "creative_writing", "academic_writing", "business_writing",
+                "technical_writing", "copywriting", "journalism",
+                "poetry_composition", "script_writing", "blog_writing",
+                "grant_writing", "editing_skills", "publishing_strategies"
+            ],
+            "user_intents": [
+                "creative_writing", "academic_writing", "business_writing",
+                "technical_writing", "copywriting", "journalism",
+                "poetry_composition", "script_writing", "blog_writing",
+                "grant_writing", "editing_skills", "publishing_strategies"
+            ],
+            "conversation_starters": [
+                "I want to write a novel but I don't know how to start. How do I develop my story and characters?",
+                "I need to write a research paper but I'm struggling with academic writing. How do I structure my argument?",
+                "I'm trying to write compelling marketing copy but my writing feels flat. How do I make it more engaging?",
+                "I want to write poetry but I don't understand meter and rhythm. How do I learn poetic techniques?",
+                "I'm writing a technical manual but my audience finds it confusing. How do I make complex information clear?",
+                "I want to start a blog but I don't know what to write about. How do I find my voice and audience?",
+                "I'm trying to write a screenplay but I'm struggling with dialogue. How do I write natural conversations?",
+                "I need to write a grant proposal but I don't know how to make it compelling. What should I include?",
+                "I want to improve my writing skills but I don't know where to start. How do I develop my craft?",
+                "I'm editing my work but I'm not sure if it's good enough. How do I evaluate and improve my writing?"
+            ],
+            "response_patterns": [
+                "creative_writing", "academic_writing", "business_writing",
+                "technical_writing", "copywriting", "journalism",
+                "poetry_composition", "script_writing", "blog_writing",
+                "grant_writing", "editing_skills", "publishing_strategies"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Storytelling Domain Templates
+        self.domain_templates["storytelling"] = {
+            "scenarios": [
+                "narrative_structure", "character_development", "plot_construction",
+                "dialogue_writing", "world_building", "pacing_techniques",
+                "point_of_view", "theme_development", "conflict_creation",
+                "storytelling_mediums", "audience_engagement", "story_arcs"
+            ],
+            "user_intents": [
+                "narrative_structure", "character_development", "plot_construction",
+                "dialogue_writing", "world_building", "pacing_techniques",
+                "point_of_view", "theme_development", "conflict_creation",
+                "storytelling_mediums", "audience_engagement", "story_arcs"
+            ],
+            "conversation_starters": [
+                "I want to tell better stories but I don't know how to structure them. How do I create compelling narratives?",
+                "I'm trying to develop characters for my story but they feel flat. How do I create three-dimensional characters?",
+                "I want to write dialogue that sounds natural but my conversations feel forced. How do I improve dialogue?",
+                "I'm building a fantasy world but I don't know where to start. How do I create believable settings?",
+                "I want to tell stories to children but I don't know how to engage them. What techniques work best?",
+                "I'm trying to write a story with multiple plot lines but I'm getting confused. How do I manage complex plots?",
+                "I want to use storytelling in my presentations but I don't know how to structure them. How do I make them engaging?",
+                "I'm trying to write a story with a strong theme but I don't know how to develop it. How do I weave themes into my narrative?",
+                "I want to create conflict in my story but I don't know how to make it compelling. How do I build tension?",
+                "I'm trying to tell a story through different mediums but I don't know how to adapt it. How do I choose the right format?"
+            ],
+            "response_patterns": [
+                "narrative_structure", "character_development", "plot_construction",
+                "dialogue_writing", "world_building", "pacing_techniques",
+                "point_of_view", "theme_development", "conflict_creation",
+                "storytelling_mediums", "audience_engagement", "story_arcs"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Content Creation Domain Templates
+        self.domain_templates["content_creation"] = {
+            "scenarios": [
+                "content_strategy", "audience_research", "content_planning",
+                "multimedia_creation", "brand_storytelling", "content_distribution",
+                "engagement_optimization", "content_analytics", "trend_analysis",
+                "platform_optimization", "content_calendar", "collaboration_management"
+            ],
+            "user_intents": [
+                "content_strategy", "audience_research", "content_planning",
+                "multimedia_creation", "brand_storytelling", "content_distribution",
+                "engagement_optimization", "content_analytics", "trend_analysis",
+                "platform_optimization", "content_calendar", "collaboration_management"
+            ],
+            "conversation_starters": [
+                "I want to create content for my business but I don't know what to post. How do I develop a content strategy?",
+                "I'm trying to grow my social media following but my content isn't engaging. How do I create better content?",
+                "I want to start a YouTube channel but I don't know what content to make. How do I find my niche?",
+                "I'm creating content for multiple platforms but I'm overwhelmed. How do I manage my content calendar?",
+                "I want to create content that converts but I don't know how to measure success. What metrics should I track?",
+                "I'm trying to create viral content but I don't understand what makes content shareable. How do I optimize for engagement?",
+                "I want to collaborate with other creators but I don't know how to approach them. How do I build partnerships?",
+                "I'm creating content for a specific audience but I don't know how to research them. How do I understand my target market?",
+                "I want to create content that builds my personal brand but I don't know how to be authentic. How do I find my voice?",
+                "I'm trying to monetize my content but I don't know what strategies work. How do I turn content into income?"
+            ],
+            "response_patterns": [
+                "content_strategy", "audience_research", "content_planning",
+                "multimedia_creation", "brand_storytelling", "content_distribution",
+                "engagement_optimization", "content_analytics", "trend_analysis",
+                "platform_optimization", "content_calendar", "collaboration_management"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Social Media Domain Templates
+        self.domain_templates["social_media"] = {
+            "scenarios": [
+                "platform_strategy", "content_creation", "community_management",
+                "engagement_optimization", "analytics_tracking", "trend_monitoring",
+                "crisis_management", "influencer_collaboration", "advertising_strategies",
+                "brand_voice_development", "audience_growth", "platform_algorithm_understanding"
+            ],
+            "user_intents": [
+                "platform_strategy", "content_creation", "community_management",
+                "engagement_optimization", "analytics_tracking", "trend_monitoring",
+                "crisis_management", "influencer_collaboration", "advertising_strategies",
+                "brand_voice_development", "audience_growth", "platform_algorithm_understanding"
+            ],
+            "conversation_starters": [
+                "I want to grow my business on social media but I don't know which platforms to focus on. How do I choose?",
+                "I'm trying to increase engagement on my posts but I'm not getting likes or comments. How do I create more engaging content?",
+                "I want to build a personal brand on social media but I don't know how to be authentic. How do I find my voice?",
+                "I'm managing social media for my company but I don't know how to handle negative comments. How do I respond professionally?",
+                "I want to use social media advertising but I don't know how to target the right audience. How do I set up effective ads?",
+                "I'm trying to collaborate with influencers but I don't know how to approach them. How do I build partnerships?",
+                "I want to track my social media performance but I don't understand the metrics. What should I measure?",
+                "I'm trying to stay relevant on social media but the algorithms keep changing. How do I adapt my strategy?",
+                "I want to create viral content but I don't know what makes posts shareable. How do I optimize for virality?",
+                "I'm trying to manage multiple social media accounts but I'm overwhelmed. How do I streamline my workflow?"
+            ],
+            "response_patterns": [
+                "platform_strategy", "content_creation", "community_management",
+                "engagement_optimization", "analytics_tracking", "trend_monitoring",
+                "crisis_management", "influencer_collaboration", "advertising_strategies",
+                "brand_voice_development", "audience_growth", "platform_algorithm_understanding"
+            ],
+            "trinity_phase": "arc_reactor_foundation",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Design Thinking Domain Templates
+        self.domain_templates["design_thinking"] = {
+            "scenarios": [
+                "empathy_research", "problem_definition", "ideation_techniques",
+                "prototyping_methods", "user_testing", "iteration_process",
+                "design_research", "creative_problem_solving", "user_centered_design",
+                "innovation_methods", "design_sprints", "collaborative_design"
+            ],
+            "user_intents": [
+                "empathy_research", "problem_definition", "ideation_techniques",
+                "prototyping_methods", "user_testing", "iteration_process",
+                "design_research", "creative_problem_solving", "user_centered_design",
+                "innovation_methods", "design_sprints", "collaborative_design"
+            ],
+            "conversation_starters": [
+                "I want to solve a complex problem using design thinking but I don't know where to start. How do I begin the process?",
+                "I'm trying to understand my users better but I don't know how to conduct empathy research. What methods should I use?",
+                "I want to generate creative solutions but I'm stuck in conventional thinking. How do I use ideation techniques?",
+                "I'm prototyping a solution but I don't know how to test it effectively. How do I conduct user testing?",
+                "I want to run a design sprint but I don't know how to structure it. How do I plan and facilitate the process?",
+                "I'm trying to define the problem clearly but I keep jumping to solutions. How do I stay in the problem space?",
+                "I want to collaborate with my team using design thinking but we're not aligned. How do I facilitate the process?",
+                "I'm trying to iterate on my design but I don't know how to incorporate feedback. How do I improve my solution?",
+                "I want to use design thinking for innovation but I don't know how to apply it to my industry. How do I adapt the process?",
+                "I'm trying to create user-centered solutions but I don't understand my users' needs. How do I conduct effective research?"
+            ],
+            "response_patterns": [
+                "empathy_research", "problem_definition", "ideation_techniques",
+                "prototyping_methods", "user_testing", "iteration_process",
+                "design_research", "creative_problem_solving", "user_centered_design",
+                "innovation_methods", "design_sprints", "collaborative_design"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Photography Domain Templates
+        self.domain_templates["photography"] = {
+            "scenarios": [
+                "composition_techniques", "lighting_strategies", "camera_settings",
+                "post_processing", "genre_specialization", "equipment_selection",
+                "creative_vision", "technical_skills", "business_photography",
+                "portfolio_development", "client_management", "marketing_strategies"
+            ],
+            "user_intents": [
+                "composition_techniques", "lighting_strategies", "camera_settings",
+                "post_processing", "genre_specialization", "equipment_selection",
+                "creative_vision", "technical_skills", "business_photography",
+                "portfolio_development", "client_management", "marketing_strategies"
+            ],
+            "conversation_starters": [
+                "I want to take better photos but I don't understand composition. How do I create more visually appealing images?",
+                "I'm trying to improve my lighting but my photos look flat. How do I use light to create depth and mood?",
+                "I want to shoot in manual mode but I don't understand aperture, shutter speed, and ISO. How do I master these settings?",
+                "I'm trying to edit my photos but I don't know where to start. How do I develop a post-processing workflow?",
+                "I want to specialize in a photography genre but I don't know which one to choose. How do I find my niche?",
+                "I'm trying to build a photography business but I don't know how to price my services. How do I determine my rates?",
+                "I want to create a portfolio but I don't know which photos to include. How do I curate my best work?",
+                "I'm trying to market my photography but I don't know how to reach potential clients. What strategies work best?",
+                "I want to improve my creative vision but I don't know how to develop my style. How do I find my artistic voice?",
+                "I'm trying to work with clients but I don't know how to manage expectations. How do I handle difficult clients?"
+            ],
+            "response_patterns": [
+                "composition_techniques", "lighting_strategies", "camera_settings",
+                "post_processing", "genre_specialization", "equipment_selection",
+                "creative_vision", "technical_skills", "business_photography",
+                "portfolio_development", "client_management", "marketing_strategies"
+            ],
+            "trinity_phase": "arc_reactor_foundation",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Music Domain Templates
+        self.domain_templates["music"] = {
+            "scenarios": [
+                "music_theory", "instrument_learning", "composition_techniques",
+                "performance_skills", "recording_technology", "music_production",
+                "genre_exploration", "collaboration_skills", "music_business",
+                "audience_development", "creative_process", "technical_skills"
+            ],
+            "user_intents": [
+                "music_theory", "instrument_learning", "composition_techniques",
+                "performance_skills", "recording_technology", "music_production",
+                "genre_exploration", "collaboration_skills", "music_business",
+                "audience_development", "creative_process", "technical_skills"
+            ],
+            "conversation_starters": [
+                "I want to learn music theory but I find it overwhelming. How do I start understanding the basics?",
+                "I'm trying to learn an instrument but I'm struggling with practice. How do I develop effective practice habits?",
+                "I want to compose my own music but I don't know how to start. How do I develop my compositional skills?",
+                "I'm trying to improve my performance skills but I get nervous on stage. How do I overcome performance anxiety?",
+                "I want to record my music but I don't understand the technology. How do I set up a home recording studio?",
+                "I'm trying to produce music but I don't know how to use the software. How do I learn music production?",
+                "I want to collaborate with other musicians but I don't know how to find them. How do I build musical partnerships?",
+                "I'm trying to build a music career but I don't know how to market myself. How do I develop my audience?",
+                "I want to explore different genres but I don't know where to start. How do I expand my musical horizons?",
+                "I'm trying to write songs but I'm stuck in a creative rut. How do I overcome writer's block?"
+            ],
+            "response_patterns": [
+                "music_theory", "instrument_learning", "composition_techniques",
+                "performance_skills", "recording_technology", "music_production",
+                "genre_exploration", "collaboration_skills", "music_business",
+                "audience_development", "creative_process", "technical_skills"
+            ],
+            "trinity_phase": "arc_reactor_foundation",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Art Appreciation Domain Templates
+        self.domain_templates["art_appreciation"] = {
+            "scenarios": [
+                "art_history", "visual_analysis", "cultural_context",
+                "artistic_movements", "criticism_skills", "museum_visits",
+                "art_collecting", "gallery_navigation", "artistic_interpretation",
+                "contemporary_art", "art_investment", "cultural_heritage"
+            ],
+            "user_intents": [
+                "art_history", "visual_analysis", "cultural_context",
+                "artistic_movements", "criticism_skills", "museum_visits",
+                "art_collecting", "gallery_navigation", "artistic_interpretation",
+                "contemporary_art", "art_investment", "cultural_heritage"
+            ],
+            "conversation_starters": [
+                "I want to understand art better but I don't know how to analyze it. How do I develop my visual literacy?",
+                "I'm visiting a museum but I don't know how to appreciate the art. How do I engage with artwork meaningfully?",
+                "I want to learn about art history but I don't know where to start. How do I explore different periods and movements?",
+                "I'm trying to understand contemporary art but I find it confusing. How do I interpret modern artwork?",
+                "I want to start collecting art but I don't know how to evaluate quality. How do I make informed purchases?",
+                "I'm trying to write about art but I don't know how to critique it. How do I develop my critical thinking skills?",
+                "I want to understand the cultural context of art but I don't know how to research it. How do I explore cultural influences?",
+                "I'm trying to navigate the art world but I feel intimidated. How do I engage with galleries and artists?",
+                "I want to invest in art but I don't know how to assess value. How do I make smart investment decisions?",
+                "I'm trying to understand different artistic styles but I get confused. How do I distinguish between movements?"
+            ],
+            "response_patterns": [
+                "art_history", "visual_analysis", "cultural_context",
+                "artistic_movements", "criticism_skills", "museum_visits",
+                "art_collecting", "gallery_navigation", "artistic_interpretation",
+                "contemporary_art", "art_investment", "cultural_heritage"
+            ],
+            "trinity_phase": "arc_reactor_foundation",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Mythology Domain Templates
+        self.domain_templates["mythology"] = {
+            "scenarios": [
+                "cultural_mythologies", "mythological_stories", "symbolic_interpretation",
+                "comparative_mythology", "mythological_characters", "creation_stories",
+                "hero_journeys", "divine_beings", "mythological_themes",
+                "cultural_significance", "modern_interpretations", "mythological_research"
+            ],
+            "user_intents": [
+                "cultural_mythologies", "mythological_stories", "symbolic_interpretation",
+                "comparative_mythology", "mythological_characters", "creation_stories",
+                "hero_journeys", "divine_beings", "mythological_themes",
+                "cultural_significance", "modern_interpretations", "mythological_research"
+            ],
+            "conversation_starters": [
+                "I want to learn about Greek mythology but I don't know where to start. How do I explore these ancient stories?",
+                "I'm trying to understand the symbolism in myths but I find it confusing. How do I interpret mythological symbols?",
+                "I want to compare different creation stories but I don't know how to analyze them. How do I study comparative mythology?",
+                "I'm trying to understand the hero's journey but I don't know how to identify the patterns. How do I recognize mythological themes?",
+                "I want to learn about Norse mythology but I don't know the cultural context. How do I understand Viking beliefs?",
+                "I'm trying to write stories inspired by mythology but I don't know how to adapt them. How do I modernize ancient tales?",
+                "I want to understand the role of gods in different cultures but I get confused by the differences. How do I compare divine beings?",
+                "I'm trying to research mythology but I don't know which sources are reliable. How do I find accurate information?",
+                "I want to understand the cultural significance of myths but I don't know how to analyze their impact. How do I study their influence?",
+                "I'm trying to connect mythology to modern life but I don't see the relevance. How do I find contemporary meaning in ancient stories?"
+            ],
+            "response_patterns": [
+                "cultural_mythologies", "mythological_stories", "symbolic_interpretation",
+                "comparative_mythology", "mythological_characters", "creation_stories",
+                "hero_journeys", "divine_beings", "mythological_themes",
+                "cultural_significance", "modern_interpretations", "mythological_research"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Spiritual Domain Templates
+        self.domain_templates["spiritual"] = {
+            "scenarios": [
+                "meditation_practices", "mindfulness_techniques", "spiritual_development",
+                "religious_studies", "philosophical_inquiry", "inner_peace",
+                "spiritual_guidance", "contemplative_practices", "sacred_texts",
+                "spiritual_community", "personal_growth", "transcendence_experiences"
+            ],
+            "user_intents": [
+                "meditation_practices", "mindfulness_techniques", "spiritual_development",
+                "religious_studies", "philosophical_inquiry", "inner_peace",
+                "spiritual_guidance", "contemplative_practices", "sacred_texts",
+                "spiritual_community", "personal_growth", "transcendence_experiences"
+            ],
+            "conversation_starters": [
+                "I want to start meditating but I don't know how to begin. How do I develop a meditation practice?",
+                "I'm trying to find inner peace but I'm constantly stressed. How do I cultivate mindfulness in daily life?",
+                "I want to explore spirituality but I don't know where to start. How do I begin my spiritual journey?",
+                "I'm trying to understand different religions but I get confused by the differences. How do I study religious traditions?",
+                "I want to develop a spiritual practice but I don't know what resonates with me. How do I find my path?",
+                "I'm trying to read sacred texts but I find them difficult to understand. How do I approach spiritual literature?",
+                "I want to connect with a spiritual community but I don't know how to find one. How do I build spiritual relationships?",
+                "I'm trying to find meaning in life but I feel lost. How do I develop a sense of purpose?",
+                "I want to practice mindfulness but I get distracted easily. How do I improve my focus and awareness?",
+                "I'm trying to understand philosophical concepts but I find them abstract. How do I apply spiritual wisdom to daily life?"
+            ],
+            "response_patterns": [
+                "meditation_practices", "mindfulness_techniques", "spiritual_development",
+                "religious_studies", "philosophical_inquiry", "inner_peace",
+                "spiritual_guidance", "contemplative_practices", "sacred_texts",
+                "spiritual_community", "personal_growth", "transcendence_experiences"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Psychology Domain Templates
+        self.domain_templates["psychology"] = {
+            "scenarios": [
+                "behavioral_analysis", "cognitive_processes", "emotional_understanding",
+                "personality_studies", "developmental_psychology", "social_psychology",
+                "therapeutic_techniques", "mental_health_awareness", "psychological_research",
+                "behavioral_change", "stress_management", "psychological_assessment"
+            ],
+            "user_intents": [
+                "behavioral_analysis", "cognitive_processes", "emotional_understanding",
+                "personality_studies", "developmental_psychology", "social_psychology",
+                "therapeutic_techniques", "mental_health_awareness", "psychological_research",
+                "behavioral_change", "stress_management", "psychological_assessment"
+            ],
+            "conversation_starters": [
+                "I want to understand why people behave the way they do. How do I analyze human behavior patterns?",
+                "I'm trying to understand my own thought processes but I get confused. How do I develop self-awareness?",
+                "I want to help others with their mental health but I don't know how to approach sensitive topics. How do I provide support?",
+                "I'm trying to change a bad habit but I keep falling back into old patterns. How do I use psychology to break habits?",
+                "I want to understand personality differences but I don't know how to interpret them. How do I study personality psychology?",
+                "I'm dealing with stress and anxiety but I don't know how to manage them. How do I apply psychological techniques?",
+                "I want to improve my relationships but I don't understand social psychology. How do I apply psychological principles?",
+                "I'm trying to understand child development but I find the theories confusing. How do I learn about developmental psychology?",
+                "I want to conduct psychological research but I don't know where to start. How do I design psychological studies?",
+                "I'm trying to assess my mental health but I don't know what's normal. How do I evaluate psychological well-being?"
+            ],
+            "response_patterns": [
+                "behavioral_analysis", "cognitive_processes", "emotional_understanding",
+                "personality_studies", "developmental_psychology", "social_psychology",
+                "therapeutic_techniques", "mental_health_awareness", "psychological_research",
+                "behavioral_change", "stress_management", "psychological_assessment"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Yoga Domain Templates
+        self.domain_templates["yoga"] = {
+            "scenarios": [
+                "asana_practice", "breathing_techniques", "meditation_practices",
+                "yoga_philosophy", "mind_body_connection", "yoga_therapy",
+                "yoga_for_stress", "yoga_for_beginners", "advanced_practices",
+                "yoga_teaching", "yoga_business", "yoga_lifestyle"
+            ],
+            "user_intents": [
+                "asana_practice", "breathing_techniques", "meditation_practices",
+                "yoga_philosophy", "mind_body_connection", "yoga_therapy",
+                "yoga_for_stress", "yoga_for_beginners", "advanced_practices",
+                "yoga_teaching", "yoga_business", "yoga_lifestyle"
+            ],
+            "conversation_starters": [
+                "I want to start practicing yoga but I don't know where to begin. How do I develop a beginner's practice?",
+                "I'm trying to improve my flexibility but I find yoga poses challenging. How do I progress safely?",
+                "I want to learn breathing techniques but I don't understand pranayama. How do I practice breath control?",
+                "I'm trying to meditate during yoga but I get distracted. How do I develop focus and concentration?",
+                "I want to understand yoga philosophy but I find the concepts abstract. How do I apply ancient wisdom to modern life?",
+                "I'm dealing with back pain and I heard yoga can help. How do I practice therapeutic yoga safely?",
+                "I want to become a yoga teacher but I don't know how to start. How do I develop teaching skills?",
+                "I'm trying to create a home yoga practice but I don't know how to structure it. How do I design a personal practice?",
+                "I want to deepen my yoga practice but I don't know how to advance. How do I move beyond basic poses?",
+                "I'm trying to integrate yoga into my lifestyle but I'm busy. How do I make yoga a daily habit?"
+            ],
+            "response_patterns": [
+                "asana_practice", "breathing_techniques", "meditation_practices",
+                "yoga_philosophy", "mind_body_connection", "yoga_therapy",
+                "yoga_for_stress", "yoga_for_beginners", "advanced_practices",
+                "yoga_teaching", "yoga_business", "yoga_lifestyle"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Life Coaching Domain Templates
+        self.domain_templates["life_coaching"] = {
+            "scenarios": [
+                "goal_setting", "personal_development", "career_coaching",
+                "relationship_coaching", "life_transitions", "confidence_building",
+                "work_life_balance", "decision_making", "action_planning",
+                "accountability_support", "mindset_shifting", "breakthrough_coaching"
+            ],
+            "user_intents": [
+                "goal_setting", "personal_development", "career_coaching",
+                "relationship_coaching", "life_transitions", "confidence_building",
+                "work_life_balance", "decision_making", "action_planning",
+                "accountability_support", "mindset_shifting", "breakthrough_coaching"
+            ],
+            "conversation_starters": [
+                "I want to set meaningful goals but I don't know how to identify what I really want. How do I clarify my vision?",
+                "I'm stuck in a rut and I need to make changes but I don't know where to start. How do I create a plan for transformation?",
+                "I want to build confidence but I keep doubting myself. How do I develop self-assurance and belief in my abilities?",
+                "I'm trying to balance work and personal life but I feel overwhelmed. How do I create better boundaries?",
+                "I want to make a major life decision but I'm afraid of making the wrong choice. How do I approach decision-making?",
+                "I'm going through a difficult transition and I need support. How do I navigate change effectively?",
+                "I want to improve my relationships but I don't know how to communicate better. How do I develop relationship skills?",
+                "I'm trying to achieve my dreams but I keep procrastinating. How do I overcome resistance and take action?",
+                "I want to change my mindset but I keep falling into negative thinking. How do I develop a positive outlook?",
+                "I'm trying to find my purpose but I feel lost. How do I discover what I'm meant to do?"
+            ],
+            "response_patterns": [
+                "goal_setting", "personal_development", "career_coaching",
+                "relationship_coaching", "life_transitions", "confidence_building",
+                "work_life_balance", "decision_making", "action_planning",
+                "accountability_support", "mindset_shifting", "breakthrough_coaching"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Social Support Domain Templates
+        self.domain_templates["social_support"] = {
+            "scenarios": [
+                "community_building", "peer_support", "emotional_support",
+                "crisis_support", "support_groups", "mentoring_relationships",
+                "family_support", "friend_support", "professional_support",
+                "online_communities", "support_coordination", "self_advocacy"
+            ],
+            "user_intents": [
+                "community_building", "peer_support", "emotional_support",
+                "crisis_support", "support_groups", "mentoring_relationships",
+                "family_support", "friend_support", "professional_support",
+                "online_communities", "support_coordination", "self_advocacy"
+            ],
+            "conversation_starters": [
+                "I'm going through a difficult time and I need support but I don't know how to ask for help. How do I reach out?",
+                "I want to support a friend who's struggling but I don't know what to say. How do I provide emotional support?",
+                "I'm trying to build a support network but I don't know how to connect with people. How do I develop meaningful relationships?",
+                "I want to join a support group but I'm afraid of sharing my problems. How do I overcome my fear of vulnerability?",
+                "I'm trying to help someone in crisis but I don't know how to respond. How do I provide crisis support?",
+                "I want to be a mentor but I don't know how to guide others effectively. How do I develop mentoring skills?",
+                "I'm dealing with family issues and I need support. How do I navigate difficult family dynamics?",
+                "I want to create a supportive community but I don't know how to organize it. How do I build a support network?",
+                "I'm trying to advocate for myself but I don't know how to speak up. How do I develop self-advocacy skills?",
+                "I want to provide professional support but I need to maintain boundaries. How do I balance helping others with self-care?"
+            ],
+            "response_patterns": [
+                "community_building", "peer_support", "emotional_support",
+                "crisis_support", "support_groups", "mentoring_relationships",
+                "family_support", "friend_support", "professional_support",
+                "online_communities", "support_coordination", "self_advocacy"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Sports Recreation Domain Templates
+        self.domain_templates["sports_recreation"] = {
+            "scenarios": [
+                "athletic_training", "sports_psychology", "team_sports",
+                "individual_sports", "recreational_activities", "fitness_programs",
+                "sports_coaching", "performance_optimization", "injury_prevention",
+                "sports_equipment", "competitive_sports", "leisure_activities"
+            ],
+            "user_intents": [
+                "athletic_training", "sports_psychology", "team_sports",
+                "individual_sports", "recreational_activities", "fitness_programs",
+                "sports_coaching", "performance_optimization", "injury_prevention",
+                "sports_equipment", "competitive_sports", "leisure_activities"
+            ],
+            "conversation_starters": [
+                "I want to get back into sports but I don't know how to start safely. How do I begin athletic training?",
+                "I'm trying to improve my performance but I keep getting nervous during competitions. How do I manage sports psychology?",
+                "I want to join a team sport but I'm afraid of not being good enough. How do I build confidence in team settings?",
+                "I'm trying to prevent injuries but I don't know proper training techniques. How do I train safely?",
+                "I want to coach youth sports but I don't know how to teach effectively. How do I develop coaching skills?",
+                "I'm trying to find recreational activities that fit my lifestyle. How do I choose the right activities?",
+                "I want to optimize my athletic performance but I don't know how to train properly. How do I create effective programs?",
+                "I'm trying to stay motivated to exercise but I get bored easily. How do I maintain enthusiasm for fitness?",
+                "I want to participate in competitive sports but I don't know how to prepare. How do I train for competition?",
+                "I'm trying to balance sports with other commitments. How do I manage time for athletic activities?"
+            ],
+            "response_patterns": [
+                "athletic_training", "sports_psychology", "team_sports",
+                "individual_sports", "recreational_activities", "fitness_programs",
+                "sports_coaching", "performance_optimization", "injury_prevention",
+                "sports_equipment", "competitive_sports", "leisure_activities"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Remote Work Domain Templates
+        self.domain_templates["remote_work"] = {
+            "scenarios": [
+                "remote_setup", "productivity_management", "communication_tools",
+                "work_life_balance", "team_collaboration", "remote_leadership",
+                "time_management", "technology_setup", "remote_culture",
+                "performance_tracking", "remote_challenges", "career_development"
+            ],
+            "user_intents": [
+                "remote_setup", "productivity_management", "communication_tools",
+                "work_life_balance", "team_collaboration", "remote_leadership",
+                "time_management", "technology_setup", "remote_culture",
+                "performance_tracking", "remote_challenges", "career_development"
+            ],
+            "conversation_starters": [
+                "I'm starting to work remotely but I don't know how to set up my home office. How do I create an effective workspace?",
+                "I'm struggling to stay productive while working from home. How do I maintain focus and motivation?",
+                "I need to communicate with my team remotely but I don't know which tools to use. How do I choose the right platforms?",
+                "I'm trying to balance work and personal life while working from home. How do I create boundaries?",
+                "I want to lead a remote team but I don't know how to manage people virtually. How do I develop remote leadership skills?",
+                "I'm having trouble collaborating with colleagues online. How do I build effective remote teamwork?",
+                "I want to track my performance while working remotely. How do I measure productivity and success?",
+                "I'm dealing with technical issues while working from home. How do I troubleshoot remote work problems?",
+                "I want to build a positive remote work culture but I don't know how. How do I create connection virtually?",
+                "I'm trying to advance my career while working remotely. How do I maintain visibility and growth opportunities?"
+            ],
+            "response_patterns": [
+                "remote_setup", "productivity_management", "communication_tools",
+                "work_life_balance", "team_collaboration", "remote_leadership",
+                "time_management", "technology_setup", "remote_culture",
+                "performance_tracking", "remote_challenges", "career_development"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Social Media Management Domain Templates
+        self.domain_templates["social_media_management"] = {
+            "scenarios": [
+                "content_strategy", "platform_management", "audience_engagement",
+                "analytics_tracking", "crisis_management", "brand_voice",
+                "campaign_planning", "community_management", "influencer_collaboration",
+                "content_calendar", "performance_optimization", "trend_monitoring"
+            ],
+            "user_intents": [
+                "content_strategy", "platform_management", "audience_engagement",
+                "analytics_tracking", "crisis_management", "brand_voice",
+                "campaign_planning", "community_management", "influencer_collaboration",
+                "content_calendar", "performance_optimization", "trend_monitoring"
+            ],
+            "conversation_starters": [
+                "I'm managing social media for my company but I don't know how to create a strategy. How do I develop a content plan?",
+                "I want to increase engagement on our social media posts but I'm not sure what content works. How do I create engaging content?",
+                "I'm trying to manage multiple social media platforms but I'm overwhelmed. How do I streamline my workflow?",
+                "I need to handle negative comments on social media but I don't know how to respond professionally. How do I manage crises?",
+                "I want to build a strong brand voice on social media but I don't know how to develop it. How do I create consistent messaging?",
+                "I'm trying to track social media performance but I don't understand the metrics. How do I measure success?",
+                "I want to collaborate with influencers but I don't know how to approach them. How do I build partnerships?",
+                "I'm trying to grow our social media following but I don't know how to reach new audiences. How do I expand our reach?",
+                "I want to create viral content but I don't understand what makes posts shareable. How do I optimize for engagement?",
+                "I'm trying to stay relevant on social media but the algorithms keep changing. How do I adapt my strategy?"
+            ],
+            "response_patterns": [
+                "content_strategy", "platform_management", "audience_engagement",
+                "analytics_tracking", "crisis_management", "brand_voice",
+                "campaign_planning", "community_management", "influencer_collaboration",
+                "content_calendar", "performance_optimization", "trend_monitoring"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Digital Literacy Domain Templates
+        self.domain_templates["digital_literacy"] = {
+            "scenarios": [
+                "technology_basics", "online_safety", "digital_communication",
+                "information_evaluation", "digital_tools", "online_privacy",
+                "digital_citizenship", "technology_troubleshooting", "digital_learning",
+                "online_research", "digital_ethics", "technology_adoption"
+            ],
+            "user_intents": [
+                "technology_basics", "online_safety", "digital_communication",
+                "information_evaluation", "digital_tools", "online_privacy",
+                "digital_citizenship", "technology_troubleshooting", "digital_learning",
+                "online_research", "digital_ethics", "technology_adoption"
+            ],
+            "conversation_starters": [
+                "I want to improve my digital skills but I don't know where to start. How do I develop basic technology literacy?",
+                "I'm concerned about online safety but I don't know how to protect myself. How do I stay safe on the internet?",
+                "I want to communicate effectively online but I don't know the etiquette. How do I navigate digital communication?",
+                "I'm trying to evaluate information online but I don't know what's reliable. How do I fact-check and verify sources?",
+                "I want to use digital tools for work but I'm not tech-savvy. How do I learn to use new software?",
+                "I'm worried about my privacy online but I don't know how to protect it. How do I manage my digital footprint?",
+                "I want to be a responsible digital citizen but I don't know the guidelines. How do I practice good online behavior?",
+                "I'm having trouble with technology but I don't know how to troubleshoot. How do I solve common tech problems?",
+                "I want to learn new skills online but I don't know which platforms to use. How do I find reliable learning resources?",
+                "I'm trying to research topics online but I get overwhelmed by information. How do I conduct effective online research?"
+            ],
+            "response_patterns": [
+                "technology_basics", "online_safety", "digital_communication",
+                "information_evaluation", "digital_tools", "online_privacy",
+                "digital_citizenship", "technology_troubleshooting", "digital_learning",
+                "online_research", "digital_ethics", "technology_adoption"
+            ],
+            "trinity_phase": "arc_reactor_foundation",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True
+        }
+
+        # Research Domain Templates
+        self.domain_templates["research"] = {
+            "scenarios": [
+                "research_methodology", "data_collection", "literature_review",
+                "statistical_analysis", "research_ethics", "academic_writing",
+                "peer_review", "publication_strategies", "funding_applications",
+                "research_collaboration", "research_integrity", "knowledge_dissemination"
+            ],
+            "user_intents": [
+                "research_methodology", "data_collection", "literature_review",
+                "statistical_analysis", "research_ethics", "academic_writing",
+                "peer_review", "publication_strategies", "funding_applications",
+                "research_collaboration", "research_integrity", "knowledge_dissemination"
+            ],
+            "conversation_starters": [
+                "I need to conduct research for my thesis but I don't know how to design a study. How do I develop a research methodology?",
+                "I'm trying to collect data for my research but I'm not sure if my methods are ethical. How do I ensure ethical research practices?",
+                "I want to write a literature review but I'm overwhelmed by all the sources. How do I organize and synthesize information?",
+                "I need to analyze my research data but I don't know which statistical methods to use. How do I choose appropriate analyses?",
+                "I'm trying to publish my research but I keep getting rejected. How do I improve my chances of acceptance?",
+                "I need to apply for research funding but I don't know how to write a compelling proposal. What should I include?",
+                "I'm collaborating with other researchers but we're having conflicts. How do I manage research partnerships effectively?",
+                "I found errors in my research data. How do I handle this ethically and professionally?",
+                "I want to make my research more accessible to the public. How do I communicate complex findings clearly?",
+                "I'm trying to maintain research integrity but I'm under pressure to produce results. How do I balance quality and deadlines?"
+            ],
+            "response_patterns": [
+                "research_methodology", "data_collection", "literature_review",
+                "statistical_analysis", "research_ethics", "academic_writing",
+                "peer_review", "publication_strategies", "funding_applications",
+                "research_collaboration", "research_integrity", "knowledge_dissemination"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Legal Assistance Domain Templates
+        self.domain_templates["legal_assistance"] = {
+            "scenarios": [
+                "legal_research", "document_preparation", "legal_procedures",
+                "rights_understanding", "legal_consultation", "dispute_resolution",
+                "contract_review", "regulatory_compliance", "legal_advocacy",
+                "legal_education", "procedural_guidance", "legal_referrals"
+            ],
+            "user_intents": [
+                "legal_research", "document_preparation", "legal_procedures",
+                "rights_understanding", "legal_consultation", "dispute_resolution",
+                "contract_review", "regulatory_compliance", "legal_advocacy",
+                "legal_education", "procedural_guidance", "legal_referrals"
+            ],
+            "conversation_starters": [
+                "I need legal help but I can't afford a lawyer. How do I find affordable legal assistance?",
+                "I'm dealing with a legal issue but I don't know my rights. How do I understand my legal position?",
+                "I need to prepare legal documents but I don't know where to start. How do I create proper legal paperwork?",
+                "I'm involved in a dispute and I need to understand the legal process. How do I navigate legal procedures?",
+                "I want to review a contract before signing but I don't understand the legal terms. How do I evaluate contracts?",
+                "I'm starting a business and I need to understand legal requirements. How do I ensure regulatory compliance?",
+                "I need to research a legal issue but I don't know where to find reliable information. How do I conduct legal research?",
+                "I'm trying to resolve a legal dispute without going to court. How do I pursue alternative dispute resolution?",
+                "I need to advocate for myself in a legal matter but I don't know how. How do I represent my interests?",
+                "I want to understand the legal system better but I find it confusing. How do I educate myself about the law?"
+            ],
+            "response_patterns": [
+                "legal_research", "document_preparation", "legal_procedures",
+                "rights_understanding", "legal_consultation", "dispute_resolution",
+                "contract_review", "regulatory_compliance", "legal_advocacy",
+                "legal_education", "procedural_guidance", "legal_referrals"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Insurance Domain Templates
+        self.domain_templates["insurance"] = {
+            "scenarios": [
+                "policy_selection", "claims_process", "coverage_understanding",
+                "premium_optimization", "risk_assessment", "insurance_comparison",
+                "policy_review", "claims_assistance", "insurance_education",
+                "coverage_disputes", "policy_management", "insurance_planning"
+            ],
+            "user_intents": [
+                "policy_selection", "claims_process", "coverage_understanding",
+                "premium_optimization", "risk_assessment", "insurance_comparison",
+                "policy_review", "claims_assistance", "insurance_education",
+                "coverage_disputes", "policy_management", "insurance_planning"
+            ],
+            "conversation_starters": [
+                "I need to buy insurance but I don't know what coverage I need. How do I choose the right policy?",
+                "I'm trying to file an insurance claim but I don't understand the process. How do I navigate the claims system?",
+                "I want to understand my insurance policy but the language is confusing. How do I interpret coverage terms?",
+                "I'm trying to save money on insurance but I don't want to sacrifice coverage. How do I optimize my premiums?",
+                "I need to compare insurance options but I don't know how to evaluate them. How do I make an informed decision?",
+                "I'm dealing with a denied insurance claim but I think it should be covered. How do I appeal the decision?",
+                "I want to review my insurance policies but I don't know what to look for. How do I assess my coverage needs?",
+                "I'm trying to understand different types of insurance but I get confused. How do I learn about insurance options?",
+                "I need to update my insurance after a life change but I don't know what to adjust. How do I modify my coverage?",
+                "I want to plan my insurance needs for the future but I don't know how to prepare. How do I create an insurance strategy?"
+            ],
+            "response_patterns": [
+                "policy_selection", "claims_process", "coverage_understanding",
+                "premium_optimization", "risk_assessment", "insurance_comparison",
+                "policy_review", "claims_assistance", "insurance_education",
+                "coverage_disputes", "policy_management", "insurance_planning"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
+        # Real Estate Domain Templates
+        self.domain_templates["real_estate"] = {
+            "scenarios": [
+                "property_search", "market_analysis", "financing_options",
+                "negotiation_strategies", "inspection_process", "closing_procedures",
+                "investment_analysis", "property_management", "legal_aspects",
+                "market_trends", "property_valuation", "transaction_guidance"
+            ],
+            "user_intents": [
+                "property_search", "market_analysis", "financing_options",
+                "negotiation_strategies", "inspection_process", "closing_procedures",
+                "investment_analysis", "property_management", "legal_aspects",
+                "market_trends", "property_valuation", "transaction_guidance"
+            ],
+            "conversation_starters": [
+                "I want to buy a house but I don't know where to start. How do I begin the home buying process?",
+                "I'm trying to understand the real estate market but I don't know how to analyze it. How do I evaluate market conditions?",
+                "I need to get a mortgage but I don't understand the financing options. How do I choose the right loan?",
+                "I'm trying to negotiate the price of a property but I don't know how. How do I negotiate effectively?",
+                "I want to invest in real estate but I don't know how to analyze properties. How do I evaluate investment potential?",
+                "I'm selling my house but I don't know how to price it. How do I determine the right listing price?",
+                "I need to get a property inspection but I don't know what to look for. How do I evaluate inspection reports?",
+                "I'm trying to understand closing costs but I find them confusing. How do I prepare for closing?",
+                "I want to manage rental properties but I don't know the legal requirements. How do I handle property management?",
+                "I'm trying to understand real estate contracts but the language is complex. How do I review purchase agreements?"
+            ],
+            "response_patterns": [
+                "property_search", "market_analysis", "financing_options",
+                "negotiation_strategies", "inspection_process", "closing_procedures",
+                "investment_analysis", "property_management", "legal_aspects",
+                "market_trends", "property_valuation", "transaction_guidance"
+            ],
+            "trinity_phase": "einstein_fusion",
+            "emotional_intelligence": True,
+            "crisis_intervention": True,
+            "professional_boundaries": True
+        }
+
     def _analyze_urgency_patterns(self, conversation_starters: List[str]) -> float:
         """
         Analyze urgency patterns in conversation starters for Trinity Architecture.
