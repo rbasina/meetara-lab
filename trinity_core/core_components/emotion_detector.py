@@ -9,7 +9,12 @@ import numpy as np
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+try:
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification
+except ImportError:
+    # Fallback for environments where transformers is not available
+    AutoTokenizer = None
+    AutoModelForSequenceClassification = None
 from transformers import pipeline
 
 # Import trinity_core components
@@ -146,6 +151,12 @@ class EnhancedEmotionDetector:
     async def _load_emotion_model(self):
         """Load RoBERTa-based emotion detection model"""
         try:
+            # Check if transformers is available
+            if AutoTokenizer is None or AutoModelForSequenceClassification is None:
+                print("⚠️ Transformers not available, using fallback emotion detection")
+                self.emotion_classifier = None
+                return
+                
             print("📥 Loading RoBERTa emotion detection model...")
             
             # Initialize emotion classification pipeline
