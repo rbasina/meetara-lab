@@ -38,11 +38,12 @@ class TrinityIntelligenceHub:
     Intelligence: 33.3% cache hit rate
     """
     
-    def __init__(self, config_manager: Optional[SmartTrinityConfigManager] = None):
+    def __init__(self, config_manager: Optional[SmartTrinityConfigManager] = None, environment: str = "dev"):
         self.config_manager = config_manager or SmartTrinityConfigManager()
         self.config = self.config_manager.get_config_dict()
         self.mcp = LightweightMCPv2()
         self.intelligence = TARAComprehensiveIntelligence()
+        self.environment = environment  # Store environment for data paths
         
         # Trinity Architecture optimization settings
         self.optimization_mode = "trinity_fusion"
@@ -51,7 +52,7 @@ class TrinityIntelligenceHub:
         self.context_sharing = True
         
         # Fused capabilities
-        self.data_generator = TrinityDataGenerator(self)
+        self.data_generator = TrinityDataGenerator(self, environment)  # Pass environment to data generator
         self.knowledge_transfer = TrinityKnowledgeTransfer(self)
         self.domain_router = TrinityDomainRouter(self)
         

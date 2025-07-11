@@ -148,7 +148,7 @@ class TrinityPrimaryConductor:
         
         # Instantiate the agents it needs to conduct
         self.model_factory = model_factory
-        self.intelligence_hub = TrinityIntelligenceHub(self.config_manager)
+        self.intelligence_hub = TrinityIntelligenceHub(self.config_manager, environment="dev")  # Default to dev
         self.data_generator = self.intelligence_hub.data_generator
         self.knowledge_transfer = self.intelligence_hub.knowledge_transfer
         self.quantization_cleanup_agent = QuantizationAndCleanupAgent() # Corrected class name
@@ -338,7 +338,8 @@ class TrinityPrimaryConductor:
 
     async def _process_domain_optimized(self, domain: str, category: str, 
                                       allocation: Dict[str, Any], simulation: bool = False, 
-                                      generate_synthetic: bool = False) -> Dict[str, Any]: # Added generate_synthetic
+                                      generate_synthetic: bool = False, # Added generate_synthetic
+                                      environment: str = "dev") -> Dict[str, Any]: # Added environment
         """
         Process a single domain with enhanced optimization and resource awareness.
         """
@@ -350,6 +351,10 @@ class TrinityPrimaryConductor:
             domain_details = self.config_manager._get_domain_details(domain)
             base_model = domain_details.get('base_model', 'microsoft/Phi-3.5-mini-instruct')
             tier_name = domain_details.get('tier_name', 'balanced')
+            
+            # Update intelligence hub environment for this domain processing
+            self.intelligence_hub.environment = environment
+            self.data_generator.environment = environment
             
             # Step 1: Generate intelligent training data with emotion/context learning
             logger.info(f"📊 Step 1: Generating intelligent training data for {domain}")
@@ -374,7 +379,8 @@ class TrinityPrimaryConductor:
                 "generate_synthetic": generate_synthetic,
                 "target_size_mb": 8.3,  # Target GGUF size
                 "base_model": base_model,
-                "tier_name": tier_name
+                "tier_name": tier_name,
+                "environment": environment  # Pass environment parameter to model factory
             }
             
             model_result = await self.model_factory.create_intelligent_model(model_request)
@@ -659,7 +665,8 @@ class TrinityPrimaryConductor:
     async def orchestrate_intelligent_training(self, target_domains: List[str] = None, 
                                              training_mode: str = "optimized", 
                                              simulation: bool = False, # Existing parameter
-                                             generate_synthetic: bool = False) -> Dict[str, Any]: # Added generate_synthetic
+                                             generate_synthetic: bool = False, # Added generate_synthetic
+                                             environment: str = "dev") -> Dict[str, Any]: # Added environment
         """
         Orchestrates the end-to-end intelligent training pipeline.
         
@@ -668,6 +675,7 @@ class TrinityPrimaryConductor:
             training_mode (str, optional): "optimized" or "basic". Defaults to "optimized".
             simulation (bool, optional): If True, runs in simulation mode, generating simulated data and saving to dev/.
             generate_synthetic (bool, optional): If True, generates synthetically realistic data instead of loading real data.
+            environment (str, optional): Environment for data paths ("dev" or "production"). Defaults to "dev".
 
         Returns:
             Dict[str, Any]: Overall training results and performance metrics.
@@ -709,13 +717,14 @@ class TrinityPrimaryConductor:
         for batch in batches:
             for domain in batch.domains:
                 category = self._get_domain_category(domain)
-                # Pass both simulation and generate_synthetic flags
+                # Pass simulation, generate_synthetic, and environment flags
                 tasks.append(self._process_domain_optimized(
                     domain=domain,
                     category=category,
                     allocation=resource_plan.get(batch.batch_id, {}),
                     simulation=simulation,
-                    generate_synthetic=generate_synthetic # Pass the flag here
+                    generate_synthetic=generate_synthetic, # Pass the flag here
+                    environment=environment # Pass environment parameter
                 ))
         
         # Execute all domain processing tasks in parallel

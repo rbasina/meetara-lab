@@ -241,7 +241,7 @@ class IntegratedGPUPipeline:
         
         return domain_keywords.get(domain, ["professional", "assistance", "help", "guidance"])
 
-    def create_training_data(self, domain: str, size: int = None) -> List[str]:
+    def create_training_data(self, domain: str, size: int = None,environment: str = 'dev') -> List[str]:
         """Generate training data matching TARA Universal Model quality and scale"""
         
         # Use TARA standard sample count
@@ -254,7 +254,11 @@ class IntegratedGPUPipeline:
         self.logger.warning(f"🚨 SIMULATION: This is simulated training data, not real data!")
         
         # Create data directory structure using absolute path from project root
-        data_dir = self.project_root / "data"
+        if environment == 'production':
+            data_dir = self.project_root / "data" / "production"
+        else:
+            data_dir = self.project_root / "data" / "dev"
+            
         training_dir = data_dir / "training" / domain
         training_dir.mkdir(parents=True, exist_ok=True)
         

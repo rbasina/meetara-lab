@@ -160,7 +160,7 @@ class IntelligentModelFactory:
             # In a real scenario, this would involve calling a training engine (e.g., Hugging Face Trainer)
             # and saving the trained model in a format like PyTorch .bin or TensorFlow .ckpt
             
-            raw_model_path = self._generate_raw_model_path(domain, target_size_mb, is_simulation, category) # Pass is_simulation and category
+            raw_model_path = self._generate_raw_model_path(domain, target_size_mb, is_simulation, category, request.get("environment", "dev")) # Pass environment parameter
             raw_model_path.parent.mkdir(parents=True, exist_ok=True)
             
             # Simulate creating a dummy raw model file with LoRA weights
@@ -221,16 +221,16 @@ class IntelligentModelFactory:
             logger.error(f"❌ Raw model generation failed for {domain}: {e}")
             return {"error": f"Raw model generation failed: {str(e)}"}
 
-    def _generate_raw_model_path(self, domain: str, size_mb: float, is_simulation: bool, category: str) -> Path:
+    def _generate_raw_model_path(self, domain: str, size_mb: float, is_simulation: bool, category: str, environment: str = "dev") -> Path:
         """Generates a unique path for the raw model artifact."""
         # Get the base model factory directory from the config
         data_trained_base_dir = Path(self.config_manager.get_config_dict()["paths"]["data_trained_base_dir"])
 
-        # Determine the final output base based on simulation flag
-        if is_simulation:
-            final_output_base = data_trained_base_dir / "dev"
-        else:
+        # Determine the final output base based on environment parameter (overrides simulation flag)
+        if environment == "production":
             final_output_base = data_trained_base_dir / "production"
+        else:
+            final_output_base = data_trained_base_dir / "dev"
 
         # Construct the full path: models/{dev|production}/trained/<category>/<domain>/
         output_dir = final_output_base / "trained" / category / domain
@@ -271,7 +271,7 @@ class IntelligentModelFactory:
             # This would involve sophisticated logic to combine base models and domain data.
             # For this simplified factory, we simulate the output of a raw model.
             
-            raw_model_path = self._generate_raw_model_path(domain, target_size_gb * 1024, is_simulation, category) # Pass is_simulation and category
+            raw_model_path = self._generate_raw_model_path(domain, target_size_gb * 1024, is_simulation, category, request.get("environment", "dev")) # Pass environment parameter
             raw_model_path.parent.mkdir(parents=True, exist_ok=True)
             
             # Simulate creating a dummy raw model file

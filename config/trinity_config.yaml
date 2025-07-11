@@ -381,5 +381,5 @@ domain_config:
       engineering: "Qwen/Qwen2.5-14B-Instruct"                  # 🎯 EXPERT - Engineering precision
 
 paths:
-  data_training_base_dir: "data/dev/training"
-  data_trained_base_dir: "data/dev/trained"
+  data_training_base_dir: "data"
+  data_trained_base_dir: "data"

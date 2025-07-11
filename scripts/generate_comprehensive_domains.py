@@ -546,7 +546,11 @@ class ComprehensiveDomainGenerator:
             f.write('COMPREHENSIVE_DOMAIN_TEMPLATES = {\n')
             
             for domain, template in self.domain_templates.items():
-                f.write(f'    "{domain}": {json.dumps(template, indent=8)},\n')
+                # Convert JSON to Python dict format
+                template_str = json.dumps(template, indent=8)
+                # Replace JSON true/false with Python True/False
+                template_str = template_str.replace('true', 'True').replace('false', 'False')
+                f.write(f'    "{domain}": {template_str},\n')
             
             f.write('}\n')
         

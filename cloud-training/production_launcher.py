@@ -64,7 +64,12 @@ async def main():
         action='store_true',
         help="Train all 62 domains"
     )
-
+    parser.add_argument(
+        '--environment',
+        type=str,
+        choices=['dev', 'production'],
+        help="Set the environment for data paths (overrides config)."
+    )
     # Simulation flag (defined once)
     parser.add_argument(
         '--simulation',
@@ -83,7 +88,10 @@ async def main():
 
     # Initialize configuration manager
     config_manager = SmartTrinityConfigManager()
-    
+    # Get environment from config, allow CLI override
+    config_env = config_manager._config.get('environment', 'dev')
+    environment = args.environment if args.environment else config_env
+
     # Get total domains from config for logger initialization
     all_configured_domains = config_manager.get_all_domains_flat()
     total_domains_in_config = len(all_configured_domains)
@@ -99,10 +107,10 @@ async def main():
 
     # IntelligentLogger initialization
     # Ensure log_base_dir is correctly set to logs/dev or logs/production
-    if args.simulation or args.generate_synthetic:
-        log_base_dir = Path("logs") / "dev"
-    else:
+    if environment == 'production':
         log_base_dir = Path("logs") / "production"
+    else:
+        log_base_dir = Path("logs") / "dev"
     
     logger = IntelligentLogger(
         session_id=trinity_session.session_id, 
@@ -125,7 +133,12 @@ async def main():
         domains_to_process = all_configured_domains # Use the already fetched list
     elif args.category:
         try:
-            domains_to_process = [d['domain_name'] for d in config_manager.get_domains_by_category(args.category)]
+            # Get all domains for the specified category
+            category_config = config_manager._domain_config.get(args.category)
+            if not category_config:
+                logger.main_logger.error(f"Category '{args.category}' not found in configuration.")
+                sys.exit(1)
+            domains_to_process = list(category_config.get('domains', {}).keys())   
         except ValueError as e:
             logger.main_logger.error(f"Error: {e}")
             sys.exit(1)
@@ -164,7 +177,8 @@ async def main():
     overall_results = await ecosystem.trinity_conductor.orchestrate_intelligent_training(
         target_domains=domains_to_process, # Corrected argument name
         simulation=args.simulation, # Corrected argument name
-        generate_synthetic=args.generate_synthetic # Pass the generate_synthetic flag
+        generate_synthetic=args.generate_synthetic, # Pass the generate_synthetic flag
+        environment=environment # Pass environment to downstream components
     )
     
     # Enhanced reporting and documentation
@@ -172,10 +186,10 @@ async def main():
     logger.log_comprehensive_summary(overall_results)
     
     # Generate detailed reports and manifest
-    await _generate_detailed_reports(overall_results, trinity_session, logger)
-    await _generate_comprehensive_manifest(overall_results, trinity_session, logger)
+    await _generate_detailed_reports(overall_results, trinity_session, logger, environment)
+    await _generate_comprehensive_manifest(overall_results, trinity_session, logger, environment)
 
-async def _generate_detailed_reports(overall_results: Dict[str, Any], session: TrinitySession, logger: Any):
+async def _generate_detailed_reports(overall_results: Dict[str, Any], session: TrinitySession, logger: Any, environment: str):
     """Generate detailed reports for traceability and reproducibility"""
     logger.main_logger.info("📊 Generating detailed reports...")
     
@@ -229,7 +243,7 @@ async def _generate_detailed_reports(overall_results: Dict[str, Any], session: T
     except Exception as e:
         logger.main_logger.error(f"❌ Failed to generate detailed reports: {e}")
 
-async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], session: TrinitySession, logger: Any):
+async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], session: TrinitySession, logger: Any, environment: str):
     """Generate comprehensive manifest for traceability and reproducibility"""
     logger.main_logger.info("📋 Generating comprehensive manifest...")
     
@@ -308,7 +322,7 @@ async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], sess
                 "reports": f"reports/session_{session.session_id}",
                 "manifests": f"manifests/session_{session.session_id}",
                 "models": "models/production",
-                "logs": f"logs/{'dev' if args.simulation else 'production'}"
+                "logs": f"logs/{'dev' if environment == 'dev' else 'production'}"
             },
             "reproducibility": {
                 "config_files": [
@@ -376,7 +390,7 @@ async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], sess
 - Reports: `reports/session_{session.session_id}/`
 - Manifests: `manifests/session_{session.session_id}/`
 - Models: `models/production/`
-- Logs: `logs/{'dev' if args.simulation else 'production'}/`
+- Logs: `logs/{'dev' if environment == 'dev' else 'production'}/`
 
 ---
 *Generated by MeeTARA Lab Trinity Architecture*

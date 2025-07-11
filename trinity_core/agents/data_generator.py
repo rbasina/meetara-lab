@@ -50,7 +50,7 @@ class TrinityDataGenerator:
     Enhanced Trinity Data Generator Agent - Trinity Architecture Optimization
     Responsible for generating high-quality, domain-specific training data with advanced modularity.
     """
-    def __init__(self, hub: Any):
+    def __init__(self, hub: Any, environment: str = 'dev'):
         self.hub = hub
         self.config_manager = hub.config_manager
         self.config = self.config_manager.get_config_dict()
@@ -58,6 +58,7 @@ class TrinityDataGenerator:
         self.intelligence = hub.intelligence
         self.domain_templates = {}
         self.trinity_config = TrinityDataConfig()
+        self.environment = environment  # Store environment for path routing
         
         # Initialize advanced modularity components
         self._initialize_urgency_patterns()
@@ -3889,7 +3890,7 @@ class TrinityDataGenerator:
             }
             
             # Save data to appropriate directory structure
-            output_path = self._save_domain_data(domain, category, combined_data)
+            output_path = self._save_domain_data(domain, category, combined_data, self.environment)
             
             processing_time = time.time() - start_time
             
@@ -4003,14 +4004,19 @@ class TrinityDataGenerator:
         
         return 1.0 - (high_diff + medium_diff + low_diff) / 3
 
-    def _save_domain_data(self, domain: str, category: str, data: Dict[str, Any]) -> Path:
+    def _save_domain_data(self, domain: str, category: str, data: Dict[str, Any], environment: str) -> Path:
         """Save domain data to the appropriate directory structure."""
         # Get base directory from config
         config = self.config_manager.get_config_dict()
-        data_base_dir = Path(config.get("paths", {}).get("data_training_base_dir", "data/training"))
+        if environment == 'production':
+             training_data_base = Path("data/production/training")
+        else:
+            training_data_base = Path("data/dev/training")
+        
+        #data_base_dir = Path(config.get("paths", {}).get("data_training_base_dir", "data/training"))
         
         # Create directory structure: data/training/{category}/{domain}/
-        output_dir = data_base_dir / category / domain
+        output_dir = training_data_base / category / domain
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Save data with timestamp
@@ -4631,22 +4637,3 @@ class TrinityDataGenerator:
         
         return 1.0 - (high_diff + medium_diff + low_diff) / 3
 
-    def _save_domain_data(self, domain: str, category: str, data: Dict[str, Any]) -> Path:
-        """Save domain data to the appropriate directory structure."""
-        # Get base directory from config
-        config = self.config_manager.get_config_dict()
-        data_base_dir = Path(config.get("paths", {}).get("data_training_base_dir", "data/training"))
-        
-        # Create directory structure: data/training/{category}/{domain}/
-        output_dir = data_base_dir / category / domain
-        output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Save data with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file = output_dir / f"{domain}_training_data_{timestamp}.json"
-        
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        
-        logger.info(f"💾 Saved training data to: {output_file}")
-        return output_file
