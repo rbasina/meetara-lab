@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-Colab Setup Script - Fixed Version
-Handles CUDA version mismatches and ensures proper installation
+Colab Real GGUF Setup - Builds Actual llama.cpp Tools
+Creates real GGUF files, not simulations
 """
 
 import subprocess
 import sys
 import os
+from pathlib import Path
 
 def run_command(command, description):
     """Run a command and handle errors"""
@@ -21,25 +22,15 @@ def run_command(command, description):
         return False
 
 def main():
-    print("🚀 Starting Colab Setup with CUDA Fixes...")
+    print("🚀 Starting Colab Real GGUF Setup...")
     
-    # Step 1: Uninstall conflicting packages
-    print("\n📦 Step 1: Cleaning up conflicting packages...")
-    run_command("pip uninstall torch torchvision torchaudio -y", "Uninstalling PyTorch packages")
-    run_command("pip uninstall transformers -y", "Uninstalling transformers")
-    
-    # Step 2: Install PyTorch with matching CUDA versions
-    print("\n📦 Step 2: Installing PyTorch with matching CUDA versions...")
+    # Step 1: Install dependencies with CUDA compatibility
+    print("\n📦 Step 1: Installing dependencies with CUDA fixes...")
+    run_command("pip uninstall torch torchvision torchaudio transformers -y", "Uninstalling conflicting packages")
     run_command("pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118", 
                "Installing PyTorch with CUDA 11.8")
-    
-    # Step 3: Install transformers and other dependencies
-    print("\n📦 Step 3: Installing AI/ML dependencies...")
     run_command("pip install transformers==4.35.0 datasets peft accelerate bitsandbytes", 
                "Installing transformers and related packages")
-    
-    # Step 4: Install other required packages
-    print("\n📦 Step 4: Installing other dependencies...")
     run_command("pip install huggingface_hub wandb tensorboard", 
                "Installing HuggingFace and monitoring tools")
     run_command("pip install gguf llama-cpp-python", 
@@ -51,8 +42,28 @@ def main():
     run_command("pip install pyyaml tqdm rich", 
                "Installing utility packages")
     
-    # Step 5: Verify installation
-    print("\n🔍 Step 5: Verifying installation...")
+    # Step 2: Install build tools for llama.cpp
+    print("\n🔧 Step 2: Installing build tools...")
+    run_command("apt-get update", "Updating package list")
+    run_command("apt-get install -y build-essential cmake", "Installing build tools")
+    
+    # Step 3: Build llama.cpp
+    print("\n🔨 Step 3: Building llama.cpp...")
+    run_command("cd llama.cpp && mkdir -p build && cd build", "Creating build directory")
+    run_command("cd llama.cpp/build && cmake .. -DLLAMA_CUBLAS=ON -DLLAMA_CUDA=ON", "Configuring llama.cpp with CUDA")
+    run_command("cd llama.cpp/build && make -j$(nproc)", "Building llama.cpp")
+    
+    # Step 4: Verify llama.cpp tools
+    print("\n🔍 Step 4: Verifying llama.cpp tools...")
+    run_command("ls -la llama.cpp/build/bin/", "Checking built executables")
+    run_command("ls -la llama.cpp/convert*.py", "Checking conversion scripts")
+    
+    # Step 5: Test GGUF creation
+    print("\n🧪 Step 5: Testing GGUF creation...")
+    run_command("cd llama.cpp && python convert_hf_to_gguf.py --help", "Testing conversion script")
+    
+    # Step 6: Verify installation
+    print("\n🔍 Step 6: Verifying installation...")
     try:
         import torch
         import torchvision
@@ -67,8 +78,8 @@ def main():
         print(f"❌ Import verification failed: {e}")
         return False
     
-    print("\n🎉 Colab setup completed successfully!")
-    print("🚀 Ready for 20-100x speed enhancement!")
+    print("\n🎉 Colab Real GGUF setup completed successfully!")
+    print("🚀 Ready for REAL GGUF creation (not simulations)!")
     return True
 
 if __name__ == "__main__":
