@@ -11,11 +11,15 @@ from datetime import datetime
 import torch
 try:
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
-except ImportError:
-    # Fallback for environments where transformers is not available
+    from transformers import pipeline
+    TRANSFORMERS_AVAILABLE = True
+except (ImportError, RuntimeError) as e:
+    # Fallback for environments where transformers is not available or has CUDA issues
     AutoTokenizer = None
     AutoModelForSequenceClassification = None
-from transformers import pipeline
+    TRANSFORMERS_AVAILABLE = False
+    print(f"⚠️ Transformers not available (CUDA issue): {e}")
+    print("⚠️ Using fallback emotion detection")
 
 # Import trinity_core components
 from trinity_core.agents.coordination.lightweight_mcp_v2 import LightweightMCPv2, TrinityEvent, EventType
@@ -152,9 +156,12 @@ class EnhancedEmotionDetector:
         """Load RoBERTa-based emotion detection model"""
         try:
             # Check if transformers is available
-            if AutoTokenizer is None or AutoModelForSequenceClassification is None:
-                print("⚠️ Transformers not available, using fallback emotion detection")
+            if not TRANSFORMERS_AVAILABLE:
+                print("⚠️ Transformers not available, using simple emotion detection")
                 self.emotion_classifier = None
+                # Import simple emotion detector
+                from .emotion_detector_simple import SimpleEmotionDetector
+                self.simple_detector = SimpleEmotionDetector()
                 return
                 
             print("📥 Loading RoBERTa emotion detection model...")
@@ -174,6 +181,9 @@ class EnhancedEmotionDetector:
             print(f"⚠️ Failed to load RoBERTa model, using fallback: {e}")
             # Fallback to simple emotion detection
             self.emotion_classifier = None
+            # Import simple emotion detector
+            from .emotion_detector_simple import SimpleEmotionDetector
+            self.simple_detector = SimpleEmotionDetector()
             
     def _create_domain_emotion_patterns(self) -> Dict[str, List[str]]:
         """Create domain-specific emotion patterns"""
