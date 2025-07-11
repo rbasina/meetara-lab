@@ -36,8 +36,14 @@ class QuantizationAndCleanupAgent:
             logger.error(f"❌ Failed to get llama.cpp path from config: {e}. Please run scripts/setup/setup_llama_cpp.py.")
             self.llama_cpp_path = None # Set to None to handle gracefully
 
-        self.converter_script = self.llama_cpp_path / "convert-hf-to-gguf.py" if self.llama_cpp_path else None
-        self.quantize_executable = self.llama_cpp_path / "quantize" if self.llama_cpp_path else None
+        self.converter_script = self.llama_cpp_path / "convert_hf_to_gguf.py" if self.llama_cpp_path else None
+        
+        # On Windows, the quantize executable is in the build/bin directory as test-quantize-stats.exe
+        import platform
+        if platform.system() == "Windows" and self.llama_cpp_path:
+            self.quantize_executable = self.llama_cpp_path / "build" / "bin" / "test-quantize-stats.exe"
+        else:
+            self.quantize_executable = self.llama_cpp_path / "quantize" if self.llama_cpp_path else None
 
         self._check_llama_cpp_tools()
         logger.info("🧹 Quantization and Cleanup Agent initialized.")
@@ -52,7 +58,7 @@ class QuantizationAndCleanupAgent:
             return
 
         if not self.converter_script.exists():
-            logger.warning(f"⚠️ LLaMA.cpp convert-hf-to-gguf.py not found at {self.converter_script}. GGUF conversion will be simulated.")
+            logger.warning(f"⚠️ LLaMA.cpp convert_hf_to_gguf.py not found at {self.converter_script}. GGUF conversion will be simulated.")
         else:
             logger.info(f"✅ LLaMA.cpp converter found at: {self.converter_script}")
 
