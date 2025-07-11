@@ -81,12 +81,28 @@ def build_llama_cpp():
         subprocess.run(['cmake', '--build', 'build', '--config', 'Release'], cwd='llama.cpp', check=True)
         print("✅ llama.cpp built successfully")
         
-        # Verify if convert-hf-to-gguf.py exists after build
-        converter_script_path = Path('llama.cpp') / "convert-hf-to-gguf.py"
+        # Verify if convert_hf_to_gguf.py exists after build
+        converter_script_path = Path('llama.cpp') / "convert_hf_to_gguf.py"
         if not converter_script_path.exists():
-            print(f"❌ Critical: convert-hf-to-gguf.py not found after llama.cpp build at {converter_script_path}")
+            print(f"❌ Critical: convert_hf_to_gguf.py not found after llama.cpp build at {converter_script_path}")
             return False
-        print(f"✅ Verified: convert-hf-to-gguf.py found at {converter_script_path}")
+        print(f"✅ Verified: convert_hf_to_gguf.py found at {converter_script_path}")
+        
+        # Check for quantize executable in build directory
+        import platform
+        if platform.system() == "Windows":
+            quantize_path = Path('llama.cpp') / "build" / "bin" / "test-quantize-stats.exe"
+            if not quantize_path.exists():
+                print(f"❌ Critical: test-quantize-stats.exe not found after llama.cpp build at {quantize_path}")
+                return False
+            print(f"✅ Verified: test-quantize-stats.exe found at {quantize_path}")
+        else:
+            # For Linux/Mac, check for the standard quantize executable
+            quantize_path = Path('llama.cpp') / "quantize"
+            if not quantize_path.exists():
+                print(f"❌ Critical: quantize executable not found after llama.cpp build at {quantize_path}")
+                return False
+            print(f"✅ Verified: quantize executable found at {quantize_path}")
 
         return True
         
