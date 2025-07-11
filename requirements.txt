@@ -1,8 +1,23 @@
-﻿# MeeTARA Lab - Requirements
+﻿# MeeTARA Lab - Requirements (CUDA Compatible)
 pyyaml>=6.0
 numpy>=1.20.0
 tqdm>=4.62.0
 matplotlib>=3.4.0
-torch>=1.9.0
-transformers>=4.12.0
-asyncio>=3.4.3
+torch==2.1.0
+torchvision==0.16.0
+torchaudio==2.1.0
+transformers==4.35.0
+datasets>=2.0.0
+peft>=0.4.0
+accelerate>=0.20.0
+bitsandbytes>=0.41.0
+huggingface_hub>=0.16.0
+wandb>=0.15.0
+tensorboard>=2.10.0
+gguf>=0.1.0
+llama-cpp-python>=0.2.0
+speechbrain>=0.5.0
+librosa>=0.9.0
+soundfile>=0.12.0
+opencv-python>=4.5.0
+Pillow>=8.0.0
