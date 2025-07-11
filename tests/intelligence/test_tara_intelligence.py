@@ -11,7 +11,7 @@ from typing import Dict, Any, List
 # Import TARA's intelligence modules
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), 'trinity-core'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'trinity_core'))
 
 async def test_tara_intelligence():
     """Test TARA's comprehensive intelligence with real scenarios"""

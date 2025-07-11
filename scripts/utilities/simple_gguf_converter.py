@@ -23,10 +23,10 @@ from pathlib import Path
 from typing import Dict, Any, List
 import sys
 
-# Add trinity-core to path
-sys.path.append(str(Path(__file__).parent.parent.parent / "trinity-core"))
+# Add trinity_core to path
+sys.path.append(str(Path(__file__).parent.parent.parent / "trinity_core"))
 
-from agents.super_agents.intelligent_model_factory import IntelligentModelFactory
+from agents.intelligent_model_factory import IntelligentModelFactory
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

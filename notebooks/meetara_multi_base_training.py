@@ -52,7 +52,7 @@ else:
 # Import MeeTARA Lab components
 try:
     from trinity_core.agents.model_factory import EnhancedModelFactory, ArchitectureType
-    from trinity_core.config_manager import SmartTrinityConfigManager
+    from trinity_core.core_components.config_manager import SmartTrinityConfigManager
     print("✅ MeeTARA Lab components imported successfully")
 except ImportError as e:
     print(f"❌ Failed to import MeeTARA Lab components: {e}")

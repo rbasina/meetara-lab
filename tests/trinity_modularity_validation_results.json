@@ -1,0 +1,258 @@
+{
+  "urgency_pattern_analysis": {
+    "Medical Emergency": {
+      "score": 0.5333333333333333,
+      "expected": 0.8,
+      "passed": false
+    },
+    "Mental Health Crisis": {
+      "score": 0.9,
+      "expected": 0.9,
+      "passed": true
+    },
+    "General Inquiry": {
+      "score": 0.0,
+      "expected": 0.0,
+      "passed": true
+    },
+    "Mixed Urgency": {
+      "score": 0.15,
+      "expected": 0.4,
+      "passed": false
+    }
+  },
+  "domain_criticality_detection": {
+    "healthcare": {
+      "criticality": 1.0,
+      "expected": 0.95,
+      "passed": true
+    },
+    "mental_health": {
+      "criticality": 1.0,
+      "expected": 0.95,
+      "passed": true
+    },
+    "emergency_care": {
+      "criticality": 1.0,
+      "expected": 0.98,
+      "passed": true
+    },
+    "business": {
+      "criticality": 0.7,
+      "expected": 0.7,
+      "passed": true
+    },
+    "creative": {
+      "criticality": 0.36000000000000004,
+      "expected": 0.4,
+      "passed": true
+    },
+    "shopping": {
+      "criticality": 0.225,
+      "expected": 0.25,
+      "passed": true
+    }
+  },
+  "user_intent_urgency_analysis": {
+    "['immediate_help', 'crisis_support']": {
+      "urgency": 0.74,
+      "expected": 0.96,
+      "passed": false
+    },
+    "['quick_question', 'general_inquiry']": {
+      "urgency": 0.5,
+      "expected": 0.25,
+      "passed": false
+    },
+    "['casual_conversation', 'entertainment']": {
+      "urgency": 0.3,
+      "expected": 0.15,
+      "passed": true
+    },
+    "['professional_guidance', 'decision_support']": {
+      "urgency": 0.725,
+      "expected": 0.72,
+      "passed": true
+    }
+  },
+  "dynamic_ratio_calculation": {
+    "High Urgency Crisis": {
+      "ratio": 0.8,
+      "expected_range": [
+        0.6,
+        0.8
+      ],
+      "passed": true
+    },
+    "Low Urgency General": {
+      "ratio": 0.5415,
+      "expected_range": [
+        0.1,
+        0.3
+      ],
+      "passed": false
+    },
+    "Medium Urgency Business": {
+      "ratio": 0.8,
+      "expected_range": [
+        0.3,
+        0.5
+      ],
+      "passed": false
+    }
+  },
+  "domain_expert_creation": {
+    "healthcare": {
+      "expert_created": true,
+      "has_capabilities": true,
+      "has_response_patterns": true,
+      "trinity_phase": "einstein_fusion",
+      "crisis_intervention": true,
+      "emotional_intelligence": true
+    },
+    "mental_health": {
+      "expert_created": true,
+      "has_capabilities": true,
+      "has_response_patterns": true,
+      "trinity_phase": "einstein_fusion",
+      "crisis_intervention": true,
+      "emotional_intelligence": true
+    },
+    "business": {
+      "expert_created": true,
+      "has_capabilities": true,
+      "has_response_patterns": true,
+      "trinity_phase": "perplexity_intelligence",
+      "crisis_intervention": false,
+      "emotional_intelligence": true
+    },
+    "education": {
+      "expert_created": true,
+      "has_capabilities": true,
+      "has_response_patterns": true,
+      "trinity_phase": "perplexity_intelligence",
+      "crisis_intervention": false,
+      "emotional_intelligence": true
+    },
+    "creative": {
+      "expert_created": true,
+      "has_capabilities": true,
+      "has_response_patterns": true,
+      "trinity_phase": "arc_reactor_foundation",
+      "crisis_intervention": false,
+      "emotional_intelligence": true
+    }
+  },
+  "blended_conversation_generation": {
+    "healthcare": {
+      "conversation_generated": true,
+      "has_turns": true,
+      "has_trinity_metadata": true,
+      "scenario_type": "realtime_crisis",
+      "urgency_score": 0.0,
+      "domain_criticality": 1.0,
+      "realtime_ratio": 0.8
+    },
+    "mental_health": {
+      "conversation_generated": true,
+      "has_turns": true,
+      "has_trinity_metadata": true,
+      "scenario_type": "realtime_crisis",
+      "urgency_score": 0.3,
+      "domain_criticality": 1.0,
+      "realtime_ratio": 0.8
+    },
+    "business": {
+      "conversation_generated": true,
+      "has_turns": true,
+      "has_trinity_metadata": true,
+      "scenario_type": "realtime_crisis",
+      "urgency_score": 0.0,
+      "domain_criticality": 0.7,
+      "realtime_ratio": 0.7016249999999999
+    }
+  },
+  "response_generation_functions": {
+    "healthcare": {
+      "original_response_generated": true,
+      "blended_response_generated": true,
+      "original_length": 327,
+      "blended_length": 513,
+      "has_trinity_enhancement": true
+    },
+    "mental_health": {
+      "original_response_generated": true,
+      "blended_response_generated": true,
+      "original_length": 264,
+      "blended_length": 450,
+      "has_trinity_enhancement": true
+    },
+    "business": {
+      "original_response_generated": true,
+      "blended_response_generated": true,
+      "original_length": 124,
+      "blended_length": 193,
+      "has_trinity_enhancement": true
+    },
+    "general": {
+      "original_response_generated": true,
+      "blended_response_generated": true,
+      "original_length": 113,
+      "blended_length": 181,
+      "has_trinity_enhancement": true
+    }
+  },
+  "personalization_functions": {
+    "crisis_panic": {
+      "personalized": true,
+      "has_emotion_tag": true,
+      "has_scenario_tag": true,
+      "has_trinity_tag": true
+    },
+    "general_neutral": {
+      "personalized": true,
+      "has_emotion_tag": false,
+      "has_scenario_tag": false,
+      "has_trinity_tag": true
+    },
+    "emergency_anxious": {
+      "personalized": true,
+      "has_emotion_tag": true,
+      "has_scenario_tag": true,
+      "has_trinity_tag": true
+    }
+  },
+  "followup_generation": {
+    "conversation_0": {
+      "user_followup_generated": true,
+      "assistant_followup_generated": true,
+      "user_followup_length": 90,
+      "assistant_followup_length": 382
+    },
+    "conversation_1": {
+      "user_followup_generated": true,
+      "assistant_followup_generated": true,
+      "user_followup_length": 79,
+      "assistant_followup_length": 382
+    }
+  },
+  "all_domains_generation": {
+    "domains_generated": 5,
+    "files_created": true,
+    "expected_domains": [
+      "healthcare",
+      "mental_health",
+      "business",
+      "education",
+      "creative"
+    ]
+  },
+  "overall": {
+    "total_tests": 17,
+    "passed_tests": 11,
+    "success_rate": 64.70588235294117,
+    "trinity_architecture": "ENHANCED",
+    "modularity": "ROBUST",
+    "healthcare_scenarios": "VALIDATED"
+  }
+}

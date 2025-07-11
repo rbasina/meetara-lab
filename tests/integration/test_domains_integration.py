@@ -14,8 +14,8 @@ from typing import Dict, Set, List
 import sys
 sys.path.append(str(Path(__file__).parent.parent.parent))
 sys.path.append(str(Path(__file__).parent.parent))
-sys.path.append(str(Path(__file__).parent.parent.parent / "trinity-core"))
-sys.path.append(str(Path(__file__).parent.parent.parent / "trinity-core" / "agents"))
+sys.path.append(str(Path(__file__).parent.parent.parent / "trinity_core"))
+sys.path.append(str(Path(__file__).parent.parent.parent / "trinity_core" / "agents"))
 
 from utils.domain_validation_utils import (
     DomainConfigManager, 

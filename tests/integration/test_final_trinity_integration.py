@@ -31,15 +31,15 @@ from pathlib import Path
 from typing import Dict, Any, List
 from datetime import datetime
 
-# Add trinity-core to path
-sys.path.append(str(Path(__file__).parent.parent.parent / "trinity-core"))
+# Add trinity_core to path
+sys.path.append(str(Path(__file__).parent.parent.parent / "trinity_core"))
 sys.path.append(str(Path(__file__).parent.parent.parent / "scripts"))
 
 # Import all components for testing
-from trinity_core.agents.10_trinity_orchestrator_master import TrinityOrchestratorMaster, TrinityConfig, TrinityMode
-from trinity_core.agents.09_full_mode_orchestrator import FullModeOrchestrator, FullModeConfig
-from gguf_factory.enhanced_universal_factory import EnhancedUniversalFactory
-from trinity_core.06_core_components.08_speech_recognition import EnhancedSpeechRecognition
+from trinity_core.agents.trinity_orchestrator_master import TrinityOrchestratorMaster, TrinityConfig, TrinityMode
+from trinity_core.agents.trinity_orchestrator_master import FullModeOrchestrator, FullModeConfig
+from scripts.factory.working_enhanced_factory import EnhancedUniversalFactory
+from trinity_core.core_components.enhanced_components.speech_recognition import EnhancedSpeechRecognition
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

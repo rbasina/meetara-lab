@@ -96,3 +96,16 @@ deployment_packages/
 
 # Problematic directories with permission issues
 model-factory/trinity_gguf_models/ 
+
+# Test files (temporary)
+test_q3_km_merging.py
+test_universal_category.py
+test_model_compatibility.py
+test_gguf_compatibility.py
+
+# Generated output files
+quantization_demo_results.json
+training_results_analysis.csv 
+
+data/production/
+data/training/ 

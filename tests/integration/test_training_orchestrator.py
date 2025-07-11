@@ -11,7 +11,7 @@ from pathlib import Path
 
 # Add cloud-training to path
 sys.path.append('../../cloud-training')
-sys.path.append('../../trinity-core')
+sys.path.append('../../trinity_core')
 
 from cloud_training.training_orchestrator import TrainingOrchestrator
 

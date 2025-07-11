@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Import the emotion detector component
 import sys
-sys.path.append(str(Path(__file__).parent.parent.parent / "trinity-core"))
+sys.path.append(str(Path(__file__).parent.parent.parent / "trinity_core"))
 
 try:
     from emotion_detector import EnhancedEmotionDetector
@@ -23,7 +23,7 @@ except ImportError:
         # Try with explicit path
         import sys
         from pathlib import Path
-        sys.path.insert(0, str(Path(__file__).parent.parent.parent / "trinity-core"))
+        sys.path.insert(0, str(Path(__file__).parent.parent.parent / "trinity_core"))
         from emotion_detector import EnhancedEmotionDetector
     except ImportError:
         # Create mock class if import fails

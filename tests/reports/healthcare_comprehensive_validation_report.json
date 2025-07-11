@@ -1,0 +1,192 @@
+{
+  "total_domains": 12,
+  "passed_domains": 12,
+  "failed_domains": 0,
+  "domain_results": {
+    "healthcare": {
+      "domain": "healthcare",
+      "overall_status": "PASSED",
+      "accuracy_score": 1.0,
+      "trinity_phase": "einstein_fusion",
+      "crisis_intervention": "PASSED",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for healthcare"
+      ]
+    },
+    "mental_health": {
+      "domain": "mental_health",
+      "overall_status": "PASSED",
+      "accuracy_score": 1.0,
+      "trinity_phase": "einstein_fusion",
+      "crisis_intervention": "PASSED",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for mental_health"
+      ]
+    },
+    "nutrition": {
+      "domain": "nutrition",
+      "overall_status": "PASSED",
+      "accuracy_score": 0.8,
+      "trinity_phase": "perplexity_intelligence",
+      "crisis_intervention": "NOT APPLICABLE",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for nutrition"
+      ]
+    },
+    "fitness": {
+      "domain": "fitness",
+      "overall_status": "PASSED",
+      "accuracy_score": 0.8,
+      "trinity_phase": "arc_reactor_foundation",
+      "crisis_intervention": "NOT APPLICABLE",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for fitness"
+      ]
+    },
+    "sleep": {
+      "domain": "sleep",
+      "overall_status": "PASSED",
+      "accuracy_score": 0.8,
+      "trinity_phase": "perplexity_intelligence",
+      "crisis_intervention": "NOT APPLICABLE",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for sleep"
+      ]
+    },
+    "stress_management": {
+      "domain": "stress_management",
+      "overall_status": "PASSED",
+      "accuracy_score": 1.0,
+      "trinity_phase": "einstein_fusion",
+      "crisis_intervention": "PASSED",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for stress_management"
+      ]
+    },
+    "preventive_care": {
+      "domain": "preventive_care",
+      "overall_status": "PASSED",
+      "accuracy_score": 0.8,
+      "trinity_phase": "perplexity_intelligence",
+      "crisis_intervention": "NOT APPLICABLE",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for preventive_care"
+      ]
+    },
+    "chronic_conditions": {
+      "domain": "chronic_conditions",
+      "overall_status": "PASSED",
+      "accuracy_score": 0.8,
+      "trinity_phase": "perplexity_intelligence",
+      "crisis_intervention": "NOT APPLICABLE",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for chronic_conditions"
+      ]
+    },
+    "medication_management": {
+      "domain": "medication_management",
+      "overall_status": "PASSED",
+      "accuracy_score": 1.0,
+      "trinity_phase": "einstein_fusion",
+      "crisis_intervention": "PASSED",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for medication_management"
+      ]
+    },
+    "emergency_care": {
+      "domain": "emergency_care",
+      "overall_status": "PASSED",
+      "accuracy_score": 1.0,
+      "trinity_phase": "einstein_fusion",
+      "crisis_intervention": "PASSED",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for emergency_care"
+      ]
+    },
+    "women_health": {
+      "domain": "women_health",
+      "overall_status": "PASSED",
+      "accuracy_score": 0.8,
+      "trinity_phase": "perplexity_intelligence",
+      "crisis_intervention": "NOT APPLICABLE",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for women_health"
+      ]
+    },
+    "senior_health": {
+      "domain": "senior_health",
+      "overall_status": "PASSED",
+      "accuracy_score": 0.8,
+      "trinity_phase": "perplexity_intelligence",
+      "crisis_intervention": "NOT APPLICABLE",
+      "emotional_intelligence": "PASSED",
+      "professional_boundaries": "PASSED",
+      "data_generation": "FAILED",
+      "template_availability": "PASSED",
+      "domain_expert": "PASSED",
+      "errors": [
+        "Failed to generate conversation for senior_health"
+      ]
+    }
+  },
+  "overall_accuracy": 0.8833333333333333,
+  "trinity_integration": {},
+  "crisis_intervention": {},
+  "emotional_intelligence": {},
+  "professional_boundaries": {}
+}
