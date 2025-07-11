@@ -13,10 +13,10 @@ from enum import Enum
 import requests
 import os
 
-# Import trinity-core agents
+# Import trinity_core agents
 import sys
-sys.path.append('../trinity-core')
-from agents.mcp_protocol import BaseAgent, AgentType, MessageType, MCPMessage, mcp_protocol
+sys.path.append('../trinity_core')
+from trinity_core.agents.coordination.lightweight_mcp_v2 import BaseAgent, AgentType, MessageType, MCPMessage, mcp_protocol
 
 class CloudProvider(Enum):
     GOOGLE_COLAB = "google_colab"
@@ -410,7 +410,7 @@ class GPUOrchestratorAgent(BaseAgent):
                     "metadata": {},
                     "source": [
                         f"# Start optimized training for {job.domain}\\n",
-                        f"!python trinity-core/training/gpu_optimized_pipeline.py \\\\\\n",
+                        f"!python trinity_core/training/gpu_optimized_pipeline.py \\\\\\n",
                         f"  --domain {job.domain} \\\\\\n",
                         f"  --gpu_type {job.gpu_requirements.value} \\\\\\n",
                         f"  --batch_size_auto \\\\\\n",

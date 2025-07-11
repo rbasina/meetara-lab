@@ -14,6 +14,9 @@ from pathlib import Path
 from datetime import datetime
 import subprocess
 
+# Import the centralized config manager
+from trinity_core.core_components.config_manager import SmartTrinityConfigManager
+
 class ColabModelManager:
     """Manages model downloading and domain mapping for Google Colab"""
     
@@ -21,8 +24,13 @@ class ColabModelManager:
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(exist_ok=True)
         
-        # Load domain mapping
-        self.domain_mapping = self._load_domain_mapping()
+        # Load domain mapping via the centralized manager
+        try:
+            self.config_manager = SmartTrinityConfigManager()
+            print("✅ Centralized SmartTrinityConfigManager loaded successfully.")
+        except (FileNotFoundError, ValueError) as e:
+            print(f"❌ Failed to load SmartTrinityConfigManager: {e}")
+            self.config_manager = None
         
         # Model download status
         self.downloaded_models = {}
@@ -46,40 +54,6 @@ class ColabModelManager:
         print(f"?? Cache directory: {self.cache_dir}")
         print(f"??? GPU memory: {self.gpu_memory_limit:.1f}GB available")
     
-    def _load_domain_mapping(self) -> Dict[str, Any]:
-        """Load quality-focused domain mapping"""
-        possible_paths = [
-            "config/trinity_domain_model_mapping_config.yaml",
-            "../config/trinity_domain_model_mapping_config.yaml",
-            "/content/meetara-lab/config/trinity_domain_model_mapping_config.yaml"
-        ]
-        
-        for path in possible_paths:
-            try:
-                with open(path, 'r') as f:
-                    mapping = yaml.safe_load(f)
-                    print(f"? Domain mapping loaded from: {path}")
-                    return mapping
-            except FileNotFoundError:
-                continue
-        
-        print("?? Domain mapping not found, using minimal configuration")
-        return self._get_minimal_mapping()
-    
-    def _get_minimal_mapping(self) -> Dict[str, Any]:
-        """Minimal mapping for testing"""
-        return {
-            "model_tiers": {
-                "fast": "microsoft/Phi-3.5-mini-instruct",
-                "quality": "microsoft/Phi-3-medium-4k-instruct",
-                "expert": "Qwen/Qwen2.5-14B-Instruct",
-                "premium": "microsoft/Phi-3-medium-14B-instruct"
-            },
-            "healthcare": {"general_health": "microsoft/Phi-3-medium-14B-instruct"},
-            "business": {"entrepreneurship": "Qwen/Qwen2.5-14B-Instruct"},
-            "education": {"academic_tutoring": "Qwen/Qwen2.5-14B-Instruct"}
-        }
-    
     def _get_gpu_memory_limit(self) -> float:
         """Get available GPU memory in GB"""
         try:
@@ -92,16 +66,20 @@ class ColabModelManager:
             return 12.0  # Default assumption for Colab
     
     def get_domain_model_mapping(self) -> Dict[str, str]:
-        """Get complete domain to model mapping"""
+        """Get complete domain to model mapping from the config manager."""
+        if not self.config_manager:
+            print("?? Config manager not available, returning empty mapping.")
+            return {}
+
         domain_model_mapping = {}
-        
-        # Process each category dynamically from domain mapping
-        categories = list(self.domain_mapping.keys())
-        
-        for category in categories:
-            category_domains = self.domain_mapping.get(category, {})
-            for domain, model in category_domains.items():
-                domain_model_mapping[domain] = model
+        all_domains = self.config_manager.get_all_domains_flat()
+
+        for domain in all_domains:
+            try:
+                params = self.config_manager.get_tara_proven_params(domain)
+                domain_model_mapping[domain] = params.get('base_model')
+            except ValueError as e:
+                print(f"?? Could not get params for domain '{domain}': {e}")
         
         return domain_model_mapping
     

@@ -12,7 +12,7 @@ from pathlib import Path
 import sys
 
 # Import the intelligent router component
-sys.path.append(str(Path(__file__).parent.parent.parent / "trinity-core"))
+sys.path.append(str(Path(__file__).parent.parent.parent / "trinity_core"))
 
 try:
     from intelligent_router import IntelligentRouter

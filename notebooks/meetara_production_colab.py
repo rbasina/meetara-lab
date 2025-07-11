@@ -141,7 +141,7 @@ def clone_repository():
     
     # Check existing Trinity Architecture components
     print("\n🔧 Existing Trinity Architecture Components:")
-    os.system("ls trinity-core/")
+    os.system("ls trinity_core/")
     os.system("ls cloud-training/")
     os.system("ls model-factory/")
     
@@ -165,7 +165,7 @@ def validate_existing_system():
     
     # Test existing centralized domain integration
     try:
-        from trinity_core.domain_integration import get_domain_categories, get_all_domains, get_domain_stats
+        from trinity_core.core_components.domain_integration import get_domain_categories, get_all_domains, get_domain_stats
         domain_stats = get_domain_stats()
         print(f"✅ Existing Domain Integration: {domain_stats['total_domains']} domains, {domain_stats['total_categories']} categories")
     except Exception as e:

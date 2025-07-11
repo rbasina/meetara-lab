@@ -41,7 +41,7 @@ def setup_meetara_lab_colab():
     # Create essential directories
     essential_dirs = [
         "config",
-        "trinity-core/agents",
+        "trinity_core/agents",
         "cloud-training", 
         "model-factory/output",
         "notebooks",
@@ -194,9 +194,9 @@ tara_proven_params:
   quality_focused_training: true
 """
     
-    with open("config/trinity_domain_model_mapping_config.yaml", "w") as f:
+    with open("config/trinity_config.yaml", "w") as f:
         f.write(domain_config)
-    print("✅ Created domain mapping config")
+    print("✅ Created unified trinity_config.yaml")
 
 def create_production_launcher():
     """Create simplified production launcher for Colab"""
@@ -233,7 +233,7 @@ class ColabTrinityLauncher:
     
     def load_domain_config(self):
         """Load domain configuration"""
-        config_path = Path("config/trinity_domain_model_mapping_config.yaml")
+        config_path = Path("config/trinity_config.yaml")
         if config_path.exists():
             with open(config_path, 'r') as f:
                 self.config = yaml.safe_load(f)

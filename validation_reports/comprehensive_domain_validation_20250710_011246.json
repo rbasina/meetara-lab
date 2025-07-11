@@ -1,0 +1,809 @@
+{
+  "total_domains": 61,
+  "passed_domains": 61,
+  "failed_domains": 0,
+  "domain_details": {
+    "healthcare": {
+      "domain": "healthcare",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": true,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "mental_health": {
+      "domain": "mental_health",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": true,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "nutrition": {
+      "domain": "nutrition",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "fitness": {
+      "domain": "fitness",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "sleep": {
+      "domain": "sleep",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "stress_management": {
+      "domain": "stress_management",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": true,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "preventive_care": {
+      "domain": "preventive_care",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "chronic_conditions": {
+      "domain": "chronic_conditions",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "medication_management": {
+      "domain": "medication_management",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": true,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "emergency_care": {
+      "domain": "emergency_care",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": true,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "women_health": {
+      "domain": "women_health",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "senior_health": {
+      "domain": "senior_health",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "parenting": {
+      "domain": "parenting",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "relationships": {
+      "domain": "relationships",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "personal_assistant": {
+      "domain": "personal_assistant",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "communication": {
+      "domain": "communication",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "home_management": {
+      "domain": "home_management",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "shopping": {
+      "domain": "shopping",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "planning": {
+      "domain": "planning",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "transportation": {
+      "domain": "transportation",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "time_management": {
+      "domain": "time_management",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "decision_making": {
+      "domain": "decision_making",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "conflict_resolution": {
+      "domain": "conflict_resolution",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "work_life_balance": {
+      "domain": "work_life_balance",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "entrepreneurship": {
+      "domain": "entrepreneurship",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "marketing": {
+      "domain": "marketing",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "sales": {
+      "domain": "sales",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "customer_service": {
+      "domain": "customer_service",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "project_management": {
+      "domain": "project_management",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "team_leadership": {
+      "domain": "team_leadership",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "financial_planning": {
+      "domain": "financial_planning",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "operations": {
+      "domain": "operations",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "hr_management": {
+      "domain": "hr_management",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "strategy": {
+      "domain": "strategy",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "consulting": {
+      "domain": "consulting",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "legal_business": {
+      "domain": "legal_business",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "teaching": {
+      "domain": "teaching",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "language_learning": {
+      "domain": "language_learning",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "research": {
+      "domain": "research",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "study_skills": {
+      "domain": "study_skills",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "career_planning": {
+      "domain": "career_planning",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "skill_development": {
+      "domain": "skill_development",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "test_preparation": {
+      "domain": "test_preparation",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "programming": {
+      "domain": "programming",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "web_development": {
+      "domain": "web_development",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "mobile_apps": {
+      "domain": "mobile_apps",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "ai_ml": {
+      "domain": "ai_ml",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "cybersecurity": {
+      "domain": "cybersecurity",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "space_research": {
+      "domain": "space_research",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "aerospace_engineering": {
+      "domain": "aerospace_engineering",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "satellite_systems": {
+      "domain": "satellite_systems",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "space_mission_planning": {
+      "domain": "space_mission_planning",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "creative_writing": {
+      "domain": "creative_writing",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "visual_arts": {
+      "domain": "visual_arts",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "music": {
+      "domain": "music",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "content_creation": {
+      "domain": "content_creation",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "design": {
+      "domain": "design",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "innovation": {
+      "domain": "innovation",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "photography": {
+      "domain": "photography",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "film_making": {
+      "domain": "film_making",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    },
+    "legal_assistance": {
+      "domain": "legal_assistance",
+      "template_available": true,
+      "domain_expert_created": true,
+      "trinity_phase_correct": true,
+      "crisis_intervention": false,
+      "emotional_intelligence": true,
+      "professional_boundaries": true,
+      "sample_generation": false,
+      "errors": [
+        "Sample generation failed: 'TrinityDataGenerator' object has no attribute 'generate_domain_data'"
+      ]
+    }
+  },
+  "overall_accuracy": 100.0,
+  "trinity_phases": {
+    "einstein_fusion": 5,
+    "perplexity_intelligence": 6,
+    "arc_reactor_foundation": 50
+  },
+  "crisis_intervention": 5,
+  "emotional_intelligence": 61,
+  "professional_boundaries": 61
+}
