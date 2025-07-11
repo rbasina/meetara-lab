@@ -154,7 +154,7 @@ global_tara_params:
   strict_mode: true
   allow_fallback: false
   max_retries: 3
-  llama_cpp_path: llama.cpp
+  llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
 domain_config:
   healthcare:
     category_tier: premium
