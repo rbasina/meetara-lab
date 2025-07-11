@@ -36,7 +36,22 @@ class QuantizationAndCleanupAgent:
             logger.error(f"❌ Failed to get llama.cpp path from config: {e}. Please run scripts/setup/setup_llama_cpp.py.")
             self.llama_cpp_path = None # Set to None to handle gracefully
 
-        self.converter_script = self.llama_cpp_path / "convert_hf_to_gguf.py" if self.llama_cpp_path else None
+        # Look for conversion script in multiple possible locations
+        if self.llama_cpp_path:
+            possible_paths = [
+                self.llama_cpp_path / "convert_hf_to_gguf.py",
+                self.llama_cpp_path / "convert_hf_to_gguf_update.py",
+                self.llama_cpp_path / "scripts" / "convert_hf_to_gguf.py",
+                self.llama_cpp_path / "gguf-py" / "convert_hf_to_gguf.py"
+            ]
+            for path in possible_paths:
+                if path.exists():
+                    self.converter_script = path
+                    break
+            else:
+                self.converter_script = self.llama_cpp_path / "convert_hf_to_gguf.py"  # Default
+        else:
+            self.converter_script = None
         
         # Platform-specific quantize executable paths
         import platform
