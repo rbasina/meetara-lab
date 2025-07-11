@@ -265,13 +265,13 @@ class TrinityIntelligenceHub:
         }
         
         if results.get("data_generation") and not results["data_generation"].get("success"):
-            actionable["warnings"].append(f"Data generation failed: {results["data_generation"].get("error", "Unknown error")}")
+            actionable["warnings"].append(f"Data generation failed: {results['data_generation'].get('error', 'Unknown error')}")
 
         if results.get("knowledge_transfer") and not results["knowledge_transfer"].get("success"):
-            actionable["warnings"].append(f"Knowledge transfer failed: {results["knowledge_transfer"].get("error", "Unknown error")}")
+            actionable["warnings"].append(f"Knowledge transfer failed: {results['knowledge_transfer'].get('error', 'Unknown error')}")
 
         if results.get("domain_routing") and not results["domain_routing"].get("success"):
-            actionable["warnings"].append(f"Domain routing failed: {results["domain_routing"].get("error", "Unknown error")}")
+            actionable["warnings"].append(f"Domain routing failed: {results['domain_routing'].get('error', 'Unknown error')}")
             
         return actionable
 
