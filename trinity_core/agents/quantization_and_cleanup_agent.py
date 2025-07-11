@@ -38,10 +38,13 @@ class QuantizationAndCleanupAgent:
 
         self.converter_script = self.llama_cpp_path / "convert_hf_to_gguf.py" if self.llama_cpp_path else None
         
-        # On Windows, the quantize executable is in the build/bin directory as test-quantize-stats.exe
+        # Platform-specific quantize executable paths
         import platform
         if platform.system() == "Windows" and self.llama_cpp_path:
             self.quantize_executable = self.llama_cpp_path / "build" / "bin" / "test-quantize-stats.exe"
+        elif platform.system() == "Linux" and self.llama_cpp_path:
+            # On Linux (Colab), look for the actual quantize executable
+            self.quantize_executable = self.llama_cpp_path / "build" / "bin" / "quantize"
         else:
             self.quantize_executable = self.llama_cpp_path / "quantize" if self.llama_cpp_path else None
 
@@ -58,12 +61,12 @@ class QuantizationAndCleanupAgent:
             return
 
         if not self.converter_script.exists():
-            logger.warning(f"⚠️ LLaMA.cpp convert_hf_to_gguf.py not found at {self.converter_script}. GGUF conversion will be simulated.")
+            logger.warning(f"⚠️ LLaMA.cpp convert_hf_to_gguf.py not found at {self.converter_script}. GGUF conversion will be simulated. Run notebooks/colab_real_gguf_setup.py to build real tools.")
         else:
             logger.info(f"✅ LLaMA.cpp converter found at: {self.converter_script}")
 
         if not self.quantize_executable.exists():
-            logger.warning(f"⚠️ LLaMA.cpp quantize executable not found at {self.quantize_executable}. Quantization will be simulated.")
+            logger.warning(f"⚠️ LLaMA.cpp quantize executable not found at {self.quantize_executable}. Quantization will be simulated. Run notebooks/colab_real_gguf_setup.py to build real tools.")
         else:
             logger.info(f"✅ LLaMA.cpp quantizer found at: {self.quantize_executable}")
 
