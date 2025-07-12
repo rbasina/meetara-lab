@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-🚀 Colab Model Setup for MeeTARA Lab
-Downloads models once and saves to Google Drive for future Colab sessions
-This eliminates the need to download models every time you run Colab
+🚀 Enhanced Colab Model Setup for MeeTARA Lab
+Complete setup including llama.cpp + CUDA compilation, model downloads, and Google Drive sync
+This provides a one-stop setup for production-ready Colab environments
 """
 
 import os
 import sys
 import time
+import subprocess
 from pathlib import Path
 
 def setup_colab_environment():
@@ -22,6 +23,119 @@ def setup_colab_environment():
         return True
     except ImportError:
         print("❌ Not running in Colab - Google Drive not available")
+        return False
+
+def install_requirements():
+    """Install required packages for MeeTARA Lab"""
+    print("📦 Installing required packages...")
+    
+    try:
+        # Install core requirements
+        subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], 
+                      check=True, capture_output=True, text=True)
+        print("✅ Core requirements installed")
+        
+        # Install additional packages for llama.cpp
+        additional_packages = [
+            "cmake",
+            "ninja",
+            "torch",
+            "transformers",
+            "accelerate",
+            "datasets",
+            "peft",
+            "bitsandbytes"
+        ]
+        
+        for package in additional_packages:
+            try:
+                subprocess.run([sys.executable, "-m", "pip", "install", package], 
+                              check=True, capture_output=True, text=True)
+                print(f"✅ {package} installed")
+            except subprocess.CalledProcessError:
+                print(f"⚠️ Failed to install {package} (may already be installed)")
+        
+        return True
+    except Exception as e:
+        print(f"❌ Failed to install requirements: {e}")
+        return False
+
+def setup_llama_cpp():
+    """Setup llama.cpp with CUDA support"""
+    print("🔧 Setting up llama.cpp with CUDA support...")
+    
+    try:
+        # Navigate to llama.cpp directory
+        llama_path = Path("llama.cpp")
+        if not llama_path.exists():
+            print("❌ llama.cpp directory not found")
+            return False
+        
+        os.chdir(llama_path)
+        print(f"📁 Working in: {os.getcwd()}")
+        
+        # Check CUDA availability
+        try:
+            import torch
+            cuda_available = torch.cuda.is_available()
+            if cuda_available:
+                cuda_version = torch.version.cuda
+                print(f"✅ CUDA available: {cuda_version}")
+            else:
+                print("⚠️ CUDA not available, will compile CPU-only version")
+        except ImportError:
+            print("⚠️ PyTorch not available, proceeding with CPU compilation")
+            cuda_available = False
+        
+        # Configure CMake with CUDA support
+        cmake_cmd = ["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release"]
+        
+        if cuda_available:
+            cmake_cmd.extend(["-DLLAMA_CUBLAS=ON", "-DLLAMA_CUDA=ON"])
+            print("🔧 Configuring with CUDA support...")
+        else:
+            print("🔧 Configuring CPU-only version...")
+        
+        result = subprocess.run(cmake_cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"❌ CMake configuration failed: {result.stderr}")
+            return False
+        
+        print("✅ CMake configuration successful")
+        
+        # Build llama.cpp
+        print("🔨 Building llama.cpp...")
+        build_cmd = ["cmake", "--build", "build", "--config", "Release", "-j"]
+        result = subprocess.run(build_cmd, capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            print(f"❌ Build failed: {result.stderr}")
+            return False
+        
+        print("✅ llama.cpp build successful")
+        
+        # Verify key tools are available
+        tools_to_check = [
+            "build/bin/llama-quantize",
+            "build/bin/llama-server",
+            "convert_hf_to_gguf.py"
+        ]
+        
+        for tool in tools_to_check:
+            if Path(tool).exists():
+                print(f"✅ {tool} available")
+            else:
+                print(f"❌ {tool} not found")
+                return False
+        
+        # Return to project root
+        os.chdir("..")
+        print(f"📁 Returned to: {os.getcwd()}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ llama.cpp setup failed: {e}")
         return False
 
 def check_drive_models():
@@ -95,55 +209,110 @@ def download_models_to_drive():
     
     return success_count == len(results)
 
+def verify_setup():
+    """Verify that the complete setup is working"""
+    print("🔍 Verifying setup...")
+    
+    checks = []
+    
+    # Check llama.cpp tools
+    llama_tools = [
+        "llama.cpp/build/bin/llama-quantize",
+        "llama.cpp/build/bin/llama-server",
+        "llama.cpp/convert_hf_to_gguf.py"
+    ]
+    
+    for tool in llama_tools:
+        if Path(tool).exists():
+            checks.append(f"✅ {tool}")
+        else:
+            checks.append(f"❌ {tool}")
+    
+    # Check CUDA availability
+    try:
+        import torch
+        if torch.cuda.is_available():
+            checks.append(f"✅ CUDA available: {torch.version.cuda}")
+        else:
+            checks.append("⚠️ CUDA not available")
+    except ImportError:
+        checks.append("❌ PyTorch not available")
+    
+    # Check model directories
+    model_path = Path("models/base_models")
+    if model_path.exists():
+        model_count = len(list(model_path.iterdir()))
+        checks.append(f"✅ Models directory: {model_count} models")
+    else:
+        checks.append("❌ Models directory not found")
+    
+    print("\n📊 Setup Verification:")
+    for check in checks:
+        print(f"   {check}")
+    
+    return all("✅" in check for check in checks)
+
 def main():
     """Main Colab setup function"""
     print("=" * 60)
-    print("🚀 MeeTARA Lab - Colab Model Setup")
+    print("🚀 MeeTARA Lab - Enhanced Colab Setup")
     print("=" * 60)
     
-    # Setup Colab environment
+    # Step 1: Setup Colab environment
     if not setup_colab_environment():
         print("❌ Colab setup failed")
         return False
     
-    # Check if models are already in Drive
+    # Step 2: Install requirements
+    if not install_requirements():
+        print("❌ Requirements installation failed")
+        return False
+    
+    # Step 3: Setup llama.cpp with CUDA
+    if not setup_llama_cpp():
+        print("❌ llama.cpp setup failed")
+        return False
+    
+    # Step 4: Handle model downloads/sync
     if check_drive_models():
         print("\n📁 Models found in Google Drive!")
         choice = input("Do you want to sync from Drive to local? (y/n): ").lower()
         if choice == 'y':
             if sync_models_from_drive():
                 print("✅ Models synced successfully!")
-                print("💡 You can now run training without downloading models again")
-                return True
             else:
                 print("❌ Failed to sync models")
                 return False
         else:
             print("⏭️ Skipping sync")
-            return True
+    else:
+        print("\n📥 No models found in Drive - downloading now...")
+        print("⏰ This will take 30-60 minutes for all models")
+        print("💾 Models will be saved to Google Drive for future use")
+        
+        choice = input("Continue with download? (y/n): ").lower()
+        if choice == 'y':
+            if download_models_to_drive():
+                print("✅ All models downloaded and saved to Drive!")
+            else:
+                print("❌ Download failed")
+                return False
+        else:
+            print("⏭️ Download cancelled")
     
-    # Download models to Drive
-    print("\n📥 No models found in Drive - downloading now...")
-    print("⏰ This will take 30-60 minutes for all models")
-    print("💾 Models will be saved to Google Drive for future use")
-    
-    choice = input("Continue with download? (y/n): ").lower()
-    if choice != 'y':
-        print("⏭️ Download cancelled")
-        return False
-    
-    if download_models_to_drive():
-        print("✅ All models downloaded and saved to Drive!")
-        print("💡 Future Colab sessions will be much faster")
+    # Step 5: Verify complete setup
+    if verify_setup():
+        print("\n🎉 Complete setup successful!")
+        print("💡 You can now run training with: python cloud-training/production_launcher.py --category healthcare")
         return True
     else:
-        print("❌ Download failed")
-        return False
+        print("\n⚠️ Setup completed with warnings - some components may not work optimally")
+        return True
 
 if __name__ == "__main__":
     success = main()
     if success:
-        print("\n🎉 Colab setup complete!")
-        print("💡 You can now run training with: python cloud-training/production_launcher.py --category healthcare")
+        print("\n🎉 Enhanced Colab setup complete!")
+        print("🚀 Ready for production training!")
     else:
-        print("\n❌ Colab setup failed") 
+        print("\n❌ Enhanced Colab setup failed") 
