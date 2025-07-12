@@ -138,7 +138,7 @@ class CompleteAgentEcosystem:
             # Combine results for the final report
             final_result = {
                 "domain": domain_name,
-                "category": self._get_domain_category(domain_name),
+                "category": self.config_manager.get_tara_proven_params(domain_name)['category'],
                 "status": "completed",
                 "real_training": True,
                 **model_result

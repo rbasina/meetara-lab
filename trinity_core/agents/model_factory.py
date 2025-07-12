@@ -192,7 +192,7 @@ class IntelligentModelFactory:
                     return {"error": f"Model loading failed: {str(e)}"}
             
             # Get domain category and tier information
-            category = self.config_manager.get_domain_category(domain)
+            category = self.config_manager.get_tara_proven_params(domain)['category']
             tier_name = self.config_manager.get_domain_tier(domain)
             logger.info(f"[TIER] Domain '{domain}' using tier: {tier_name}")
             

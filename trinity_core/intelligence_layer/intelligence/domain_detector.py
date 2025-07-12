@@ -234,7 +234,7 @@ class TARACoreIntelligence:
                     score += 0.1
             
             # Category-based scoring
-            domain_category = self._get_domain_category(domain)
+            domain_category = self.config_manager.get_tara_proven_params(domain)['category']
             if domain_category and domain_category in text_lower:
                 score += 0.2
             

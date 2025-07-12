@@ -1,0 +1,31 @@
+{
+  "session_id": "healthcare_1752343156",
+  "timestamp": "2025-07-12T17:59:16.446304",
+  "total_domains_processed": 11,
+  "successful_domains": 0,
+  "failed_domains": 11,
+  "overall_quality_score": 0.0,
+  "average_training_time": 10.663909435272217,
+  "total_cost": 0.0,
+  "domain_breakdown": {
+    "successful_domains": [],
+    "failed_domains": [
+      "general_health",
+      "mental_health",
+      "nutrition",
+      "sleep",
+      "stress_management",
+      "preventive_care",
+      "chronic_conditions",
+      "medication_management",
+      "emergency_care",
+      "women_health",
+      "senior_health"
+    ],
+    "quality_scores": {}
+  },
+  "quality_threshold_met": false,
+  "emotion_context_learning": true,
+  "lora_integration": true,
+  "contextual_intelligence_baked": true
+}

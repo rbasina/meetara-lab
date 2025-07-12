@@ -364,7 +364,7 @@ class TrainingOrchestrator(BaseAgent):
         category_batches = {}
         
         for domain in target_domains:
-            category = self._get_domain_category(domain)
+            category = self.config_manager.get_tara_proven_params(domain)['category']
             if category not in category_batches:
                 category_batches[category] = []
             category_batches[category].append(domain)
