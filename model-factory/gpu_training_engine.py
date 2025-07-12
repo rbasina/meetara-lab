@@ -33,7 +33,7 @@ except ImportError:
 class GPUTrainingConfig:
     """Configuration for GPU training optimization"""
     # Model parameters
-    base_model: str = "microsoft/DialoGPT-medium"
+    base_model: str = None  # Must be set from config
     domain: str = "general"
     max_length: int = 512
     
@@ -66,6 +66,20 @@ class GPUTrainingConfig:
     auto_gpu_selection: bool = True
     cost_budget_per_hour: float = 5.0
     max_training_time_hours: float = 3.0
+
+    def validate(self):
+        supported_models = [
+            "microsoft/Phi-3-mini-4k-instruct",
+            "microsoft/Phi-3-medium-4k-instruct",
+            "microsoft/Phi-3-medium-14B-instruct",
+            "Qwen/Qwen2.5-7B-Instruct",
+            "Qwen/Qwen2.5-14B-Instruct",
+            "HuggingFaceTB/SmolLM2-1.7B",
+            "mistralai/Mistral-7B-Instruct-v0.2"
+        ]
+        if not self.base_model or self.base_model not in supported_models:
+            raise ValueError(f"Invalid or missing base_model: {self.base_model}. Must be set from config and be a supported model.")
+        print(f"[INFO] Using base model for domain '{self.domain}': {self.base_model}")
 
 class GPUTrainingEngine:
     """High-performance GPU training engine with 20-100x optimization"""
