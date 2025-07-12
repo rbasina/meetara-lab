@@ -10,19 +10,31 @@ import sys
 import time
 import subprocess
 from pathlib import Path
+import shutil
 
 def setup_colab_environment():
     """Setup Colab environment and mount Google Drive"""
     print("🚀 Setting up Colab environment...")
     
-    # Mount Google Drive
+    # Check if we're in Colab
+    try:
+        import google.colab
+        print("✅ Running in Google Colab environment")
+    except ImportError:
+        print("❌ Not running in Colab - Google Drive not available")
+        return False
+    
+    # Mount Google Drive with better error handling
     try:
         from google.colab import drive
+        print("📁 Attempting to mount Google Drive...")
         drive.mount('/content/drive')
         print("✅ Google Drive mounted successfully")
         return True
-    except ImportError:
-        print("❌ Not running in Colab - Google Drive not available")
+    except Exception as e:
+        print(f"⚠️ Google Drive mounting failed: {e}")
+        print("💡 Continuing without Google Drive - models will be downloaded locally only")
+        print("💡 You can manually mount Drive later if needed")
         return False
 
 def install_requirements():
@@ -60,9 +72,37 @@ def install_requirements():
         print(f"❌ Failed to install requirements: {e}")
         return False
 
+def ensure_llama_cpp():
+    """Ensure llama.cpp is present and valid. Auto-clone if missing or broken."""
+    llama_path = Path("llama.cpp")
+    cmake_file = llama_path / "CMakeLists.txt"
+    if not cmake_file.exists():
+        print("⚠️ llama.cpp/CMakeLists.txt not found. Cloning fresh repo...")
+        if llama_path.exists():
+            print("🧹 Removing broken or partial llama.cpp directory...")
+            shutil.rmtree(llama_path)
+        # Clone official repo
+        import subprocess
+        result = subprocess.run([
+            "git", "clone", "https://github.com/ggerganov/llama.cpp.git", str(llama_path)
+        ], capture_output=True, text=True)
+        if result.returncode == 0:
+            print("✅ llama.cpp cloned successfully!")
+        else:
+            print(f"❌ Failed to clone llama.cpp: {result.stderr}")
+            return False
+    else:
+        print("✅ llama.cpp/CMakeLists.txt found.")
+    return True
+
 def setup_llama_cpp():
     """Setup llama.cpp with CUDA support"""
     print("🔧 Setting up llama.cpp with CUDA support...")
+    
+    # Ensure llama.cpp is present and valid
+    if not ensure_llama_cpp():
+        print("❌ Could not ensure llama.cpp is present and valid.")
+        return False
     
     try:
         # Navigate to llama.cpp directory
@@ -113,6 +153,18 @@ def setup_llama_cpp():
             return False
         
         print("✅ llama.cpp build successful")
+        
+        # Auto-create quantize symlink if needed
+        bin_dir = Path("build/bin")
+        llama_quantize = bin_dir / "llama-quantize"
+        quantize = bin_dir / "quantize"
+        if llama_quantize.exists() and not quantize.exists():
+            try:
+                import os
+                os.symlink(str(llama_quantize), str(quantize))
+                print("✅ Created symlink: quantize -> llama-quantize")
+            except Exception as e:
+                print(f"⚠️ Could not create symlink for quantize: {e}")
         
         # Verify key tools are available
         tools_to_check = [
@@ -174,7 +226,6 @@ def sync_models_from_drive():
     local_path.mkdir(parents=True, exist_ok=True)
     
     # Copy models from Drive to local
-    import shutil
     copied_count = 0
     
     for model_dir in drive_path.iterdir():
@@ -258,10 +309,10 @@ def main():
     print("🚀 MeeTARA Lab - Enhanced Colab Setup")
     print("=" * 60)
     
-    # Step 1: Setup Colab environment
-    if not setup_colab_environment():
-        print("❌ Colab setup failed")
-        return False
+    # Step 1: Setup Colab environment (Google Drive is optional)
+    drive_available = setup_colab_environment()
+    if not drive_available:
+        print("⚠️ Continuing without Google Drive - models will be stored locally only")
     
     # Step 2: Install requirements
     if not install_requirements():
@@ -273,29 +324,57 @@ def main():
         print("❌ llama.cpp setup failed")
         return False
     
-    # Step 4: Handle model downloads/sync
-    if check_drive_models():
-        print("\n📁 Models found in Google Drive!")
-        choice = input("Do you want to sync from Drive to local? (y/n): ").lower()
-        if choice == 'y':
-            if sync_models_from_drive():
-                print("✅ Models synced successfully!")
+    # Step 4: Handle model downloads/sync (only if Drive is available)
+    if drive_available:
+        if check_drive_models():
+            print("\n📁 Models found in Google Drive!")
+            choice = input("Do you want to sync from Drive to local? (y/n): ").lower()
+            if choice == 'y':
+                if sync_models_from_drive():
+                    print("✅ Models synced successfully!")
+                else:
+                    print("❌ Failed to sync models")
+                    return False
             else:
-                print("❌ Failed to sync models")
-                return False
+                print("⏭️ Skipping sync")
         else:
-            print("⏭️ Skipping sync")
-    else:
-        print("\n📥 No models found in Drive - downloading now...")
-        print("⏰ This will take 30-60 minutes for all models")
-        print("💾 Models will be saved to Google Drive for future use")
-        
-        choice = input("Continue with download? (y/n): ").lower()
-        if choice == 'y':
-            if download_models_to_drive():
-                print("✅ All models downloaded and saved to Drive!")
+            print("\n📥 No models found in Drive - downloading now...")
+            print("⏰ This will take 30-60 minutes for all models")
+            print("💾 Models will be saved to Google Drive for future use")
+            
+            choice = input("Continue with download? (y/n): ").lower()
+            if choice == 'y':
+                if download_models_to_drive():
+                    print("✅ All models downloaded and saved to Drive!")
+                else:
+                    print("❌ Download failed")
+                    return False
             else:
-                print("❌ Download failed")
+                print("⏭️ Download cancelled")
+    else:
+        print("\n📥 Google Drive not available - downloading models locally...")
+        print("⏰ This will take 30-60 minutes for all models")
+        print("💾 Models will be stored locally only")
+        
+        choice = input("Continue with local download? (y/n): ").lower()
+        if choice == 'y':
+            # Download models locally
+            try:
+                sys.path.append(str(Path.cwd() / "scripts" / "factory"))
+                from download_base_models import BaseModelDownloader
+                
+                downloader = BaseModelDownloader("models/base_models")
+                results = downloader.download_all_base_models(sync_to_drive=False)
+                
+                success_count = sum(results.values())
+                print(f"📊 Downloaded {success_count}/{len(results)} models locally")
+                
+                if success_count == len(results):
+                    print("✅ All models downloaded locally!")
+                else:
+                    print("⚠️ Some models failed to download")
+            except Exception as e:
+                print(f"❌ Local download failed: {e}")
                 return False
         else:
             print("⏭️ Download cancelled")
