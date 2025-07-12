@@ -193,7 +193,7 @@ class SimpleProductionLauncher:
         for category, domains in self.domains.items():
             if domain in domains:
                 return category
-        return "unknown"
+        raise ValueError(f"Domain '{domain}' not found in any category!")
     
     async def _create_super_agent_model(self, category: str, domain: str, domain_cost: float):
         """Create super agent optimized model output"""
