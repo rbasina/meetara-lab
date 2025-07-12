@@ -180,7 +180,7 @@ class TrinityPrimaryConductor:
         # This is a simplified sorting. A more advanced version would use a more complex algorithm.
         sorted_domains = sorted(
             domains_to_process,
-            key=lambda d: self.batch_config.get(self._get_domain_category(d), {}).get("priority", 0),
+            key=lambda d: self.batch_config.get(self.config_manager.get_tara_proven_params(d)['category'], {}).get("priority", 0),
             reverse=True
         )
 
@@ -191,7 +191,7 @@ class TrinityPrimaryConductor:
         # This can be made more sophisticated with dynamic load balancing
         categorized_domains = defaultdict(list)
         for domain in sorted_domains:
-            category = self._get_domain_category(domain)
+            category = self.config_manager.get_tara_proven_params(domain)['category']
             categorized_domains[category].append(domain)
 
         for category, domains_in_category in categorized_domains.items():
@@ -264,7 +264,7 @@ class TrinityPrimaryConductor:
                 # Simulate processing for each domain within the batch
                 domain_futures = []
                 for domain in batch.domains:
-                    category = self._get_domain_category(domain)
+                    category = self.config_manager.get_tara_proven_params(domain)['category']
                     future = loop.run_in_executor(
                         executor, 
                         lambda d=domain, c=category: asyncio.run(self._process_domain_optimized(d, c, resource_plan.get(batch.batch_id, {}), simulation_mode))
@@ -576,7 +576,7 @@ class TrinityPrimaryConductor:
         # Aggregate quality distribution by category
         quality_distribution = {}
         for domain, score in quality_scores.items():
-            category = self._get_domain_category(domain)
+            category = self.config_manager.get_tara_proven_params(domain)['category']
             if category not in quality_distribution:
                 quality_distribution[category] = []
             quality_distribution[category].append(score)
@@ -716,7 +716,7 @@ class TrinityPrimaryConductor:
         tasks = []
         for batch in batches:
             for domain in batch.domains:
-                category = self._get_domain_category(domain)
+                category = self.config_manager.get_tara_proven_params(domain)['category']
                 # Pass simulation, generate_synthetic, and environment flags
                 tasks.append(self._process_domain_optimized(
                     domain=domain,
