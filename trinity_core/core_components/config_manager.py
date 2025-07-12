@@ -23,7 +23,6 @@ class MultiBaseModel(Enum):
     """
     Maps specific domain models to their required base model architecture.
     """
-    DIALO_GPT_MEDIUM = "microsoft/DialoGPT-medium"
     PHI_3_MINI_INSTRUCT = "microsoft/Phi-3-mini-4k-instruct"
     QWEN2_1_5B_INSTRUCT = "Qwen/Qwen2-1.5B-Instruct"
     MISTRAL_7B_INSTRUCT = "mistralai/Mistral-7B-Instruct-v0.2"
@@ -239,14 +238,29 @@ class SmartTrinityConfigManager:
 
     def get_all_domains_flat(self):
         """
-        Returns a flat list of all domain names, discovered dynamically from the nested YAML structure.
+        Returns a flat list of all domain names from all categories.
         """
         all_domains = []
-        for category_config in self._domain_config.values():
-            domains = category_config.get('domains')
-            if isinstance(domains, dict):
-                all_domains.extend(domains.keys())
+        for category_name, category_config in self._domain_config.items():
+            domains = category_config.get('domains', {})
+            all_domains.extend(domains.keys())
         return all_domains
+
+    def get_base_model_for_domain(self, domain_name: str) -> str:
+        """
+        Gets the base model for a specific domain.
+        This is the method that the model factory calls.
+        """
+        domain_details = self._get_domain_details(domain_name)
+        return domain_details['base_model']
+
+    def get_tier_config(self, domain_name: str) -> dict:
+        """
+        Gets the tier configuration for a specific domain.
+        """
+        domain_details = self._get_domain_details(domain_name)
+        tier_name = domain_details['tier_name']
+        return self.get_model_tier_config(tier_name)
 
     def get_config_dict(self):
         """

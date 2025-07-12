@@ -3,7 +3,7 @@ description: Quality-focused configuration with premium models for critical doma
 last_updated: '2025-07-09'
 model_tiers:
   premium:
-    base_model_suggestion: microsoft/Phi-3-medium-14B-instruct
+    base_model_suggestion: microsoft/Phi-3-medium-4k-instruct
     sample_count: 8000
     num_epochs: 2
     batch_size: 1
@@ -81,12 +81,12 @@ gpu_configs:
     max_parallel_jobs: 8
     recommended_models:
     - Qwen/Qwen2.5-14B-Instruct
-    - microsoft/Phi-3-medium-14B-instruct
+    - microsoft/Phi-3-medium-4k-instruct
     batch_size: 16
     estimated_time_per_domain: 4-6 minutes
 cost_estimates:
   premium_tier:
-    model: Phi-3-medium-14B-instruct
+    model: Phi-3-medium-4k-instruct
     gpu: A100
     parallel_jobs: 8
     time_all_domains: 2-3 hours
@@ -107,7 +107,6 @@ verified_licenses:
   HuggingFaceTB/SmolLM2-1.7B: Apache-2.0
   microsoft/Phi-3.5-mini-instruct: MIT
   microsoft/Phi-3-medium-4k-instruct: MIT
-  microsoft/Phi-3-medium-14B-instruct: MIT
   Qwen/Qwen2.5-7B-Instruct: Apache-2.0
   Qwen/Qwen2.5-14B-Instruct: Apache-2.0
 global_tara_params:
@@ -158,19 +157,19 @@ global_tara_params:
 domain_config:
   healthcare:
     category_tier: premium
-    base_model: microsoft/Phi-3-medium-14B-instruct
+    base_model: microsoft/Phi-3-medium-4k-instruct
     domains:
-      general_health: microsoft/Phi-3-medium-14B-instruct
-      mental_health: microsoft/Phi-3-medium-14B-instruct
+      general_health: microsoft/Phi-3-medium-4k-instruct
+      mental_health: microsoft/Phi-3-medium-4k-instruct
       nutrition: microsoft/Phi-3-medium-4k-instruct
       sleep: microsoft/Phi-3-medium-4k-instruct
-      stress_management: microsoft/Phi-3-medium-14B-instruct
-      preventive_care: microsoft/Phi-3-medium-14B-instruct
-      chronic_conditions: microsoft/Phi-3-medium-14B-instruct
-      medication_management: microsoft/Phi-3-medium-14B-instruct
-      emergency_care: microsoft/Phi-3-medium-14B-instruct
-      women_health: microsoft/Phi-3-medium-14B-instruct
-      senior_health: microsoft/Phi-3-medium-14B-instruct
+      stress_management: microsoft/Phi-3-medium-4k-instruct
+      preventive_care: microsoft/Phi-3-medium-4k-instruct
+      chronic_conditions: microsoft/Phi-3-medium-4k-instruct
+      medication_management: microsoft/Phi-3-medium-4k-instruct
+      emergency_care: microsoft/Phi-3-medium-4k-instruct
+      women_health: microsoft/Phi-3-medium-4k-instruct
+      senior_health: microsoft/Phi-3-medium-4k-instruct
   daily_life:
     category_tier: quality
     base_model: microsoft/Phi-3-medium-4k-instruct
@@ -197,19 +196,19 @@ domain_config:
       customer_service: microsoft/Phi-3.5-mini-instruct
       project_management: Qwen/Qwen2.5-14B-Instruct
       team_leadership: Qwen/Qwen2.5-14B-Instruct
-      financial_planning: microsoft/Phi-3-medium-14B-instruct
+      financial_planning: microsoft/Phi-3-medium-4k-instruct
       operations: Qwen/Qwen2.5-7B-Instruct
       hr_management: microsoft/Phi-3-medium-4k-instruct
       strategy: Qwen/Qwen2.5-14B-Instruct
       consulting: Qwen/Qwen2.5-14B-Instruct
-      legal_business: microsoft/Phi-3-medium-14B-instruct
+      legal_business: microsoft/Phi-3-medium-4k-instruct
   education:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
       academic_tutoring: Qwen/Qwen2.5-14B-Instruct
       skill_development: microsoft/Phi-3-medium-4k-instruct
-      career_guidance: microsoft/Phi-3-medium-14B-instruct
+      career_guidance: microsoft/Phi-3-medium-4k-instruct
       exam_preparation: microsoft/Phi-3-medium-4k-instruct
       language_learning_education: microsoft/Phi-3.5-mini-instruct
       research_assistance: Qwen/Qwen2.5-14B-Instruct
@@ -259,19 +258,19 @@ domain_config:
       academic_tutoring_research: Qwen/Qwen2.5-14B-Instruct
   legal_financial:
     category_tier: premium
-    base_model: microsoft/Phi-3-medium-14B-instruct
+    base_model: microsoft/Phi-3-medium-4k-instruct
     domains:
-      legal_assistance: microsoft/Phi-3-medium-14B-instruct
-      insurance: microsoft/Phi-3-medium-14B-instruct
-      real_estate: microsoft/Phi-3-medium-14B-instruct
+      legal_assistance: microsoft/Phi-3-medium-4k-instruct
+      insurance: microsoft/Phi-3-medium-4k-instruct
+      real_estate: microsoft/Phi-3-medium-4k-instruct
   emergency_crisis:
     category_tier: premium
-    base_model: microsoft/Phi-3-medium-14B-instruct
+    base_model: microsoft/Phi-3-medium-4k-instruct
     domains:
-      crisis_management: microsoft/Phi-3-medium-14B-instruct
-      disaster_preparedness: microsoft/Phi-3-medium-14B-instruct
-      emergency_response: microsoft/Phi-3-medium-14B-instruct
-      safety_security: microsoft/Phi-3-medium-14B-instruct
+      crisis_management: microsoft/Phi-3-medium-4k-instruct
+      disaster_preparedness: microsoft/Phi-3-medium-4k-instruct
+      emergency_response: microsoft/Phi-3-medium-4k-instruct
+      safety_security: microsoft/Phi-3-medium-4k-instruct
   aerospace_transportation:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
@@ -296,16 +295,16 @@ domain_config:
     domains:
       programming: Qwen/Qwen2.5-14B-Instruct
       ai_ml: Qwen/Qwen2.5-14B-Instruct
-      cybersecurity: microsoft/Phi-3-medium-14B-instruct
+      cybersecurity: microsoft/Phi-3-medium-4k-instruct
       data_analysis: Qwen/Qwen2.5-14B-Instruct
       tech_support: microsoft/Phi-3.5-mini-instruct
       software_development: Qwen/Qwen2.5-14B-Instruct
   specialized:
     category_tier: premium
-    base_model: microsoft/Phi-3-medium-14B-instruct
+    base_model: microsoft/Phi-3-medium-4k-instruct
     domains:
-      legal: microsoft/Phi-3-medium-14B-instruct
-      financial: microsoft/Phi-3-medium-14B-instruct
+      legal: microsoft/Phi-3-medium-4k-instruct
+      financial: microsoft/Phi-3-medium-4k-instruct
       scientific_research: Qwen/Qwen2.5-14B-Instruct
       engineering: Qwen/Qwen2.5-14B-Instruct
 paths:

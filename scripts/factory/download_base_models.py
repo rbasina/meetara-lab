@@ -1,62 +1,67 @@
 #!/usr/bin/env python3
 """
-🏗️ Base Models Downloader for A_universal_full
-Downloads the 7 base models from HuggingFace and creates proper A_universal_full (7.78GB)
-Enhanced with resume capability and progress tracking
+🏗️ Base Models Downloader for MeeTARA Lab
+Downloads real models from HuggingFace and saves to Google Drive for Colab reuse
+Enhanced with resume capability, progress tracking, and Drive integration
 """
 
 import logging
 import json
+import os
+import time
 from pathlib import Path
 from typing import List, Dict, Tuple
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(name)s:%(message)s')
 logger = logging.getLogger(__name__)
 
-# Base models from trinity-config.json
+# Base models from your config (corrected names)
 BASE_MODELS = [
     "HuggingFaceTB/SmolLM2-1.7B",
     "microsoft/Phi-3.5-mini-instruct", 
     "Qwen/Qwen2.5-7B-Instruct",
     "microsoft/Phi-3-medium-4k-instruct",
-    "Qwen/Qwen2.5-14B-Instruct",
-    "microsoft/Phi-3-medium-14B-instruct"
+    "Qwen/Qwen2.5-14B-Instruct"
 ]
 
 class BaseModelDownloader:
-    """Downloads and manages base models for base_models with resume capability"""
+    """Downloads and manages base models with real HuggingFace downloads"""
     
-    def __init__(self):
+    def __init__(self, drive_path: str = None):
         self.base_dir = Path(__file__).parent.parent.parent
         self.base_models_dir = self.base_dir / "models" / "base_models"
         self.base_models_dir.mkdir(parents=True, exist_ok=True)
         
-        logger.info("🏗️ Base Model Downloader initialized (with resume support)")
-        logger.info(f"📁 Base models directory: {self.base_models_dir}")
+        # Google Drive path for Colab
+        self.drive_path = drive_path or "/content/drive/MyDrive/meetara-lab/models/base_models"
+        if drive_path:
+            self.drive_models_dir = Path(drive_path)
+            self.drive_models_dir.mkdir(parents=True, exist_ok=True)
+        
+        logger.info("🏗️ Base Model Downloader initialized (Real Downloads)")
+        logger.info(f"📁 Local models directory: {self.base_models_dir}")
+        if drive_path:
+            logger.info(f"📁 Drive models directory: {self.drive_models_dir}")
     
     def check_model_status(self, model_name: str) -> Tuple[bool, str]:
         """Check if a model is already downloaded and complete"""
-        model_filename = f"{model_name.replace('/', '_')}_Q3_K_M.gguf"
-        model_path = self.base_models_dir / model_filename
-        metadata_path = self.base_models_dir / f"{model_filename}.json"
+        model_dir = self.base_models_dir / model_name.replace('/', '_')
+        tokenizer_path = model_dir / "tokenizer.json"
+        model_path = model_dir / "pytorch_model.bin"
         
-        if not model_path.exists():
+        if not model_dir.exists():
             return False, "not_found"
         
-        expected_size = self._get_expected_model_size(model_name)
-        actual_size = model_path.stat().st_size
-        
-        # Check if file is complete (within 5% tolerance)
-        if actual_size >= expected_size * 0.95:
-            return True, "complete"
-        elif actual_size > 0:
+        if not tokenizer_path.exists() or not model_path.exists():
             return False, "incomplete"
-        else:
-            return False, "empty"
+        
+        return True, "complete"
     
     def download_base_model(self, model_name: str, force_redownload: bool = False) -> bool:
-        """Download and convert a single base model to Q3_K_M GGUF"""
+        """Download a single base model from HuggingFace"""
         
         # Check if already downloaded
         is_complete, status = self.check_model_status(model_name)
@@ -64,68 +69,52 @@ class BaseModelDownloader:
             logger.info(f"✅ {model_name} already downloaded and complete")
             return True
         
-        if status == "incomplete":
-            logger.info(f"🔄 Resuming incomplete download for {model_name}...")
-        elif status == "empty":
-            logger.info(f"🔄 Restarting empty download for {model_name}...")
-        else:
-            logger.info(f"📥 Starting fresh download for {model_name}...")
+        logger.info(f"📥 Downloading {model_name}...")
+        start_time = time.time()
         
         try:
-            model_filename = f"{model_name.replace('/', '_')}_Q3_K_M.gguf"
-            model_path = self.base_models_dir / model_filename
+            # Create model directory
+            model_dir = self.base_models_dir / model_name.replace('/', '_')
+            model_dir.mkdir(parents=True, exist_ok=True)
             
-            # Get expected size
-            expected_size = self._get_expected_model_size(model_name)
+            # Download tokenizer
+            logger.info(f"   🔧 Downloading tokenizer...")
+            tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=self.base_models_dir)
+            tokenizer.save_pretrained(model_dir)
             
-            # Create metadata for the model
+            # Download model
+            logger.info(f"   🧠 Downloading model...")
+            model = AutoModelForCausalLM.from_pretrained(
+                model_name, 
+                cache_dir=self.base_models_dir,
+                torch_dtype=torch.float16,
+                device_map="auto" if torch.cuda.is_available() else None
+            )
+            model.save_pretrained(model_dir)
+            
+            # Calculate size
+            total_size = 0
+            for file_path in model_dir.rglob("*"):
+                if file_path.is_file():
+                    total_size += file_path.stat().st_size
+            
+            download_time = time.time() - start_time
+            size_gb = total_size / (1024**3)
+            
+            logger.info(f"   ✅ Downloaded {model_name}: {size_gb:.2f}GB in {download_time:.1f}s")
+            
+            # Create metadata
             metadata = {
                 "model_name": model_name,
-                "quantization": "Q3_K_M",
-                "original_size_gb": expected_size / (1024**3),
-                "compressed_size_mb": expected_size / (1024**2),
-                "download_status": "downloading",
-                "expected_size_bytes": expected_size,
-                "note": "Placeholder - real download requires HuggingFace Hub + llama.cpp"
+                "download_time": download_time,
+                "size_gb": size_gb,
+                "status": "complete",
+                "download_date": time.strftime("%Y-%m-%d %H:%M:%S")
             }
             
-            # Write metadata
-            metadata_path = self.base_models_dir / f"{model_filename}.json"
+            metadata_path = model_dir / "metadata.json"
             with open(metadata_path, 'w') as f:
                 json.dump(metadata, f, indent=2)
-            
-            # Create the GGUF file with proper size
-            logger.info(f"   📝 Creating {model_filename} ({expected_size / (1024**2):.1f}MB)...")
-            
-            with open(model_path, 'wb') as f:
-                # Write GGUF header
-                f.write(b'GGUF')  # GGUF magic
-                f.write(b'\x03\x00\x00\x00')  # Version 3
-                
-                # Write placeholder data in chunks to show progress
-                remaining = expected_size - 8  # Already wrote 8 bytes
-                chunk_size = 1024 * 1024  # 1MB chunks
-                written = 8
-                
-                while remaining > 0:
-                    chunk = min(chunk_size, remaining)
-                    f.write(b'\x00' * chunk)
-                    remaining -= chunk
-                    written += chunk
-                    
-                    # Show progress every 100MB
-                    if written % (100 * 1024 * 1024) == 0:
-                        progress = (written / expected_size) * 100
-                        logger.info(f"   📊 Progress: {progress:.1f}% ({written / (1024**2):.1f}MB)")
-            
-            # Update metadata to complete
-            metadata["download_status"] = "complete"
-            metadata["actual_size_bytes"] = model_path.stat().st_size
-            with open(metadata_path, 'w') as f:
-                json.dump(metadata, f, indent=2)
-            
-            size_mb = model_path.stat().st_size / (1024**2)
-            logger.info(f"   ✅ Completed {model_filename}: {size_mb:.1f}MB")
             
             return True
             
@@ -133,18 +122,59 @@ class BaseModelDownloader:
             logger.error(f"❌ Failed to download {model_name}: {e}")
             return False
     
-    def _get_expected_model_size(self, model_name: str) -> int:
-        """Get expected file size for each model in Q3_K_M quantization"""
-        # Approximate sizes in bytes for Q3_K_M quantization (better quality than Q2_K)
-        size_map = {
-            "HuggingFaceTB/SmolLM2-1.7B": 750 * 1024**2,  # 750MB (was 500MB)
-            "microsoft/Phi-3.5-mini-instruct": 1200 * 1024**2,  # 1.2GB (was 800MB)
-            "Qwen/Qwen2.5-7B-Instruct": 3000 * 1024**2,  # 3GB (was 2GB)
-            "microsoft/Phi-3-medium-4k-instruct": 2250 * 1024**2,  # 2.25GB (was 1.5GB)
-            "Qwen/Qwen2.5-14B-Instruct": 5250 * 1024**2,  # 5.25GB (was 3.5GB)
-            "microsoft/Phi-3-medium-14B-instruct": 4500 * 1024**2,  # 4.5GB (was 3GB)
-        }
-        return size_map.get(model_name, 1500 * 1024**2)  # Default 1.5GB
+    def sync_to_drive(self, model_name: str) -> bool:
+        """Sync downloaded model to Google Drive"""
+        if not hasattr(self, 'drive_models_dir'):
+            logger.warning("Drive path not set, skipping sync")
+            return False
+        
+        try:
+            local_dir = self.base_models_dir / model_name.replace('/', '_')
+            drive_dir = self.drive_models_dir / model_name.replace('/', '_')
+            
+            if not local_dir.exists():
+                logger.error(f"Local model {model_name} not found")
+                return False
+            
+            # Copy to drive
+            import shutil
+            if drive_dir.exists():
+                shutil.rmtree(drive_dir)
+            shutil.copytree(local_dir, drive_dir)
+            
+            logger.info(f"📁 Synced {model_name} to Drive")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to sync {model_name} to Drive: {e}")
+            return False
+    
+    def sync_from_drive(self, model_name: str) -> bool:
+        """Sync model from Google Drive to local"""
+        if not hasattr(self, 'drive_models_dir'):
+            logger.warning("Drive path not set, skipping sync")
+            return False
+        
+        try:
+            local_dir = self.base_models_dir / model_name.replace('/', '_')
+            drive_dir = self.drive_models_dir / model_name.replace('/', '_')
+            
+            if not drive_dir.exists():
+                logger.error(f"Drive model {model_name} not found")
+                return False
+            
+            # Copy from drive
+            import shutil
+            if local_dir.exists():
+                shutil.rmtree(local_dir)
+            shutil.copytree(drive_dir, local_dir)
+            
+            logger.info(f"📁 Synced {model_name} from Drive")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to sync {model_name} from Drive: {e}")
+            return False
     
     def get_download_status(self) -> Dict[str, str]:
         """Get current download status for all models"""
@@ -154,7 +184,7 @@ class BaseModelDownloader:
             status[model_name] = "complete" if is_complete else model_status
         return status
     
-    def download_all_base_models(self, force_redownload: bool = False) -> Dict[str, bool]:
+    def download_all_base_models(self, force_redownload: bool = False, sync_to_drive: bool = True) -> Dict[str, bool]:
         """Download all base models with resume capability"""
         logger.info(f"🚀 Downloading {len(BASE_MODELS)} base models...")
         
@@ -172,63 +202,59 @@ class BaseModelDownloader:
             results[model_name] = success
             if success:
                 success_count += 1
+                if sync_to_drive:
+                    self.sync_to_drive(model_name)
         
         logger.info(f"📊 Downloaded {success_count}/{len(BASE_MODELS)} base models")
         return results
     
-    def create_universal_full_manifest(self) -> None:
-        """Create manifest for the complete A_universal_full model"""
-        # Calculate total size
-        total_size = 0
-        base_models_info = []
-        
-        for model_file in self.base_models_dir.glob("*.gguf"):
-            size = model_file.stat().st_size
-            total_size += size
-            base_models_info.append({
-                "file": model_file.name,
-                "size_mb": round(size / (1024**2), 1)
-            })
-        
-        # Add domain models size (assuming 64 × 8.3MB)
-        domain_models_size = 64 * 8.3 * 1024**2
-        total_size += domain_models_size
-        
+    def create_download_manifest(self) -> None:
+        """Create manifest for all downloaded models"""
         manifest = {
-            "model_type": "A_universal_full",
-            "architecture": "Multi-base model with domain specialization",
-            "total_size_gb": round(total_size / (1024**3), 2),
-            "components": {
-                "base_models": {
-                    "count": len(base_models_info),
-                    "quantization": "Q3_K_M",
-                    "models": base_models_info,
-                    "total_size_gb": round((total_size - domain_models_size) / (1024**3), 2)
-                },
-                "domain_models": {
-                    "count": 64,
-                    "quantization": "Q4_K_M",
-                    "size_per_model_mb": 8.3,
-                    "total_size_mb": round(domain_models_size / (1024**2), 1)
-                }
-            },
-            "status": "Base models downloaded",
-            "next_step": "Merge base models with domain models"
+            "download_date": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "total_models": len(BASE_MODELS),
+            "models": {}
         }
         
-        manifest_path = self.base_models_dir.parent / "A_universal_full_complete_manifest.json"
+        total_size_gb = 0
+        
+        for model_name in BASE_MODELS:
+            model_dir = self.base_models_dir / model_name.replace('/', '_')
+            metadata_path = model_dir / "metadata.json"
+            
+            if metadata_path.exists():
+                with open(metadata_path, 'r') as f:
+                    metadata = json.load(f)
+                manifest["models"][model_name] = metadata
+                total_size_gb += metadata.get("size_gb", 0)
+            else:
+                manifest["models"][model_name] = {"status": "not_downloaded"}
+        
+        manifest["total_size_gb"] = total_size_gb
+        
+        manifest_path = self.base_models_dir / "download_manifest.json"
         with open(manifest_path, 'w') as f:
             json.dump(manifest, f, indent=2)
         
-        logger.info(f"📋 Created manifest: {manifest['total_size_gb']}GB total")
+        logger.info(f"📋 Created manifest: {total_size_gb:.2f}GB total")
 
 def main():
-    """Main function with resume support"""
-    logger.info("🚀 Starting Base Model Download (Resume Mode)...")
+    """Main function with Colab integration"""
+    logger.info("🚀 Starting Base Model Download (Colab Optimized)...")
     logger.info("=" * 50)
     
     try:
-        downloader = BaseModelDownloader()
+        # Check if running in Colab
+        drive_path = None
+        try:
+            from google.colab import drive
+            drive.mount('/content/drive')
+            drive_path = "/content/drive/MyDrive/meetara-lab/models/base_models"
+            logger.info("📁 Google Drive mounted for Colab")
+        except ImportError:
+            logger.info("🖥️ Running locally (no Google Drive)")
+        
+        downloader = BaseModelDownloader(drive_path)
         
         # Show what needs to be downloaded
         status = downloader.get_download_status()
@@ -242,25 +268,20 @@ def main():
                 logger.info(f"   - {model} ({status[model]})")
         
         # Download all base models (will skip complete ones)
-        results = downloader.download_all_base_models()
+        results = downloader.download_all_base_models(sync_to_drive=bool(drive_path))
         
         # Create manifest
-        downloader.create_universal_full_manifest()
+        downloader.create_download_manifest()
         
         success_count = sum(results.values())
-        if success_count == len(BASE_MODELS):
-            logger.info("🎉 All base models downloaded successfully!")
-            logger.info("📁 Base models directory is now populated")
-            logger.info("🔧 Next: Merge with domain models to create 7.78GB A_universal_full")
-        else:
-            logger.warning(f"⚠️ Only {success_count}/{len(BASE_MODELS)} models downloaded")
+        logger.info(f"✅ Download complete: {success_count}/{len(BASE_MODELS)} models")
         
-        return 0
+        if drive_path:
+            logger.info("💡 Tip: Models are synced to Google Drive for future Colab sessions")
         
     except Exception as e:
-        logger.error(f"❌ Base model download failed: {e}")
-        return 1
+        logger.error(f"❌ Download failed: {e}")
+        raise
 
 if __name__ == "__main__":
-    import sys
-    sys.exit(main()) 
+    main() 

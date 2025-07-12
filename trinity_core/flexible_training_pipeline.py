@@ -230,27 +230,40 @@ class FlexibleTrainingPipeline:
     
     def train_single_domain(self, domain: str) -> Optional[str]:
         """Train a single domain model"""
+        import logging, json, os
+        logger = logging.getLogger("FlexibleTrainingPipeline")
         print(f"🚀 Training single domain: {domain}")
-        
+        stats = {"domain": domain}
+        config_path = self.config_manager.config_path if hasattr(self.config_manager, 'config_path') else 'config/trinity_config.yaml'
+        logger.info(f"[CONFIG] Using config: {config_path}")
+        stats["config_path"] = config_path
         # Get model for this domain from the config manager
         try:
             params = self.config_manager.get_tara_proven_params(domain)
             model_name = params['base_model']
             category = params['category']
         except ValueError as e:
-            print(f"❌ Could not get training parameters for domain '{domain}': {e}")
+            logger.error(f"❌ Could not get training parameters for domain '{domain}': {e}")
             return None
-        
-        print(f"📋 Domain: {domain}")
-        print(f"📂 Category: {category}")
-        print(f"🤖 Base Model: {model_name}")
-        
+        logger.info(f"📋 Domain: {domain}")
+        logger.info(f"📂 Category: {category}")
+        logger.info(f"🤖 Base Model: {model_name}")
+        stats["base_model"] = model_name
+        stats["category"] = category
         # Generate training data
         training_data = self.generate_domain_training_data(domain)
-        
+        stats["num_samples_before_training"] = len(training_data) if training_data else 0
         # Train model
         model_path = self._train_model(domain, model_name, training_data)
-        
+        # Optionally, collect stats after training (e.g., loss, accuracy if available)
+        stats["model_path"] = model_path
+        # Save stats report
+        stats_dir = "training_stats"
+        os.makedirs(stats_dir, exist_ok=True)
+        stats_file = os.path.join(stats_dir, f"{domain}_stats.json")
+        with open(stats_file, "w") as f:
+            json.dump(stats, f, indent=2)
+        logger.info(f"[STATS] Training stats saved to {stats_file}")
         return model_path
     
     def train_multiple_domains(self, domain_list: List[str]) -> Dict[str, str]:
@@ -304,19 +317,68 @@ class FlexibleTrainingPipeline:
     
     def _train_model(self, domain: str, model_name: str, training_data: List[Dict]) -> str:
         """Internal method to train a model"""
+        import time
+        import os
+        from pathlib import Path
         
-        # Load model and tokenizer
-        print(f"📥 Loading model: {model_name}")
+        # Track download timing and caching
+        download_start = time.time()
+        print(f"📥 Starting download for domain '{domain}' with base model: {model_name}")
+        
+        # Check if model is already cached
+        cache_dir = os.path.expanduser("~/.cache/huggingface/hub")
+        model_cache_path = None
+        
+        # Try to find existing model in cache
+        for root, dirs, files in os.walk(cache_dir):
+            if model_name.replace("/", "--") in root:
+                model_cache_path = root
+                break
+        
+        if model_cache_path:
+            print(f"✅ Model found in cache: {model_cache_path}")
+            print(f"⏱️ Cache hit - no download needed")
+        else:
+            print(f"🔄 Model not in cache - downloading from HuggingFace...")
+        
+        # Load model and tokenizer with timing
+        tokenizer_start = time.time()
+        print(f"🔧 Loading tokenizer: {model_name}")
         tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+        tokenizer_time = time.time() - tokenizer_start
+        print(f"✅ Tokenizer loaded in {tokenizer_time:.2f}s")
+        
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
         
+        model_start = time.time()
+        print(f"🧠 Loading base model: {model_name}")
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
             device_map="auto" if torch.cuda.is_available() else None,
             trust_remote_code=True
         )
+        model_time = time.time() - model_start
+        print(f"✅ Base model loaded in {model_time:.2f}s")
+        
+        # Check where the model was actually stored
+        try:
+            from transformers import file_utils
+            model_path = file_utils.cached_file(model_name, "pytorch_model.bin")
+            print(f"📁 Model stored at: {model_path}")
+        except Exception as e:
+            print(f"⚠️ Could not determine exact model path: {e}")
+        
+        total_download_time = time.time() - download_start
+        print(f"⏱️ Total model preparation time: {total_download_time:.2f}s")
+        
+        # Log model size
+        try:
+            model_size_mb = sum(p.numel() * p.element_size() for p in model.parameters()) / (1024 * 1024)
+            print(f"📊 Model size: {model_size_mb:.1f} MB")
+        except Exception as e:
+            print(f"⚠️ Could not calculate model size: {e}")
         
         # Configure LoRA (TARA proven parameters)
         tara_params = self.config_manager.get_tara_proven_params(domain)

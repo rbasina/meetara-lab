@@ -44,28 +44,47 @@ class RealModelLoader:
             self.llama_cpp = None
     
     def get_available_models(self) -> Dict[str, Dict[str, Any]]:
-        """Get list of available GGUF models"""
+        """Get list of available GGUF models, including all D_domain_specific models automatically."""
         models = {
             "A_universal_full": {
-                "path": Path(r"C:\Users\rames\Documents\github\meetara\services\ai-engine-python\models\qwen2.5-3b-instruct-q4_0.gguf"),
-                "size": "1.9GB",
+                "path": self.models_dir / "production" / "A_universal_full" / "meetara_a_universal_full.gguf",
+                "size": "3.5GB",
                 "type": "Maximum Intelligence",
-                "description": "Qwen 2.5-14B Q3_K_M base"
+                "description": "Qwen 2.5-14B with all 62 domains"
             },
             "B_universal_lite": {
-                "path": Path(r"C:\Users\rames\Documents\github\meetara\services\ai-engine-python\models\Phi-3.5-mini-instruct-Q4_K_M.gguf"),
-                "size": "2.3GB",
+                "path": self.models_dir / "production" / "B_universal_lite" / "meetara_b_universal_lite.gguf",
+                "size": "800MB",
                 "type": "Universal Speed",
-                "description": "Phi-3.5-mini Q3_K_M base"
+                "description": "Phi-3.5-mini with all 62 domains"
             },
             "C_category_specific": {
-                "path": Path(r"C:\Users\rames\Documents\tara-universal-model\models\gguf\domains\sleep_clean_Q4_K_M_20250701_141621.gguf"),
-                "size": "4.8MB",
+                "path": self.models_dir / "production" / "C_category_specific" / "meetara_healthcare_specialist_v1_Q4.gguf",
+                "size": "8.3MB",
                 "type": "Healthcare Specialist",
-                "description": "General health Q4_K_M domain"
+                "description": "Healthcare category specialist"
             }
         }
-        
+        # --- Auto-discover D_domain_specific models (only Q4_K_M) ---
+        d_root = self.models_dir / "production" / "D_domain_specific"
+        if d_root.exists():
+            for category_dir in d_root.iterdir():
+                if category_dir.is_dir():
+                    category = category_dir.name
+                    for domain_dir in category_dir.iterdir():
+                        if domain_dir.is_dir():
+                            domain = domain_dir.name
+                            # Only add Q4_K_M quantization
+                            for gguf_file in domain_dir.glob(f"{domain}_*Q4_K_M.gguf"):
+                                label = f"D_{domain}"
+                                models[label] = {
+                                    "path": gguf_file,
+                                    "size": f"{gguf_file.stat().st_size // (1024*1024)}MB",
+                                    "type": "Domain Specialist",
+                                    "description": f"{category}/{domain} (Q4_K_M)",
+                                    "category": category
+                                }
+        # --- End auto-discovery ---
         # Check which models actually exist
         available_models = {}
         for name, info in models.items():
@@ -76,7 +95,6 @@ class RealModelLoader:
                 info["available"] = False
                 info["file_size"] = "Not found"
             available_models[name] = info
-        
         return available_models
     
     def load_model(self, model_name: str) -> bool:
@@ -232,7 +250,7 @@ class SmartRouting:
         # Emergency detection
         if any(keyword in prompt_lower for keyword in self.routing_rules["emergency_keywords"]):
             return {
-                "recommended_model": "C_category_specific",
+                "recommended_model": "C_healthcare_specialist",
                 "reason": "Emergency/healthcare query detected",
                 "complexity": "urgent",
                 "confidence": 0.95
@@ -241,7 +259,7 @@ class SmartRouting:
         # Healthcare specialization
         if any(keyword in prompt_lower for keyword in self.routing_rules["healthcare_keywords"]):
             return {
-                "recommended_model": "C_category_specific", 
+                "recommended_model": "C_healthcare_specialist", 
                 "reason": "Healthcare specialization needed",
                 "complexity": "specialized",
                 "confidence": 0.85
@@ -279,8 +297,11 @@ def index():
 
 @app.route('/api/models')
 def get_models():
-    """Get available models"""
     models = model_loader.get_available_models()
+    # Convert all Path objects to strings for JSON serialization
+    for m in models.values():
+        if isinstance(m.get("path"), Path):
+            m["path"] = str(m["path"])
     return jsonify(models)
 
 @app.route('/api/load_model', methods=['POST'])
@@ -313,7 +334,7 @@ def compare_models():
     """Compare responses from multiple models"""
     data = request.get_json()
     prompt = data.get('prompt', '')
-    models = data.get('models', ['A_universal_full', 'B_universal_lite', 'C_category_specific'])
+    models = data.get('models', ['A_universal_full', 'B_universal_lite', 'C_healthcare_specialist'])
     
     if not prompt:
         return jsonify({"error": "Prompt required"}), 400
