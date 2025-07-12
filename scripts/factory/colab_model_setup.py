@@ -160,6 +160,7 @@ def setup_llama_cpp():
         quantize = bin_dir / "quantize"
         if llama_quantize.exists() and not quantize.exists():
             try:
+                import os
                 os.symlink(str(llama_quantize), str(quantize))
                 print("✅ Created symlink: quantize -> llama-quantize")
             except Exception as e:

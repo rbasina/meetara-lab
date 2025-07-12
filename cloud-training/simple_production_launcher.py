@@ -147,7 +147,7 @@ class SimpleProductionLauncher:
         """Train a single domain with super agent optimization"""
         
         # Get domain category
-        domain_category = self._get_domain_category(domain)
+        domain_category = self.config_manager.get_tara_proven_params(domain)['category']
         
         # Calculate training parameters with super agent optimization
         domain_complexity = len(domain) / 10.0
@@ -193,7 +193,7 @@ class SimpleProductionLauncher:
         for category, domains in self.domains.items():
             if domain in domains:
                 return category
-        return "unknown"
+        raise ValueError(f"Domain '{domain}' not found in any category!")
     
     async def _create_super_agent_model(self, category: str, domain: str, domain_cost: float):
         """Create super agent optimized model output"""

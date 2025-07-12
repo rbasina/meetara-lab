@@ -243,12 +243,11 @@ class TrainingOrchestrator(BaseAgent):
             raise Exception(f"Training Orchestrator requires centralized domain integration: {e}")
 
     def _get_domain_category(self, domain: str) -> str:
-        """Get domain category using centralized validation"""
         # Use centralized domain integration
         for category, domains in get_domain_categories().items():
             if domain in domains:
                 return category
-        return "daily_life"  # Default fallback
+        raise ValueError(f"Domain '{domain}' not found in any category!")
 
     def _get_category_model_tier(self, category: str) -> str:
         """Get model tier recommendation for category"""
@@ -364,7 +363,7 @@ class TrainingOrchestrator(BaseAgent):
         category_batches = {}
         
         for domain in target_domains:
-            category = self._get_domain_category(domain)
+            category = self.config_manager.get_tara_proven_params(domain)['category']
             if category not in category_batches:
                 category_batches[category] = []
             category_batches[category].append(domain)

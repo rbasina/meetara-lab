@@ -386,11 +386,10 @@ class TARACoreIntelligence:
         return keyword_mapping.get(domain, [domain.replace("_", " ")])
     
     def _get_domain_category(self, domain: str) -> Optional[str]:
-        """Get the category for a domain"""
-        for category, domains in self.domain_categories.items():
+        for category, domains in get_domain_categories().items():
             if domain in domains:
                 return category
-        return None
+        raise ValueError(f"Domain '{domain}' not found in any category!")
     
     async def _update_detection_stats(self, result: Dict[str, Any]):
         """Update performance statistics"""

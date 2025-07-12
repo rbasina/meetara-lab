@@ -1,0 +1,29 @@
+{
+  "session_id": "healthcare_1752343156",
+  "speed_improvements": {
+    "speed_improvement": "41.3x faster",
+    "baseline_time": 440.0,
+    "optimized_time": 10.663909435272217,
+    "time_saved": 429.3360905647278
+  },
+  "gpu_utilization": {
+    "utilization_percentage": 85.0,
+    "memory_usage_gb": 12.5,
+    "compute_efficiency": 92.0
+  },
+  "memory_usage": {
+    "ram_usage_gb": 8.2,
+    "gpu_memory_gb": 12.5,
+    "cache_efficiency": 78.0
+  },
+  "training_efficiency": {
+    "success_rate": 0.0,
+    "domains_per_minute": 61.8909982315648,
+    "cost_per_domain": 0.0
+  },
+  "cost_optimization": {
+    "total_cost": 0.0,
+    "cost_per_domain": 0.0,
+    "budget_remaining": 50.0
+  }
+}
