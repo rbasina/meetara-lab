@@ -128,8 +128,8 @@ class IntelligentModelFactory:
                     # For Phi-3 models, check if we have enough memory
                     if "phi-3" in base_model.lower() and gpu_memory < 16:
                         print(f"⚠️ Phi-3 model requires ~16GB GPU memory, but only {gpu_memory:.1f}GB available")
-                        print(f"🔄 Falling back to smaller model: microsoft/Phi-3-mini-instruct")
-                        base_model = "microsoft/Phi-3-mini-instruct"
+                        print(f"🔄 Falling back to smaller model: microsoft/Phi-3-mini-4k-instruct")
+                        base_model = "microsoft/Phi-3-mini-4k-instruct"
                 
                 # Configure device and memory settings
                 device = "cuda" if torch.cuda.is_available() else "cpu"
