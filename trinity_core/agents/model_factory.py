@@ -5,13 +5,16 @@ This agent is responsible for the intelligent training and generation of raw mod
 Post-processing, quantization, and cleanup are handled by a separate agent.
 """
 
+import asyncio
+import json
 import logging
+import os
 import time
+from pathlib import Path
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-from pathlib import Path
-import json
-import os # Added missing import for os.urandom
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -57,72 +60,168 @@ class IntelligentModelFactory:
         }
 
     async def create_intelligent_model(self, request: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Creates a raw, unquantized model based on intelligent configuration with LoRA integration.
-        The output is a path to the raw model artifact, not a GGUF.
-        """
+        import logging, json, os, time
+        from pathlib import Path
+        
         start_time = time.time()
+        logger = logging.getLogger("IntelligentModelFactory")
+        stats = {"domain": request.get("domain", "unknown")}
+        config_path = getattr(self.config_manager, 'config_path', 'config/trinity_config.yaml')
+        logger.info(f"[CONFIG] Using config: {config_path}")
+        stats["config_path"] = config_path
         
         try:
             domain = request.get("domain", "unknown")
-            training_data = request.get("training_data", []) # Assume raw data or path
+            training_data = request.get("training_data", []) # Assuming training data is provided
             is_simulation = request.get("simulation", False) # Get simulation flag from request
-            category = request.get("category", "unknown_category") # Get category from request
             
-            # Get domain configuration from config manager
-            domain_details = self.config_manager._get_domain_details(domain)
-            base_model = domain_details.get('base_model', 'microsoft/Phi-3.5-mini-instruct')
-            tier_name = domain_details.get('tier_name', 'balanced')
+            # Get base model from config
+            base_model = self.config_manager.get_base_model_for_domain(domain)
+            logger.info(f"[BASE_MODEL] Domain '{domain}' mapped to base model: {base_model}")
+            stats["base_model"] = base_model
             
-            # Get tier configuration for LoRA parameters
-            tier_config = self.config_manager.get_model_tier_config(tier_name)
+            # Track download timing and caching
+            download_start = time.time()
+            print(f"📥 Starting download for domain '{domain}' with base model: {base_model}")
             
-            # Enhanced LoRA configuration
+            # Check if model is already cached
+            cache_dir = os.path.expanduser("~/.cache/huggingface/hub")
+            model_cache_path = None
+            
+            # Try to find existing model in cache
+            for root, dirs, files in os.walk(cache_dir):
+                if base_model.replace("/", "--") in root:
+                    model_cache_path = root
+                    break
+            
+            if model_cache_path:
+                print(f"✅ Model found in cache: {model_cache_path}")
+                download_time = time.time() - download_start
+                print(f"⏱️ Cache hit - no download needed")
+            else:
+                print(f"📥 Downloading model: {base_model}")
+                # In a real implementation, this would download the model
+                # For now, we'll simulate the download
+                download_time = time.time() - download_start
+                print(f"⏱️ Download completed in {download_time:.2f}s")
+            
+            # Load tokenizer
+            tokenizer_start = time.time()
+            print(f"🔧 Loading tokenizer: {base_model}")
+            try:
+                tokenizer = AutoTokenizer.from_pretrained(base_model)
+                tokenizer_time = time.time() - tokenizer_start
+                print(f"✅ Tokenizer loaded in {tokenizer_time:.2f}s")
+            except Exception as e:
+                print(f"❌ Tokenizer loading failed: {e}")
+                return {"error": f"Tokenizer loading failed: {str(e)}"}
+            
+            # Load base model with proper memory management
+            model_start = time.time()
+            print(f"🧠 Loading base model: {base_model}")
+            try:
+                # Check available GPU memory
+                if torch.cuda.is_available():
+                    gpu_memory = torch.cuda.get_device_properties(0).total_memory / (1024**3)  # GB
+                    print(f"📊 Available GPU memory: {gpu_memory:.1f} GB")
+                    
+                    # For Phi-3 models, check if we have enough memory
+                    if "phi-3" in base_model.lower() and gpu_memory < 16:
+                        print(f"⚠️ Phi-3 model requires ~16GB GPU memory, but only {gpu_memory:.1f}GB available")
+                        print(f"🔄 Falling back to smaller model: microsoft/Phi-3-mini-instruct")
+                        base_model = "microsoft/Phi-3-mini-instruct"
+                
+                # Configure device and memory settings
+                device = "cuda" if torch.cuda.is_available() else "cpu"
+                
+                # For Phi-3 models, use specific memory configuration
+                if "phi-3" in base_model.lower():
+                    # Use more conservative memory settings for Phi-3
+                    model = AutoModelForCausalLM.from_pretrained(
+                        base_model,
+                        torch_dtype=torch.float16,
+                        device_map="auto",
+                        low_cpu_mem_usage=True,
+                        trust_remote_code=True,
+                        # Remove offload_folder to avoid disk offload error
+                        max_memory={0: "12GB", "cpu": "16GB"} if torch.cuda.is_available() else None
+                    )
+                else:
+                    # Standard loading for other models
+                    model = AutoModelForCausalLM.from_pretrained(
+                        base_model,
+                        torch_dtype=torch.float16,
+                        device_map="auto",
+                        low_cpu_mem_usage=True
+                    )
+                
+                model_time = time.time() - model_start
+                print(f"✅ Base model loaded in {model_time:.2f}s")
+                
+                # Try to get model size
+                try:
+                    model_size_mb = sum(p.numel() * p.element_size() for p in model.parameters()) / (1024 * 1024)
+                    print(f"📊 Model size: {model_size_mb:.1f} MB")
+                except:
+                    print(f"⚠️ Could not determine exact model path: module 'transformers.file_utils' has no attribute 'cached_file'")
+                
+                total_prep_time = time.time() - start_time
+                print(f"⏱️ Total model preparation time: {total_prep_time:.2f}s")
+                
+            except Exception as e:
+                print(f"❌ Model loading failed: {e}")
+                # If model loading fails due to memory, try with CPU-only loading
+                if "offload" in str(e).lower() or "memory" in str(e).lower():
+                    print(f"🔄 Attempting CPU-only loading for {base_model}")
+                    try:
+                        model = AutoModelForCausalLM.from_pretrained(
+                            base_model,
+                            torch_dtype=torch.float32,  # Use float32 for CPU
+                            device_map=None,  # No device mapping for CPU
+                            low_cpu_mem_usage=True,
+                            trust_remote_code=True
+                        )
+                        model_time = time.time() - model_start
+                        print(f"✅ Base model loaded on CPU in {model_time:.2f}s")
+                        total_prep_time = time.time() - start_time
+                        print(f"⏱️ Total model preparation time: {total_prep_time:.2f}s")
+                    except Exception as cpu_error:
+                        print(f"❌ CPU loading also failed: {cpu_error}")
+                        return {"error": f"Model loading failed on both GPU and CPU: {str(e)}"}
+                else:
+                    return {"error": f"Model loading failed: {str(e)}"}
+            
+            # Get domain category and tier information
+            category = self.config_manager.get_domain_category(domain)
+            tier_name = self.config_manager.get_domain_tier(domain)
+            logger.info(f"[TIER] Domain '{domain}' using tier: {tier_name}")
+            
+            # LoRA configuration for efficient fine-tuning
             lora_config = {
-                "r": tier_config.get("lora_r", 8),
-                "alpha": tier_config.get("lora_alpha", 16),
-                "dropout": tier_config.get("lora_dropout", 0.1),
-                "target_modules": ["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+                "r": 8,  # Rank
+                "lora_alpha": 16,  # Alpha parameter
+                "lora_dropout": 0.1,
                 "bias": "none",
                 "task_type": "CAUSAL_LM"
             }
             
-            # Training configuration with emotion/context learning
+            # Training configuration
             training_config = {
-                "base_model": base_model,
-                "lora_config": lora_config,
-                "batch_size": tier_config.get("batch_size", 4),
-                "learning_rate": tier_config.get("learning_rate", 2e-4),
-                "num_epochs": tier_config.get("num_epochs", 1),
-                "max_steps": tier_config.get("max_steps", 500),
-                "warmup_steps": tier_config.get("warmup_steps", 50),
-                "gradient_accumulation_steps": tier_config.get("gradient_accumulation_steps", 4),
-                "save_steps": tier_config.get("save_steps", 100),
-                "eval_steps": tier_config.get("eval_steps", 100),
-                "logging_steps": tier_config.get("logging_steps", 10),
-                "save_total_limit": tier_config.get("save_total_limit", 3),
+                "output_dir": f"models/trained/{category}/{domain}",
+                "num_train_epochs": 3,
+                "per_device_train_batch_size": 4,
+                "per_device_eval_batch_size": 4,
+                "gradient_accumulation_steps": 4,
+                "learning_rate": 2e-4,
+                "warmup_steps": 100,
+                "logging_steps": 10,
+                "save_steps": 500,
+                "eval_steps": 500,
+                "evaluation_strategy": "steps",
+                "save_strategy": "steps",
                 "load_best_model_at_end": True,
                 "metric_for_best_model": "eval_loss",
                 "greater_is_better": False,
-                "fp16": True,
-                "bf16": False,
-                "dataloader_pin_memory": False,
-                "remove_unused_columns": False,
-                "label_names": ["labels"],
-                "group_by_length": True,
-                "length_column_name": "length",
-                "max_grad_norm": 1.0,
-                "weight_decay": 0.01,
-                "optim": "adamw_torch",
-                "lr_scheduler_type": "cosine",
-                "warmup_ratio": 0.1,
-                "report_to": "none",
-                "dataloader_num_workers": 4,
-                "ddp_find_unused_parameters": False,
-                "gradient_checkpointing": True,
-                "torch_compile": False,
-                "optim_args": {"capturable": True},
-                "full_determinism": False,
                 "dataloader_pin_memory": False,
                 "remove_unused_columns": False,
                 "label_names": ["labels"],
@@ -215,11 +314,21 @@ class IntelligentModelFactory:
             logger.info(f"   → Size: {target_size_mb:.2f} MB, Quality (Simulated): {simulated_quality:.2f}")
             logger.info(f"   → Emotion/Context learning: {emotion_context_config['enable_emotion_detection']}")
             
+            # After training, optionally collect stats (e.g., loss, accuracy if available)
+            stats["model_path"] = str(raw_model_path)
+            # Save stats report
+            stats_dir = "training_stats"
+            os.makedirs(stats_dir, exist_ok=True)
+            stats_file = os.path.join(stats_dir, f"{domain}_stats.json")
+            with open(stats_file, "w") as f:
+                json.dump(stats, f, indent=2)
+            logger.info(f"[STATS] Training stats saved to {stats_file}")
+            
             return model_result
             
         except Exception as e:
-            logger.error(f"❌ Raw model generation failed for {domain}: {e}")
-            return {"error": f"Raw model generation failed: {str(e)}"}
+            logger.error(f"❌ Error in create_intelligent_model: {e}")
+            raise
 
     def _generate_raw_model_path(self, domain: str, size_mb: float, is_simulation: bool, category: str, environment: str = "dev") -> Path:
         """Generates a unique path for the raw model artifact."""

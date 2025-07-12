@@ -350,6 +350,28 @@
             margin: 0;
         }
 
+        .d-model-checkbox {
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .d-model-checkbox:hover {
+            background: #e9ecef;
+        }
+
+        .d-model-checkbox.selected {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .d-category-header {
+            font-weight: bold;
+            margin: 10px 0 0 0;
+        }
+
         @media (max-width: 768px) {
             .comparison-grid {
                 grid-template-columns: 1fr;
@@ -399,16 +421,12 @@
 
             <div class="input-group">
                 <label>Select models to compare:</label>
+                <div class="input-group" id="dCategoryGroup" style="display:none; margin-bottom: 10px;">
+                  <label for="dCategorySelect">Select D Category:</label>
+                  <select id="dCategorySelect"></select>
+                </div>
                 <div class="model-selector" id="modelSelector">
-                    <div class="model-checkbox selected" data-model="A_universal_full">
-                        <input type="checkbox" checked> A_universal_full (3.5GB)
-                    </div>
-                    <div class="model-checkbox selected" data-model="B_universal_lite">
-                        <input type="checkbox" checked> B_universal_lite (800MB)
-                    </div>
-                    <div class="model-checkbox selected" data-model="C_category_specific">
-                        <input type="checkbox" checked> C_category_specific (8.3MB)
-                    </div>
+                    <!-- Model checkboxes will be dynamically inserted here by JS -->
                 </div>
             </div>
 
@@ -445,8 +463,112 @@
             llamaCppAvailable: false
         };
 
+        // Populate model selector with available models
+        async function populateModelSelector() {
+            try {
+                const response = await fetch('/api/models');
+                const models = await response.json();
+
+                const selector = document.getElementById('modelSelector');
+                selector.innerHTML = '';
+
+                // Separate A, B, C and D models
+                const abcModels = [];
+                const dModelsByCategory = {};
+
+                Object.entries(models).forEach(([modelKey, model]) => {
+                    if (!model.available) return;
+                    if (modelKey.startsWith('D_')) {
+                        const cat = model.category || 'Other';
+                        if (!dModelsByCategory[cat]) dModelsByCategory[cat] = [];
+                        dModelsByCategory[cat].push({ key: modelKey, ...model });
+                    } else {
+                        abcModels.push({ key: modelKey, ...model });
+                    }
+                });
+
+                // Add A, B, C models first
+                abcModels.forEach(model => {
+                    const div = document.createElement('div');
+                    div.className = 'model-checkbox selected';
+                    div.dataset.model = model.key;
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.checked = true;
+                    div.appendChild(input);
+                    div.appendChild(document.createTextNode(` ${model.key} (${model.file_size})`));
+                    selector.appendChild(div);
+                    div.addEventListener('click', function() {
+                        input.checked = !input.checked;
+                        div.classList.toggle('selected', input.checked);
+                    });
+                });
+
+                // --- D CATEGORY DROPDOWN LOGIC ---
+                const dCategoryGroup = document.getElementById('dCategoryGroup');
+                const dCategorySelect = document.getElementById('dCategorySelect');
+                const dCategories = Object.keys(dModelsByCategory);
+
+                function removeDModelCheckboxes() {
+                    Array.from(selector.querySelectorAll('.d-model-checkbox, .d-category-header')).forEach(el => el.remove());
+                }
+
+                if (dCategories.length > 0) {
+                    dCategoryGroup.style.display = '';
+                    dCategorySelect.innerHTML = '';
+                    dCategories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat;
+                        option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+                        dCategorySelect.appendChild(option);
+                    });
+
+                    // Show models for the selected category
+                    function renderDModelsForCategory(selectedCat) {
+                        removeDModelCheckboxes();
+                        // Add header for D models
+                        const header = document.createElement('div');
+                        header.className = 'd-category-header';
+                        header.style.fontWeight = 'bold';
+                        header.style.margin = '10px 0 0 0';
+                        header.textContent = `D_domain_specific: ${selectedCat}`;
+                        selector.appendChild(header);
+                        // Add D models for selected category
+                        dModelsByCategory[selectedCat].forEach(model => {
+                            const div = document.createElement('div');
+                            div.className = 'model-checkbox selected d-model-checkbox';
+                            div.dataset.model = model.key;
+                            const input = document.createElement('input');
+                            input.type = 'checkbox';
+                            input.checked = true;
+                            div.appendChild(input);
+                            div.appendChild(document.createTextNode(` ${model.key} (${model.file_size})`));
+                            selector.appendChild(div);
+                            div.addEventListener('click', function() {
+                                input.checked = !input.checked;
+                                div.classList.toggle('selected', input.checked);
+                            });
+                        });
+                    }
+
+                    // Initial render
+                    renderDModelsForCategory(dCategories[0]);
+
+                    // Listen for dropdown changes
+                    dCategorySelect.onchange = (e) => {
+                        renderDModelsForCategory(e.target.value);
+                    };
+                } else {
+                    dCategoryGroup.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Failed to fetch models:', error);
+            }
+        }
+
         // Initialize the application
         async function init() {
+            await populateModelSelector();
             updateStatus();
             await checkSystemStatus();
             setupEventListeners();
