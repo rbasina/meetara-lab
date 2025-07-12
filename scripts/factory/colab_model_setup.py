@@ -154,6 +154,18 @@ def setup_llama_cpp():
         
         print("✅ llama.cpp build successful")
         
+        # Auto-create quantize symlink if needed
+        bin_dir = Path("build/bin")
+        llama_quantize = bin_dir / "llama-quantize"
+        quantize = bin_dir / "quantize"
+        if llama_quantize.exists() and not quantize.exists():
+            try:
+                import os
+                os.symlink(str(llama_quantize), str(quantize))
+                print("✅ Created symlink: quantize -> llama-quantize")
+            except Exception as e:
+                print(f"⚠️ Could not create symlink for quantize: {e}")
+        
         # Verify key tools are available
         tools_to_check = [
             "build/bin/llama-quantize",
