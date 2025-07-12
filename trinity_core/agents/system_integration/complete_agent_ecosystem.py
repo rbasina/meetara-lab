@@ -20,7 +20,8 @@ from trinity_core.agents.intelligence_hub import TrinityIntelligenceHub # Correc
 from trinity_core.agents.model_factory import IntelligentModelFactory
 from trinity_core.core_components.domain_integration import (
     get_all_domains,
-    get_domains_for_category
+    get_domains_for_category,
+    get_domain_categories
 )
 
 # Configure logging
@@ -153,11 +154,10 @@ class CompleteAgentEcosystem:
 
         
     def _get_domain_category(self, domain_name: str) -> str:
-        """Helper to get the category for a given domain."""
-        # This is inefficient, but will work for now.
-        # A better implementation would be a new function in domain_integration.py
-        all_domains = get_all_domains()
-        return all_domains.get(domain_name, {}).get('category', 'unknown')
+        for category, domains in get_domain_categories().items():
+            if domain_name in domains:
+                return category
+        raise ValueError(f"Domain '{domain_name}' not found in any category!")
 
 # Global ecosystem instance
 complete_ecosystem = CompleteAgentEcosystem()
