@@ -10,6 +10,7 @@ import sys
 import time
 import subprocess
 from pathlib import Path
+import shutil
 
 def setup_colab_environment():
     """Setup Colab environment and mount Google Drive"""
@@ -71,9 +72,37 @@ def install_requirements():
         print(f"❌ Failed to install requirements: {e}")
         return False
 
+def ensure_llama_cpp():
+    """Ensure llama.cpp is present and valid. Auto-clone if missing or broken."""
+    llama_path = Path("llama.cpp")
+    cmake_file = llama_path / "CMakeLists.txt"
+    if not cmake_file.exists():
+        print("⚠️ llama.cpp/CMakeLists.txt not found. Cloning fresh repo...")
+        if llama_path.exists():
+            print("🧹 Removing broken or partial llama.cpp directory...")
+            shutil.rmtree(llama_path)
+        # Clone official repo
+        import subprocess
+        result = subprocess.run([
+            "git", "clone", "https://github.com/ggerganov/llama.cpp.git", str(llama_path)
+        ], capture_output=True, text=True)
+        if result.returncode == 0:
+            print("✅ llama.cpp cloned successfully!")
+        else:
+            print(f"❌ Failed to clone llama.cpp: {result.stderr}")
+            return False
+    else:
+        print("✅ llama.cpp/CMakeLists.txt found.")
+    return True
+
 def setup_llama_cpp():
     """Setup llama.cpp with CUDA support"""
     print("🔧 Setting up llama.cpp with CUDA support...")
+    
+    # Ensure llama.cpp is present and valid
+    if not ensure_llama_cpp():
+        print("❌ Could not ensure llama.cpp is present and valid.")
+        return False
     
     try:
         # Navigate to llama.cpp directory
@@ -185,7 +214,6 @@ def sync_models_from_drive():
     local_path.mkdir(parents=True, exist_ok=True)
     
     # Copy models from Drive to local
-    import shutil
     copied_count = 0
     
     for model_dir in drive_path.iterdir():
