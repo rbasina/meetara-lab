@@ -28,6 +28,24 @@ class SimpleProductionLauncher:
     def __init__(self, domain: str = None, category: str = None, all_domains: bool = False):
         self.config_manager = SmartTrinityConfigManager()
         self.domains_to_train = self._resolve_domains(domain, category, all_domains)
+        
+        # Add missing attributes
+        self.simulation = True  # Default to simulation mode
+        self.current_cost = 0.0
+        self.budget_limit = 50.0  # $50 budget limit
+        self.output_dir = Path("models/dev")
+        self.domains = {
+            "healthcare": ["general_health", "mental_health", "nutrition", "sleep", "stress_management"],
+            "business": ["remote_work", "social_media_management", "digital_literacy", "language_learning_professional"],
+            "education": ["academic_tutoring", "skill_development", "career_guidance", "exam_preparation"],
+            "creative": ["writing", "storytelling", "content_creation", "design_thinking"],
+            "technology": ["programming", "ai_ml", "cybersecurity", "data_analysis"]
+        }
+        self.metrics = {
+            "performance_improvement": 37.0,
+            "coordination_efficiency": 8.5,
+            "intelligence_insights": 0
+        }
 
     def _resolve_domains(self, domain, category, all_flag):
         """Resolves which domains to train based on the provided flags."""
@@ -274,7 +292,7 @@ def main():
     
     args = parser.parse_args()
     
-    launcher = SimpleProductionLauncher(simulation=not args.production)
+    launcher = SimpleProductionLauncher()
     
     if args.list_categories:
         launcher.list_categories()

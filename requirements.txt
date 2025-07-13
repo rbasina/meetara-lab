@@ -10,4 +10,5 @@ peft
 bitsandbytes
 cmake
 ninja
+numpy==1.26.4
 # ... (other packages as needed)

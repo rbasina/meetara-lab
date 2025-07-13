@@ -18,6 +18,7 @@ import logging
 from trinity_core.agents.trinity_conductor import trinity_conductor
 from trinity_core.agents.intelligence_hub import TrinityIntelligenceHub # Corrected import to class
 from trinity_core.agents.model_factory import IntelligentModelFactory
+from trinity_core.core_components.config_manager import SmartTrinityConfigManager
 from trinity_core.core_components.domain_integration import (
     get_all_domains,
     get_domains_for_category,
@@ -55,7 +56,9 @@ class CompleteAgentEcosystem:
         # --- Initialize Super Agents ---
         self.intelligence_hub = TrinityIntelligenceHub() # Instantiate the class
         self.trinity_conductor = trinity_conductor
-        self.model_factory = IntelligentModelFactory()
+        self.config_manager = SmartTrinityConfigManager()
+        self.model_factory = IntelligentModelFactory(self.config_manager)
+        
         
         logger.info("🚀 Super-Agent-driven Ecosystem initialized")
         logger.info(f"   → Intelligence Hub: ACTIVE")

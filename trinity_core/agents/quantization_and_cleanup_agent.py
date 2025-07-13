@@ -101,7 +101,7 @@ class QuantizationAndCleanupAgent:
             await self._perform_garbage_collection(raw_model_path)
 
             # Step 2: Determine optimal quantization and compression strategy
-            quantization_strategies = ["Q2_K", "Q4_K_M", "Q5_K_M", "Q8_0"]
+            quantization_strategies = ["q8_0", "f16", "bf16"]
             compression_strategy = self._determine_optimal_compression(model_size_mb, domain, architecture_type)
 
             # Step 3: Perform GGUF conversion and quantization for each strategy
@@ -212,19 +212,50 @@ class QuantizationAndCleanupAgent:
 
             if self.llama_cpp_path and self.converter_script.exists() and self.quantize_executable.exists():
                 logger.info(f"Converting {raw_model_path} to GGUF using {self.converter_script} for {quant_strategy}...")
-                # --- Real Conversion Simulation --- #
-                simulated_intermediate_gguf = final_output_dir_base / f"temp_converted_{timestamp}_{quant_strategy}.gguf"
-                with open(simulated_intermediate_gguf, 'wb') as f:
-                    f.write(os.urandom(int(model_size_mb * 0.8 * 1024 * 1024))) # Simulate some size reduction
-                logger.info(f"Simulated conversion to intermediate GGUF for {quant_strategy}: {simulated_intermediate_gguf}")
+                
+                # --- REAL GGUF CONVERSION --- #
+                import subprocess
+                import sys
+                
+                # Step 1: Convert HuggingFace model to GGUF
+                intermediate_gguf = final_output_dir_base / f"temp_converted_{timestamp}_{quant_strategy}.gguf"
+                conversion_cmd = [
+                    sys.executable, str(self.converter_script),
+                    str(raw_model_path),
+                    "--outfile", str(intermediate_gguf),
+                    "--outtype", quant_strategy.lower()
+                ]
+                
+                try:
+                    logger.info(f"Running conversion command: {' '.join(conversion_cmd)}")
+                    result = subprocess.run(conversion_cmd, capture_output=True, text=True, check=True)
+                    logger.info(f"Conversion successful: {result.stdout}")
+                except subprocess.CalledProcessError as e:
+                    logger.error(f"Conversion failed: {e.stderr}")
+                    raise Exception(f"GGUF conversion failed: {e.stderr}")
 
+                # Step 2: Quantize the GGUF file
                 logger.info(f"Quantizing to {quant_strategy} using {self.quantize_executable}...")
-                # --- Real Quantization Simulation --- #
-                shutil.copy(simulated_intermediate_gguf, final_gguf_path)
-                with open(final_gguf_path, 'wb') as f:
-                    f.write(os.urandom(int(model_size_mb * 0.5 * 1024 * 1024))) # Simulate further size reduction
-                logger.info(f"Simulated quantization complete for {quant_strategy}. Final GGUF: {final_gguf_path}")
-                os.remove(simulated_intermediate_gguf) # Clean up intermediate
+                quantization_cmd = [
+                    str(self.quantize_executable),
+                    str(intermediate_gguf),
+                    str(final_gguf_path),
+                    quant_strategy
+                ]
+                
+                try:
+                    logger.info(f"Running quantization command: {' '.join(quantization_cmd)}")
+                    result = subprocess.run(quantization_cmd, capture_output=True, text=True, check=True)
+                    logger.info(f"Quantization successful: {result.stdout}")
+                except subprocess.CalledProcessError as e:
+                    logger.error(f"Quantization failed: {e.stderr}")
+                    raise Exception(f"GGUF quantization failed: {e.stderr}")
+                
+                # Clean up intermediate file
+                if intermediate_gguf.exists():
+                    os.remove(intermediate_gguf)
+                
+                logger.info(f"Real GGUF conversion and quantization complete for {quant_strategy}. Final GGUF: {final_gguf_path}")
 
             else:
                 logger.warning(f"⚠️ LLaMA.cpp tools not fully available. Simulating GGUF creation for {quant_strategy}.")

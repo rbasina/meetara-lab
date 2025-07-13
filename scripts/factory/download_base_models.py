@@ -20,12 +20,15 @@ logger = logging.getLogger(__name__)
 
 # Base models from your config (corrected names)
 BASE_MODELS = [
-    "HuggingFaceTB/SmolLM2-1.7B",
-    "microsoft/Phi-3.5-mini-instruct", 
-    "Qwen/Qwen2.5-7B-Instruct",
     "microsoft/Phi-3-medium-4k-instruct",
-    "Qwen/Qwen2.5-14B-Instruct"
 ]
+
+#    "Qwen/Qwen2.5-14B-Instruct",
+#    "microsoft/Phi-3-mini-4k-instruct",
+#    "Qwen/Qwen2.5-7B-Instruct",
+#    "microsoft/Phi-3.5-mini-instruct",
+#    "HuggingFaceTB/SmolLM2-1.7B", 
+
 
 class BaseModelDownloader:
     """Downloads and manages base models with real HuggingFace downloads"""
