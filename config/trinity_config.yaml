@@ -310,3 +310,4 @@ domain_config:
 paths:
   data_training_base_dir: data
   data_trained_base_dir: data
+llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp

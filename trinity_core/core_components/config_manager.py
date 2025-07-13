@@ -131,30 +131,34 @@ class SmartTrinityConfigManager:
                 
                 # Handle both string and dict domain entries
                 if isinstance(domain_entry, str):
-                    # If domain entry is a string (base model), create a dict
-                    domain_entry = {"base_model": domain_entry}
-                elif domain_entry is None:
-                    domain_entry = {}
+                    # If domain entry is a string (base model), use it directly
+                    base_model = domain_entry
+                elif isinstance(domain_entry, dict):
+                    # If domain entry is a dict, get base_model from it
+                    base_model = domain_entry.get('base_model', category_config.get('base_model'))
+                else:
+                    # Fallback to category base model
+                    base_model = category_config.get('base_model')
                 
-                logging.debug(f"ConfigManager: Found domain '{domain_name}' in category '{category_name}'. Entry: {domain_entry}")
+                if not base_model:
+                    raise ValueError(f"Configuration error: No base model found for domain '{domain_name}' in category '{category_name}'.")
+                
+                logging.debug(f"ConfigManager: Found domain '{domain_name}' in category '{category_name}'. Base model: {base_model}")
 
-                # Determine tier_name from domain_entry or category_config
-                tier_name = domain_entry.get('category_tier', category_config.get('category_tier'))
+                # Determine tier_name from category_config
+                tier_name = category_config.get('category_tier')
 
                 if not tier_name:
-                    raise ValueError(f"Configuration error: Model tier not specified for domain '{domain_name}' or its category '{category_name}'.")
-
-                # Now, use the tier_name to get the base_model_suggestion from model_tiers
-                tier_config = self._model_tiers.get(tier_name)
-                if not tier_config or 'base_model_suggestion' not in tier_config:
-                    raise ValueError(f"Configuration error: 'base_model_suggestion' not found for tier '{tier_name}'.")
-                
-                base_model = tier_config['base_model_suggestion']
+                    raise ValueError(f"Configuration error: Model tier not specified for category '{category_name}'.")
 
                 # Retrieve generate_synthetic_data with fallback hierarchy
-                generate_synthetic = domain_entry.get('generate_synthetic_data', 
-                                                    category_config.get('generate_synthetic_data', 
-                                                                        self._global_params.get('generate_synthetic_data', False)))
+                if isinstance(domain_entry, dict):
+                    generate_synthetic = domain_entry.get('generate_synthetic_data', 
+                        category_config.get('generate_synthetic_data', 
+                            self._global_params.get('generate_synthetic_data', False)))
+                else:
+                    generate_synthetic = category_config.get('generate_synthetic_data', 
+                        self._global_params.get('generate_synthetic_data', False))
 
                 self._domain_cache[domain_name] = {
                     'base_model': base_model,
