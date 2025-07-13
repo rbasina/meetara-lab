@@ -1,6 +1,0 @@
-{
-  "domain": "shopping",
-  "config_path": "config/trinity_config.yaml",
-  "base_model": "microsoft/DialoGPT-small",
-  "model_path": "data\\dev\\trained\\daily_life"
-}
