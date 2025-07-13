@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # NOTE: The direct imports from domain_integration are removed as we now use the manager.
-from .model_factory import model_factory
+from .model_factory import get_model_factory_singleton
 from .quantization_and_cleanup_agent import quantization_and_cleanup_agent
 from .intelligence_hub import TrinityIntelligenceHub
 from trinity_core.core_components.config_manager import SmartTrinityConfigManager
@@ -147,12 +147,12 @@ class TrinityPrimaryConductor:
         }
         
         # Instantiate the agents it needs to conduct
-        self.model_factory = model_factory
+        self.model_factory = get_model_factory_singleton()  # This now uses the properly initialized singleton
         self.intelligence_hub = TrinityIntelligenceHub(self.config_manager, environment="dev")  # Default to dev
         self.data_generator = self.intelligence_hub.data_generator
         self.knowledge_transfer = self.intelligence_hub.knowledge_transfer
         self.quantization_cleanup_agent = QuantizationAndCleanupAgent() # Corrected class name
-        self.config_manager = SmartTrinityConfigManager()
+        # Remove duplicate config_manager initialization since it's already done above
         
         logger.info(f"🎯 Trinity Conductor initialized for {len(self.all_domains)} domains")
         logger.info(f"   → Intelligent batching: {sum(config['parallel_capacity'] for config in self.batch_config.values())} parallel capacity")
@@ -349,6 +349,15 @@ class TrinityPrimaryConductor:
         try:
             # Get domain configuration
             domain_details = self.config_manager._get_domain_details(domain)
+            if domain_details is None:
+                logger.error(f"❌ Could not get domain details for '{domain}' - domain not found in configuration")
+                return {
+                    "status": "error",
+                    "domain": domain,
+                    "error": f"Domain '{domain}' not found in configuration",
+                    "processing_time": time.time() - start_time
+                }
+            
             base_model = domain_details.get('base_model', 'microsoft/Phi-3.5-mini-instruct')
             tier_name = domain_details.get('tier_name', 'balanced')
             
@@ -385,12 +394,12 @@ class TrinityPrimaryConductor:
             
             model_result = await self.model_factory.create_intelligent_model(model_request)
             
-            if model_result.get("error"):
-                logger.error(f"❌ Model creation failed for {domain}: {model_result.get('error')}")
+            if not model_result or not isinstance(model_result, dict) or model_result.get("error"):
+                logger.error(f"❌ Model factory returned invalid or error result for {domain}: {model_result}")
                 return {
                     "status": "error",
                     "domain": domain,
-                    "error": f"Model creation failed: {model_result.get('error')}",
+                    "error": f"Model factory error: {model_result.get('error') if isinstance(model_result, dict) else model_result}",
                     "processing_time": time.time() - start_time
                 }
             

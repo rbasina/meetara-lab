@@ -3824,6 +3824,15 @@ class TrinityDataGenerator:
         try:
             # Get domain configuration
             domain_details = self.config_manager._get_domain_details(domain)
+            if domain_details is None:
+                logger.error(f"❌ Could not get domain details for '{domain}' - domain not found in configuration")
+                return {
+                    "status": "error",
+                    "domain": domain,
+                    "error": f"Domain '{domain}' not found in configuration",
+                    "processing_time": time.time() - start_time
+                }
+            
             category = domain_details.get('category', 'general')
             
             # Initialize domain expert agent for enhanced data generation

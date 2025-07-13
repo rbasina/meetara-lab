@@ -127,11 +127,14 @@ def setup_llama_cpp():
             print("⚠️ PyTorch not available, proceeding with CPU compilation")
             cuda_available = False
         
+        # Clean the build directory to avoid stale CMake cache
+        build_dir = Path("build")
+        if build_dir.exists():
+            shutil.rmtree(build_dir)
+
         # Configure CMake with CUDA support
-        cmake_cmd = ["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release"]
-        
+        cmake_cmd = ["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release", "-DGGML_CUDA=ON"]
         if cuda_available:
-            cmake_cmd.extend(["-DLLAMA_CUBLAS=ON", "-DLLAMA_CUDA=ON"])
             print("🔧 Configuring with CUDA support...")
         else:
             print("🔧 Configuring CPU-only version...")
@@ -143,9 +146,12 @@ def setup_llama_cpp():
         
         print("✅ CMake configuration successful")
         
-        # Build llama.cpp
-        print("🔨 Building llama.cpp...")
-        build_cmd = ["cmake", "--build", "build", "--config", "Release", "-j"]
+        # Build llama.cpp (only essential tools for training)
+        print("🔨 Building llama.cpp (essential tools only)...")
+        build_cmd = [ "cmake", "--build", "build", 
+                     "--target", "llama-quantize", 
+                     "--config", "Release", "-j"
+        ]
         result = subprocess.run(build_cmd, capture_output=True, text=True)
         
         if result.returncode != 0:
@@ -168,7 +174,6 @@ def setup_llama_cpp():
         # Verify key tools are available
         tools_to_check = [
             "build/bin/llama-quantize",
-            "build/bin/llama-server",
             "convert_hf_to_gguf.py"
         ]
         
@@ -268,7 +273,6 @@ def verify_setup():
     # Check llama.cpp tools
     llama_tools = [
         "llama.cpp/build/bin/llama-quantize",
-        "llama.cpp/build/bin/llama-server",
         "llama.cpp/convert_hf_to_gguf.py"
     ]
     
