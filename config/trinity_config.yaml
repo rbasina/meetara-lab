@@ -179,7 +179,7 @@ domain_config:
       personal_assistant: Qwen/Qwen2.5-7B-Instruct
       communication: microsoft/Phi-3.5-mini-instruct
       home_management: microsoft/Phi-3.5-mini-instruct
-      shopping: HuggingFaceTB/SmolLM2-1.7B
+      shopping: microsoft/Phi-3.5-mini-instruct
       planning: Qwen/Qwen2.5-7B-Instruct
       transportation: microsoft/Phi-3.5-mini-instruct
       time_management: Qwen/Qwen2.5-7B-Instruct
@@ -225,7 +225,7 @@ domain_config:
       design_thinking: microsoft/Phi-3-medium-4k-instruct
       photography: microsoft/Phi-3.5-mini-instruct
       music: microsoft/Phi-3.5-mini-instruct
-      art_appreciation: HuggingFaceTB/SmolLM2-1.7B
+      art_appreciation: microsoft/Phi-3.5-mini-instruct
       mythology: microsoft/Phi-3-medium-4k-instruct
       spiritual: microsoft/Phi-3-medium-4k-instruct
   psychology_wellness:
@@ -311,3 +311,17 @@ paths:
   data_training_base_dir: data
   data_trained_base_dir: data
 llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp
+
+model_type_map:
+  microsoft/Phi-3.5-mini-instruct:
+    model_type: phi3
+    architecture: Phi3ForCausalLM
+  microsoft/Phi-3-medium-4k-instruct:
+    model_type: phi3
+    architecture: Phi3ForCausalLM
+  Qwen/Qwen2.5-7B-Instruct:
+    model_type: qwen2
+    architecture: Qwen2ForCausalLM
+  Qwen/Qwen2.5-14B-Instruct:
+    model_type: qwen2
+    architecture: Qwen2ForCausalLM

@@ -101,12 +101,19 @@ class QuantizationAndCleanupAgent:
             await self._perform_garbage_collection(raw_model_path)
 
             # Step 2: Determine optimal quantization and compression strategy
-            quantization_strategies = ["q8_0", "f16", "bf16"]
+            quantization_strategies = ["q8_0", "f16", "bf16"]  # Only supported types
             compression_strategy = self._determine_optimal_compression(model_size_mb, domain, architecture_type)
 
             # Step 3: Perform GGUF conversion and quantization for each strategy
+            # Fix: raw_model_path should be a directory, not a file
+            raw_model_dir = Path(raw_model_path)
+            if raw_model_dir.is_file():
+                # If it's a file, use the parent directory
+                raw_model_dir = raw_model_dir.parent
+                logger.info(f"🔄 Adjusted path from file to directory: {raw_model_path} → {raw_model_dir}")
+            
             final_gguf_paths = await self._perform_gguf_conversion_and_quantization(
-                raw_model_path, domain, quantization_strategies, compression_strategy, model_size_mb, architecture_type, is_simulation
+                str(raw_model_dir), domain, quantization_strategies, compression_strategy, model_size_mb, architecture_type, is_simulation
             )
 
             # Step 4: Enhanced GGUF validation with llama.cpp
@@ -158,12 +165,12 @@ class QuantizationAndCleanupAgent:
         Determines the optimal quantization strategy based on model size, domain, architecture, and configured defaults.
         """
         global_params = self.config_manager.get_config_dict().get("global_tara_params", {})
-        default_quant_strategy = global_params.get("output_format", "Q4_K_M") # Default from config
+        default_quant_strategy = global_params.get("output_format", "q8_0") # Default from config - use supported type
 
         if "universal" in architecture_type.lower():
             return default_quant_strategy # Consistent for universal models from config
         elif model_size_mb < 50:
-            return "Q2_K" # More aggressive for smaller models, can be overridden by specific config
+            return "q8_0" # Use supported type instead of Q2_K
         else:
             return default_quant_strategy # Balanced for domain-specific, default from config
 
@@ -296,11 +303,11 @@ class QuantizationAndCleanupAgent:
                     await asyncio.sleep(0.5)
                     
                     # Simulate different validation scenarios
-                    if "Q4_K_M" in str(gguf_path):
+                    if "q8_0" in str(gguf_path):
                         validation_status = "passed"
                         validation_score = 0.98
                         load_time = 2.5
-                    elif "Q2_K" in str(gguf_path):
+                    elif "f16" in str(gguf_path):
                         validation_status = "passed"
                         validation_score = 0.95
                         load_time = 1.8

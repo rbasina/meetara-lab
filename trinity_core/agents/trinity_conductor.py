@@ -368,22 +368,19 @@ class TrinityPrimaryConductor:
             # Step 1: Generate intelligent training data with emotion/context learning
             logger.info(f"📊 Step 1: Generating intelligent training data for {domain}")
             data_result = self.data_generator.generate_domain_data(domain, samples_per_domain=5000)
-            
-            if data_result.get("status") == "error":
-                logger.error(f"❌ Data generation failed for {domain}: {data_result.get('error')}")
-                return {
-                    "status": "error",
-                    "domain": domain,
-                    "error": f"Data generation failed: {data_result.get('error')}",
-                    "processing_time": time.time() - start_time
-                }
-            
+            conversations = data_result.get("conversations", [])
+            if not conversations and data_result.get("output_path"):
+                # Fallback: load from file if not present in result
+                import json as _json
+                with open(data_result["output_path"], "r", encoding="utf-8") as f:
+                    file_data = _json.load(f)
+                    conversations = file_data.get("conversations", [])
             # Step 2: Create intelligent model with LoRA integration
             logger.info(f"🧠 Step 2: Creating intelligent model for {domain}")
             model_request = {
                 "domain": domain,
                 "category": category,
-                "training_data": data_result.get("conversations", []),
+                "training_data": conversations,
                 "simulation": simulation,
                 "generate_synthetic": generate_synthetic,
                 "target_size_mb": 8.3,  # Target GGUF size
