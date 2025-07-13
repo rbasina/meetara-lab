@@ -3862,62 +3862,47 @@ class TrinityDataGenerator:
             
             # Generate multiple real-time scenarios with crisis intervention
             realtime_conversations = []
-            realtime_emotions = []
-            realtime_contexts = []
-            realtime_urgency = []
-            
             num_realtime = max(1, int(samples_per_domain * realtime_ratio))
             for _ in range(num_realtime):
                 conv_data = self._generate_realtime_conversation(domain, urgent_starters, domain_expert)
-                realtime_conversations.extend(conv_data.get('conversations', []))
-                realtime_emotions.extend(conv_data.get('emotion_labels', []))
-                realtime_contexts.extend(conv_data.get('context_labels', []))
-                realtime_urgency.extend(conv_data.get('urgency_scores', []))
+                for conv, emotion, context, urgency in zip(
+                    conv_data.get('conversations', []),
+                    conv_data.get('emotion_labels', []),
+                    conv_data.get('context_labels', []),
+                    conv_data.get('urgency_scores', [])
+                ):
+                    conv['emotion_label'] = emotion
+                    conv['context_label'] = context
+                    conv['urgency_score'] = urgency
+                    realtime_conversations.append(conv)
             
-            realtime_data = {
-                'conversations': realtime_conversations,
-                'emotion_labels': realtime_emotions,
-                'context_labels': realtime_contexts,
-                'urgency_scores': realtime_urgency
-            }
             
             # Generate multiple general scenarios with emotional intelligence
             general_conversations = []
-            general_emotions = []
-            general_contexts = []
-            general_urgency = []
-            
             num_general = max(1, samples_per_domain - len(realtime_conversations))
             for _ in range(num_general):
                 conv_data = self._generate_general_conversation(domain, general_starters, domain_expert)
-                general_conversations.extend(conv_data.get('conversations', []))
-                general_emotions.extend(conv_data.get('emotion_labels', []))
-                general_contexts.extend(conv_data.get('context_labels', []))
-                general_urgency.extend(conv_data.get('urgency_scores', []))
-            
-            general_data = {
-                'conversations': general_conversations,
-                'emotion_labels': general_emotions,
-                'context_labels': general_contexts,
-                'urgency_scores': general_urgency
-            }
+                for conv, emotion, context, urgency in zip(
+                    conv_data.get('conversations', []),
+                    conv_data.get('emotion_labels', []),
+                    conv_data.get('context_labels', []),
+                    conv_data.get('urgency_scores', [])
+                ):
+                    conv['emotion_label'] = emotion
+                    conv['context_label'] = context
+                    conv['urgency_score'] = urgency
+                    general_conversations.append(conv)
             
             # Combine all data with intelligent routing
-            conversations = realtime_data.get('conversations', []) + general_data.get('conversations', [])
-            emotion_labels = realtime_data.get('emotion_labels', []) + general_data.get('emotion_labels', [])
-            context_labels = realtime_data.get('context_labels', []) + general_data.get('context_labels', [])
-            urgency_scores = realtime_data.get('urgency_scores', []) + general_data.get('urgency_scores', [])
-            
+            conversations = realtime_conversations + general_conversations
+           
             combined_data = {
                 "domain": domain,
                 "category": category,
                 "total_samples": len(conversations),
-                "realtime_samples": len(realtime_data.get('conversations', [])),
-                "general_samples": len(general_data.get('conversations', [])),
+                "realtime_samples": len(realtime_conversations),
+                "general_samples": len(general_conversations),
                 "conversations": conversations,
-                "emotion_labels": emotion_labels,
-                "context_labels": context_labels,
-                "urgency_scores": urgency_scores,
                 "trinity_enhancements": {
                     "crisis_intervention": domain_config.get('crisis_intervention', False),
                     "emotional_intelligence": domain_config.get('emotional_intelligence', True),
@@ -3928,9 +3913,9 @@ class TrinityDataGenerator:
                 },
                 "quality_metrics": {
                     "diversity_score": self._calculate_diversity_score(conversations),
-                    "emotion_coverage": self._calculate_emotion_coverage(emotion_labels),
-                    "context_coverage": self._calculate_context_coverage(context_labels),
-                    "urgency_distribution": self._calculate_urgency_distribution(urgency_scores)
+                    "emotion_coverage": self._calculate_emotion_coverage([c.get('emotion_label') for c in conversations]),
+                    "context_coverage": self._calculate_context_coverage([c.get('context_label') for c in conversations]),
+                    "urgency_distribution": self._calculate_urgency_distribution([c.get('urgency_score') for c in conversations])
                 }
             }
             
