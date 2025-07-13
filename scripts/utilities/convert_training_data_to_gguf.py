@@ -661,7 +661,7 @@ class IntelligentGGUFAgent:
             with open(gguf_path, 'wb') as f:
                 # Write GGUF magic number and version
                 f.write(b'GGUF')
-                f.write((4).to_bytes(4, 'little'))  # Version 4.0
+                f.write((3).to_bytes(4, 'little'))  # Version 3.0 (llama.cpp compatible)
                 
                 # Write compressed metadata
                 metadata_json = json.dumps(metadata, separators=(',', ':')).encode('utf-8')
