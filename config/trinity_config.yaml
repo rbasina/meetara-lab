@@ -179,7 +179,7 @@ domain_config:
       personal_assistant: Qwen/Qwen2.5-7B-Instruct
       communication: microsoft/Phi-3.5-mini-instruct
       home_management: microsoft/Phi-3.5-mini-instruct
-      shopping: microsoft/Phi-3.5-mini-instruct
+      shopping: microsoft/DialoGPT-small
       planning: Qwen/Qwen2.5-7B-Instruct
       transportation: microsoft/Phi-3.5-mini-instruct
       time_management: Qwen/Qwen2.5-7B-Instruct
@@ -316,12 +316,50 @@ model_type_map:
   microsoft/Phi-3.5-mini-instruct:
     model_type: phi3
     architecture: Phi3ForCausalLM
+    vocab_size: 32000
+    hidden_size: 3072
+    num_attention_heads: 24
+    num_hidden_layers: 24
+    intermediate_size: 8192
+    max_position_embeddings: 4096
+    n_ctx: 4096
   microsoft/Phi-3-medium-4k-instruct:
     model_type: phi3
     architecture: Phi3ForCausalLM
+    vocab_size: 32000
+    hidden_size: 3072
+    num_attention_heads: 24
+    num_hidden_layers: 24
+    intermediate_size: 8192
+    max_position_embeddings: 4096
+    n_ctx: 4096
   Qwen/Qwen2.5-7B-Instruct:
     model_type: qwen2
     architecture: Qwen2ForCausalLM
+    vocab_size: 32000
+    hidden_size: 4096
+    num_attention_heads: 32
+    num_hidden_layers: 32
+    intermediate_size: 11008
+    max_position_embeddings: 32768
+    n_ctx: 32768
   Qwen/Qwen2.5-14B-Instruct:
     model_type: qwen2
     architecture: Qwen2ForCausalLM
+    vocab_size: 32000
+    hidden_size: 4096
+    num_attention_heads: 32
+    num_hidden_layers: 32
+    intermediate_size: 11008
+    max_position_embeddings: 32768
+    n_ctx: 32768
+  microsoft/DialoGPT-small:
+    model_type: gpt2
+    architecture: GPT2LMHeadModel
+    vocab_size: 50257
+    hidden_size: 768
+    num_attention_heads: 12
+    num_hidden_layers: 12
+    intermediate_size: 3072
+    max_position_embeddings: 1024
+    n_ctx: 1024

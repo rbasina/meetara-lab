@@ -367,7 +367,7 @@ class TrinityPrimaryConductor:
             
             # Step 1: Generate intelligent training data with emotion/context learning
             logger.info(f"📊 Step 1: Generating intelligent training data for {domain}")
-            data_result = self.data_generator.generate_domain_data(domain, samples_per_domain=5000)
+            data_result = self.data_generator.generate_domain_data(domain, samples_per_domain=200)
             conversations = data_result.get("conversations", [])
             if not conversations and data_result.get("output_path"):
                 # Fallback: load from file if not present in result

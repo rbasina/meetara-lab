@@ -243,12 +243,12 @@ class IntelligentModelFactory:
                     
                     # For Phi-3 models, use specific memory configuration
                     if "phi-3" in base_model.lower():
-                        # Use automatic memory allocation for Phi-3
+                        # Load with real weights, not meta tensors
                         model = AutoModelForCausalLM.from_pretrained(
                             base_model,
                             torch_dtype=torch.float16,
-                            device_map="auto",
-                            low_cpu_mem_usage=True,
+                            device_map=None,  # Don't use auto device mapping
+                            low_cpu_mem_usage=False,  # Ensure full model loading
                             trust_remote_code=True
                         )
                     else:
@@ -256,8 +256,8 @@ class IntelligentModelFactory:
                         model = AutoModelForCausalLM.from_pretrained(
                             base_model,
                             torch_dtype=torch.float16,
-                            device_map="auto",
-                            low_cpu_mem_usage=True
+                            device_map=None,  # Don't use auto device mapping
+                            low_cpu_mem_usage=False  # Ensure full model loading
                         )
                     
                     model_time = time.time() - model_start
@@ -342,7 +342,7 @@ class IntelligentModelFactory:
                 "optim": "adamw_torch",
                 "lr_scheduler_type": "cosine",
                 "warmup_ratio": 0.1,
-                "report_to": "none",
+                "report_to": [],
                 "dataloader_num_workers": 4,
                 "ddp_find_unused_parameters": False,
                 "gradient_checkpointing": True,
@@ -372,12 +372,14 @@ class IntelligentModelFactory:
             raw_model_path = self._generate_raw_model_path(domain, target_size_mb, is_simulation, category, request.get("environment", "dev")) # Pass environment parameter
             raw_model_path.parent.mkdir(parents=True, exist_ok=True)
             
-            # REAL MODEL TRAINING - Replace placeholder with actual training
             if is_simulation:
                 # Simulation mode: Create placeholder file
                 with open(raw_model_path, 'wb') as f:
                     f.write(os.urandom(int(target_size_mb * 1024 * 1024))) # Create a dummy file of target size
                 logger.info(f"🔧 SIMULATION MODE: Created placeholder model for {domain}")
+                # Always create HuggingFace format directory in simulation mode (dev folder)
+                self._create_huggingface_format_model(domain, base_model, raw_model_path.parent, target_size_mb, is_placeholder=True)
+                raw_model_path = raw_model_path.parent
             else:
                 # PRODUCTION MODE: Real model training
                 logger.info(f"🚀 PRODUCTION MODE: Starting real model training for {domain}")
@@ -389,8 +391,9 @@ class IntelligentModelFactory:
                         model = AutoModelForCausalLM.from_pretrained(
                             base_model,
                             torch_dtype=torch.float16,
-                            device_map="auto" if torch.cuda.is_available() else None,
-                            trust_remote_code=True
+                            device_map=None,  # Don't use auto device mapping for training
+                            trust_remote_code=True,
+                            low_cpu_mem_usage=False  # Ensure full model loading
                         )
                         self.model_cache[base_model] = model
                     else:
@@ -463,18 +466,62 @@ class IntelligentModelFactory:
                             # Create dataset and tokenize it properly
                             dataset = Dataset.from_list(formatted_data)
                             
-                            # Tokenize the dataset for causal language modeling
+                            # Universal tokenizer handling - works for any base model
+                            logger.info(f"🔧 Loading tokenizer: {base_model}")
+                            tokenizer_start = time.time()
+                            
+                            # Load tokenizer from base model (downloads if needed, uses cache if available)
+                            tokenizer = AutoTokenizer.from_pretrained(base_model)
+                            
+                            # Universal padding token configuration (no model-specific logic)
+                            if tokenizer.pad_token is None:
+                                if tokenizer.eos_token is not None:
+                                    tokenizer.pad_token = tokenizer.eos_token
+                                    logger.info(f"✅ Auto-configured tokenizer: pad_token={tokenizer.pad_token}")
+                                else:
+                                    # Fallback: add a new pad token
+                                    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+                                    logger.info(f"✅ Added new pad token: [PAD]")
+                            
+                            tokenizer_load_time = time.time() - tokenizer_start
+                            logger.info(f"✅ Tokenizer loaded in {tokenizer_load_time:.2f}s")
+                            
+                            # Cache the tokenizer for future use
+                            self.tokenizer_cache[base_model] = tokenizer
+                            logger.info(f"💾 Tokenizer cached for future reuse: {base_model}")
+                            
+                            # Universal tokenizer configuration - works for all model types
+                            if tokenizer.pad_token is None:
+                                tokenizer.pad_token = tokenizer.eos_token
+                            logger.info(f"✅ Auto-configured tokenizer: pad_token={tokenizer.pad_token}")
+                            
+                            # Tokenize the dataset
                             def tokenize_function(examples):
-                                # Tokenize the text data for causal LM
+                                # Universal tokenization - works with any tokenizer
                                 tokenized = tokenizer(
                                     examples["text"],
                                     truncation=True,
-                                    padding="max_length",  # Use max_length padding
+                                    padding=True,
                                     max_length=512,
-                                    return_tensors=None  # Don't return tensors, let the dataset handle it
+                                    return_tensors=None  # Let dataset handle tensors
                                 )
-                                # For causal LM, we need to create labels (same as input_ids)
-                                tokenized["labels"] = tokenized["input_ids"].copy()
+                                
+                                # Create labels for causal LM (same as input_ids)
+                                # Universal handling for any tokenizer output format
+                                input_ids = tokenized["input_ids"]
+                                if isinstance(input_ids, list):
+                                    # Handle list of lists case
+                                    if input_ids and isinstance(input_ids[0], list):
+                                        tokenized["labels"] = [ids[:] for ids in input_ids]
+                                    else:
+                                        tokenized["labels"] = input_ids[:]
+                                elif hasattr(input_ids, 'copy'):
+                                    # Handle tensor case
+                                    tokenized["labels"] = input_ids.copy()
+                                else:
+                                    # Fallback: create new list
+                                    tokenized["labels"] = list(input_ids)
+                                
                                 return tokenized
                             
                             # Apply tokenization to the dataset
@@ -484,35 +531,87 @@ class IntelligentModelFactory:
                             # Configure training arguments
                             from transformers import TrainingArguments, Trainer
                             
+                            # Calculate total steps based on dataset size
+                            total_samples = len(dataset)
+                            effective_batch_size = training_config.get("per_device_train_batch_size", 1) * training_config.get("gradient_accumulation_steps", 8)
+                            max_steps = max(1, total_samples // effective_batch_size)
+                            
+                            logger.info(f"📊 Training configuration:")
+                            logger.info(f"   → Total samples: {total_samples}")
+                            logger.info(f"   → Batch size: {training_config.get('per_device_train_batch_size', 1)}")
+                            logger.info(f"   → Gradient accumulation: {training_config.get('gradient_accumulation_steps', 8)}")
+                            logger.info(f"   → Effective batch size: {effective_batch_size}")
+                            logger.info(f"   → Max steps: {max_steps}")
+                            
                             training_args = TrainingArguments(
                                 output_dir=str(raw_model_path.parent),
                                 num_train_epochs=1,  # Single epoch for domain adaptation
-                                per_device_train_batch_size=2,  # Conservative batch size
-                                gradient_accumulation_steps=4,
-                                learning_rate=5e-5,
-                                warmup_steps=100,
-                                logging_steps=10,
-                                save_steps=500,
-                                save_strategy="epoch",
+                                max_steps=max_steps,  # Explicitly set max steps
+                                per_device_train_batch_size=training_config.get("per_device_train_batch_size", 1),
+                                gradient_accumulation_steps=training_config.get("gradient_accumulation_steps", 8),
+                                learning_rate=training_config.get("learning_rate", 5e-5),
+                                warmup_steps=min(50, max_steps // 4),  # Reduced warmup
+                                logging_steps=max(1, max_steps // 10),  # More frequent logging
+                                save_steps=max_steps,  # Save at the end
+                                save_strategy="steps",
                                 load_best_model_at_end=False,
-                                report_to=None,  # Disable wandb/tensorboard
+                                report_to=[],  # Disable wandb/tensorboard
                                 remove_unused_columns=False,
                                 dataloader_pin_memory=False,
+                                dataloader_num_workers=0,  # Disable multiprocessing
+                                fp16=False,  # Disable mixed precision for stability
+                                bf16=False,  # Disable bfloat16
+                                max_grad_norm=1.0,  # Gradient clipping
+                                logging_dir=str(raw_model_path.parent / "logs"),
+                                save_total_limit=1,  # Keep only best model
+                                push_to_hub=False,  # Disable hub pushing
                             )
                             
-                            # Enhanced memory management for Phi-3 models
-                            if "phi-3" in base_model.lower():
-                                # Ensure model is on the correct device before training
-                                if torch.cuda.is_available():
-                                    model = model.cuda()
-                                else:
-                                    model = model.cpu()
-                                
-                                # Disable offloading for training
-                                training_args.dataloader_pin_memory = False
-                                training_args.remove_unused_columns = False
+                            # Universal memory management - works for all model types
+                            if torch.cuda.is_available():
+                                model = model.cuda()
+                            else:
+                                model = model.cpu()
+                            logger.info(f"✅ Auto-configured memory management for universal model")
                             
-                            # Create trainer
+                            # Add LoRA configuration for training
+                            lora_applied = False
+                            try:
+                                from peft import LoraConfig, get_peft_model, TaskType
+                                
+                                # Universal LoRA target modules - works for all model architectures
+                                # Universal LoRA target modules - comprehensive coverage for all architectures
+                                target_modules = [
+                                    "q_proj", "k_proj", "v_proj", "o_proj", 
+                                    "gate_proj", "up_proj", "down_proj", 
+                                    "c_attn", "c_proj", "c_fc", "dense",
+                                    "query_key_value", "dense_h_to_4h", "dense_4h_to_h",
+                                    "attention", "mlp", "self_attn"
+                                ]
+                                
+                                # Configure LoRA
+                                lora_config_peft = LoraConfig(
+                                    task_type=TaskType.CAUSAL_LM,
+                                    inference_mode=False,
+                                    r=lora_config["r"],
+                                    lora_alpha=lora_config["lora_alpha"],
+                                    lora_dropout=lora_config["lora_dropout"],
+                                    target_modules=target_modules
+                                )
+                                
+                                # Apply LoRA to the model
+                                model = get_peft_model(model, lora_config_peft)
+                                lora_applied = True
+                                logger.info(f"✅ Auto-applied LoRA to {model_type} model: r={lora_config['r']}, alpha={lora_config['lora_alpha']}")
+                                
+                            except ImportError:
+                                logger.warning("⚠️ PEFT not available, training without LoRA")
+                            except Exception as lora_error:
+                                logger.warning(f"⚠️ LoRA setup failed: {lora_error}, training without LoRA")
+                                # Ensure model is in training mode even without LoRA
+                                model.train()
+                            
+                            # Create trainer with better error handling
                             trainer = Trainer(
                                 model=model,
                                 args=training_args,
@@ -522,12 +621,87 @@ class IntelligentModelFactory:
                             
                             # Train the model
                             logger.info(f"🎯 Starting real training for {domain}...")
-                            trainer.train()
+                            try:
+                                # Clear memory before training
+                                if torch.cuda.is_available():
+                                    torch.cuda.empty_cache()
+                                gc.collect()
+                                
+                                # Add timeout and progress tracking
+                                import signal
+                                import threading
+                                import time
+                                
+                                # Set a timeout for training (30 minutes max)
+                                training_timeout = 1800  # 30 minutes
+                                
+                                def timeout_handler(signum, frame):
+                                    raise TimeoutError(f"Training timeout after {training_timeout} seconds")
+                                
+                                # Set up timeout signal (only on Unix systems)
+                                if hasattr(signal, 'SIGALRM'):
+                                    signal.signal(signal.SIGALRM, timeout_handler)
+                                    signal.alarm(training_timeout)
+                                
+                                # Start training with progress tracking
+                                logger.info(f"⏱️ Training timeout set to {training_timeout} seconds")
+                                logger.info(f"📊 Expected steps: {max_steps}")
+                                
+                                start_time = time.time()
+                                trainer.train()
+                                training_duration = time.time() - start_time
+                                
+                                # Cancel timeout
+                                if hasattr(signal, 'SIGALRM'):
+                                    signal.alarm(0)
+                                
+                                logger.info(f"✅ Training completed in {training_duration:.2f} seconds")
+                                
+                            except TimeoutError as timeout_error:
+                                logger.error(f"❌ Training timeout for {domain}: {timeout_error}")
+                                raise timeout_error
+                            except Exception as train_error:
+                                logger.error(f"❌ Training failed for {domain}: {train_error}")
+                                raise train_error
                             
-                            # Save the trained model
-                            model_save_dir = raw_model_path.parent
+                            # Save the trained model in proper Hugging Face format
+                            model_save_dir = raw_model_path.parent / domain
+                            model_save_dir.mkdir(parents=True, exist_ok=True)
                             logger.info(f"💾 Saving trained model to {model_save_dir}")
+                            
+                            # Save model in proper Hugging Face format with complete directory structure
                             trainer.save_model(str(model_save_dir))
+                            
+                            # Also save tokenizer to the same directory
+                            tokenizer.save_pretrained(str(model_save_dir))
+                            
+                            # Ensure config.json has correct model type and architecture
+                            config_path = model_save_dir / "config.json"
+                            if config_path.exists():
+                                with open(config_path, 'r') as f:
+                                    config_data = json.load(f)
+                                
+                                # Update config with correct model type and architecture
+                                config_data["model_type"] = getattr(model.config, 'model_type', 'auto')
+                                config_data["architectures"] = [getattr(model.config, 'architectures', ['AutoModelForCausalLM'])[0]]
+                                
+                                with open(config_path, 'w') as f:
+                                    json.dump(config_data, f, indent=2)
+                            
+                            # Ensure the model directory has all required files
+                            required_files = ["config.json", "pytorch_model.bin", "tokenizer.json"]
+                            missing_files = []
+                            for file in required_files:
+                                if not (model_save_dir / file).exists():
+                                    missing_files.append(file)
+                            
+                            if missing_files:
+                                logger.warning(f"⚠️ Missing required files: {missing_files}")
+                                # Create minimal config if missing
+                                if "config.json" in missing_files:
+                                    config = model.config.to_dict()
+                                    with open(model_save_dir / "config.json", 'w') as f:
+                                        json.dump(config, f, indent=2)
                             
                             # Update path to point to the saved model directory
                             raw_model_path = model_save_dir
@@ -535,22 +709,19 @@ class IntelligentModelFactory:
                             logger.info(f"✅ REAL TRAINING COMPLETED for {domain}")
                         else:
                             logger.warning(f"⚠️ No valid training data could be formatted for {domain}, creating HuggingFace format placeholder")
-                            model_dir = raw_model_path.parent / domain
+                            model_dir = raw_model_path.parent
                             self._create_huggingface_format_model(domain, base_model, model_dir, target_size_mb, is_placeholder=True)
                             raw_model_path = model_dir
                     else:
                         logger.warning(f"⚠️ No training data provided for {domain}, creating HuggingFace format placeholder")
-                        model_dir = raw_model_path.parent / domain
+                        model_dir = raw_model_path.parent
                         self._create_huggingface_format_model(domain, base_model, model_dir, target_size_mb, is_placeholder=True)
                         raw_model_path = model_dir
                             
                 except Exception as training_error:
                     logger.error(f"❌ Real training failed for {domain}: {training_error}")
-                    logger.info(f"🔄 Falling back to HuggingFace format placeholder model for {domain}")
-                    # Create proper HuggingFace format model directory instead of single .bin file
-                    model_dir = raw_model_path.parent / domain
-                    self._create_huggingface_format_model(domain, base_model, model_dir, target_size_mb, is_placeholder=True)
-                    raw_model_path = model_dir  # Update path to point to the directory
+                    logger.error(f"❌ No placeholder will be created in production/real mode. Please fix the error and retry.")
+                    raise training_error  # Do not create placeholder, just raise
             
             # Update filename with actual file size
             raw_model_path = self._update_filename_with_actual_size(raw_model_path)
@@ -674,10 +845,8 @@ class IntelligentModelFactory:
         # Construct the full path: models/{dev|production}/trained/<category>/<domain>/
         output_dir = final_output_base / "trained" / category / domain
         
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{domain}_raw_{timestamp}_{size_mb:.1f}MB.bin" # .bin for raw PyTorch/TF model
-        
-        return output_dir / filename
+        # Return the directory path for HuggingFace format models
+        return output_dir
 
     def _update_filename_with_actual_size(self, file_path: Path) -> Path:
         """Updates the filename with the actual file size after creation."""
@@ -721,113 +890,148 @@ class IntelligentModelFactory:
 
     def _create_huggingface_format_model(self, domain: str, base_model: str, model_dir: Path, target_size_mb: float, is_placeholder: bool = False) -> Path:
         """
-        Creates a proper HuggingFace format model directory with config.json, pytorch_model.bin, etc.
-        This ensures GGUF conversion will work even for placeholder models.
+        Creates a proper HuggingFace format model directory with trained model weights.
         """
         import json
         import torch
-        from transformers import AutoConfig, AutoTokenizer
         
         # Ensure the directory exists
         model_dir.mkdir(parents=True, exist_ok=True)
         
-        # Get the base model config to use as template
-        try:
-            base_config = AutoConfig.from_pretrained(base_model)
-            base_tokenizer = AutoTokenizer.from_pretrained(base_model)
-            # Convert config to dict for JSON serialization
-            base_config_dict = base_config.to_dict()
-        except Exception as e:
-            logger.warning(f"⚠️ Could not load base model config for {base_model}: {e}")
-            # Use config-driven mapping for model_type and architecture
-            config_dict = self.config_manager.get_config_dict()
-            model_type_map = config_dict.get('model_type_map', {})
-            model_info = model_type_map.get(base_model, None)
-            if model_info:
-                model_type = model_info.get('model_type', 'auto')
-                architecture = model_info.get('architecture', 'AutoModelForCausalLM')
-            else:
-                model_type = 'auto'
-                architecture = 'AutoModelForCausalLM'
-            # Create minimal config based on detected model type
-            base_config_dict = {
-                "model_type": model_type,
-                "architectures": [architecture],
-                "torch_dtype": "float16",
-                "transformers_version": "4.37.0",
-                "use_cache": True,
-                "vocab_size": 51200,
-                "hidden_size": 2048,
-                "intermediate_size": 5632,
-                "num_hidden_layers": 24,
-                "num_attention_heads": 16,
-                "max_position_embeddings": 2048,
-                "rope_theta": 10000.0,
-                "use_cache": True,
-                "pad_token_id": None,
-                "bos_token_id": 1,
-                "eos_token_id": 2,
-                "tie_word_embeddings": False
+        # Load all model parameters from config
+        config_dict = self.config_manager.get_config_dict()
+        model_type_map = config_dict.get("model_type_map", {})
+        model_info = model_type_map.get(base_model, {})
+        
+        if not model_info:
+            logger.warning(f"⚠️ No model configuration found for {base_model}, using generic defaults")
+            model_info = {
+                "model_type": "gpt2",
+                "architecture": "GPT2LMHeadModel",
+                "vocab_size": 50257,
+                "hidden_size": 768,
+                "num_attention_heads": 12,
+                "num_hidden_layers": 12,
+                "intermediate_size": 3072,
+                "max_position_embeddings": 1024,
+                "n_ctx": 1024
             }
-            base_tokenizer = None
         
-        # Create config.json
-        config_path = model_dir / "config.json"
-        with open(config_path, 'w') as f:
-            json.dump(base_config_dict, f, indent=2)
+        # Extract all parameters from config
+        model_type = model_info.get("model_type", "gpt2")
+        architecture = model_info.get("architecture", "GPT2LMHeadModel")
+        vocab_size = model_info.get("vocab_size", 50257)
+        hidden_size = model_info.get("hidden_size", 768)
+        num_attention_heads = model_info.get("num_attention_heads", 12)
+        num_hidden_layers = model_info.get("num_hidden_layers", 12)
+        intermediate_size = model_info.get("intermediate_size", 3072)
+        max_position_embeddings = model_info.get("max_position_embeddings", 1024)
+        n_ctx = model_info.get("n_ctx", max_position_embeddings)
         
-        # Create pytorch_model.bin (either real or placeholder)
-        model_bin_path = model_dir / "pytorch_model.bin"
         if is_placeholder:
-            # Create placeholder weights with proper serialization
-            placeholder_weights = torch.randn(1000, 1000)  # Create a dummy tensor
-            torch.save(placeholder_weights, model_bin_path, _use_new_zipfile_serialization=True)
+            # Only create a placeholder in simulation or error fallback
+            model_file = model_dir / f"{domain}_model.bin"
+            with open(model_file, 'wb') as f:
+                f.write(b'PLACEHOLDER_MODEL' * int(target_size_mb * 1024 * 1024 // 18))
+            
+            # Create config.json
+            config_file = model_dir / "config.json"
+            config = {
+                "model_type": model_type,
+                "vocab_size": vocab_size,
+                "hidden_size": hidden_size,
+                "num_attention_heads": num_attention_heads,
+                "num_hidden_layers": num_hidden_layers,
+                "intermediate_size": intermediate_size,
+                "max_position_embeddings": max_position_embeddings,
+                "n_ctx": n_ctx,
+                "architectures": [architecture]
+            }
+            with open(config_file, 'w') as f:
+                json.dump(config, f, indent=2)
+            
+            # Create minimal tokenizer files for GGUF conversion
+            tokenizer_config = {
+                "model_type": model_type,
+                "tokenizer_class": "GPT2Tokenizer",
+                "pad_token": "<|endoftext|>",
+                "unk_token": "<|endoftext|>",
+                "bos_token": "<|endoftext|>",
+                "eos_token": "<|endoftext|>"
+            }
+            tokenizer_config_file = model_dir / "tokenizer_config.json"
+            with open(tokenizer_config_file, 'w') as f:
+                json.dump(tokenizer_config, f, indent=2)
+            
+            # Create proper vocab.json for GPT2 tokenizer (matching DialoGPT-small)
+            # This is a minimal but valid GPT2 vocabulary
+            vocab = {}
+            # Add special tokens
+            vocab["<|endoftext|>"] = 50256
+            vocab["<|pad|>"] = 50256  # Same as endoftext for GPT2
+            # Add basic vocabulary (simplified but valid)
+            for i in range(50256):
+                vocab[f"<|{i}|>"] = i
+            
+            vocab_file = model_dir / "vocab.json"
+            with open(vocab_file, 'w') as f:
+                json.dump(vocab, f, indent=2)
+            
+            # Create merges.txt for GPT2 tokenizer (minimal but valid)
+            merges_file = model_dir / "merges.txt"
+            with open(merges_file, 'w') as f:
+                f.write("#version: 0.2\n")
+                # Add some basic merges to make it valid
+                f.write("l o</w>\n")
+                f.write("lo w</w>\n")
+                f.write("low e</w>\n")
+                f.write("lowe r</w>\n")
+                f.write("t h</w>\n")
+                f.write("th e</w>\n")
+                f.write("the </w>\n")
+                f.write("a n</w>\n")
+                f.write("an d</w>\n")
+                f.write("and </w>\n")
+            
+            logger.info(f"✅ Created placeholder model format for {domain}")
+            logger.info(f"   → Model file: {model_file}")
+            logger.info(f"   → Config file: {config_file}")
+            logger.info(f"   → Tokenizer files: {tokenizer_config_file}, {vocab_file}, {merges_file}")
+            logger.info(f"   → Model type: {model_type}")
+            logger.info(f"   → Size: {target_size_mb:.1f}MB")
         else:
-            # This would be the real trained model weights
-            # For now, we'll create a placeholder but mark it as real
-            placeholder_weights = torch.randn(1000, 1000)  # Create a dummy tensor
-            torch.save(placeholder_weights, model_bin_path, _use_new_zipfile_serialization=True)
-        
-        # Create tokenizer files if we have a base tokenizer
-        if base_tokenizer:
+            # In real training, ensure actual model weights are saved as pytorch_model.bin
+            # This should be handled by Trainer.save_model() or model.save_pretrained()
+            # Here, just ensure config.json is correct and present
+            config_file = model_dir / "config.json"
+            model_config = {
+                "model_type": model_type,
+                "vocab_size": vocab_size,
+                "hidden_size": hidden_size,
+                "num_attention_heads": num_attention_heads,
+                "num_hidden_layers": num_hidden_layers,
+                "intermediate_size": intermediate_size,
+                "max_position_embeddings": max_position_embeddings,
+                "n_ctx": n_ctx,
+                "architectures": [architecture]
+            }
+            with open(config_file, 'w') as f:
+                json.dump(model_config, f, indent=2)
+            
+            # Also save tokenizer files for real training
             try:
-                base_tokenizer.save_pretrained(str(model_dir))
-                logger.info(f"✅ Tokenizer files saved to {model_dir}")
+                from transformers import AutoTokenizer
+                tokenizer = AutoTokenizer.from_pretrained(base_model)
+                tokenizer.save_pretrained(str(model_dir))
+                logger.info(f"✅ Tokenizer files saved for {domain}")
             except Exception as e:
                 logger.warning(f"⚠️ Could not save tokenizer files: {e}")
-        
-        # Create generation_config.json
-        generation_config = {
-            "do_sample": True,
-            "temperature": 0.7,
-            "top_p": 0.9,
-            "top_k": 50,
-            "repetition_penalty": 1.1,
-            "max_new_tokens": 512,
-            "pad_token_id": None,
-            "bos_token_id": 1,
-            "eos_token_id": 2
-        }
-        generation_config_path = model_dir / "generation_config.json"
-        with open(generation_config_path, 'w') as f:
-            json.dump(generation_config, f, indent=2)
-        
-        # Create special_tokens_map.json
-        special_tokens_map = {
-            "bos_token": "<|endoftext|>",
-            "eos_token": "<|endoftext|>",
-            "pad_token": None,
-            "unk_token": "<|endoftext|>"
-        }
-        special_tokens_path = model_dir / "special_tokens_map.json"
-        with open(special_tokens_path, 'w') as f:
-            json.dump(special_tokens_map, f, indent=2)
-        
-        logger.info(f"✅ Created HuggingFace format model at {model_dir}")
-        logger.info(f"   → config.json: ✅")
-        logger.info(f"   → pytorch_model.bin: ✅ ({target_size_mb:.1f}MB)")
-        logger.info(f"   → tokenizer files: ✅")
-        logger.info(f"   → generation_config.json: ✅")
+            
+            logger.info(f"✅ Real trained model config saved for {domain}")
+            logger.info(f"   → Model directory: {model_dir}")
+            logger.info(f"   → Config file: {config_file}")
+            logger.info(f"   → Base model: {base_model}")
+            logger.info(f"   → Model type: {model_type}")
         
         return model_dir
 
