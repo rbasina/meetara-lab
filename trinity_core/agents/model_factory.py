@@ -232,51 +232,37 @@ class IntelligentModelFactory:
                         
                         print(f"📊 GPU Memory: {total_memory:.1f}GB total, {allocated_memory:.1f}GB used, {available_memory:.1f}GB available")
                         
-                        # For Phi-3 models, check if we have enough available memory
-                        if "phi-3" in base_model.lower() and available_memory < 12:  # Reduced threshold for available memory
-                            print(f"⚠️ Phi-3 model requires ~12GB available GPU memory, but only {available_memory:.1f}GB available")
-                            print(f"🔄 Falling back to smaller model: microsoft/Phi-3-mini-4k-instruct")
-                            base_model = "microsoft/Phi-3-mini-4k-instruct"
-                    
-                    # Configure device and memory settings
-                    device = "cuda" if torch.cuda.is_available() else "cpu"
-                    
-                    # For Phi-3 models, use specific memory configuration
-                    if "phi-3" in base_model.lower():
-                        # Load with real weights, not meta tensors
+                        # Configure device and memory settings
+                        device = "cuda" if torch.cuda.is_available() else "cpu"
+                        
+                        # UNIVERSAL MODEL LOADING - Config-driven
+                        model_loading_config = self.config_manager._config.get('model_loading_config', {})
+                        
                         model = AutoModelForCausalLM.from_pretrained(
                             base_model,
                             torch_dtype=torch.float16,
-                            device_map=None,  # Don't use auto device mapping
-                            low_cpu_mem_usage=False,  # Ensure full model loading
-                            trust_remote_code=True
+                            device_map=model_loading_config.get('device_map'),
+                            low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', False),
+                            trust_remote_code=model_loading_config.get('trust_remote_code', True)
                         )
-                    else:
-                        # Standard loading for other models
-                        model = AutoModelForCausalLM.from_pretrained(
-                            base_model,
-                            torch_dtype=torch.float16,
-                            device_map=None,  # Don't use auto device mapping
-                            low_cpu_mem_usage=False  # Ensure full model loading
-                        )
-                    
-                    model_time = time.time() - model_start
-                    print(f"✅ Base model loaded in {model_time:.2f}s")
-                    
-                    # Cache the model for reuse
-                    self.model_cache[base_model] = model
-                    print(f"💾 Model cached for future reuse: {base_model}")
-                    
-                    # Try to get model size
-                    try:
-                        model_size_mb = sum(p.numel() * p.element_size() for p in model.parameters()) / (1024 * 1024)
-                        print(f"📊 Model size: {model_size_mb:.1f} MB")
-                    except:
-                        print(f"⚠️ Could not determine exact model path: module 'transformers.file_utils' has no attribute 'cached_file'")
-                    
-                    total_prep_time = time.time() - start_time
-                    print(f"⏱️ Total model preparation time: {total_prep_time:.2f}s")
-                    
+                        
+                        model_time = time.time() - model_start
+                        print(f"✅ Base model loaded in {model_time:.2f}s")
+                        
+                        # Cache the model for reuse
+                        self.model_cache[base_model] = model
+                        print(f"💾 Model cached for future reuse: {base_model}")
+                        
+                        # Try to get model size
+                        try:
+                            model_size_mb = sum(p.numel() * p.element_size() for p in model.parameters()) / (1024 * 1024)
+                            print(f"📊 Model size: {model_size_mb:.1f} MB")
+                        except:
+                            print(f"⚠️ Could not determine exact model path: module 'transformers.file_utils' has no attribute 'cached_file'")
+                        
+                        total_prep_time = time.time() - start_time
+                        print(f"⏱️ Total model preparation time: {total_prep_time:.2f}s")
+                        
                 except Exception as e:
                     print(f"❌ Model loading failed: {e}")
                     # If model loading fails due to memory, try with CPU-only loading

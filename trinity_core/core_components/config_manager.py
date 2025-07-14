@@ -23,7 +23,7 @@ class MultiBaseModel(Enum):
     """
     Maps specific domain models to their required base model architecture.
     """
-    PHI_3_MINI_INSTRUCT = "microsoft/Phi-3-mini-4k-instruct"
+    PHI_3_MINI_INSTRUCT = "microsoft/Phi-3.5-mini-instruct"  # Fixed: Use correct model name
     QWEN2_1_5B_INSTRUCT = "Qwen/Qwen2-1.5B-Instruct"
     MISTRAL_7B_INSTRUCT = "mistralai/Mistral-7B-Instruct-v0.2"
     
