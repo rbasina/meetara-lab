@@ -382,12 +382,28 @@ class FlexibleTrainingPipeline:
         
         # Configure LoRA (TARA proven parameters)
         tara_params = self.config_manager.get_tara_proven_params(domain)
+        
+        def get_linear_module_names(model):
+            linear_names = []
+            for name, module in model.named_modules():
+                if isinstance(module, torch.nn.Linear):
+                    linear_names.append(name)
+            return linear_names
+        # Model-specific target modules
+        base_model = tara_params.get('base_model', 'unknown')
+        if "phi" in base_model.lower():
+            target_modules = get_linear_module_names(model)
+        elif "qwen" in base_model.lower():
+            target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+        else:
+            target_modules = ["q_proj", "v_proj", "k_proj", "o_proj"]
+        
         lora_config = LoraConfig(
             task_type=TaskType.CAUSAL_LM,
             r=tara_params['lora_r'],
             lora_alpha=16,
             lora_dropout=0.1,
-            target_modules=["q_proj", "v_proj", "k_proj", "o_proj"]
+            target_modules=target_modules
         )
         
         model = get_peft_model(model, lora_config)

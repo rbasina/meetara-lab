@@ -38,25 +38,39 @@ class QuantizationAndCleanupAgent:
 
         # Look for conversion script in multiple possible locations
         if self.llama_cpp_path:
+            # The llama_cpp_path points to build/bin, but convert_hf_to_gguf.py is in the root llama.cpp directory
+            llama_cpp_root = self.llama_cpp_path.parent.parent  # Go up from build/bin to llama.cpp root
             possible_paths = [
-                self.llama_cpp_path / "convert_hf_to_gguf.py",
-                self.llama_cpp_path / "convert_hf_to_gguf_update.py",
-                self.llama_cpp_path / "scripts" / "convert_hf_to_gguf.py",
-                self.llama_cpp_path / "gguf-py" / "convert_hf_to_gguf.py"
+                llama_cpp_root / "convert_hf_to_gguf.py",
+                llama_cpp_root / "convert_hf_to_gguf_update.py",
+                llama_cpp_root / "scripts" / "convert_hf_to_gguf.py",
+                llama_cpp_root / "gguf-py" / "convert_hf_to_gguf.py",
+                self.llama_cpp_path / "convert_hf_to_gguf.py",  # Fallback to build/bin
             ]
             for path in possible_paths:
                 if path.exists():
                     self.converter_script = path
                     break
             else:
-                self.converter_script = self.llama_cpp_path / "convert_hf_to_gguf.py"  # Default
+                self.converter_script = llama_cpp_root / "convert_hf_to_gguf.py"  # Default to root
         else:
             self.converter_script = None
         
         # Platform-specific quantize executable paths
         import platform
         if platform.system() == "Windows" and self.llama_cpp_path:
-            self.quantize_executable = self.llama_cpp_path / "build" / "bin" / "test-quantize-stats.exe"
+            # Look for quantize.exe (which we created) instead of test-quantize-stats.exe
+            possible_quantize_paths = [
+                self.llama_cpp_path / "quantize.exe",
+                self.llama_cpp_path / "test-quantize-stats.exe",
+                self.llama_cpp_path / "llama-quantize.exe"
+            ]
+            for path in possible_quantize_paths:
+                if path.exists():
+                    self.quantize_executable = path
+                    break
+            else:
+                self.quantize_executable = self.llama_cpp_path / "quantize.exe"  # Default
         elif platform.system() == "Linux" and self.llama_cpp_path:
             # On Linux (Colab), look for the actual quantize executable
             self.quantize_executable = self.llama_cpp_path / "build" / "bin" / "quantize"
