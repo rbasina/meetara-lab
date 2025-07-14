@@ -3,10 +3,10 @@ torchvision==0.17.2
 torchaudio==2.2.2
 torchao
 triton
-transformers==4.41.2
+transformers==4.37.2
 accelerate
 datasets
-peft
+peft==0.8.2
 bitsandbytes
 cmake
 ninja
