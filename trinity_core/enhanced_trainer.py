@@ -83,12 +83,27 @@ class EnhancedTrinityTrainer:
             low_cpu_mem_usage=True
         )
         
+        import torch
+        def get_linear_module_names(model):
+            linear_names = []
+            for name, module in model.named_modules():
+                if isinstance(module, torch.nn.Linear):
+                    linear_names.append(name)
+            return linear_names
+        # Model-specific target modules
+        if "phi" in self.model_name.lower():
+            target_modules = get_linear_module_names(base_model)
+        elif "qwen" in self.model_name.lower():
+            target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+        else:
+            target_modules = ["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+        
         lora_config = LoraConfig(
             task_type=TaskType.CAUSAL_LM,
             r=self.lora_r,
             lora_alpha=self.lora_alpha,
             lora_dropout=self.lora_dropout,
-            target_modules=["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+            target_modules=target_modules
         )
         
         self.model = get_peft_model(base_model, lora_config)

@@ -565,15 +565,29 @@ class IntelligentModelFactory:
                             try:
                                 from peft import LoraConfig, get_peft_model, TaskType
                                 
-                                # Universal LoRA target modules - works for all model architectures
-                                # Universal LoRA target modules - comprehensive coverage for all architectures
-                                target_modules = [
-                                    "q_proj", "k_proj", "v_proj", "o_proj", 
-                                    "gate_proj", "up_proj", "down_proj", 
-                                    "c_attn", "c_proj", "c_fc", "dense",
-                                    "query_key_value", "dense_h_to_4h", "dense_4h_to_h",
-                                    "attention", "mlp", "self_attn"
-                                ]
+                                def get_linear_module_names(model):
+                                    linear_names = []
+                                    for name, module in model.named_modules():
+                                        if isinstance(module, torch.nn.Linear):
+                                            linear_names.append(name)
+                                    return linear_names
+                                # Model-specific LoRA target modules
+                                base_model = lora_config.get("base_model", "unknown")
+                                if "phi" in base_model.lower():
+                                    # Phi-3: dynamically find all Linear submodules
+                                    target_modules = get_linear_module_names(model)
+                                elif "qwen" in base_model.lower():
+                                    target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+                                elif "llama" in base_model.lower() or "mistral" in base_model.lower():
+                                    target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+                                else:
+                                    target_modules = [
+                                        "q_proj", "k_proj", "v_proj", "o_proj", 
+                                        "gate_proj", "up_proj", "down_proj", 
+                                        "c_attn", "c_proj", "c_fc", "dense",
+                                        "query_key_value", "dense_h_to_4h", "dense_4h_to_h",
+                                        "attention", "mlp", "self_attn"
+                                    ]
                                 
                                 # Configure LoRA
                                 lora_config_peft = LoraConfig(
