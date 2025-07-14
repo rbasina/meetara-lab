@@ -1,6 +1,10 @@
 version: '2.0'
 description: Quality-focused configuration with premium models for critical domains
 last_updated: '2025-07-09'
+# config/trinity_config.yaml
+#llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp\build\bin  # Windows
+llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
+
 model_tiers:
   premium:
     base_model_suggestion: microsoft/Phi-3-medium-4k-instruct
@@ -153,7 +157,6 @@ global_tara_params:
   strict_mode: true
   allow_fallback: false
   max_retries: 3
-  llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
 domain_config:
   healthcare:
     category_tier: premium
@@ -224,7 +227,7 @@ domain_config:
       social_media: microsoft/Phi-3.5-mini-instruct
       design_thinking: microsoft/Phi-3-medium-4k-instruct
       photography: microsoft/Phi-3.5-mini-instruct
-      music: microsoft/DialoGPT-medium
+      music: microsoft/Phi-3.5-mini-instruct
       art_appreciation: microsoft/Phi-3-medium-4k-instruct
       mythology: microsoft/Phi-3-medium-4k-instruct
       spiritual: microsoft/Phi-3-medium-4k-instruct
@@ -310,7 +313,6 @@ domain_config:
 paths:
   data_training_base_dir: data
   data_trained_base_dir: data
-llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
 
 model_type_map:
   microsoft/Phi-3.5-mini-instruct:
