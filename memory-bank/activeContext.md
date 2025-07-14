@@ -445,3 +445,44 @@ GPU Memory Check → Model Selection → Memory-Optimized Loading → Training
 - **Memory Optimization**: Proper model loading with fallbacks
 - **Quality Validation**: Real training possible
 - **Dynamic Adaptation**: Automatic model selection based on resources 
+
+---
+
+## 📝 July 14th, 2025 — Model Compatibility, LoRA, GGUF, and Hugging Face Findings
+
+### **Key Discoveries & Technical Progress**
+- **DialoGPT (all sizes):** Not compatible with LoRA or GGUF conversion (PEFT warnings, tensor mapping errors).
+- **Phi-3.5-mini-instruct:** Fully compatible with LoRA and GGUF, but blocked by Hugging Face custom code import bug in Colab (`ModuleNotFoundError: No module named 'transformers_modules.microsoft.Phi-3'`).
+- **Qwen2.5, Llama, Mistral:** Fully compatible with LoRA, GGUF, and Hugging Face loading (recommended for production).
+- **HuggingFaceTB/SmolLM2-1.7B:** Open source (Apache-2.0), but previously removed due to technical/compatibility issues (not license/trust).
+- **Verified Licenses:** All major base models have been checked for open-source/commercial use.
+- **Colab Warnings:** `resume_download` and `HF_TOKEN` warnings are safe to ignore for public models.
+
+### **Why SmolLM2-1.7B Was Removed**
+- Not due to license or trust, but because of technical issues (LoRA/GGUF/format compatibility) at the time. Can be re-added if it passes all pipeline checks.
+
+---
+
+## 8. Next Steps
+
+**Actionable items for the next session:**
+
+1. **Phi-3.5-mini-instruct Loading:**
+   - Try loading on a local machine (fresh Python venv, not Colab) to bypass the Colab dynamic import bug.
+   - If still blocked, consider using Qwen2.5-7B/14B-Instruct, Llama, or Mistral for full LoRA + GGUF compatibility.
+
+2. **Re-test HuggingFaceTB/SmolLM2-1.7B:**
+   - Check if LoRA and GGUF conversion now work out-of-the-box.
+   - If successful, re-add to the config as a trusted, open-source base model.
+
+3. **Monitor Hugging Face Warnings:**
+   - The `resume_download` warning is safe to ignore for now.
+   - The `HF_TOKEN` warning is only needed for private models or higher download limits.
+
+4. **General:**
+   - Continue to validate all new base models for LoRA, GGUF, and Trinity compatibility before adding to production.
+   - Keep documentation and memory bank updated after each major finding.
+
+---
+
+*End of actionable checklist. Resume here next session!* 

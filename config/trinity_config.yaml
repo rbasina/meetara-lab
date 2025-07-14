@@ -224,8 +224,8 @@ domain_config:
       social_media: microsoft/Phi-3.5-mini-instruct
       design_thinking: microsoft/Phi-3-medium-4k-instruct
       photography: microsoft/Phi-3.5-mini-instruct
-      music: microsoft/Phi-3.5-mini-instruct
-      art_appreciation: microsoft/Phi-3.5-mini-instruct
+      music: microsoft/DialoGPT-medium
+      art_appreciation: microsoft/Phi-3-medium-4k-instruct
       mythology: microsoft/Phi-3-medium-4k-instruct
       spiritual: microsoft/Phi-3-medium-4k-instruct
   psychology_wellness:
@@ -310,7 +310,7 @@ domain_config:
 paths:
   data_training_base_dir: data
   data_trained_base_dir: data
-llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp
+llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
 
 model_type_map:
   microsoft/Phi-3.5-mini-instruct:
@@ -363,3 +363,20 @@ model_type_map:
     intermediate_size: 3072
     max_position_embeddings: 1024
     n_ctx: 1024
+  microsoft/DialoGPT-medium:
+    model_type: gpt2
+    architecture: GPT2LMHeadModel
+    vocab_size: 50257
+    hidden_size: 768
+    num_attention_heads: 12
+    num_hidden_layers: 12
+    intermediate_size: 3072
+    max_position_embeddings: 1024
+    n_ctx: 1024
+
+model_loading_config:
+  torch_dtype: "float16"
+  device_map: null
+  low_cpu_mem_usage: false
+  trust_remote_code: true
+  # Add any model-specific parameters here if needed
