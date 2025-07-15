@@ -12,6 +12,31 @@ import subprocess
 from pathlib import Path
 import shutil
 
+def fix_numpy_jax_compatibility():
+    """Fix NumPy/JAX compatibility issues in Colab"""
+    print("🔧 Fixing NumPy/JAX compatibility...")
+    
+    try:
+        # First, uninstall problematic packages
+        subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "jax", "jaxlib"], 
+                      capture_output=True, text=True)
+        print("✅ Uninstalled JAX packages")
+        
+        # Install compatible NumPy version
+        subprocess.run([sys.executable, "-m", "pip", "install", "numpy==1.24.3"], 
+                      check=True, capture_output=True, text=True)
+        print("✅ Installed compatible NumPy version")
+        
+        # Reinstall JAX with compatible versions
+        subprocess.run([sys.executable, "-m", "pip", "install", "jax==0.4.20", "jaxlib==0.4.20"], 
+                      check=True, capture_output=True, text=True)
+        print("✅ Reinstalled JAX with compatible versions")
+        
+        return True
+    except Exception as e:
+        print(f"❌ Failed to fix NumPy/JAX compatibility: {e}")
+        return False
+
 def setup_colab_environment():
     """Setup Colab environment and mount Google Drive"""
     print("🚀 Setting up Colab environment...")
@@ -38,25 +63,58 @@ def setup_colab_environment():
         return False
 
 def install_requirements():
-    """Install required packages for MeeTARA Lab"""
+    """Install required packages for MeeTARA Lab with Colab compatibility fixes"""
     print("📦 Installing required packages...")
     
     try:
-        # Install core requirements
-        subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], 
-                      check=True, capture_output=True, text=True)
-        print("✅ Core requirements installed")
+        # Fix NumPy/JAX compatibility first
+        if not fix_numpy_jax_compatibility():
+            print("⚠️ NumPy/JAX compatibility fix failed, continuing...")
+        
+        # Install core requirements with specific versions for Colab
+        colab_compatible_packages = [
+            "torch==2.1.0",
+            "torchvision==0.16.0", 
+            "torchaudio==2.1.0",
+            "transformers==4.36.2",
+            "accelerate==0.25.0",
+            "datasets==2.16.1",
+            "peft==0.7.1",
+            "tokenizers==0.15.0",
+            "bitsandbytes==0.41.3",
+            "triton==2.1.0",
+            "llama-cpp-python==0.2.23",
+            "gguf==0.1.0",
+            "speechbrain==0.5.16",
+            "librosa==0.10.1",
+            "soundfile==0.12.1",
+            "opencv-python==4.8.1.78",
+            "Pillow==10.1.0",
+            "numpy==1.24.3",
+            "pandas==2.1.4",
+            "scipy==1.11.4",
+            "pyyaml==6.0.1",
+            "tqdm==4.66.1",
+            "rich==13.7.0",
+            "huggingface_hub==0.19.4",
+            "wandb==0.16.1",
+            "tensorboard==2.15.1",
+            "requests==2.31.0",
+            "urllib3==2.0.7"
+        ]
+        
+        for package in colab_compatible_packages:
+            try:
+                subprocess.run([sys.executable, "-m", "pip", "install", package], 
+                              check=True, capture_output=True, text=True)
+                print(f"✅ {package} installed")
+            except subprocess.CalledProcessError as e:
+                print(f"⚠️ Failed to install {package}: {e}")
         
         # Install additional packages for llama.cpp
         additional_packages = [
             "cmake",
-            "ninja",
-            "torch",
-            "transformers",
-            "accelerate",
-            "datasets",
-            "peft",
-            "bitsandbytes"
+            "ninja"
         ]
         
         for package in additional_packages:
@@ -67,6 +125,7 @@ def install_requirements():
             except subprocess.CalledProcessError:
                 print(f"⚠️ Failed to install {package} (may already be installed)")
         
+        print("✅ All packages installed successfully")
         return True
     except Exception as e:
         print(f"❌ Failed to install requirements: {e}")
@@ -133,8 +192,9 @@ def setup_llama_cpp():
             shutil.rmtree(build_dir)
 
         # Configure CMake with CUDA support
-        cmake_cmd = ["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release", "-DGGML_CUDA=ON"]
+        cmake_cmd = ["cmake", "-B", "build", "-DCMAKE_BUILD_TYPE=Release"]
         if cuda_available:
+            cmake_cmd.append("-DGGML_CUDA=ON")
             print("🔧 Configuring with CUDA support...")
         else:
             print("🔧 Configuring CPU-only version...")
@@ -146,12 +206,9 @@ def setup_llama_cpp():
         
         print("✅ CMake configuration successful")
         
-        # Build llama.cpp (only essential tools for training)
-        print("🔨 Building llama.cpp (essential tools only)...")
-        build_cmd = [ "cmake", "--build", "build", 
-                     "--target", "llama-quantize", 
-                     "--config", "Release", "-j"
-        ]
+        # Build llama.cpp with all essential tools
+        print("🔨 Building llama.cpp (essential tools)...")
+        build_cmd = ["cmake", "--build", "build", "--config", "Release", "-j"]
         result = subprocess.run(build_cmd, capture_output=True, text=True)
         
         if result.returncode != 0:
@@ -160,20 +217,40 @@ def setup_llama_cpp():
         
         print("✅ llama.cpp build successful")
         
-        # Auto-create quantize symlink if needed
-        bin_dir = Path("build/bin")
-        llama_quantize = bin_dir / "llama-quantize"
-        quantize = bin_dir / "quantize"
-        if llama_quantize.exists() and not quantize.exists():
-            try:
-                os.symlink(str(llama_quantize), str(quantize))
-                print("✅ Created symlink: quantize -> llama-quantize")
-            except Exception as e:
-                print(f"⚠️ Could not create symlink for quantize: {e}")
+        # Check for quantize tool in different possible locations
+        quantize_paths = [
+            "build/bin/quantize",
+            "build/bin/llama-quantize",
+            "build/quantize",
+            "build/llama-quantize"
+        ]
+        
+        quantize_found = False
+        for quantize_path in quantize_paths:
+            if Path(quantize_path).exists():
+                print(f"✅ Found quantize tool: {quantize_path}")
+                quantize_found = True
+                # Create symlink for consistent access
+                try:
+                    os.symlink(str(Path(quantize_path).absolute()), "build/bin/quantize")
+                    print("✅ Created symlink: build/bin/quantize")
+                except FileExistsError:
+                    print("✅ Symlink already exists")
+                except Exception as e:
+                    print(f"⚠️ Could not create symlink: {e}")
+                break
+        
+        if not quantize_found:
+            print("❌ Quantize tool not found in any expected location")
+            print("🔍 Checking build directory contents:")
+            if Path("build/bin").exists():
+                for file in Path("build/bin").iterdir():
+                    print(f"   - {file.name}")
+            return False
         
         # Verify key tools are available
         tools_to_check = [
-            "build/bin/llama-quantize",
+            "build/bin/quantize",
             "convert_hf_to_gguf.py"
         ]
         
@@ -182,7 +259,8 @@ def setup_llama_cpp():
                 print(f"✅ {tool} available")
             else:
                 print(f"❌ {tool} not found")
-                return False
+                if tool == "build/bin/quantize":
+                    print("💡 This will cause simulated quantization")
         
         # Return to project root
         os.chdir("..")

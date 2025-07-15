@@ -1,3 +1,11 @@
+
+    def get_config(self):
+        """
+        Fallback method for backward compatibility.
+        Returns the same as get_config_dict().
+        """
+        return self.get_config_dict()
+
 #!/usr/bin/env python3
 """
 Trinity Configuration Manager - SMART YAML-Based Configuration
@@ -129,22 +137,47 @@ class SmartTrinityConfigManager:
         if domain_name in self._domain_cache:
             return self._domain_cache[domain_name]
 
+        # Ensure _domain_config is properly loaded
+        if not self._domain_config:
+            raise ValueError("Domain configuration not loaded. Please ensure config is properly initialized.")
+
+        # Debug logging to understand the structure
+        logging.debug(f"ConfigManager: Searching for domain '{domain_name}'")
+        logging.debug(f"ConfigManager: Available categories: {list(self._domain_config.keys())}")
+
         for category_name, category_config in self._domain_config.items():
             logging.debug(f"ConfigManager: Checking category '{category_name}' for domain '{domain_name}'")
+            
+            # Ensure category_config is a dictionary
+            if not isinstance(category_config, dict):
+                logging.warning(f"ConfigManager: Category '{category_name}' is not a dictionary: {type(category_config)}")
+                continue
+                
             domains = category_config.get('domains', {})
+            
+            # Ensure domains is a dictionary
+            if not isinstance(domains, dict):
+                logging.warning(f"ConfigManager: Domains in category '{category_name}' is not a dictionary: {type(domains)}")
+                continue
+                
             if domain_name in domains:
                 domain_entry = domains[domain_name]
+                logging.debug(f"ConfigManager: Found domain '{domain_name}' in category '{category_name}'")
+                logging.debug(f"ConfigManager: Domain entry type: {type(domain_entry)}, value: {domain_entry}")
                 
                 # Handle both string and dict domain entries
                 if isinstance(domain_entry, str):
                     # If domain entry is a string (base model), use it directly
                     base_model = domain_entry
+                    logging.debug(f"ConfigManager: Using string base model: {base_model}")
                 elif isinstance(domain_entry, dict):
                     # If domain entry is a dict, get base_model from it
                     base_model = domain_entry.get('base_model', category_config.get('base_model'))
+                    logging.debug(f"ConfigManager: Using dict base model: {base_model}")
                 else:
                     # Fallback to category base model
                     base_model = category_config.get('base_model')
+                    logging.debug(f"ConfigManager: Using category fallback base model: {base_model}")
                 
                 if not base_model:
                     raise ValueError(f"Configuration error: No base model found for domain '{domain_name}' in category '{category_name}'.")
@@ -166,15 +199,27 @@ class SmartTrinityConfigManager:
                     generate_synthetic = category_config.get('generate_synthetic_data', 
                         self._global_params.get('generate_synthetic_data', False))
 
-                self._domain_cache[domain_name] = {
+                domain_details = {
                     'base_model': base_model,
                     'tier_name': tier_name,
                     'category': category_name,
-                    'generate_synthetic_data': generate_synthetic # Add the new flag
+                    'generate_synthetic_data': generate_synthetic
                 }
-                return self._domain_cache[domain_name]
+                
+                # Cache the result
+                self._domain_cache[domain_name] = domain_details
+                logging.debug(f"ConfigManager: Cached domain details for '{domain_name}': {domain_details}")
+                return domain_details
 
-        raise ValueError(f"Domain '{domain_name}' not found in any category in the configuration.")
+        # If we get here, domain was not found
+        available_domains = []
+        for category_name, category_config in self._domain_config.items():
+            if isinstance(category_config, dict):
+                domains = category_config.get('domains', {})
+                if isinstance(domains, dict):
+                    available_domains.extend(domains.keys())
+        
+        raise ValueError(f"Domain '{domain_name}' not found in any category in the configuration. Available domains: {available_domains}")
 
     def get_model_tier_config(self, tier_name):
         """
