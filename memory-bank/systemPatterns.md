@@ -1,6 +1,113 @@
 # MeeTARA Lab - System Patterns & Architecture
 *System architecture, key technical decisions, design patterns, component relationships*
 
+## 🚀 LATEST PATTERN: QLoRA INTEGRATION & CONFIGURATION-DRIVEN ARCHITECTURE
+
+### **QLoRA Manager Pattern**
+**Status**: ✅ **IMPLEMENTED** - Centralized QLoRA/LoRA management with configuration-driven approach
+
+```
+Pattern: Single point of control for all LoRA operations
+Implementation: qlora_manager.py with comprehensive configuration
+
+QLoRA Manager Architecture:
+qlora_manager.py (Centralized Control)
+├── GPU Detection & Capability Assessment
+├── Model Validation & Compatibility Checking
+├── Intelligent Method Selection (QLoRA → LoRA → No LoRA)
+├── Configuration-Driven Settings
+├── Performance Optimization
+└── Error Handling & Graceful Fallbacks
+
+Configuration Integration:
+trinity_config.yaml (Single Source of Truth)
+├── qlora_config (QLoRA settings)
+├── model_specific_settings (Per-model parameters)
+├── optimization (Performance settings)
+├── memory_management (Resource allocation)
+└── risk_assessment (Model selection criteria)
+```
+
+### **Configuration-Driven Architecture Pattern**
+**Status**: ✅ **IMPLEMENTED** - Zero hardcoded values, complete configuration-driven approach
+
+```
+Pattern: All settings from configuration, no hardcoded values
+Implementation: trinity_config.yaml as single source of truth
+
+Configuration Structure:
+trinity_config.yaml (Master Configuration)
+├── model_names (Centralized model mappings)
+├── qlora_config (QLoRA/LoRA settings)
+├── domain_model_mapping (Domain-to-model mapping)
+├── domain_config (Backward-compatible structure)
+├── risk_assessment (Model selection criteria)
+├── approved_models (Apache-2.0 licensed models)
+└── fallback_base_model (Global fallback)
+
+Code Integration:
+Before (Anti-pattern):
+base_model = "microsoft/Phi-3.5-mini-instruct"  # ❌ Hardcoded
+
+After (Correct pattern):
+base_model = self.config_manager._global_params.get('fallback_base_model')  # ✅ Config-driven
+```
+
+### **Multi-Model Ecosystem Pattern**
+**Status**: ✅ **IMPLEMENTED** - Risk-based model selection with Apache-2.0 licensing
+
+```
+Pattern: Comprehensive model ecosystem with risk assessment
+Implementation: Multi-model support with intelligent selection
+
+Model Categories:
+Primary Models (Perfect Compatibility)
+├── Qwen 2.5-7B/14B (Apache-2.0, perfect LoRA/QLoRA)
+├── Llama 2/3 (Apache-2.0, excellent LoRA support)
+├── Mistral (Apache-2.0, strong LoRA compatibility)
+└── Code Llama (Apache-2.0, specialized coding)
+
+Approved Models (Good Compatibility)
+├── SmolLM2-1.7B (Apache-2.0, moderate LoRA support)
+├── DialoGPT (Partial compatibility, limited use)
+└── Phi-3 (Technical issues, local only)
+
+Risk Assessment:
+├── Licensing Risk (Apache-2.0 preferred)
+├── Technical Risk (LoRA/QLoRA compatibility)
+├── Colab Risk (Import and compatibility issues)
+├── Performance Risk (Training efficiency)
+└── Memory Risk (GPU memory requirements)
+```
+
+### **Import & Package Structure Pattern**
+**Status**: ✅ **IMPLEMENTED** - Proper Python package hierarchy with clean imports
+
+```
+Pattern: Clean package structure with proper __init__.py files
+Implementation: Organized imports with zero import errors
+
+Package Structure:
+trinity_core/
+├── __init__.py (Package initialization)
+├── core_components/
+│   ├── __init__.py (Component package)
+│   ├── qlora_manager.py (QLoRA management)
+│   ├── config_manager.py (Configuration management)
+│   └── ... (Other components)
+├── agents/
+│   ├── __init__.py (Agent package)
+│   └── ... (Agent modules)
+└── utils/
+    ├── __init__.py (Utility package)
+    └── ... (Utility modules)
+
+Import Pattern:
+from trinity_core.core_components.qlora_manager import QLoRAManager
+from trinity_core.core_components.config_manager import SmartTrinityConfigManager
+from trinity_core.agents.intelligent_model_factory import IntelligentModelFactory
+```
+
 ## 🏗️ TRINITY ARCHITECTURE OVERVIEW
 
 ### **Core Design Philosophy**

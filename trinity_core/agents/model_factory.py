@@ -237,13 +237,54 @@ class IntelligentModelFactory:
                         
                         # UNIVERSAL MODEL LOADING - Config-driven
                         model_loading_config = self.config_manager._config.get('model_loading_config', {})
+                        gpu_config = self.config_manager._config.get('gpu_config', {})
+                        
+                        # GPU Detection and Optimization
+                        if torch.cuda.is_available():
+                            gpu_name = torch.cuda.get_device_name(0).lower()
+                            print(f"🔥 GPU Detected: {torch.cuda.get_device_name(0)}")
+                            
+                            # Determine GPU type and settings
+                            if "t4" in gpu_name:
+                                gpu_type = "t4"
+                                speed_factor = "37x"
+                            elif "v100" in gpu_name:
+                                gpu_type = "v100"
+                                speed_factor = "75x"
+                            elif "a100" in gpu_name:
+                                gpu_type = "a100"
+                                speed_factor = "151x"
+                            else:
+                                gpu_type = "t4"  # Default to T4 settings
+                                speed_factor = "37x"
+                            
+                            # Get GPU-specific settings
+                            gpu_performance = gpu_config.get('performance', {}).get(gpu_type, {})
+                            batch_size = gpu_performance.get('batch_size', 4)
+                            max_memory_gb = gpu_performance.get('max_memory_gb', 12)
+                            
+                            print(f"⚡ GPU Type: {gpu_type.upper()} | Speed: {speed_factor} | Batch Size: {batch_size}")
+                            print(f"💾 GPU Memory: {max_memory_gb}GB allocated | Buffer: {gpu_config.get('gpu_memory_buffer_gb', 2.0)}GB reserved")
+                        else:
+                            print("⚠️ No GPU detected - using CPU fallback")
+                            gpu_type = "cpu"
+                            speed_factor = "1x"
+                            batch_size = 1
+                        
+                        print(f"🔄 Loading model {base_model} with optimized settings...")
+                        print(f"   → device_map: {model_loading_config.get('device_map', 'auto')}")
+                        print(f"   → low_cpu_mem_usage: {model_loading_config.get('low_cpu_mem_usage', True)}")
+                        print(f"   → max_memory: {model_loading_config.get('max_memory', 'auto')}")
+                        print(f"   → GPU Type: {gpu_type.upper()} | Speed: {speed_factor}")
+                        print(f"⏳ Please wait - this may take 1-2 minutes for large models...")
                         
                         model = AutoModelForCausalLM.from_pretrained(
                             base_model,
                             torch_dtype=torch.float16,
-                            device_map=model_loading_config.get('device_map'),
-                            low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', False),
-                            trust_remote_code=model_loading_config.get('trust_remote_code', True)
+                            device_map=model_loading_config.get('device_map', "auto"),
+                            low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', True),
+                            trust_remote_code=model_loading_config.get('trust_remote_code', True),
+                            max_memory=model_loading_config.get('max_memory', "auto")
                         )
                         
                         model_time = time.time() - model_start
@@ -374,12 +415,15 @@ class IntelligentModelFactory:
                     # Load the base model for training
                     if base_model not in self.model_cache:
                         logger.info(f"📥 Loading base model for training: {base_model}")
+                        model_loading_config = self.config_manager._config.get('model_loading_config', {})
+                        
                         model = AutoModelForCausalLM.from_pretrained(
                             base_model,
                             torch_dtype=torch.float16,
-                            device_map=None,  # Don't use auto device mapping for training
+                            device_map=model_loading_config.get('device_map', "auto"),
                             trust_remote_code=True,
-                            low_cpu_mem_usage=False  # Ensure full model loading
+                            low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', True),
+                            max_memory=model_loading_config.get('max_memory', "auto")
                         )
                         self.model_cache[base_model] = model
                     else:
@@ -560,56 +604,52 @@ class IntelligentModelFactory:
                                 model = model.cpu()
                             logger.info(f"✅ Auto-configured memory management for universal model")
                             
-                            # Add LoRA configuration for training
+                            # Add LoRA configuration for training using QLoRA Manager
+                            from trinity_core.core_components.qlora_manager import QLoRAManager
+                            
+                            qlora_manager = QLoRAManager(self.config_manager)
+                            
+                            # Detect GPU capabilities
+                            gpu_capabilities = qlora_manager.detect_gpu_capabilities()
+                            
+                            # Get recommended method
+                            recommended_method = qlora_manager.get_recommended_method(base_model, gpu_capabilities)
+                            
+                            # Validate model compatibility
+                            compatibility = qlora_manager.validate_model_compatibility(base_model)
+                            
+                            if compatibility["issues"]:
+                                logger.warning(f"⚠️ Model compatibility issues: {compatibility['issues']}")
+                            
                             lora_applied = False
-                            try:
-                                from peft import LoraConfig, get_peft_model, TaskType
-                                
-                                def get_linear_module_names(model):
-                                    linear_names = []
-                                    for name, module in model.named_modules():
-                                        if isinstance(module, torch.nn.Linear):
-                                            linear_names.append(name)
-                                    return linear_names
-                                # Model-specific LoRA target modules
-                                base_model = lora_config.get("base_model", "unknown")
-                                if "phi" in base_model.lower():
-                                    # Phi-3: dynamically find all Linear submodules
-                                    target_modules = get_linear_module_names(model)
-                                elif "qwen" in base_model.lower():
-                                    target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
-                                elif "llama" in base_model.lower() or "mistral" in base_model.lower():
-                                    target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+                            qlora_applied = False
+                            
+                            # Apply QLoRA/LoRA based on capabilities
+                            if recommended_method == "qlora" and compatibility["qlora_compatible"]:
+                                logger.info("🚀 Applying QLoRA...")
+                                model, qlora_applied = qlora_manager.apply_qlora(model, base_model, lora_config)
+                                if qlora_applied:
+                                    lora_applied = True
+                                    qlora_manager.log_integration_status(base_model, "qlora", True)
                                 else:
-                                    target_modules = [
-                                        "q_proj", "k_proj", "v_proj", "o_proj", 
-                                        "gate_proj", "up_proj", "down_proj", 
-                                        "c_attn", "c_proj", "c_fc", "dense",
-                                        "query_key_value", "dense_h_to_4h", "dense_4h_to_h",
-                                        "attention", "mlp", "self_attn"
-                                    ]
-                                
-                                # Configure LoRA
-                                lora_config_peft = LoraConfig(
-                                    task_type=TaskType.CAUSAL_LM,
-                                    inference_mode=False,
-                                    r=lora_config["r"],
-                                    lora_alpha=lora_config["lora_alpha"],
-                                    lora_dropout=lora_config["lora_dropout"],
-                                    target_modules=target_modules
-                                )
-                                
-                                # Apply LoRA to the model
-                                model = get_peft_model(model, lora_config_peft)
-                                lora_applied = True
-                                logger.info(f"✅ Auto-applied LoRA to {model_type} model: r={lora_config['r']}, alpha={lora_config['lora_alpha']}")
-                                
-                            except ImportError:
-                                logger.warning("⚠️ PEFT not available, training without LoRA")
-                            except Exception as lora_error:
-                                logger.warning(f"⚠️ LoRA setup failed: {lora_error}, training without LoRA")
-                                # Ensure model is in training mode even without LoRA
-                                model.train()
+                                    logger.warning("🔄 QLoRA failed, falling back to LoRA...")
+                                    recommended_method = "lora"
+                            
+                            if recommended_method == "lora" and compatibility["lora_compatible"] and not qlora_applied:
+                                logger.info("🚀 Applying LoRA...")
+                                model, lora_applied = qlora_manager.apply_lora(model, base_model, lora_config)
+                                if lora_applied:
+                                    qlora_manager.log_integration_status(base_model, "lora", True)
+                                else:
+                                    logger.warning("🔄 LoRA failed, continuing without LoRA...")
+                                    qlora_manager.log_integration_status(base_model, "none", False)
+                            
+                            if not lora_applied:
+                                logger.info("ℹ️ Training without LoRA/QLoRA")
+                                qlora_manager.log_integration_status(base_model, "none", False)
+                            
+                            # Setup optimization
+                            training_args = qlora_manager.setup_optimization(training_args)
                             
                             # Create trainer with better error handling
                             trainer = Trainer(

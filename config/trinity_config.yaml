@@ -2,12 +2,25 @@ version: '2.0'
 description: Quality-focused configuration with premium models for critical domains
 last_updated: '2025-07-09'
 # config/trinity_config.yaml
-#llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp\build\bin  # Windows
-llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
+llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp\build\bin  # Windows
+#llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
+
+# Model name mappings (centralized model definitions)
+model_names:
+  qwen2_7b_instruct: "Qwen/Qwen2.5-7B-Instruct"
+  qwen2_14b_instruct: "Qwen/Qwen2.5-14B-Instruct"
+  mistral_7b_instruct: "mistralai/Mistral-7B-Instruct-v0.2"
+  llama2_7b_chat: "meta-llama/Llama-2-7b-chat-hf"
+  llama2_13b_chat: "meta-llama/Llama-2-13b-chat-hf"
+  llama3_8b_instruct: "meta-llama/Llama-3-8B-Instruct"
+  llama3_70b_instruct: "meta-llama/Llama-3-70B-Instruct"
+  codellama_7b_instruct: "codellama/CodeLlama-7b-Instruct-hf"
+  codellama_13b_instruct: "codellama/CodeLlama-13b-Instruct-hf"
+  smollm2_1_7b: "HuggingFaceTB/SmolLM2-1.7B"
 
 model_tiers:
   premium:
-    base_model_suggestion: microsoft/Phi-3-medium-4k-instruct
+    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct
     sample_count: 8000
     num_epochs: 2
     batch_size: 1
@@ -23,7 +36,7 @@ model_tiers:
     learning_rate: 0.00015
     quality_target: 99.5%
   quality:
-    base_model_suggestion: microsoft/Phi-3-medium-4k-instruct
+    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct
     sample_count: 5000
     num_epochs: 1
     batch_size: 4
@@ -39,7 +52,7 @@ model_tiers:
     learning_rate: 0.00025
     quality_target: 98.5%
   fast:
-    base_model_suggestion: microsoft/Phi-3.5-mini-instruct
+    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct
     sample_count: 3000
     num_epochs: 1
     batch_size: 8
@@ -68,57 +81,117 @@ gpu_configs:
     cost_per_hour: 0.4
     max_parallel_jobs: 2
     recommended_models:
-    - microsoft/Phi-3.5-mini-instruct
+    # Primary Models (Optimized for T4)
+    - Qwen/Qwen2.5-7B-Instruct
     - HuggingFaceTB/SmolLM2-1.7B
+    - meta-llama/Llama-2-7b-chat-hf
+    - mistralai/Mistral-7B-Instruct-v0.2
+    - codellama/CodeLlama-7b-Instruct-hf
+    # Fallback Models (Lower Memory)
+    - microsoft/DialoGPT-medium
     batch_size: 4
     estimated_time_per_domain: 15-20 minutes
+    # GPU Optimization Settings
+    device_map: "auto"
+    low_cpu_mem_usage: true
+    max_memory: "auto"
+    memory_buffer_gb: 1.0
+    speed_factor: 1.0
+    max_model_size_gb: 8
+    quantization: "4bit"
+    torch_dtype: "auto"
   V100:
     cost_per_hour: 2.5
     max_parallel_jobs: 6
     recommended_models:
+    # Primary Models (Optimized for V100)
     - Qwen/Qwen2.5-7B-Instruct
-    - microsoft/Phi-3-medium-4k-instruct
+    - Qwen/Qwen2.5-14B-Instruct
+    - meta-llama/Llama-2-7b-chat-hf
+    - meta-llama/Llama-2-13b-chat-hf
+    - meta-llama/Llama-3-8B-Instruct
+    - mistralai/Mistral-7B-Instruct-v0.2
+    - codellama/CodeLlama-7b-Instruct-hf
+    - codellama/CodeLlama-13b-Instruct-hf
+    # Fallback Models
+    - HuggingFaceTB/SmolLM2-1.7B
+    - microsoft/DialoGPT-medium
     batch_size: 8
     estimated_time_per_domain: 8-12 minutes
+    # GPU Optimization Settings
+    device_map: "auto"
+    low_cpu_mem_usage: true
+    max_memory: "auto"
+    memory_buffer_gb: 2.0
+    speed_factor: 2.5
+    max_model_size_gb: 16
+    quantization: "8bit"
+    torch_dtype: "auto"
   A100:
     cost_per_hour: 4.0
     max_parallel_jobs: 8
     recommended_models:
+    # Primary Models (Optimized for A100)
     - Qwen/Qwen2.5-14B-Instruct
-    - microsoft/Phi-3-medium-4k-instruct
+    - Qwen/Qwen2.5-7B-Instruct
+    - meta-llama/Llama-3-70B-Instruct
+    - meta-llama/Llama-2-13b-chat-hf
+    - meta-llama/Llama-3-8B-Instruct
+    - codellama/CodeLlama-13b-Instruct-hf
+    # Secondary Models
+    - meta-llama/Llama-2-7b-chat-hf
+    - mistralai/Mistral-7B-Instruct-v0.2
+    - codellama/CodeLlama-7b-Instruct-hf
+    # Fallback Models
+    - HuggingFaceTB/SmolLM2-1.7B
+    - microsoft/DialoGPT-medium
     batch_size: 16
     estimated_time_per_domain: 4-6 minutes
+    # GPU Optimization Settings
+    device_map: "auto"
+    low_cpu_mem_usage: true
+    max_memory: "auto"
+    memory_buffer_gb: 4.0
+    speed_factor: 5.0
+    max_model_size_gb: 32
+    quantization: "16bit"
+    torch_dtype: "auto"
 cost_estimates:
   premium_tier:
-    model: Phi-3-medium-4k-instruct
+    model: Qwen/Qwen2.5-7B-Instruct
     gpu: A100
     parallel_jobs: 8
     time_all_domains: 2-3 hours
     total_cost: $8-12
   expert_tier:
-    model: Qwen2.5-14B-Instruct
+    model: Qwen/Qwen2.5-14B-Instruct
     gpu: A100
     parallel_jobs: 8
     time_all_domains: 2-3 hours
     total_cost: $8-12
   quality_tier:
-    model: Phi-3-medium-4k-instruct
+    model: Qwen/Qwen2.5-7B-Instruct
     gpu: V100
     parallel_jobs: 6
     time_all_domains: 2-4 hours
     total_cost: $10-20
 verified_licenses:
   HuggingFaceTB/SmolLM2-1.7B: Apache-2.0
-  microsoft/Phi-3.5-mini-instruct: MIT
-  microsoft/Phi-3-medium-4k-instruct: MIT
   Qwen/Qwen2.5-7B-Instruct: Apache-2.0
   Qwen/Qwen2.5-14B-Instruct: Apache-2.0
+  meta-llama/Llama-2-7b-chat-hf: Apache-2.0
+  meta-llama/Llama-2-13b-chat-hf: Apache-2.0
+  meta-llama/Llama-3-8B-Instruct: Apache-2.0
+  meta-llama/Llama-3-70B-Instruct: Apache-2.0
+  mistralai/Mistral-7B-Instruct-v0.2: Apache-2.0
+  codellama/CodeLlama-7b-Instruct-hf: Apache-2.0
+  codellama/CodeLlama-13b-Instruct-hf: Apache-2.0
 global_tara_params:
   sequence_length: 256
   validation_target: 101.0
   output_format: Q4_K_M
   target_gguf_size_mb: 8.3
-  fallback_base_model: microsoft/Phi-3.5-mini-instruct
+  fallback_base_model: Qwen/Qwen2.5-7B-Instruct
   generate_synthetic_data: false
   quality_focus: true
   environment: dev
@@ -160,181 +233,161 @@ global_tara_params:
 domain_config:
   healthcare:
     category_tier: premium
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      general_health: microsoft/Phi-3-medium-4k-instruct
-      mental_health: microsoft/Phi-3-medium-4k-instruct
-      nutrition: microsoft/Phi-3-medium-4k-instruct
-      sleep: microsoft/Phi-3-medium-4k-instruct
-      stress_management: microsoft/Phi-3-medium-4k-instruct
-      preventive_care: microsoft/Phi-3-medium-4k-instruct
-      chronic_conditions: microsoft/Phi-3-medium-4k-instruct
-      medication_management: microsoft/Phi-3-medium-4k-instruct
-      emergency_care: microsoft/Phi-3-medium-4k-instruct
-      women_health: microsoft/Phi-3-medium-4k-instruct
-      senior_health: microsoft/Phi-3-medium-4k-instruct
+      general_health: Qwen/Qwen2.5-7B-Instruct
+      mental_health: Qwen/Qwen2.5-7B-Instruct
+      nutrition: Qwen/Qwen2.5-7B-Instruct
+      sleep: Qwen/Qwen2.5-7B-Instruct
+      stress_management: Qwen/Qwen2.5-7B-Instruct
+      preventive_care: Qwen/Qwen2.5-7B-Instruct
+      chronic_conditions: Qwen/Qwen2.5-7B-Instruct
+      medication_management: Qwen/Qwen2.5-7B-Instruct
+      emergency_care: Qwen/Qwen2.5-7B-Instruct
+      women_health: Qwen/Qwen2.5-7B-Instruct
+      senior_health: Qwen/Qwen2.5-7B-Instruct
   daily_life:
     category_tier: quality
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      parenting: microsoft/Phi-3-medium-4k-instruct
-      relationships: microsoft/Phi-3-medium-4k-instruct
+      parenting: Qwen/Qwen2.5-7B-Instruct
+      relationships: Qwen/Qwen2.5-7B-Instruct
       personal_assistant: Qwen/Qwen2.5-7B-Instruct
-      communication: microsoft/Phi-3.5-mini-instruct
-      home_management: microsoft/Phi-3.5-mini-instruct
-      shopping: microsoft/DialoGPT-small
+      communication: Qwen/Qwen2.5-7B-Instruct
+      home_management: Qwen/Qwen2.5-7B-Instruct
+      shopping: Qwen/Qwen2.5-7B-Instruct
       planning: Qwen/Qwen2.5-7B-Instruct
-      transportation: microsoft/Phi-3.5-mini-instruct
+      transportation: Qwen/Qwen2.5-7B-Instruct
       time_management: Qwen/Qwen2.5-7B-Instruct
-      decision_making: microsoft/Phi-3-medium-4k-instruct
-      conflict_resolution: microsoft/Phi-3-medium-4k-instruct
-      work_life_balance: microsoft/Phi-3-medium-4k-instruct
+      decision_making: Qwen/Qwen2.5-7B-Instruct
+      conflict_resolution: Qwen/Qwen2.5-7B-Instruct
+      work_life_balance: Qwen/Qwen2.5-7B-Instruct
   business:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
       entrepreneurship: Qwen/Qwen2.5-14B-Instruct
-      marketing: microsoft/Phi-3-medium-4k-instruct
-      sales: microsoft/Phi-3-medium-4k-instruct
-      customer_service: microsoft/Phi-3.5-mini-instruct
+      marketing: Qwen/Qwen2.5-7B-Instruct
+      sales: Qwen/Qwen2.5-7B-Instruct
+      customer_service: Qwen/Qwen2.5-7B-Instruct
       project_management: Qwen/Qwen2.5-14B-Instruct
       team_leadership: Qwen/Qwen2.5-14B-Instruct
-      financial_planning: microsoft/Phi-3-medium-4k-instruct
+      financial_planning: Qwen/Qwen2.5-14B-Instruct
       operations: Qwen/Qwen2.5-7B-Instruct
-      hr_management: microsoft/Phi-3-medium-4k-instruct
+      hr_management: Qwen/Qwen2.5-7B-Instruct
       strategy: Qwen/Qwen2.5-14B-Instruct
       consulting: Qwen/Qwen2.5-14B-Instruct
-      legal_business: microsoft/Phi-3-medium-4k-instruct
+      legal_business: Qwen/Qwen2.5-7B-Instruct
   education:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
-      academic_tutoring: Qwen/Qwen2.5-14B-Instruct
-      skill_development: microsoft/Phi-3-medium-4k-instruct
-      career_guidance: microsoft/Phi-3-medium-4k-instruct
-      exam_preparation: microsoft/Phi-3-medium-4k-instruct
-      language_learning_education: microsoft/Phi-3.5-mini-instruct
+      academic_tutoring: Qwen/Qwen2.5-7B-Instruct
+      skill_development: Qwen/Qwen2.5-7B-Instruct
+      career_guidance: Qwen/Qwen2.5-7B-Instruct
+      exam_preparation: Qwen/Qwen2.5-7B-Instruct
+      language_learning_education: Qwen/Qwen2.5-7B-Instruct
       research_assistance: Qwen/Qwen2.5-14B-Instruct
-      study_techniques: microsoft/Phi-3-medium-4k-instruct
+      study_techniques: Qwen/Qwen2.5-7B-Instruct
       educational_technology: Qwen/Qwen2.5-7B-Instruct
   creative:
     category_tier: quality
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      writing: microsoft/Phi-3-medium-4k-instruct
-      storytelling: microsoft/Phi-3-medium-4k-instruct
+      writing: Qwen/Qwen2.5-7B-Instruct
+      storytelling: Qwen/Qwen2.5-7B-Instruct
       content_creation: Qwen/Qwen2.5-7B-Instruct
-      social_media: microsoft/Phi-3.5-mini-instruct
-      design_thinking: microsoft/Phi-3-medium-4k-instruct
-      photography: microsoft/Phi-3.5-mini-instruct
-      music: microsoft/Phi-3.5-mini-instruct
-      art_appreciation: microsoft/Phi-3-medium-4k-instruct
-      mythology: microsoft/Phi-3-medium-4k-instruct
-      spiritual: microsoft/Phi-3-medium-4k-instruct
+      social_media: Qwen/Qwen2.5-7B-Instruct
+      design_thinking: Qwen/Qwen2.5-7B-Instruct
+      photography: Qwen/Qwen2.5-7B-Instruct
+      music: Qwen/Qwen2.5-7B-Instruct
+      art_appreciation: Qwen/Qwen2.5-7B-Instruct
+      mythology: Qwen/Qwen2.5-7B-Instruct
+      spiritual: Qwen/Qwen2.5-7B-Instruct
   psychology_wellness:
     category_tier: quality
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      psychology: microsoft/Phi-3-medium-4k-instruct
-      yoga: microsoft/Phi-3-medium-4k-instruct
-      life_coaching: microsoft/Phi-3-medium-4k-instruct
-      social_support: microsoft/Phi-3-medium-4k-instruct
+      psychology: Qwen/Qwen2.5-7B-Instruct
+      yoga: Qwen/Qwen2.5-7B-Instruct
+      life_coaching: Qwen/Qwen2.5-7B-Instruct
+      social_support: Qwen/Qwen2.5-7B-Instruct
   sports_recreation:
     category_tier: quality
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      sports_recreation: microsoft/Phi-3-medium-4k-instruct
-      fitness_healthcare: microsoft/Phi-3.5-mini-instruct
+      sports_recreation: Qwen/Qwen2.5-7B-Instruct
+      fitness_healthcare: Qwen/Qwen2.5-7B-Instruct
   business_professional:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
-      remote_work: Qwen/Qwen2.5-14B-Instruct
+      remote_work: Qwen/Qwen2.5-7B-Instruct
       social_media_management: Qwen/Qwen2.5-7B-Instruct
-      digital_literacy: microsoft/Phi-3.5-mini-instruct
-      language_learning_professional: microsoft/Phi-3.5-mini-instruct
+      digital_literacy: Qwen/Qwen2.5-7B-Instruct
+      language_learning_professional: Qwen/Qwen2.5-7B-Instruct
   research_academic:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
       research: Qwen/Qwen2.5-14B-Instruct
+      research_assistance: "meta-llama/Llama-3-70B-Instruct"  # Academic support
       academic_tutoring_research: Qwen/Qwen2.5-14B-Instruct
   legal_financial:
     category_tier: premium
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      legal_assistance: microsoft/Phi-3-medium-4k-instruct
-      insurance: microsoft/Phi-3-medium-4k-instruct
-      real_estate: microsoft/Phi-3-medium-4k-instruct
+      legal_assistance: Qwen/Qwen2.5-7B-Instruct
+      insurance: Qwen/Qwen2.5-7B-Instruct
+      real_estate: Qwen/Qwen2.5-7B-Instruct
   emergency_crisis:
     category_tier: premium
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      crisis_management: microsoft/Phi-3-medium-4k-instruct
-      disaster_preparedness: microsoft/Phi-3-medium-4k-instruct
-      emergency_response: microsoft/Phi-3-medium-4k-instruct
-      safety_security: microsoft/Phi-3-medium-4k-instruct
+      crisis_management: Qwen/Qwen2.5-7B-Instruct
+      disaster_preparedness: Qwen/Qwen2.5-7B-Instruct
+      emergency_response: Qwen/Qwen2.5-7B-Instruct
+      safety_security: Qwen/Qwen2.5-7B-Instruct
   aerospace_transportation:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
       aeronautics: Qwen/Qwen2.5-14B-Instruct
-      automobile: Qwen/Qwen2.5-14B-Instruct
+      automobile: Qwen/Qwen2.5-7B-Instruct
       space_technology: Qwen/Qwen2.5-14B-Instruct
   industrial_manufacturing:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
-      agriculture: Qwen/Qwen2.5-14B-Instruct
-      manufacturing: Qwen/Qwen2.5-14B-Instruct
+      agriculture: Qwen/Qwen2.5-7B-Instruct
+      manufacturing: Qwen/Qwen2.5-7B-Instruct
   travel_tourism:
     category_tier: quality
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      travel_tourism: microsoft/Phi-3-medium-4k-instruct
+      travel_tourism: Qwen/Qwen2.5-7B-Instruct
   technology:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
-      programming: Qwen/Qwen2.5-14B-Instruct
+      programming: codellama/CodeLlama-13b-Instruct-hf
       ai_ml: Qwen/Qwen2.5-14B-Instruct
-      cybersecurity: microsoft/Phi-3-medium-4k-instruct
+      cybersecurity: Qwen/Qwen2.5-14B-Instruct
       data_analysis: Qwen/Qwen2.5-14B-Instruct
-      tech_support: microsoft/Phi-3.5-mini-instruct
-      software_development: Qwen/Qwen2.5-14B-Instruct
+      tech_support: Qwen/Qwen2.5-7B-Instruct
+      software_development: codellama/CodeLlama-13b-Instruct-hf
   specialized:
     category_tier: premium
-    base_model: microsoft/Phi-3-medium-4k-instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      legal: microsoft/Phi-3-medium-4k-instruct
-      financial: microsoft/Phi-3-medium-4k-instruct
-      scientific_research: Qwen/Qwen2.5-14B-Instruct
-      engineering: Qwen/Qwen2.5-14B-Instruct
+      scientific_research: "meta-llama/Llama-3-70B-Instruct"  # Research methods
+      engineering: "Qwen/Qwen2.5-14B-Instruct"                # Technical design
 paths:
   data_training_base_dir: data
   data_trained_base_dir: data
 
 model_type_map:
-  microsoft/Phi-3.5-mini-instruct:
-    model_type: phi3
-    architecture: Phi3ForCausalLM
-    vocab_size: 32000
-    hidden_size: 3072
-    num_attention_heads: 24
-    num_hidden_layers: 24
-    intermediate_size: 8192
-    max_position_embeddings: 4096
-    n_ctx: 4096
-  microsoft/Phi-3-medium-4k-instruct:
-    model_type: phi3
-    architecture: Phi3ForCausalLM
-    vocab_size: 32000
-    hidden_size: 3072
-    num_attention_heads: 24
-    num_hidden_layers: 24
-    intermediate_size: 8192
-    max_position_embeddings: 4096
-    n_ctx: 4096
+  # Primary Models (Qwen)
   Qwen/Qwen2.5-7B-Instruct:
     model_type: qwen2
     architecture: Qwen2ForCausalLM
@@ -355,6 +408,86 @@ model_type_map:
     intermediate_size: 11008
     max_position_embeddings: 32768
     n_ctx: 32768
+  
+  # Approved Models (Llama 2)
+  meta-llama/Llama-2-7b-chat-hf:
+    model_type: llama
+    architecture: LlamaForCausalLM
+    vocab_size: 32000
+    hidden_size: 4096
+    num_attention_heads: 32
+    num_hidden_layers: 32
+    intermediate_size: 11008
+    max_position_embeddings: 4096
+    n_ctx: 4096
+  meta-llama/Llama-2-13b-chat-hf:
+    model_type: llama
+    architecture: LlamaForCausalLM
+    vocab_size: 32000
+    hidden_size: 5120
+    num_attention_heads: 40
+    num_hidden_layers: 40
+    intermediate_size: 13824
+    max_position_embeddings: 4096
+    n_ctx: 4096
+  
+  # Approved Models (Llama 3)
+  meta-llama/Llama-3-8B-Instruct:
+    model_type: llama
+    architecture: LlamaForCausalLM
+    vocab_size: 128256
+    hidden_size: 4096
+    num_attention_heads: 32
+    num_hidden_layers: 32
+    intermediate_size: 11008
+    max_position_embeddings: 8192
+    n_ctx: 8192
+  meta-llama/Llama-3-70B-Instruct:
+    model_type: llama
+    architecture: LlamaForCausalLM
+    vocab_size: 128256
+    hidden_size: 8192
+    num_attention_heads: 64
+    num_hidden_layers: 80
+    intermediate_size: 28672
+    max_position_embeddings: 8192
+    n_ctx: 8192
+  
+  # Approved Models (Mistral)
+  mistralai/Mistral-7B-Instruct-v0.2:
+    model_type: mistral
+    architecture: MistralForCausalLM
+    vocab_size: 32000
+    hidden_size: 4096
+    num_attention_heads: 32
+    num_hidden_layers: 32
+    intermediate_size: 14336
+    max_position_embeddings: 32768
+    n_ctx: 32768
+  
+  # Approved Models (Code Llama)
+  codellama/CodeLlama-7b-Instruct-hf:
+    model_type: llama
+    architecture: LlamaForCausalLM
+    vocab_size: 32016
+    hidden_size: 4096
+    num_attention_heads: 32
+    num_hidden_layers: 32
+    intermediate_size: 11008
+    max_position_embeddings: 16384
+    n_ctx: 16384
+  codellama/CodeLlama-13b-Instruct-hf:
+    model_type: llama
+    architecture: LlamaForCausalLM
+    vocab_size: 32016
+    hidden_size: 5120
+    num_attention_heads: 40
+    num_hidden_layers: 40
+    intermediate_size: 13824
+    max_position_embeddings: 16384
+    n_ctx: 16384
+  
+  # Limited Models (Technical Issues)
   microsoft/DialoGPT-small:
     model_type: gpt2
     architecture: GPT2LMHeadModel
@@ -378,7 +511,157 @@ model_type_map:
 
 model_loading_config:
   torch_dtype: "float16"
-  device_map: null
-  low_cpu_mem_usage: false
+  device_map: "auto"  # Changed from null to auto for better memory management
+  low_cpu_mem_usage: true  # Changed from false to true for memory efficiency
   trust_remote_code: true
+  # Memory optimization settings
+  max_memory: "auto"
+  offload_folder: "offload"
   # Add any model-specific parameters here if needed
+
+# GPU Configuration for Colab Optimization
+gpu_config:
+  # Colab GPU Detection
+  auto_detect_gpu: true
+  gpu_memory_buffer_gb: 2.0  # Reserve 2GB for system operations
+  
+  # GPU-Specific Settings
+  colab_optimizations:
+    use_mixed_precision: true
+    enable_gradient_checkpointing: true
+    pin_memory: true
+    num_workers: 2  # Reduced for Colab stability
+    
+  # GPU Memory Management
+  memory_management:
+    max_memory: "auto"
+    device_map: "auto"
+    low_cpu_mem_usage: true
+    torch_dtype: "float16"
+    
+  # GPU Performance Settings
+  performance:
+    # T4 GPU (Colab Free)
+    t4:
+      batch_size: 4
+      max_memory_gb: 12
+      speed_factor: "37x"
+      cost_per_hour: 0.0
+      
+    # V100 GPU (Colab Pro)
+    v100:
+      batch_size: 8
+      max_memory_gb: 16
+      speed_factor: "75x"
+      cost_per_hour: 2.5
+      
+    # A100 GPU (Colab Pro+)
+    a100:
+      batch_size: 16
+      max_memory_gb: 40
+      speed_factor: "151x"
+      cost_per_hour: 4.0
+      
+    # CPU Fallback
+    cpu:
+      batch_size: 1
+      max_memory_gb: 8
+      speed_factor: "1x"
+      cost_per_hour: 0.0
+
+# QLoRA Configuration
+qlora_config:
+  enabled: true
+  load_in_4bit: true
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true
+  bnb_4bit_quant_type: "nf4"
+  
+  # GPU Requirements
+  min_gpu_memory_gb: 8
+  recommended_gpu_memory_gb: 16
+  
+  # Model-Specific QLoRA Settings
+  model_specific_settings:
+    qwen:
+      target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+      lora_r: 8
+      lora_alpha: 16
+      lora_dropout: 0.1
+    llama:
+      target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+      lora_r: 8
+      lora_alpha: 16
+      lora_dropout: 0.1
+    mistral:
+      target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+      lora_r: 8
+      lora_alpha: 16
+      lora_dropout: 0.1
+    codellama:
+      target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+      lora_r: 8
+      lora_alpha: 16
+      lora_dropout: 0.1
+  
+  # Performance Optimization
+  optimization:
+    gradient_checkpointing: true
+    fp16: true
+    dataloader_pin_memory: true
+    dataloader_num_workers: 4
+    
+  # Memory Management
+  memory_management:
+    max_memory: "auto"
+    device_map: "auto"
+    low_cpu_mem_usage: true
+    torch_dtype: "float16"
+  
+# Approved Models for MeeTARA Lab (Risk-Based Selection)
+approved_models:
+  # PRIMARY MODELS (Lowest Risk)
+  primary:
+    qwen_7b: "Qwen/Qwen2.5-7B-Instruct"
+    qwen_14b: "Qwen/Qwen2.5-14B-Instruct"
+  
+  # APPROVED MODELS (Low Risk - Apache-2.0 License)
+  approved:
+    llama2_7b: "meta-llama/Llama-2-7b-chat-hf"
+    llama2_13b: "meta-llama/Llama-2-13b-chat-hf"
+    llama3_8b: "meta-llama/Llama-3-8B-Instruct"
+    llama3_70b: "meta-llama/Llama-3-70B-Instruct"
+    mistral_7b: "mistralai/Mistral-7B-Instruct-v0.2"
+    code_llama_7b: "codellama/CodeLlama-7b-Instruct-hf"
+    code_llama_13b: "codellama/CodeLlama-13b-Instruct-hf"
+  
+  # LIMITED MODELS (Medium Risk - Technical Issues)
+  limited:
+    phi3_mini: "microsoft/Phi-3.5-mini-instruct"
+    phi3_medium: "microsoft/Phi-3-medium-4k-instruct"
+    dialogpt_small: "microsoft/DialoGPT-small"
+    dialogpt_medium: "microsoft/DialoGPT-medium"
+
+# Risk Assessment for MeeTARA Lab
+risk_assessment:
+  low_risk_models:
+    - "Qwen/Qwen2.5-7B-Instruct"
+    - "Qwen/Qwen2.5-14B-Instruct"
+    - "meta-llama/Llama-2-7b-chat-hf"
+    - "meta-llama/Llama-2-13b-chat-hf"
+    - "meta-llama/Llama-3-8B-Instruct"
+    - "meta-llama/Llama-3-70B-Instruct"
+    - "mistralai/Mistral-7B-Instruct-v0.2"
+    - "codellama/CodeLlama-7b-Instruct-hf"
+    - "codellama/CodeLlama-13b-Instruct-hf"
+  
+  medium_risk_models:
+    - "microsoft/Phi-3.5-mini-instruct"  # LoRA issues
+    - "microsoft/Phi-3-medium-4k-instruct"  # LoRA issues
+    - "microsoft/DialoGPT-small"  # GGUF conversion issues
+    - "microsoft/DialoGPT-medium"  # GGUF conversion issues
+  
+  high_risk_models:
+    - "meta-llama/Llama-4-*"  # Future licensing uncertainty
+    - "gpt-*"  # Closed source, API only
+    - "claude-*"  # Closed source, API only

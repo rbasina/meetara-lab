@@ -1,14 +1,51 @@
-﻿torch==2.2.2
-torchvision==0.17.2
-torchaudio==2.2.2
-torchao
-triton
-transformers==4.37.2
-accelerate
-datasets
-peft==0.8.2
-bitsandbytes
-cmake
-ninja
-numpy==1.26.4
-# ... (other packages as needed)
+﻿# Core PyTorch (Colab-compatible versions)
+torch==2.1.0
+torchvision==0.16.0
+torchaudio==2.1.0
+
+# Transformers and Hugging Face ecosystem
+transformers==4.36.2
+accelerate==0.25.0
+datasets==2.16.1
+peft==0.7.1
+tokenizers==0.15.0
+
+# Quantization and optimization
+bitsandbytes==0.41.3
+triton==2.1.0
+
+# Model serving and inference
+llama-cpp-python==0.2.23
+gguf==0.1.0
+
+# Audio and speech processing
+speechbrain==0.5.16
+librosa==0.10.1
+soundfile==0.12.1
+
+# Computer vision and image processing
+opencv-python==4.8.1.78
+Pillow==10.1.0
+
+# Data processing and utilities
+numpy==1.24.3
+pandas==2.1.4
+scipy==1.11.4
+
+# Configuration and utilities
+pyyaml==6.0.1
+tqdm==4.66.1
+rich==13.7.0
+
+# Hugging Face utilities
+huggingface_hub==0.19.4
+wandb==0.16.1
+tensorboard==2.15.1
+
+# Development and testing
+pytest==7.4.3
+pytest-cov==4.1.0
+
+# Additional utilities
+requests==2.31.0
+urllib3==2.0.7

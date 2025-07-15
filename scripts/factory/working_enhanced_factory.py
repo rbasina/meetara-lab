@@ -268,7 +268,7 @@ class EnhancedGGUFFactory:
         # Enhanced request with universal device optimization
         request = {
             "variant_name": variant_name,
-            "base_model": variant_config.get("base_model", "microsoft/Phi-3.5-mini-instruct"),
+            "base_model": variant_config.get("base_model", self.config_manager._global_params.get('fallback_base_model')),
             "domains": variant_config.get("domains", 62),
             "target_size_mb": variant_config.get("target_size_mb", 8.3),
             "quantization_type": variant_config.get("quantization_type", "Q4_K_M"),
