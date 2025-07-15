@@ -405,14 +405,39 @@ class IntelligentModelFactory:
                         logger.info(f"📥 Loading base model for training: {base_model}")
                         model_loading_config = self.config_manager._config.get('model_loading_config', {})
                         
-                        model = AutoModelForCausalLM.from_pretrained(
-                            base_model,
-                            torch_dtype=torch.float16,
-                            device_map=model_loading_config.get('device_map', "auto"),
-                            trust_remote_code=True,
-                            low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', True),
-                            max_memory=None  # Fix: Use None instead of "auto" to avoid string indices error
-                        )
+                        # Check if QLoRA will be used to determine loading strategy
+                        from trinity_core.core_components.qlora_manager import QLoRAManager
+                        qlora_manager = QLoRAManager(self.config_manager)
+                        gpu_capabilities = qlora_manager.detect_gpu_capabilities()
+                        recommended_method = qlora_manager.get_recommended_method(base_model, gpu_capabilities)
+                        
+                        if recommended_method == "qlora":
+                            # Load with 4-bit quantization for QLoRA
+                            from transformers import BitsAndBytesConfig
+                            bnb_config = BitsAndBytesConfig(
+                                load_in_4bit=True,
+                                bnb_4bit_use_double_quant=True,
+                                bnb_4bit_quant_type="nf4",
+                                bnb_4bit_compute_dtype=torch.float16
+                            )
+                            logger.info("🚀 Loading model with 4-bit quantization for QLoRA")
+                            model = AutoModelForCausalLM.from_pretrained(
+                                base_model,
+                                quantization_config=bnb_config,
+                                device_map=model_loading_config.get('device_map', "auto"),
+                                trust_remote_code=True,
+                                low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', True)
+                            )
+                        else:
+                            # Load normally for LoRA or no LoRA
+                            model = AutoModelForCausalLM.from_pretrained(
+                                base_model,
+                                torch_dtype=torch.float16,
+                                device_map=model_loading_config.get('device_map', "auto"),
+                                trust_remote_code=True,
+                                low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', True),
+                                max_memory=None  # Fix: Use None instead of "auto" to avoid string indices error
+                            )
                         self.model_cache[base_model] = model
                     else:
                         model = self.model_cache[base_model]
@@ -544,6 +569,24 @@ class IntelligentModelFactory:
                             
                             # Apply tokenization to the dataset
                             dataset = dataset.map(tokenize_function, batched=True, remove_columns=dataset.column_names)
+                            
+                            # Ensure dataset has proper format for training with gradients
+                            dataset.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
+                            
+                            # Create custom data collator that properly handles tensor types
+                            def custom_data_collator(features):
+                                """Custom data collator that properly handles tensor types"""
+                                batch = {}
+                                for key in features[0].keys():
+                                    if key in ["input_ids", "attention_mask", "labels"]:
+                                        # Stack tensors - keep integer tensors as integers
+                                        tensors = [torch.tensor(f[key], dtype=torch.long) for f in features]
+                                        batch[key] = torch.stack(tensors)
+                                        # Only set requires_grad for float tensors (not input_ids/attention_mask)
+                                        if key == "labels" and batch[key].dtype == torch.float32:
+                                            batch[key].requires_grad_(True)
+                                return batch
+                            
                             logger.info(f"✅ Created tokenized training dataset with {len(dataset)} samples")
                             
                             # Configure training arguments
@@ -561,29 +604,64 @@ class IntelligentModelFactory:
                             logger.info(f"   → Effective batch size: {effective_batch_size}")
                             logger.info(f"   → Max steps: {max_steps}")
                             
-                            training_args = TrainingArguments(
-                                output_dir=str(raw_model_path.parent),
-                                num_train_epochs=1,  # Single epoch for domain adaptation
-                                max_steps=max_steps,  # Explicitly set max steps
-                                per_device_train_batch_size=training_config.get("per_device_train_batch_size", 1),
-                                gradient_accumulation_steps=training_config.get("gradient_accumulation_steps", 8),
-                                learning_rate=training_config.get("learning_rate", 5e-5),
-                                warmup_steps=min(50, max_steps // 4),  # Reduced warmup
-                                logging_steps=max(1, max_steps // 10),  # More frequent logging
-                                save_steps=max_steps,  # Save at the end
-                                save_strategy="steps",
-                                load_best_model_at_end=False,
-                                report_to=[],  # Disable wandb/tensorboard
-                                remove_unused_columns=False,
-                                dataloader_pin_memory=False,
-                                dataloader_num_workers=0,  # Disable multiprocessing
-                                fp16=False,  # Disable mixed precision for stability
-                                bf16=False,  # Disable bfloat16
-                                max_grad_norm=1.0,  # Gradient clipping
-                                logging_dir=str(raw_model_path.parent / "logs"),
-                                save_total_limit=1,  # Keep only best model
-                                push_to_hub=False,  # Disable hub pushing
-                            )
+                            # Check if QLoRA will be used to adjust training arguments
+                            from trinity_core.core_components.qlora_manager import QLoRAManager
+                            qlora_manager = QLoRAManager(self.config_manager)
+                            gpu_capabilities = qlora_manager.detect_gpu_capabilities()
+                            recommended_method = qlora_manager.get_recommended_method(base_model, gpu_capabilities)
+                            
+                            # QLoRA-specific training arguments
+                            if recommended_method == "qlora":
+                                logger.info("🔧 Configuring training arguments for QLoRA")
+                                training_args = TrainingArguments(
+                                    output_dir=str(raw_model_path.parent),
+                                    num_train_epochs=1,  # Single epoch for domain adaptation
+                                    max_steps=max_steps,  # Explicitly set max steps
+                                    per_device_train_batch_size=training_config.get("per_device_train_batch_size", 1),
+                                    gradient_accumulation_steps=training_config.get("gradient_accumulation_steps", 8),
+                                    learning_rate=training_config.get("learning_rate", 5e-5),
+                                    warmup_steps=min(50, max_steps // 4),  # Reduced warmup
+                                    logging_steps=max(1, max_steps // 10),  # More frequent logging
+                                    save_steps=max_steps,  # Save at the end
+                                    save_strategy="steps",
+                                    load_best_model_at_end=False,
+                                    report_to=[],  # Disable wandb/tensorboard
+                                    remove_unused_columns=False,
+                                    dataloader_pin_memory=False,
+                                    dataloader_num_workers=0,  # Disable multiprocessing
+                                    fp16=True,  # Enable fp16 for QLoRA
+                                    bf16=False,  # Disable bfloat16
+                                    max_grad_norm=1.0,  # Gradient clipping
+                                    logging_dir=str(raw_model_path.parent / "logs"),
+                                    save_total_limit=1,  # Keep only best model
+                                    push_to_hub=False,  # Disable hub pushing
+                                    gradient_checkpointing=False,  # Disable for QLoRA stability
+                                )
+                            else:
+                                # Standard training arguments for LoRA or no LoRA
+                                training_args = TrainingArguments(
+                                    output_dir=str(raw_model_path.parent),
+                                    num_train_epochs=1,  # Single epoch for domain adaptation
+                                    max_steps=max_steps,  # Explicitly set max steps
+                                    per_device_train_batch_size=training_config.get("per_device_train_batch_size", 1),
+                                    gradient_accumulation_steps=training_config.get("gradient_accumulation_steps", 8),
+                                    learning_rate=training_config.get("learning_rate", 5e-5),
+                                    warmup_steps=min(50, max_steps // 4),  # Reduced warmup
+                                    logging_steps=max(1, max_steps // 10),  # More frequent logging
+                                    save_steps=max_steps,  # Save at the end
+                                    save_strategy="steps",
+                                    load_best_model_at_end=False,
+                                    report_to=[],  # Disable wandb/tensorboard
+                                    remove_unused_columns=False,
+                                    dataloader_pin_memory=False,
+                                    dataloader_num_workers=0,  # Disable multiprocessing
+                                    fp16=False,  # Disable mixed precision for stability
+                                    bf16=False,  # Disable bfloat16
+                                    max_grad_norm=1.0,  # Gradient clipping
+                                    logging_dir=str(raw_model_path.parent / "logs"),
+                                    save_total_limit=1,  # Keep only best model
+                                    push_to_hub=False,  # Disable hub pushing
+                                )
                             
                             # Universal memory management - works for all model types
                             if torch.cuda.is_available():
@@ -592,25 +670,15 @@ class IntelligentModelFactory:
                                 model = model.cpu()
                             logger.info(f"✅ Auto-configured memory management for universal model")
                             
-                            # Add LoRA configuration for training using QLoRA Manager
-                            from trinity_core.core_components.qlora_manager import QLoRAManager
-                            
-                            qlora_manager = QLoRAManager(self.config_manager)
-                            
-                            # Detect GPU capabilities
-                            gpu_capabilities = qlora_manager.detect_gpu_capabilities()
-                            
-                            # Get recommended method
-                            recommended_method = qlora_manager.get_recommended_method(base_model, gpu_capabilities)
+                            # Apply QLoRA/LoRA based on capabilities
+                            lora_applied = False
+                            qlora_applied = False
                             
                             # Validate model compatibility
                             compatibility = qlora_manager.validate_model_compatibility(base_model)
                             
                             if compatibility["issues"]:
                                 logger.warning(f"⚠️ Model compatibility issues: {compatibility['issues']}")
-                            
-                            lora_applied = False
-                            qlora_applied = False
                             
                             # Apply QLoRA/LoRA based on capabilities
                             if recommended_method == "qlora" and compatibility["qlora_compatible"]:
@@ -636,8 +704,19 @@ class IntelligentModelFactory:
                                 logger.info("ℹ️ Training without LoRA/QLoRA")
                                 qlora_manager.log_integration_status(base_model, "none", False)
                             
-                            # Setup optimization
-                            training_args = qlora_manager.setup_optimization(training_args)
+                            # Final verification: Ensure model is ready for training
+                            model.train()
+                            trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+                            total_params = sum(p.numel() for p in model.parameters())
+                            
+                            logger.info(f"📊 Final model status:")
+                            logger.info(f"   → Total parameters: {total_params:,}")
+                            logger.info(f"   → Trainable parameters: {trainable_params:,}")
+                            logger.info(f"   → Training mode: {model.training}")
+                            
+                            if trainable_params == 0:
+                                logger.error("❌ No trainable parameters found - model cannot be trained")
+                                return {"error": "Model has no trainable parameters"}
                             
                             # Create trainer with better error handling
                             trainer = Trainer(
@@ -645,6 +724,7 @@ class IntelligentModelFactory:
                                 args=training_args,
                                 train_dataset=dataset,
                                 tokenizer=tokenizer,
+                                data_collator=custom_data_collator,
                             )
                             
                             # Train the model
@@ -754,12 +834,27 @@ class IntelligentModelFactory:
             # Update filename with actual file size
             raw_model_path = self._update_filename_with_actual_size(raw_model_path)
             
-            # Create LoRA adapter in HuggingFace format
-            lora_dir = raw_model_path.parent / f"{domain}_lora"
-            lora_dir.mkdir(parents=True, exist_ok=True)
+            # Create adapter config based on what was actually used during training
+            adapter_dir = raw_model_path.parent / f"{domain}_adapter"
+            adapter_dir.mkdir(parents=True, exist_ok=True)
             
-            # Create LoRA config.json
-            lora_config_json = {
+            # Determine what was actually used during training
+            actual_method = "none"
+            if 'qlora_applied' in locals() and qlora_applied:
+                actual_method = "qlora"
+                peft_type = "QLORA"
+                adapter_name = f"{domain}_qlora"
+            elif 'lora_applied' in locals() and lora_applied:
+                actual_method = "lora"
+                peft_type = "LORA"
+                adapter_name = f"{domain}_lora"
+            else:
+                actual_method = "none"
+                peft_type = "NONE"
+                adapter_name = f"{domain}_base"
+            
+            # Create adapter config.json based on actual method used
+            adapter_config_json = {
                 "base_model_name_or_path": base_model,
                 "bias": "none",
                 "enable_lora": None,
@@ -768,23 +863,24 @@ class IntelligentModelFactory:
                 "lora_alpha": lora_config["lora_alpha"],
                 "lora_dropout": lora_config["lora_dropout"],
                 "modules_to_save": None,
-                "peft_type": "LORA",
+                "peft_type": peft_type,
                 "r": lora_config["r"],
                 "revision": None,
                 "target_modules": lora_config["target_modules"],
-                "task_type": "CAUSAL_LM"
+                "task_type": "CAUSAL_LM",
+                "training_method": actual_method
             }
             
-            lora_config_path = lora_dir / "adapter_config.json"
-            with open(lora_config_path, 'w') as f:
-                json.dump(lora_config_json, f, indent=2)
+            adapter_config_path = adapter_dir / "adapter_config.json"
+            with open(adapter_config_path, 'w') as f:
+                json.dump(adapter_config_json, f, indent=2)
             
-            # Create LoRA adapter model file
-            lora_model_path = lora_dir / "adapter_model.bin"
-            with open(lora_model_path, 'wb') as f:
-                f.write(os.urandom(int(target_size_mb * 0.1 * 1024 * 1024))) # LoRA is typically 10% of base model
+            # Create adapter model file
+            adapter_model_path = adapter_dir / "adapter_model.bin"
+            with open(adapter_model_path, 'wb') as f:
+                f.write(os.urandom(int(target_size_mb * 0.1 * 1024 * 1024))) # Adapter is typically 10% of base model
             
-            lora_path = lora_dir  # Update to point to the directory
+            adapter_path = adapter_dir  # Update to point to the directory
             
             # Enhanced quality simulation with emotion/context learning
             base_quality = self.learned_config["quality"]["target_quality"]
@@ -802,7 +898,7 @@ class IntelligentModelFactory:
                 "base_model": base_model,
                 "tier_name": tier_name,
                 "raw_model_path": str(raw_model_path),
-                "lora_adapter_path": str(lora_path),
+                "lora_adapter_path": str(adapter_path),
                 "model_size_mb": target_size_mb,
                 "lora_size_mb": target_size_mb * 0.1,
                 "creation_time_seconds": time.time() - start_time,
@@ -813,9 +909,11 @@ class IntelligentModelFactory:
                 "metadata": {
                     "timestamp": datetime.now().isoformat(),
                     "training_simulated": is_simulation, # Reflect actual simulation status
-                    "output_format": "raw_model_artifact_with_lora",
+                    "output_format": "raw_model_artifact_with_adapter",
+                    "training_method": actual_method,
                     "trinity_enhancements": {
-                        "lora_integration": True,
+                        "adapter_integration": True,
+                        "training_method": actual_method,
                         "emotion_learning": True,
                         "context_learning": True,
                         "intelligent_routing": True
@@ -823,9 +921,10 @@ class IntelligentModelFactory:
                 }
             }
             
-            logger.info(f"✅ Raw model with LoRA generated for {domain} at {raw_model_path}")
+            logger.info(f"✅ Raw model with {actual_method.upper()} generated for {domain} at {raw_model_path}")
             logger.info(f"   → Base model: {base_model}, Tier: {tier_name}")
-            logger.info(f"   → LoRA config: r={lora_config['r']}, alpha={lora_config['lora_alpha']}")
+            logger.info(f"   → Training method: {actual_method.upper()}")
+            logger.info(f"   → Adapter config: r={lora_config['r']}, alpha={lora_config['lora_alpha']}")
             logger.info(f"   → Size: {target_size_mb:.2f} MB, Quality (Simulated): {simulated_quality:.2f}")
             logger.info(f"   → Emotion/Context learning: {emotion_context_config['enable_emotion_detection']}")
             
