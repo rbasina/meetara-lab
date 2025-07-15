@@ -17,8 +17,8 @@ class QLoRAManager:
     
     def __init__(self, config_manager):
         self.config_manager = config_manager
-        self.qlora_config = config_manager.get_config().get('qlora_config', {})
-        self.model_type_map = config_manager.get_config().get('model_type_map', {})
+        self.qlora_config = config_manager.get_config_dict().get('qlora_config', {})
+        self.model_type_map = config_manager.get_config_dict().get('model_type_map', {})
         
         logger.info("🚀 QLoRA Manager initialized")
     

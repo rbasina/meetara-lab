@@ -195,23 +195,11 @@ class IntelligentModelFactory:
                     download_time = time.time() - download_start
                     print(f"⏱️ Download completed in {download_time:.2f}s")
             
-            # Load tokenizer
+            # Load tokenizer with universal system
             tokenizer_start = time.time()
-            print(f"🔧 Loading tokenizer: {base_model}")
-            
-            # Check if tokenizer is already cached
-            if base_model in self.tokenizer_cache:
-                tokenizer = self.tokenizer_cache[base_model]
-                print(f"✅ Tokenizer loaded from cache: {base_model}")
-            else:
-                try:
-                    tokenizer = AutoTokenizer.from_pretrained(base_model)
-                    self.tokenizer_cache[base_model] = tokenizer  # Cache the tokenizer
-                    tokenizer_time = time.time() - tokenizer_start
-                    print(f"✅ Tokenizer loaded in {tokenizer_time:.2f}s")
-                except Exception as e:
-                    print(f"❌ Tokenizer loading failed: {e}")
-                    return {"error": f"Tokenizer loading failed: {str(e)}"}
+            tokenizer = self._load_tokenizer_with_cache(base_model)
+            tokenizer_time = time.time() - tokenizer_start
+            print(f"✅ Tokenizer loaded in {tokenizer_time:.2f}s")
             
             # Load base model with proper memory management
             model_start = time.time()
@@ -284,7 +272,7 @@ class IntelligentModelFactory:
                             device_map=model_loading_config.get('device_map', "auto"),
                             low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', True),
                             trust_remote_code=model_loading_config.get('trust_remote_code', True),
-                            max_memory=model_loading_config.get('max_memory', "auto")
+                            max_memory=None  # Fix: Use None instead of "auto" to avoid string indices error
                         )
                         
                         model_time = time.time() - model_start
@@ -423,7 +411,7 @@ class IntelligentModelFactory:
                             device_map=model_loading_config.get('device_map', "auto"),
                             trust_remote_code=True,
                             low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', True),
-                            max_memory=model_loading_config.get('max_memory', "auto")
+                            max_memory=None  # Fix: Use None instead of "auto" to avoid string indices error
                         )
                         self.model_cache[base_model] = model
                     else:
@@ -1074,6 +1062,152 @@ class IntelligentModelFactory:
             logger.info(f"   → Model type: {model_type}")
         
         return model_dir
+
+    def _load_tokenizer_universal(self, base_model: str) -> Any:
+        """
+        Universal tokenizer loading system that automatically handles any model's tokenizer requirements.
+        Supports all approved models with automatic fallbacks and error handling.
+        """
+        logger = logging.getLogger("IntelligentModelFactory")
+        
+        # Define model-specific tokenizer requirements
+        model_tokenizer_configs = {
+            "qwen": {
+                "trust_remote_code": True,
+                "use_fast": True,
+                "padding_side": "left"
+            },
+            "llama": {
+                "trust_remote_code": True,
+                "use_fast": True
+            },
+            "mistral": {
+                "trust_remote_code": True,
+                "use_fast": True
+            },
+            "phi": {
+                "trust_remote_code": True,
+                "use_fast": True
+            },
+            "dialo": {
+                "trust_remote_code": False,
+                "use_fast": True
+            },
+            "code": {
+                "trust_remote_code": True,
+                "use_fast": True
+            }
+        }
+        
+        # Detect model type from base model name
+        model_type = None
+        base_model_lower = base_model.lower()
+        
+        if "qwen" in base_model_lower:
+            model_type = "qwen"
+        elif "llama" in base_model_lower:
+            model_type = "llama"
+        elif "mistral" in base_model_lower:
+            model_type = "mistral"
+        elif "phi" in base_model_lower:
+            model_type = "phi"
+        elif "dialo" in base_model_lower:
+            model_type = "dialo"
+        elif "code" in base_model_lower:
+            model_type = "code"
+        else:
+            # Default to generic settings
+            model_type = "generic"
+        
+        logger.info(f"🔍 Detected model type: {model_type} for {base_model}")
+        
+        # Get tokenizer config for this model type
+        tokenizer_config = model_tokenizer_configs.get(model_type, {
+            "trust_remote_code": True,
+            "use_fast": True
+        })
+        
+        # Universal tokenizer loading with progressive fallbacks
+        fallback_strategies = [
+            # Strategy 1: AutoTokenizer with model-specific config
+            {
+                "method": "AutoTokenizer",
+                "kwargs": tokenizer_config,
+                "description": f"AutoTokenizer with {model_type} config"
+            },
+            # Strategy 2: AutoTokenizer with trust_remote_code=True
+            {
+                "method": "AutoTokenizer",
+                "kwargs": {"trust_remote_code": True, "use_fast": True},
+                "description": "AutoTokenizer with trust_remote_code=True"
+            },
+            # Strategy 3: AutoTokenizer with minimal config
+            {
+                "method": "AutoTokenizer",
+                "kwargs": {"use_fast": True},
+                "description": "AutoTokenizer with minimal config"
+            },
+            # Strategy 4: AutoTokenizer with no special config
+            {
+                "method": "AutoTokenizer",
+                "kwargs": {},
+                "description": "AutoTokenizer with default settings"
+            }
+        ]
+        
+        # Try each fallback strategy
+        for i, strategy in enumerate(fallback_strategies, 1):
+            try:
+                logger.info(f"🔄 Attempting tokenizer strategy {i}: {strategy['description']}")
+                
+                if strategy["method"] == "AutoTokenizer":
+                    tokenizer = AutoTokenizer.from_pretrained(
+                        base_model,
+                        **strategy["kwargs"]
+                    )
+                    
+                    # Verify tokenizer is functional
+                    test_text = "Hello, world!"
+                    tokens = tokenizer.encode(test_text)
+                    decoded = tokenizer.decode(tokens)
+                    
+                    logger.info(f"✅ Tokenizer loaded successfully with strategy {i}")
+                    logger.info(f"   → Model: {base_model}")
+                    logger.info(f"   → Strategy: {strategy['description']}")
+                    logger.info(f"   → Test encode/decode: ✅")
+                    
+                    return tokenizer
+                    
+            except Exception as e:
+                logger.warning(f"⚠️ Strategy {i} failed: {str(e)[:100]}...")
+                continue
+        
+        # If all strategies fail, raise a comprehensive error
+        error_msg = f"Failed to load tokenizer for {base_model} after trying {len(fallback_strategies)} strategies"
+        logger.error(error_msg)
+        raise ValueError(error_msg)
+
+    def _load_tokenizer_with_cache(self, base_model: str) -> Any:
+        """
+        Load tokenizer with caching and universal fallback system.
+        """
+        logger = logging.getLogger("IntelligentModelFactory")
+        
+        # Check if tokenizer is already cached
+        if base_model in self.tokenizer_cache:
+            tokenizer = self.tokenizer_cache[base_model]
+            logger.info(f"✅ Tokenizer loaded from cache: {base_model}")
+            return tokenizer
+        
+        # Load tokenizer using universal system
+        logger.info(f"🔧 Loading tokenizer: {base_model}")
+        tokenizer = self._load_tokenizer_universal(base_model)
+        
+        # Cache the tokenizer
+        self.tokenizer_cache[base_model] = tokenizer
+        logger.info(f"💾 Tokenizer cached for future reuse: {base_model}")
+        
+        return tokenizer
 
     async def create_multi_base_model(self, request: Dict[str, Any]) -> Dict[str, Any]:
         """

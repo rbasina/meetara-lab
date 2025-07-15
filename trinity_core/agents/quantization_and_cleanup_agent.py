@@ -73,7 +73,7 @@ class QuantizationAndCleanupAgent:
                 self.quantize_executable = self.llama_cpp_path / "quantize.exe"  # Default
         elif platform.system() == "Linux" and self.llama_cpp_path:
             # On Linux (Colab), look for the actual quantize executable
-            self.quantize_executable = self.llama_cpp_path / "build" / "bin" / "quantize"
+            self.quantize_executable = self.llama_cpp_path / "quantize"
         else:
             self.quantize_executable = self.llama_cpp_path / "quantize" if self.llama_cpp_path else None
 
