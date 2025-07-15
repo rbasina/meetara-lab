@@ -1,11 +1,3 @@
-
-    def get_config(self):
-        """
-        Fallback method for backward compatibility.
-        Returns the same as get_config_dict().
-        """
-        return self.get_config_dict()
-
 #!/usr/bin/env python3
 """
 Trinity Configuration Manager - SMART YAML-Based Configuration
@@ -93,6 +85,13 @@ class SmartTrinityConfigManager:
             except (yaml.YAMLError, ValueError) as e:
                 logging.error(f"Error processing configuration file {config_path}: {e}")
                 raise
+
+    def get_config(self):
+        """
+        Fallback method for backward compatibility.
+        Returns the same as get_config_dict().
+        """
+        return self.get_config_dict()
 
     def get_universal_model_config(self, architecture: UniversalModelArchitecture):
         """
