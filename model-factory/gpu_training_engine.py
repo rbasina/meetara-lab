@@ -69,13 +69,16 @@ class GPUTrainingConfig:
 
     def validate(self):
         supported_models = [
-            "microsoft/Phi-3-mini-4k-instruct",
-            "microsoft/Phi-3-medium-4k-instruct",
-            "microsoft/Phi-3-medium-14B-instruct",
             "Qwen/Qwen2.5-7B-Instruct",
             "Qwen/Qwen2.5-14B-Instruct",
             "HuggingFaceTB/SmolLM2-1.7B",
-            "mistralai/Mistral-7B-Instruct-v0.2"
+            "mistralai/Mistral-7B-Instruct-v0.2",
+            "meta-llama/Llama-2-7b-chat-hf",
+            "meta-llama/Llama-2-13b-chat-hf",
+            "meta-llama/Llama-3-8B-Instruct",
+            "meta-llama/Llama-3-70B-Instruct",
+            "codellama/CodeLlama-7b-Instruct-hf",
+            "codellama/CodeLlama-13b-Instruct-hf"
         ]
         if not self.base_model or self.base_model not in supported_models:
             raise ValueError(f"Invalid or missing base_model: {self.base_model}. Must be set from config and be a supported model.")

@@ -386,7 +386,7 @@ class IntegratedGPUPipeline:
         try:
             # Get domain configuration with proven parameters
             domain_config = self.config_manager.get_tara_proven_params(domain)
-            base_model = domain_config.get('base_model', 'microsoft/Phi-3.5-mini-instruct')
+            base_model = domain_config.get('base_model', self.config_manager._global_params.get('fallback_base_model'))
             
             self.logger.info(f"📋 Domain Configuration:")
             self.logger.info(f"   - Base Model: {base_model}")
@@ -465,7 +465,7 @@ class IntegratedGPUPipeline:
         try:
             # Get domain configuration for optimal quantization
             domain_config = self.config_manager.get_tara_proven_params(domain)
-            base_model = domain_config.get('base_model', 'microsoft/Phi-3.5-mini-instruct')
+            base_model = domain_config.get('base_model', self.config_manager._global_params.get('fallback_base_model'))
             
             # Enhanced quantization configuration
             quantization_config = {

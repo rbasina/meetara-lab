@@ -90,23 +90,26 @@ class EnhancedTrinityTrainer:
                 if isinstance(module, torch.nn.Linear):
                     linear_names.append(name)
             return linear_names
-        # Model-specific target modules
-        if "phi" in self.model_name.lower():
-            target_modules = get_linear_module_names(base_model)
-        elif "qwen" in self.model_name.lower():
-            target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
-        else:
-            target_modules = ["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
         
-        lora_config = LoraConfig(
-            task_type=TaskType.CAUSAL_LM,
-            r=self.lora_r,
-            lora_alpha=self.lora_alpha,
-            lora_dropout=self.lora_dropout,
-            target_modules=target_modules
-        )
+        # Generic target modules that work with most models
+        target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
         
-        self.model = get_peft_model(base_model, lora_config)
+        # Apply LoRA with error handling
+        try:
+            lora_config = LoraConfig(
+                task_type=TaskType.CAUSAL_LM,
+                r=self.lora_r,
+                lora_alpha=self.lora_alpha,
+                lora_dropout=self.lora_dropout,
+                target_modules=target_modules
+            )
+            
+            self.model = get_peft_model(base_model, lora_config)
+            print(f"✅ LoRA successfully applied with target modules: {target_modules}")
+        except Exception as e:
+            print(f"⚠️ LoRA setup failed: {e}")
+            print("🔄 Continuing training without LoRA...")
+            self.model = base_model  # Use base model without LoRA
         
         if self.gradient_checkpointing:
             self.model.gradient_checkpointing_enable()

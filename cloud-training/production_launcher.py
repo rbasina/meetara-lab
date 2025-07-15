@@ -304,14 +304,14 @@ async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], sess
             "model_variants_created": {
                 "A_universal_full": {
                     "enabled": True,
-                    "base_model": "Qwen/Qwen2.5-14B-Instruct",
+                    "base_model": config_manager._global_params.get('fallback_base_model'),
                     "domains": 62,
                     "size_mb": 3500,
                     "purpose": "Maximum intelligence"
                 },
                 "B_universal_lite": {
                     "enabled": True,
-                    "base_model": "microsoft/Phi-3.5-mini-instruct",
+                    "base_model": "Qwen/Qwen2.5-7B-Instruct",
                     "domains": 62,
                     "size_mb": 800,
                     "purpose": "Fast universal responses"

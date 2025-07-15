@@ -56,7 +56,7 @@ class RealModelLoader:
                 "path": self.models_dir / "production" / "B_universal_lite" / "meetara_b_universal_lite.gguf",
                 "size": "800MB",
                 "type": "Universal Speed",
-                "description": "Phi-3.5-mini with all 62 domains"
+                "description": "Qwen 2.5-7B with all 62 domains"
             },
             "C_category_specific": {
                 "path": self.models_dir / "production" / "C_category_specific" / "meetara_healthcare_specialist_v1_Q4.gguf",
@@ -216,7 +216,7 @@ class RealModelLoader:
                 simulated_response = f"[A_universal_full - Maximum Intelligence] Comprehensive analysis: {prompt[:50]}... This requires deep reasoning across multiple domains. Based on the Qwen 2.5-14B base model with 62 specialized domains, I can provide a thorough analysis that considers healthcare implications, business context, technological factors, and human psychology. The optimal approach involves..."
                 response_time = 0.8  # Slower but comprehensive
             elif "lite" in model_name.lower():
-                simulated_response = f"[B_universal_lite - Universal Speed] Quick response: {prompt[:30]}... Based on the Phi-3.5-mini base model with universal domain coverage, here's an efficient answer that covers key points across relevant areas. The solution involves..."
+                simulated_response = f"[B_universal_lite - Universal Speed] Quick response: {prompt[:30]}... Based on the Qwen 2.5-7B base model with universal domain coverage, here's an efficient answer that covers key points across relevant areas. The solution involves..."
                 response_time = 0.2  # Fast universal
             else:
                 simulated_response = f"[C_universal_category - Specialist] Category-focused: {prompt[:40]}... From the combined expertise of all 7 categories (healthcare, business, specialized, technology, creative, daily_life, education), this requires specialized knowledge. The approach involves..."
