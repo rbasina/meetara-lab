@@ -358,7 +358,7 @@ class TrinityPrimaryConductor:
                     "processing_time": time.time() - start_time
                 }
             
-            base_model = domain_details.get('base_model', 'microsoft/Phi-3.5-mini-instruct')
+            base_model = domain_details.get('base_model', self.config_manager._global_params.get('fallback_base_model'))
             tier_name = domain_details.get('tier_name', 'balanced')
             
             # Update intelligence hub environment for this domain processing

@@ -378,7 +378,7 @@ class TrainingOrchestrator(BaseAgent):
             batch_cost, batch_time = self._estimate_batch_cost_time(domains, model_tier, training_mode)
             
             # Get recommended model for first domain in category (all use same tier)
-            recommended_model = get_model_for_domain(domains[0]) if domains else "microsoft/Phi-3.5-mini-instruct"
+            recommended_model = get_model_for_domain(domains[0]) if domains else self.config_manager._global_params.get('fallback_base_model')
             
             batch = {
                 "category": category,

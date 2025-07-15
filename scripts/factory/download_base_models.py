@@ -20,14 +20,22 @@ logger = logging.getLogger(__name__)
 
 # Base models from your config (corrected names)
 BASE_MODELS = [
-    "microsoft/Phi-3-medium-4k-instruct",
+    "Qwen/Qwen2.5-7B-Instruct",
+    "Qwen/Qwen2.5-14B-Instruct",
+    "mistralai/Mistral-7B-Instruct-v0.2",
+    "HuggingFaceTB/SmolLM2-1.7B",
+    "meta-llama/Llama-2-7b-chat-hf",
+    "meta-llama/Llama-2-13b-chat-hf",
+    "meta-llama/Llama-3-8B-Instruct",
+    "meta-llama/Llama-3-70B-Instruct",
+    "codellama/CodeLlama-7b-Instruct-hf",
+    "codellama/CodeLlama-13b-Instruct-hf"
 ]
 
-#    "Qwen/Qwen2.5-14B-Instruct",
-#    "microsoft/Phi-3-mini-4k-instruct",
-#    "Qwen/Qwen2.5-7B-Instruct",
-#    "microsoft/Phi-3.5-mini-instruct",
-#    "HuggingFaceTB/SmolLM2-1.7B", 
+# Removed Phi-3 models due to LoRA compatibility issues and Colab import errors
+# Removed: "microsoft/Phi-3-medium-4k-instruct",
+# Removed: "microsoft/Phi-3-mini-4k-instruct", 
+# Removed: "microsoft/Phi-3.5-mini-instruct",
 
 
 class BaseModelDownloader:

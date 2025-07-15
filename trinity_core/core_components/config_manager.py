@@ -15,17 +15,18 @@ class UniversalModelArchitecture(Enum):
     Defines the supported universal model architectures.
     The string value should match the key in trinity_config.yaml.
     """
+    QWEN_7B = "qwen_7b_universal"
     QWEN_14B = "qwen_14b_universal"
-    PHI_3_MINI = "phi_3_mini_universal"
     MISTRAL_7B = "mistral_7b_universal"
 
 class MultiBaseModel(Enum):
     """
     Maps specific domain models to their required base model architecture.
+    Model names are read from configuration file, not hardcoded.
     """
-    PHI_3_MINI_INSTRUCT = "microsoft/Phi-3.5-mini-instruct"  # Fixed: Use correct model name
-    QWEN2_1_5B_INSTRUCT = "Qwen/Qwen2-1.5B-Instruct"
-    MISTRAL_7B_INSTRUCT = "mistralai/Mistral-7B-Instruct-v0.2"
+    QWEN2_7B_INSTRUCT = "qwen2_7b_instruct"
+    QWEN2_14B_INSTRUCT = "qwen2_14b_instruct"
+    MISTRAL_7B_INSTRUCT = "mistral_7b_instruct"
     
     @classmethod
     def from_str(cls, model_string: str):
@@ -33,6 +34,11 @@ class MultiBaseModel(Enum):
             if member.value == model_string:
                 return member
         raise ValueError(f"'{model_string}' is not a valid MultiBaseModel.")
+    
+    def get_model_name(self, config_manager):
+        """Get the actual model name from configuration file."""
+        model_mapping = config_manager._config.get('model_names', {})
+        return model_mapping.get(self.value, self.value)
 
 class SmartTrinityConfigManager:
     _instance = None
