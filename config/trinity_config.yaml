@@ -2,13 +2,13 @@ version: '2.0'
 description: Quality-focused configuration with premium models for critical domains
 last_updated: '2025-07-09'
 # config/trinity_config.yaml
-llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp\build\bin  # Windows
-#llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
+#llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp\build\bin  # Windows
+llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
 
 # Model name mappings (centralized model definitions)
 model_names:
-  qwen2_7b_instruct: "Qwen/Qwen2.5-7B-Instruct"
-  qwen2_14b_instruct: "Qwen/Qwen2.5-14B-Instruct"
+  qwen_7b_instruct: "Qwen/Qwen2.5-7B-Instruct"
+  qwen_14b_instruct: "Qwen/Qwen2.5-14B-Instruct"
   mistral_7b_instruct: "mistralai/Mistral-7B-Instruct-v0.2"
   llama2_7b_chat: "meta-llama/Llama-2-7b-chat-hf"
   llama2_13b_chat: "meta-llama/Llama-2-13b-chat-hf"
@@ -389,7 +389,7 @@ paths:
 model_type_map:
   # Primary Models (Qwen)
   Qwen/Qwen2.5-7B-Instruct:
-    model_type: qwen2
+    model_type: qwen
     architecture: Qwen2ForCausalLM
     vocab_size: 32000
     hidden_size: 4096
@@ -399,7 +399,7 @@ model_type_map:
     max_position_embeddings: 32768
     n_ctx: 32768
   Qwen/Qwen2.5-14B-Instruct:
-    model_type: qwen2
+    model_type: qwen
     architecture: Qwen2ForCausalLM
     vocab_size: 32000
     hidden_size: 4096
