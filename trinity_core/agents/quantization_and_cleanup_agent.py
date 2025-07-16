@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Dict, Any, List
 from datetime import datetime
 import asyncio
+import json # Added for model merging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -111,6 +112,15 @@ class QuantizationAndCleanupAgent:
         validation_results = []
         
         try:
+            # ✅ ADDED: Step 0: Model Merging (LoRA adapter + base model)
+            logger.info(f"🔗 Step 0: Merging LoRA adapter with base model for {domain}")
+            merged_model_path = await self._merge_adapter_with_base_model(raw_model_path, domain, is_simulation)
+            
+            if not merged_model_path:
+                raise Exception(f"Model merging failed for domain {domain}")
+            
+            logger.info(f"✅ Model merging completed: {merged_model_path}")
+            
             # Step 1: Simulate garbage collection (e.g., deleting temporary training files)
             await self._perform_garbage_collection(raw_model_path)
 
@@ -119,15 +129,15 @@ class QuantizationAndCleanupAgent:
             compression_strategy = self._determine_optimal_compression(model_size_mb, domain, architecture_type)
 
             # Step 3: Perform GGUF conversion and quantization for each strategy
-            # Fix: raw_model_path should be a directory, not a file
-            raw_model_dir = Path(raw_model_path)
-            if raw_model_dir.is_file():
+            # Fix: Use merged_model_path instead of raw_model_path
+            merged_model_dir = Path(merged_model_path)
+            if merged_model_dir.is_file():
                 # If it's a file, use the parent directory
-                raw_model_dir = raw_model_dir.parent
-                logger.info(f"🔄 Adjusted path from file to directory: {raw_model_path} → {raw_model_dir}")
+                merged_model_dir = merged_model_dir.parent
+                logger.info(f"🔄 Adjusted path from file to directory: {merged_model_path} → {merged_model_dir}")
             
             final_gguf_paths = await self._perform_gguf_conversion_and_quantization(
-                str(raw_model_dir), domain, quantization_strategies, compression_strategy, model_size_mb, architecture_type, is_simulation
+                str(merged_model_dir), domain, quantization_strategies, compression_strategy, model_size_mb, architecture_type, is_simulation
             )
 
             # Step 4: Enhanced GGUF validation with llama.cpp
@@ -142,6 +152,7 @@ class QuantizationAndCleanupAgent:
             return {
                 "status": "success",
                 "domain": domain,
+                "merged_model_path": str(merged_model_path),
                 "final_gguf_paths": [str(p) for p in final_gguf_paths],
                 "quantization_applied": quantization_strategies,
                 "compression_applied": compression_strategy,
@@ -152,6 +163,7 @@ class QuantizationAndCleanupAgent:
                     "timestamp": datetime.now().isoformat(),
                     "processed_by_agent": "QuantizationAndCleanupAgent",
                     "trinity_enhancements": {
+                        "model_merging": True,
                         "gguf_validation": True,
                         "quality_assurance": True,
                         "comprehensive_reporting": True
@@ -288,6 +300,110 @@ class QuantizationAndCleanupAgent:
 
         await asyncio.sleep(0.5) # Simulate some work
         return generated_gguf_paths
+
+    async def _merge_adapter_with_base_model(self, raw_model_path: str, domain: str, is_simulation: bool) -> str:
+        """
+        Merge LoRA adapter with base model to create full merged model for GGUF conversion.
+        """
+        logger.info(f"🔗 Starting model merging for domain: {domain}")
+        
+        try:
+            # Get domain configuration to find base model
+            domain_details = self.config_manager._get_domain_details(domain)
+            if not domain_details:
+                logger.error(f"❌ Could not get domain details for '{domain}'")
+                return None
+            
+            base_model_name = domain_details.get('base_model', 'Qwen/Qwen2.5-7B-Instruct')
+            logger.info(f"📥 Base model for {domain}: {base_model_name}")
+            
+            # Determine paths
+            raw_model_dir = Path(raw_model_path)
+            if raw_model_dir.is_file():
+                raw_model_dir = raw_model_dir.parent
+            
+            # Create merged model output directory
+            project_root = Path(__file__).resolve().parents[2]
+            merged_output_dir = project_root / "models" / ("dev" if is_simulation else "production") / "merged_models" / domain
+            merged_output_dir.mkdir(parents=True, exist_ok=True)
+            
+            if is_simulation:
+                # Simulation mode: Create placeholder merged model
+                logger.info(f"🔧 SIMULATION MODE: Creating placeholder merged model for {domain}")
+                merged_model_path = merged_output_dir / "model.safetensors"
+                
+                # Create placeholder file
+                with open(merged_model_path, 'wb') as f:
+                    f.write(os.urandom(int(100 * 1024 * 1024)))  # 100MB placeholder
+                
+                # Create config files
+                config_file = merged_output_dir / "config.json"
+                with open(config_file, 'w') as f:
+                    json.dump({"model_type": "causal_lm", "base_model": base_model_name}, f)
+                
+                tokenizer_file = merged_output_dir / "tokenizer.json"
+                with open(tokenizer_file, 'w') as f:
+                    json.dump({"tokenizer_type": "standard"}, f)
+                
+                logger.info(f"✅ Simulation merged model created: {merged_model_path}")
+                return str(merged_model_path)
+            
+            else:
+                # Production mode: Real model merging
+                logger.info(f"🚀 PRODUCTION MODE: Starting real model merging for {domain}")
+                
+                try:
+                    # Import required libraries for model merging
+                    from transformers import AutoModelForCausalLM, AutoTokenizer
+                    from peft import PeftModel, PeftConfig
+                    import torch
+                    
+                    # Load base model
+                    logger.info(f"📥 Loading base model: {base_model_name}")
+                    base_model = AutoModelForCausalLM.from_pretrained(
+                        base_model_name,
+                        torch_dtype=torch.float16,
+                        device_map="auto",
+                        trust_remote_code=True
+                    )
+                    
+                    # Load adapter configuration
+                    adapter_config_path = raw_model_dir / "adapter_config.json"
+                    if not adapter_config_path.exists():
+                        logger.error(f"❌ Adapter config not found: {adapter_config_path}")
+                        return None
+                    
+                    adapter_config = PeftConfig.from_pretrained(str(raw_model_dir))
+                    logger.info(f"📋 Adapter type: {adapter_config.peft_type}")
+                    
+                    # Load and merge adapter with base model
+                    logger.info("🔗 Loading adapter and merging with base model...")
+                    adapter_model = PeftModel.from_pretrained(base_model, str(raw_model_dir))
+                    
+                    # Merge adapter with base model
+                    logger.info("🔄 Merging adapter weights with base model...")
+                    merged_model = adapter_model.merge_and_unload()
+                    
+                    # Save merged model
+                    logger.info(f"💾 Saving merged model to: {merged_output_dir}")
+                    merged_model.save_pretrained(str(merged_output_dir))
+                    
+                    # Copy tokenizer files
+                    tokenizer = AutoTokenizer.from_pretrained(base_model_name)
+                    tokenizer.save_pretrained(str(merged_output_dir))
+                    
+                    merged_model_path = merged_output_dir / "model.safetensors"
+                    logger.info(f"✅ Real model merging completed: {merged_model_path}")
+                    
+                    return str(merged_model_path)
+                    
+                except Exception as e:
+                    logger.error(f"❌ Real model merging failed for {domain}: {e}")
+                    return None
+                    
+        except Exception as e:
+            logger.error(f"❌ Model merging failed for {domain}: {e}")
+            return None
 
     async def _validate_gguf_files(self, gguf_paths: List[Path], domain: str, is_simulation: bool) -> List[Dict[str, Any]]:
         """

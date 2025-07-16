@@ -375,6 +375,22 @@ class TrinityPrimaryConductor:
                 with open(data_result["output_path"], "r", encoding="utf-8") as f:
                     file_data = _json.load(f)
                     conversations = file_data.get("conversations", [])
+            
+            # ✅ ADDED: Step 1.5: Quality Assurance for Data
+            logger.info(f"🔍 Step 1.5: Quality assurance for {domain}")
+            quality_result = await self._validate_data_quality(data_result, domain)
+            
+            if not quality_result.get("passed", False):
+                logger.error(f"❌ Data quality validation failed for {domain}: {quality_result.get('error', 'Unknown error')}")
+                return {
+                    "status": "error",
+                    "domain": domain,
+                    "error": f"Data quality validation failed: {quality_result.get('error', 'Unknown error')}",
+                    "processing_time": time.time() - start_time
+                }
+            
+            logger.info(f"✅ Data quality validation passed for {domain}")
+            
             # Step 2: Create intelligent model with LoRA integration
             logger.info(f"🧠 Step 2: Creating intelligent model for {domain}")
             model_request = {
@@ -444,6 +460,12 @@ class TrinityPrimaryConductor:
                     "quality_metrics": data_result.get("quality_metrics", {}),
                     "trinity_enhancements": data_result.get("trinity_enhancements", {})
                 },
+                "data_quality_assurance": {
+                    "status": quality_result.get("status"),
+                    "passed": quality_result.get("passed", False),
+                    "quality_score": quality_result.get("quality_score", 0.0),
+                    "validation_details": quality_result.get("validation_details", {})
+                },
                 "model_training": {
                     "status": model_result.get("status"),
                     "raw_model_path": model_result.get("raw_model_path"),
@@ -494,6 +516,91 @@ class TrinityPrimaryConductor:
                 "domain": domain,
                 "error": str(e),
                 "processing_time": time.time() - start_time
+            }
+    
+    async def _validate_data_quality(self, data_result: Dict[str, Any], domain: str) -> Dict[str, Any]:
+        """
+        Validate data quality after generation and before training.
+        """
+        logger.info(f"🔍 Validating data quality for domain: {domain}")
+        
+        try:
+            # Extract data metrics
+            total_samples = data_result.get("total_samples", 0)
+            conversations = data_result.get("conversations", [])
+            quality_metrics = data_result.get("quality_metrics", {})
+            
+            # Basic quality checks
+            quality_score = 0.0
+            validation_details = {}
+            passed = True
+            error = None
+            
+            # Check 1: Sample count
+            if total_samples < 10:
+                passed = False
+                error = f"Insufficient samples: {total_samples} (minimum 10 required)"
+                validation_details["sample_count"] = {"passed": False, "value": total_samples, "min_required": 10}
+            else:
+                validation_details["sample_count"] = {"passed": True, "value": total_samples}
+                quality_score += 0.3
+            
+            # Check 2: Conversation structure
+            valid_conversations = 0
+            for conv in conversations:
+                if isinstance(conv, dict) and "conversations" in conv:
+                    valid_conversations += 1
+            
+            if valid_conversations < len(conversations) * 0.8:  # 80% should be valid
+                passed = False
+                error = f"Invalid conversation structure: {valid_conversations}/{len(conversations)} valid"
+                validation_details["conversation_structure"] = {"passed": False, "valid": valid_conversations, "total": len(conversations)}
+            else:
+                validation_details["conversation_structure"] = {"passed": True, "valid": valid_conversations, "total": len(conversations)}
+                quality_score += 0.3
+            
+            # Check 3: Quality metrics (if available)
+            if quality_metrics:
+                diversity_score = quality_metrics.get("diversity_score", 0.0)
+                if diversity_score > 0.5:
+                    quality_score += 0.2
+                    validation_details["diversity"] = {"passed": True, "score": diversity_score}
+                else:
+                    validation_details["diversity"] = {"passed": False, "score": diversity_score}
+                
+                emotion_coverage = quality_metrics.get("emotion_coverage", 0.0)
+                if emotion_coverage > 0.3:
+                    quality_score += 0.2
+                    validation_details["emotion_coverage"] = {"passed": True, "score": emotion_coverage}
+                else:
+                    validation_details["emotion_coverage"] = {"passed": False, "score": emotion_coverage}
+            
+            # Final quality score
+            quality_score = min(quality_score, 1.0)
+            
+            result = {
+                "status": "success" if passed else "error",
+                "passed": passed,
+                "quality_score": quality_score,
+                "validation_details": validation_details,
+                "error": error
+            }
+            
+            if passed:
+                logger.info(f"✅ Data quality validation passed for {domain} (score: {quality_score:.2f})")
+            else:
+                logger.error(f"❌ Data quality validation failed for {domain}: {error}")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"❌ Data quality validation error for {domain}: {e}")
+            return {
+                "status": "error",
+                "passed": False,
+                "quality_score": 0.0,
+                "validation_details": {},
+                "error": f"Validation error: {str(e)}"
             }
     
     async def _validate_and_optimize_results(self, domain: str, category: str, model_result: Dict[str, Any]) -> Dict[str, Any]:
