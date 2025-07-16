@@ -153,27 +153,72 @@ class QLoRAManager:
             if not qlora_config:
                 return model, False
             
-            # Create 4-bit quantization config
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_use_double_quant=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.float16
-            )
-            
-            # Reload model with 4-bit quantization
-            from transformers import AutoModelForCausalLM
-            model = AutoModelForCausalLM.from_pretrained(
-                base_model,
-                quantization_config=bnb_config,
-                device_map="auto",
-                trust_remote_code=True
-            )
+            # Check if model is already quantized
+            if hasattr(model, 'is_loaded_in_4bit') and model.is_loaded_in_4bit:
+                logger.info("✅ Model already quantized, applying QLoRA directly")
+            else:
+                # Create 4-bit quantization config
+                bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_compute_dtype=torch.float16
+                )
+                
+                # Reload model with 4-bit quantization
+                from transformers import AutoModelForCausalLM
+                logger.info("🔄 Reloading model with 4-bit quantization for QLoRA")
+                model = AutoModelForCausalLM.from_pretrained(
+                    base_model,
+                    quantization_config=bnb_config,
+                    device_map="auto",
+                    trust_remote_code=True
+                )
             
             # Apply QLoRA
             model = get_peft_model(model, qlora_config)
             
+            # Ensure model is in training mode
+            model.train()
+            
+            # QLoRA specific: Ensure LoRA adapter parameters require gradients
+            # Base model parameters are quantized and frozen, but LoRA adapters should be trainable
+            trainable_params = 0
+            frozen_params = 0
+            
+            for name, param in model.named_parameters():
+                if "lora_" in name or "adapter" in name:
+                    # LoRA adapter parameters should be trainable
+                    param.requires_grad_(True)
+                    trainable_params += param.numel()
+                    logger.debug(f"✅ LoRA parameter {name}: trainable ({param.numel():,} params)")
+                elif param.requires_grad:
+                    # Keep other trainable parameters
+                    param.requires_grad_(True)
+                    trainable_params += param.numel()
+                    logger.debug(f"✅ Other trainable parameter {name}: trainable ({param.numel():,} params)")
+                else:
+                    # Base model parameters are frozen in QLoRA
+                    param.requires_grad_(False)
+                    frozen_params += param.numel()
+            
+            # Verify that LoRA parameters require gradients
+            lora_params = sum(p.numel() for name, p in model.named_parameters() 
+                            if ("lora_" in name or "adapter" in name) and p.requires_grad)
+            
+            if lora_params == 0:
+                logger.warning("⚠️ No LoRA parameters found after QLoRA application")
+                return model, False
+            
+            if trainable_params == 0:
+                logger.warning("⚠️ No trainable parameters found after QLoRA application")
+                return model, False
+            
             logger.info(f"✅ QLoRA successfully applied to {base_model}")
+            logger.info(f"📊 Trainable parameters: {trainable_params:,}")
+            logger.info(f"📊 LoRA adapter parameters: {lora_params:,}")
+            logger.info(f"📊 Frozen base model parameters: {frozen_params:,}")
+            
             return model, True
             
         except Exception as e:
@@ -193,7 +238,20 @@ class QLoRAManager:
             # Apply LoRA
             model = get_peft_model(model, lora_config_peft)
             
+            # Ensure model is in training mode and parameters require gradients
+            model.train()
+            for param in model.parameters():
+                if param.requires_grad:
+                    param.requires_grad_(True)
+            
+            # Verify that some parameters require gradients
+            trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+            if trainable_params == 0:
+                logger.warning("⚠️ No trainable parameters found after LoRA application")
+                return model, False
+            
             logger.info(f"✅ LoRA successfully applied to {base_model}")
+            logger.info(f"📊 Trainable parameters: {trainable_params:,}")
             return model, True
             
         except Exception as e:
@@ -269,8 +327,8 @@ class QLoRAManager:
         if not compatibility["lora_compatible"]:
             return "none"
         
-        # Check GPU capabilities
-        if gpu_capabilities["qlora_supported"]:
+        # Prefer QLoRA when GPU memory is sufficient (better memory efficiency)
+        if gpu_capabilities["qlora_supported"] and compatibility["qlora_compatible"]:
             return "qlora"
         elif gpu_capabilities["lora_supported"]:
             return "lora"

@@ -31,7 +31,7 @@ async def test_enhanced_model_factory():
     logger.info("🧪 Testing Enhanced Model Factory...")
     
     try:
-        from agents.02_super_agents.03_model_factory import IntelligentModelFactory
+        from trinity_core.agents.model_factory import IntelligentModelFactory
         
         # Initialize enhanced model factory
         model_factory = IntelligentModelFactory()

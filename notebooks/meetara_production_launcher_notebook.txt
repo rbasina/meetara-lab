@@ -78,12 +78,12 @@ compatible_packages = [
     "torch==2.1.0",
     "torchvision==0.16.0", 
     "torchaudio==2.1.0",
-    "transformers==4.36.2",
-    "accelerate==0.25.0",
+    "transformers==4.40.0",
+    "accelerate==0.27.0",
     "datasets==2.16.1",
     "peft==0.7.1",
     "tokenizers==0.15.0",
-    "bitsandbytes==0.41.3",  # Fixed version for CUDA compatibility
+    "bitsandbytes==0.46.1",  # Fixed version for CUDA compatibility
     "triton==2.1.0",
     "llama-cpp-python==0.2.23",
     "gguf==0.1.0",

@@ -187,7 +187,7 @@ async def main():
     
     # Generate detailed reports and manifest
     await _generate_detailed_reports(overall_results, trinity_session, logger, environment)
-    await _generate_comprehensive_manifest(overall_results, trinity_session, logger, environment)
+    await _generate_comprehensive_manifest(overall_results, trinity_session, logger, environment, config_manager)
 
 async def _generate_detailed_reports(overall_results: Dict[str, Any], session: TrinitySession, logger: Any, environment: str):
     """Generate detailed reports for traceability and reproducibility"""
@@ -265,7 +265,7 @@ async def _generate_detailed_reports(overall_results: Dict[str, Any], session: T
     except Exception as e:
         logger.main_logger.error(f"❌ Failed to generate detailed reports: {e}")
 
-async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], session: TrinitySession, logger: Any, environment: str):
+async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], session: TrinitySession, logger: Any, environment: str, config_manager: SmartTrinityConfigManager):
     """Generate comprehensive manifest for traceability and reproducibility"""
     logger.main_logger.info("📋 Generating comprehensive manifest...")
     
@@ -304,7 +304,7 @@ async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], sess
             "model_variants_created": {
                 "A_universal_full": {
                     "enabled": True,
-                    "base_model": config_manager._global_params.get('fallback_base_model'),
+                    "base_model": "Qwen/Qwen2.5-14B-Instruct",
                     "domains": 62,
                     "size_mb": 3500,
                     "purpose": "Maximum intelligence"
