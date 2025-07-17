@@ -599,71 +599,29 @@ class IntelligentModelFactory:
                             effective_batch_size = training_config.get("per_device_train_batch_size", 1) * training_config.get("gradient_accumulation_steps", 8)
                             max_steps = max(1, total_samples // effective_batch_size)
                             
-                            logger.info(f"📊 Training configuration:")
-                            logger.info(f"   → Total samples: {total_samples}")
-                            logger.info(f"   → Batch size: {training_config.get('per_device_train_batch_size', 1)}")
-                            logger.info(f"   → Gradient accumulation: {training_config.get('gradient_accumulation_steps', 8)}")
-                            logger.info(f"   → Effective batch size: {effective_batch_size}")
-                            logger.info(f"   → Max steps: {max_steps}")
+                            # Get training parameters from config
+                            batch_size = training_config.get("per_device_train_batch_size", 1)
+                            gradient_accumulation_steps = training_config.get("gradient_accumulation_steps", 8)
+                            learning_rate = training_config.get("learning_rate", 5e-5)
                             
-                            # Check if QLoRA will be used to adjust training arguments
-                            from trinity_core.core_components.qlora_manager import QLoRAManager
-                            qlora_manager = QLoRAManager(self.config_manager)
-                            gpu_capabilities = qlora_manager.detect_gpu_capabilities()
-                            recommended_method = qlora_manager.get_recommended_method(base_model, gpu_capabilities)
-                            
-                            # QLoRA-specific training arguments
-                            if recommended_method == "qlora":
-                                logger.info("🔧 Configuring training arguments for QLoRA")
-                                training_args = TrainingArguments(
-                                    output_dir=str(raw_model_path.parent),
-                                    num_train_epochs=1,  # Single epoch for domain adaptation
-                                    max_steps=max_steps,  # Explicitly set max steps
-                                    per_device_train_batch_size=training_config.get("per_device_train_batch_size", 1),
-                                    gradient_accumulation_steps=training_config.get("gradient_accumulation_steps", 8),
-                                    learning_rate=training_config.get("learning_rate", 5e-5),
-                                    warmup_steps=min(50, max_steps // 4),  # Reduced warmup
-                                    logging_steps=max(1, max_steps // 10),  # More frequent logging
-                                    save_steps=max_steps,  # Save at the end
-                                    save_strategy="steps",
-                                    load_best_model_at_end=False,
-                                    report_to=[],  # Disable wandb/tensorboard
-                                    remove_unused_columns=False,
-                                    dataloader_pin_memory=False,
-                                    dataloader_num_workers=0,  # Disable multiprocessing
-                                    fp16=True,  # Enable fp16 for QLoRA
-                                    bf16=False,  # Disable bfloat16
-                                    max_grad_norm=1.0,  # Gradient clipping
-                                    logging_dir=str(raw_model_path.parent / "logs"),
-                                    save_total_limit=1,  # Keep only best model
-                                    push_to_hub=False,  # Disable hub pushing
-                                    gradient_checkpointing=False,  # Disable for QLoRA stability
-                                )
-                            else:
-                                # Standard training arguments for LoRA or no LoRA
-                                training_args = TrainingArguments(
-                                    output_dir=str(raw_model_path.parent),
-                                    num_train_epochs=1,  # Single epoch for domain adaptation
-                                    max_steps=max_steps,  # Explicitly set max steps
-                                    per_device_train_batch_size=training_config.get("per_device_train_batch_size", 1),
-                                    gradient_accumulation_steps=training_config.get("gradient_accumulation_steps", 8),
-                                    learning_rate=training_config.get("learning_rate", 5e-5),
-                                    warmup_steps=min(50, max_steps // 4),  # Reduced warmup
-                                    logging_steps=max(1, max_steps // 10),  # More frequent logging
-                                    save_steps=max_steps,  # Save at the end
-                                    save_strategy="steps",
-                                    load_best_model_at_end=False,
-                                    report_to=[],  # Disable wandb/tensorboard
-                                    remove_unused_columns=False,
-                                    dataloader_pin_memory=False,
-                                    dataloader_num_workers=0,  # Disable multiprocessing
-                                    fp16=False,  # Disable mixed precision for stability
-                                    bf16=False,  # Disable bfloat16
-                                    max_grad_norm=1.0,  # Gradient clipping
-                                    logging_dir=str(raw_model_path.parent / "logs"),
-                                    save_total_limit=1,  # Keep only best model
-                                    push_to_hub=False,  # Disable hub pushing
-                                )
+                            # Configure training arguments with proper output directory
+                            training_args = TrainingArguments(
+                                output_dir=str(model_save_dir.absolute()),  # Use absolute path
+                                per_device_train_batch_size=batch_size,
+                                gradient_accumulation_steps=gradient_accumulation_steps,
+                                max_steps=max_steps,
+                                learning_rate=learning_rate,
+                                fp16=torch.cuda.is_available(),
+                                gradient_checkpointing=True,
+                                dataloader_pin_memory=torch.cuda.is_available(),
+                                save_steps=200,
+                                logging_steps=50,
+                                remove_unused_columns=False,
+                                report_to=None,  # Disable wandb
+                                # Ensure checkpoints go to the correct directory
+                                save_strategy="steps",
+                                save_total_limit=2,  # Keep only last 2 checkpoints
+                            )
                             
                             # Universal memory management - works for all model types
                             if torch.cuda.is_available():
@@ -850,13 +808,13 @@ class IntelligentModelFactory:
             raw_model_path = self._update_filename_with_actual_size(raw_model_path)
             
             # Check if real training created adapter files
-            real_adapter_path = raw_model_path / "adapter_model.safetensors"
-            real_adapter_config = raw_model_path / "adapter_config.json"
+            real_adapter_path = raw_model_path / "adapter" / "adapter_model.safetensors"
+            real_adapter_config = raw_model_path / "adapter" / "adapter_config.json"
             
             if real_adapter_path.exists() and real_adapter_config.exists():
                 # Use the real adapter files created by training
                 logger.info(f"✅ Using real adapter files from training for {domain}")
-                adapter_path = raw_model_path  # Point to the domain directory containing real adapter files
+                adapter_path = raw_model_path / "adapter"  # Point to the adapter subfolder
                 
                 # Determine what was actually used during training by reading the config
                 try:
