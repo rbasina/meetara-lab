@@ -125,8 +125,8 @@ class QuantizationAndCleanupAgent:
             await self._perform_garbage_collection(raw_model_path)
 
             # Step 2: Determine optimal quantization and compression strategy
-            # 🚀 OPTIMAL QUANTIZATION STRATEGY: q4_K_M, q3_K_M, q2_K for best quality/size balance
-            quantization_strategies = ["q4_K_M", "q3_K_M", "q2_K"]  # Optimal for domain-specific models
+            # 🚀 OPTIMAL QUANTIZATION STRATEGY: Advanced quantization for best quality/size balance
+            quantization_strategies = ["Q4_K_M", "Q3_K_M", "Q2_K"]  # Advanced quantization supported by quantize tool
             compression_strategy = self._determine_optimal_compression(model_size_mb, domain, architecture_type)
 
             # Step 3: Perform GGUF conversion and quantization for each strategy
@@ -251,19 +251,20 @@ class QuantizationAndCleanupAgent:
                 import subprocess
                 import sys
                 
-                # Step 1: Convert HuggingFace model to GGUF
-                intermediate_gguf = final_output_dir_base / f"temp_converted_{timestamp}_{quant_strategy}.gguf"
+                # Step 1: Convert HuggingFace model to basic GGUF format using converter
+                intermediate_gguf = final_output_dir_base / f"temp_converted_{timestamp}.gguf"
 
                 # Ensure we pass the directory path, not the file path
                 model_dir = Path(raw_model_path)
                 if model_dir.is_file():
                     model_dir = model_dir.parent
 
+                # Use basic format for initial conversion (supported by converter)
                 conversion_cmd = [
                     sys.executable, str(self.converter_script),
                     str(model_dir),  # Use directory path, not file path
                     "--outfile", str(intermediate_gguf),
-                    "--outtype", quant_strategy.lower()
+                    "--outtype", "f16"  # Use basic format supported by converter
                 ]
                 
                 try:
@@ -274,7 +275,7 @@ class QuantizationAndCleanupAgent:
                     logger.error(f"Conversion failed: {e.stderr}")
                     raise Exception(f"GGUF conversion failed: {e.stderr}")
 
-                # Step 2: Quantize the GGUF file
+                # Step 2: Apply advanced quantization using quantize tool
                 logger.info(f"Quantizing to {quant_strategy} using {self.quantize_executable}...")
                 quantization_cmd = [
                     str(self.quantize_executable),

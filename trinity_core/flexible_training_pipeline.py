@@ -437,8 +437,16 @@ class FlexibleTrainingPipeline:
         tokenized_dataset = dataset.map(tokenize_function, batched=True)
         
         # Training arguments
-        output_dir = f"./models/{domain}"
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        # Use proper path structure that matches model factory
+        from pathlib import Path
+        project_root = Path(__file__).resolve().parents[1]
+        
+        # Get category for the domain
+        domain_details = self.config_manager._get_domain_details(domain)
+        category = domain_details.get("category", "unknown_category") if domain_details else "unknown_category"
+        
+        output_dir = project_root / "data" / "production" / "trained" / category / domain
+        output_dir.mkdir(parents=True, exist_ok=True)
         
         training_args = TrainingArguments(
             output_dir=output_dir,
