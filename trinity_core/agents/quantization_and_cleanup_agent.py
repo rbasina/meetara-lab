@@ -126,7 +126,7 @@ class QuantizationAndCleanupAgent:
 
             # Step 2: Determine optimal quantization and compression strategy
             # 🚀 OPTIMAL QUANTIZATION STRATEGY: Advanced quantization for best quality/size balance
-            quantization_strategies = ["q4_K_M", "q3_K_M", "q2_K"]  # Advanced quantization supported by quantize tool
+            quantization_strategies = ["Q4_K_M", "Q3_K_M", "Q2_K"]  # Advanced quantization supported by quantize tool
             compression_strategy = self._determine_optimal_compression(model_size_mb, domain, architecture_type)
 
             # Step 3: Perform GGUF conversion and quantization for each strategy
@@ -251,7 +251,7 @@ class QuantizationAndCleanupAgent:
                 import subprocess
                 import sys
                 
-                # Step 1: Convert HuggingFace model to basic GGUF format
+                # Step 1: Convert HuggingFace model to basic GGUF format using converter
                 intermediate_gguf = final_output_dir_base / f"temp_converted_{timestamp}.gguf"
 
                 # Ensure we pass the directory path, not the file path
