@@ -1,10 +1,10 @@
 {
-  "session_id": "music_1752629161",
+  "session_id": "music_1752727901",
   "speed_improvements": {
-    "speed_improvement": "0.8x faster",
+    "speed_improvement": "0.6x faster",
     "baseline_time": 435.0,
-    "optimized_time": 529.0093042850494,
-    "time_saved": -94.00930428504944
+    "optimized_time": 747.1618769168854,
+    "time_saved": -312.1618769168854
   },
   "gpu_utilization": {
     "utilization_percentage": 85.0,
@@ -18,7 +18,7 @@
   },
   "training_efficiency": {
     "success_rate": 100.0,
-    "domains_per_minute": 0.11341955522141407,
+    "domains_per_minute": 0.08030388307228156,
     "cost_per_domain": 0.0
   },
   "cost_optimization": {

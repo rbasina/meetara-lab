@@ -779,22 +779,25 @@ class IntelligentModelFactory:
                             model_save_dir.mkdir(parents=True, exist_ok=True)
                             logger.info(f"💾 Saving trained model to {model_save_dir}")
                             logger.info(f"🔧 Absolute model_save_dir: {model_save_dir.absolute()}")
-                            logger.info(f"🔧 Current working directory: {Path.cwd()}")
                             
-                            # Ensure we're in the right directory for training
-                            original_cwd = Path.cwd()
-                            try:
-                                # Change to the model directory for training
-                                os.chdir(str(model_save_dir.parent))
-                                logger.info(f"🔧 Changed to directory: {Path.cwd()}")
-                                
-                                trainer.save_model(str(model_save_dir.name))
-                                logger.info(f"✅ Model saved successfully")
-                                
-                            finally:
-                                # Restore original working directory
-                                os.chdir(str(original_cwd))
-                                logger.info(f"🔧 Restored to directory: {Path.cwd()}")
+                            # Use absolute path for Trainer to ensure checkpoints go to correct location
+                            trainer.save_model(str(model_save_dir.absolute()))
+                            logger.info(f"✅ Model saved successfully")
+                            
+                            # Move adapter files to adapter subfolder
+                            adapter_dir = model_save_dir / "adapter"
+                            adapter_dir.mkdir(exist_ok=True)
+                            
+                            # Move adapter files to subfolder
+                            adapter_files = ["adapter_config.json", "adapter_model.safetensors"]
+                            for file_name in adapter_files:
+                                source_file = model_save_dir / file_name
+                                target_file = adapter_dir / file_name
+                                if source_file.exists():
+                                    source_file.rename(target_file)
+                                    logger.info(f"📁 Moved {file_name} to adapter subfolder")
+                            
+                            logger.info(f"✅ Adapter files organized in subfolder")
                             
                             # Also save tokenizer to the same directory
                             tokenizer.save_pretrained(str(model_save_dir))

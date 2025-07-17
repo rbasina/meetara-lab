@@ -1,8 +1,8 @@
 
 # MeeTARA Lab Training Session Summary
 
-**Session ID**: music_1752629161
-**Date**: 2025-07-16 01:26:01
+**Session ID**: music_1752727901
+**Date**: 2025-07-17 04:51:41
 **Status**: ❌ FAILED
 
 ## Training Results
@@ -35,8 +35,8 @@
 **Total System Size**: 5.8GB complete AI service
 
 ## Files Generated
-- Reports: `reports/session_music_1752629161/`
-- Manifests: `manifests/session_music_1752629161/`
+- Reports: `reports/session_music_1752727901/`
+- Manifests: `manifests/session_music_1752727901/`
 - Models: `models/production/`
 - Logs: `logs/production/`
 
