@@ -40,45 +40,118 @@ except ImportError:
 
 @dataclass
 class PipelineConfig:
-    """Configuration for the integrated pipeline"""
+    """Configuration for the integrated pipeline - Fully config-driven and dynamic"""
     # Domain settings
     domain: str = "healthcare"
     category: str = None
     max_domains: int = 60
-    
-    # Training settings (TARA UNIVERSAL MODEL PROVEN PARAMETERS)
-    max_steps: int = 468  # Based on TARA logs: 623 samples / batch_size 2 = ~312 steps
-    batch_size: int = 2   # TARA proven: memory efficient for CPU training
-    sequence_length: int = 64  # TARA proven: optimized sequence length
-    lora_r: int = 8       # TARA proven: LoRA rank
-    learning_rate: float = 2e-4
-    target_speed_improvement: float = 37.0
-    
-    # Data generation settings (TARA SCALE)
-    samples_per_domain: int = 200  # Reduced for testing, normally 2000
-    quality_threshold: float = 0.70  # TARA: 70% threshold for validation
-    target_accuracy: float = 99.99   # TARA: targeting 99.99% accuracy
-    
-    # GGUF settings
-    target_model_size_mb: float = 8.3
-    quantization_type: str = "Q4_K_M"
-    
-    # Budget settings
-    max_cost_per_domain: float = 5.0
-    monthly_budget_limit: float = 50.0
-    
-    # Quality targets
-    target_validation_score: float = 101.0
-    
-    # Output settings - Fixed to use absolute paths from project root
-    output_directory: str = None  # Will be set dynamically
-    
+
+    # Training settings - Dynamic based on config and model
+    max_steps: int = None
+    batch_size: int = None
+    sequence_length: int = None
+    lora_r: int = None
+    learning_rate: float = None
+    target_speed_improvement: float = None
+
+    # Data generation settings - Dynamic based on config
+    samples_per_domain: int = None
+    quality_threshold: float = None
+    target_accuracy: float = None
+
+    # GGUF settings - Dynamic based on model and quantization
+    target_model_size_mb: float = None
+    quantization_type: str = None
+    max_model_size_mb: float = None
+
+    # Budget settings - From config
+    max_cost_per_domain: float = None
+    monthly_budget_limit: float = None
+
+    # Quality targets - From config
+    target_validation_score: float = None
+
+    # Output settings - Dynamic based on environment
+    output_directory: str = None
+
+    # Config manager reference for dynamic resolution
+    config_manager: Any = None
+
     def __post_init__(self):
-        """Set absolute paths after initialization"""
         if self.output_directory is None:
-            # Get project root (3 levels up from model-factory/03_integration/)
             project_root = Path(__file__).parent.parent.parent
             self.output_directory = str(project_root / "model-factory" / "pipeline_output")
+
+    def resolve_training_params(self, domain: str, gpu_type: str = None) -> Dict[str, Any]:
+        if not self.config_manager:
+            raise ValueError("Config manager not available for dynamic parameter resolution")
+        domain_params = self.config_manager.get_tara_proven_params(domain)
+        batch_size = self.batch_size
+        if batch_size is None and gpu_type:
+            gpu_config = self.config_manager._config.get('gpu_configs', {}).get(gpu_type, {})
+            batch_size = gpu_config.get('batch_size', 2)
+        return {
+            'max_steps': self.max_steps or domain_params.get('max_steps', 468),
+            'batch_size': batch_size or domain_params.get('batch_size', 2),
+            'sequence_length': self.sequence_length or domain_params.get('sequence_length', 64),
+            'lora_r': self.lora_r or domain_params.get('lora_r', 8),
+            'learning_rate': self.learning_rate or domain_params.get('learning_rate', 2e-4),
+            'samples_per_domain': self.samples_per_domain or domain_params.get('sample_count', 200),
+            'quality_threshold': self.quality_threshold or 0.7,
+            'target_accuracy': self.target_accuracy or 99.99,
+            'target_validation_score': self.target_validation_score or 101.0,
+            'max_cost_per_domain': self.max_cost_per_domain or 5.0,
+            'monthly_budget_limit': self.monthly_budget_limit or 50.0
+        }
+
+    def estimate_gguf_size(self, model_name: str, quant_type: str = None) -> float:
+        if self.target_model_size_mb is not None:
+            return self.target_model_size_mb
+        quant_type = quant_type or self.quantization_type or 'Q4_K_M'
+        size_estimates = {
+            ("7B", "Q4_K_M"): 8.3,
+            ("7B", "Q3_K_M"): 6.2,
+            ("7B", "Q2_K"): 4.1,
+            ("14B", "Q4_K_M"): 16.0,
+            ("14B", "Q3_K_M"): 12.0,
+            ("14B", "Q2_K"): 8.0,
+            ("3B", "Q4_K_M"): 3.5,
+            ("3B", "Q3_K_M"): 2.6,
+            ("3B", "Q2_K"): 1.8,
+        }
+        model_size = None
+        for size in ["3B", "7B", "14B"]:
+            if size in model_name:
+                model_size = size
+                break
+        if model_size and (model_size, quant_type) in size_estimates:
+            return size_estimates[(model_size, quant_type)]
+        if "7B" in model_name:
+            return 8.3 if quant_type == "Q4_K_M" else 6.0
+        elif "14B" in model_name:
+            return 16.0 if quant_type == "Q4_K_M" else 12.0
+        elif "3B" in model_name:
+            return 3.5 if quant_type == "Q4_K_M" else 2.5
+        return 8.0  # Default fallback
+
+    def get_quantization_type(self, model_name: str = None) -> str:
+        if self.quantization_type:
+            return self.quantization_type
+        if self.config_manager:
+            global_params = getattr(self.config_manager, '_global_params', {})
+            return global_params.get('output_format', 'Q4_K_M')
+        return 'Q4_K_M'
+
+    def validate_config(self) -> bool:
+        if not self.config_manager:
+            return False
+        try:
+            sample_domain = "healthcare"
+            self.resolve_training_params(sample_domain)
+            return True
+        except Exception as e:
+            print(f"Config validation failed: {e}")
+            return False
 
 class IntegratedGPUPipeline:
     """Integrated pipeline for GPU training, GGUF creation, and deployment"""
