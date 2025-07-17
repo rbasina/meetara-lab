@@ -179,6 +179,26 @@ GPU Detection → Model Selection → GPU-Specific Settings → Enhanced Trainin
 - **Memory Optimization**: GPU-specific memory management
 - **QLoRA Integration**: Intelligent QLoRA/LoRA management
 
+## 🆕 PIPELINECONFIG REFACTOR & CONFIG-DRIVEN PIPELINE (July 2025)
+
+### 🔄 Latest Approach: Fully Config-Driven, Dynamic Pipeline
+- **PipelineConfig** class refactored to be 100% config-driven and dynamic
+- All training, data generation, GGUF, and budget parameters now resolved at runtime from config manager or domain config
+- **No hardcoded values**: All defaults removed, everything is dynamic and environment-aware
+- Added dynamic methods for:
+    - Training parameter resolution (per domain, per GPU type)
+    - GGUF size estimation (based on model/quantization)
+    - Quantization type selection (from config or model)
+    - Config validation (ensures all required params are present)
+- **Production & Development Ready**: Same codebase supports both, always using config as source of truth
+- **Backward compatible**: If config values missing, safe fallbacks are used
+- **No business logic changed**: Only PipelineConfig and its usage refactored
+
+### 🏆 Impact
+- Enables rapid tuning, multi-environment deployment, and future-proofing
+- Supports MeeTARA Lab's mission of 20-100x faster, 504% smarter training
+- Ensures all future changes are config-first, not code-first
+
 ## 📋 **SUCCESS CRITERIA**
 
 ### **✅ Complete Pipeline with GPU Optimization:**

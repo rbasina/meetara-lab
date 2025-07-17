@@ -125,7 +125,8 @@ class QuantizationAndCleanupAgent:
             await self._perform_garbage_collection(raw_model_path)
 
             # Step 2: Determine optimal quantization and compression strategy
-            quantization_strategies = ["q8_0", "f16", "bf16"]  # Only supported types
+            # 🚀 OPTIMAL QUANTIZATION STRATEGY: q4_K_M, q3_K_M, q2_K for best quality/size balance
+            quantization_strategies = ["q4_K_M", "q3_K_M", "q2_K"]  # Optimal for domain-specific models
             compression_strategy = self._determine_optimal_compression(model_size_mb, domain, architecture_type)
 
             # Step 3: Perform GGUF conversion and quantization for each strategy
@@ -252,9 +253,15 @@ class QuantizationAndCleanupAgent:
                 
                 # Step 1: Convert HuggingFace model to GGUF
                 intermediate_gguf = final_output_dir_base / f"temp_converted_{timestamp}_{quant_strategy}.gguf"
+
+                # Ensure we pass the directory path, not the file path
+                model_dir = Path(raw_model_path)
+                if model_dir.is_file():
+                    model_dir = model_dir.parent
+
                 conversion_cmd = [
                     sys.executable, str(self.converter_script),
-                    str(raw_model_path),
+                    str(model_dir),  # Use directory path, not file path
                     "--outfile", str(intermediate_gguf),
                     "--outtype", quant_strategy.lower()
                 ]
@@ -324,15 +331,26 @@ class QuantizationAndCleanupAgent:
             
             # Create merged model output directory
             project_root = Path(__file__).resolve().parents[2]
-            merged_output_dir = project_root / "models" / ("dev" if is_simulation else "production") / "merged_models" / domain
+            
+            # Get domain category for proper directory structure
+            try:
+                domain_details = self.config_manager._get_domain_details(domain)
+                category = domain_details.get("category", "unknown_category")
+            except Exception as e:
+                logger.warning(f"⚠️ Domain '{domain}' not found in configuration, using default category")
+                category = "unknown_category"
+            
+            merged_output_dir = project_root / "models" / ("dev" if is_simulation else "production") / "merged_models" / category / domain
             merged_output_dir.mkdir(parents=True, exist_ok=True)
             
             if is_simulation:
                 # Simulation mode: Create placeholder merged model
                 logger.info(f"🔧 SIMULATION MODE: Creating placeholder merged model for {domain}")
+                
+                # Create complete HuggingFace directory structure
                 merged_model_path = merged_output_dir / "model.safetensors"
                 
-                # Create placeholder file
+                # Create placeholder model file
                 with open(merged_model_path, 'wb') as f:
                     f.write(os.urandom(int(100 * 1024 * 1024)))  # 100MB placeholder
                 
@@ -345,8 +363,13 @@ class QuantizationAndCleanupAgent:
                 with open(tokenizer_file, 'w') as f:
                     json.dump({"tokenizer_type": "standard"}, f)
                 
-                logger.info(f"✅ Simulation merged model created: {merged_model_path}")
-                return str(merged_model_path)
+                # Create additional required files
+                generation_config_file = merged_output_dir / "generation_config.json"
+                with open(generation_config_file, 'w') as f:
+                    json.dump({"do_sample": True, "max_length": 2048}, f)
+                
+                logger.info(f"✅ Simulation merged model created: {merged_output_dir}")
+                return str(merged_output_dir)  # Return directory path, not file path
             
             else:
                 # Production mode: Real model merging
@@ -392,10 +415,35 @@ class QuantizationAndCleanupAgent:
                     tokenizer = AutoTokenizer.from_pretrained(base_model_name)
                     tokenizer.save_pretrained(str(merged_output_dir))
                     
-                    merged_model_path = merged_output_dir / "model.safetensors"
-                    logger.info(f"✅ Real model merging completed: {merged_model_path}")
+                    # Verify the directory structure is complete
+                    required_files = ["config.json", "tokenizer.json"]
+                    # Check for either model.safetensors or pytorch_model.bin
+                    model_files = ["model.safetensors", "pytorch_model.bin"]
+                    has_model_file = any((merged_output_dir / file).exists() for file in model_files)
                     
-                    return str(merged_model_path)
+                    missing_files = []
+                    for file in required_files:
+                        if not (merged_output_dir / file).exists():
+                            missing_files.append(file)
+                    
+                    if not has_model_file:
+                        missing_files.append("model file (safetensors or pytorch)")
+                    
+                    if missing_files:
+                        logger.warning(f"⚠️ Missing required files: {missing_files}")
+                        # Create minimal config if missing
+                        if "config.json" in missing_files:
+                            config = merged_model.config.to_dict()
+                            with open(merged_output_dir / "config.json", 'w') as f:
+                                json.dump(config, f, indent=2)
+                            logger.info("✅ Created config.json for merged model")
+                    
+                    logger.info(f"✅ Real model merging completed: {merged_output_dir}")
+                    logger.info(f"   → Model files: {'model.safetensors' if (merged_output_dir / 'model.safetensors').exists() else 'pytorch_model.bin' if (merged_output_dir / 'pytorch_model.bin').exists() else 'none'}")
+                    logger.info(f"   → Config: {'present' if (merged_output_dir / 'config.json').exists() else 'created'}")
+                    logger.info(f"   → Tokenizer: {'present' if (merged_output_dir / 'tokenizer.json').exists() else 'missing'}")
+                    
+                    return str(merged_output_dir)  # Return the directory path, not the file path
                     
                 except Exception as e:
                     logger.error(f"❌ Real model merging failed for {domain}: {e}")

@@ -72,6 +72,7 @@ print("🔧 Installing compatible package versions...")
 !pip uninstall -y jax jaxlib
 !pip install numpy==1.24.3
 !pip install jax==0.4.20 jaxlib==0.4.20
+!$env:PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
 
 # Install core packages with specific versions
 compatible_packages = [
@@ -82,7 +83,7 @@ compatible_packages = [
     "accelerate==0.27.0",
     "datasets==2.16.1",
     "peft==0.7.1",
-    "tokenizers==0.15.0",
+    "tokenizers>=0.19,<0.20",
     "bitsandbytes==0.46.1",  # Fixed version for CUDA compatibility
     "triton==2.1.0",
     "llama-cpp-python==0.2.23",
