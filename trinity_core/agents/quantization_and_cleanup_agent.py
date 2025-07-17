@@ -7,15 +7,24 @@ This agent is responsible for post-training processing:
 - Generating and storing final GGUF files.
 """
 
+import asyncio
+import json
 import logging
 import os
 import shutil
+import subprocess
+import sys
 import time
+import warnings
 from pathlib import Path
-from typing import Dict, Any, List
-from datetime import datetime
-import asyncio
-import json # Added for model merging
+from typing import Any, Dict, List, Optional
+
+import torch
+from peft import PeftConfig, PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Suppress specific warnings
+warnings.filterwarnings("ignore", message="Special tokens have been added in the vocabulary")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -248,8 +257,6 @@ class QuantizationAndCleanupAgent:
                 logger.info(f"Converting {raw_model_path} to GGUF using {self.converter_script} for {quant_strategy}...")
                 
                 # --- REAL GGUF CONVERSION --- #
-                import subprocess
-                import sys
                 
                 # Step 1: Convert HuggingFace model to basic GGUF format using converter
                 intermediate_gguf = final_output_dir_base / f"temp_converted_{timestamp}.gguf"
@@ -418,9 +425,17 @@ class QuantizationAndCleanupAgent:
                     
                     # Verify the directory structure is complete
                     required_files = ["config.json", "tokenizer.json"]
-                    # Check for either model.safetensors or pytorch_model.bin
-                    model_files = ["model.safetensors", "pytorch_model.bin"]
-                    has_model_file = any((merged_output_dir / file).exists() for file in model_files)
+                    # Check for either single model files or sharded safetensors files
+                    single_model_files = ["model.safetensors", "pytorch_model.bin"]
+                    sharded_model_pattern = "model-*-of-*.safetensors"
+                    
+                    # Check for single model files
+                    has_single_model = any((merged_output_dir / file).exists() for file in single_model_files)
+                    
+                    # Check for sharded model files
+                    has_sharded_model = any(merged_output_dir.glob(sharded_model_pattern))
+                    
+                    has_model_file = has_single_model or has_sharded_model
                     
                     missing_files = []
                     for file in required_files:
@@ -440,7 +455,12 @@ class QuantizationAndCleanupAgent:
                             logger.info("✅ Created config.json for merged model")
                     
                     logger.info(f"✅ Real model merging completed: {merged_output_dir}")
-                    logger.info(f"   → Model files: {'model.safetensors' if (merged_output_dir / 'model.safetensors').exists() else 'pytorch_model.bin' if (merged_output_dir / 'pytorch_model.bin').exists() else 'none'}")
+                    model_file_status = "none"
+                    if has_single_model:
+                        model_file_status = "single model file"
+                    elif has_sharded_model:
+                        model_file_status = "sharded model files"
+                    logger.info(f"   → Model files: {model_file_status}")
                     logger.info(f"   → Config: {'present' if (merged_output_dir / 'config.json').exists() else 'created'}")
                     logger.info(f"   → Tokenizer: {'present' if (merged_output_dir / 'tokenizer.json').exists() else 'missing'}")
                     
