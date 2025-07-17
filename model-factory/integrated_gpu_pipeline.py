@@ -232,87 +232,27 @@ class IntegratedGPUPipeline:
         return {}
     
     def _get_domain_keywords(self, domain: str) -> List[str]:
-        """Get domain-specific keywords dynamically"""
-        # Enhanced keywords based on comprehensive domain analysis
-        domain_keywords = {
-            # Healthcare domains (12 domains from config)
-            "general_health": ["doctor", "patient", "medical", "health", "symptoms", "treatment", "diagnosis"],
-            "mental_health": ["therapy", "counseling", "mental", "emotional", "stress", "anxiety", "depression"],
-            "nutrition": ["nutrition", "diet", "food", "eating", "nutrients", "vitamins", "healthy"],
-            "fitness": ["exercise", "workout", "fitness", "training", "gym", "physical", "strength"],
-            "sleep": ["sleep", "rest", "insomnia", "bedtime", "dreams", "tired", "fatigue"],
-            "stress_management": ["stress", "relaxation", "meditation", "mindfulness", "coping", "pressure"],
-            "preventive_care": ["prevention", "screening", "vaccination", "checkup", "wellness", "preventive"],
-            "chronic_conditions": ["chronic", "diabetes", "hypertension", "arthritis", "condition", "management"],
-            "medication_management": ["medication", "prescription", "dosage", "pharmacy", "drug", "medicine"],
-            "emergency_care": ["emergency", "urgent", "critical", "ambulance", "trauma", "first aid"],
-            "women_health": ["women", "pregnancy", "gynecology", "obstetrics", "reproductive", "maternal"],
-            "senior_health": ["elderly", "senior", "aging", "geriatric", "retirement", "medicare"],
-            
-            # Business domains (12 domains from config)
-            "entrepreneurship": ["business", "startup", "entrepreneur", "venture", "innovation", "market"],
-            "marketing": ["marketing", "advertising", "brand", "campaign", "customer", "promotion"],
-            "sales": ["sales", "selling", "client", "prospect", "revenue", "closing", "negotiation"],
-            "customer_service": ["customer", "service", "support", "satisfaction", "complaint", "resolution"],
-            "project_management": ["project", "management", "timeline", "milestone", "team", "coordination"],
-            "team_leadership": ["leadership", "team", "management", "motivation", "delegation", "performance"],
-            "financial_planning": ["financial", "money", "budget", "investment", "savings", "planning"],
-            "operations": ["operations", "process", "efficiency", "workflow", "logistics", "production"],
-            "hr_management": ["human resources", "hiring", "employee", "recruitment", "benefits", "payroll"],
-            "strategy": ["strategy", "planning", "vision", "goals", "competitive", "analysis"],
-            "consulting": ["consulting", "advisory", "expertise", "recommendations", "solutions", "analysis"],
-            "legal_business": ["legal", "compliance", "contracts", "regulations", "business law", "corporate"],
-            
-            # Education domains (8 domains from config)
-            "academic_tutoring": ["tutoring", "academic", "student", "learning", "study", "homework"],
-            "skill_development": ["skills", "development", "training", "learning", "improvement", "practice"],
-            "career_guidance": ["career", "job", "profession", "guidance", "employment", "workplace"],
-            "exam_preparation": ["exam", "test", "preparation", "study", "assessment", "evaluation"],
-            "language_learning": ["language", "vocabulary", "grammar", "pronunciation", "fluency", "communication"],
-            "research_assistance": ["research", "methodology", "analysis", "data", "academic", "investigation"],
-            "study_techniques": ["study", "techniques", "methods", "learning", "memory", "organization"],
-            "educational_technology": ["education", "technology", "digital", "online", "tools", "platform"],
-            
-            # Creative domains (8 domains from config)
-            "writing": ["writing", "author", "story", "content", "creative", "publish", "edit"],
-            "storytelling": ["story", "narrative", "character", "plot", "fiction", "tale"],
-            "content_creation": ["content", "creation", "media", "digital", "creative", "produce"],
-            "social_media": ["social media", "posts", "engagement", "followers", "content", "platform"],
-            "design_thinking": ["design", "creativity", "innovation", "problem solving", "ideation", "prototype"],
-            "photography": ["photography", "camera", "composition", "lighting", "editing", "visual"],
-            "music": ["music", "composition", "instrument", "melody", "rhythm", "sound"],
-            "art_appreciation": ["art", "painting", "sculpture", "culture", "aesthetic", "creativity"],
-            
-            # Technology domains (6 domains from config)
-            "programming": ["code", "programming", "software", "development", "algorithm", "debugging"],
-            "ai_ml": ["AI", "machine learning", "data", "model", "neural", "artificial intelligence"],
-            "cybersecurity": ["security", "cyber", "hacking", "protection", "vulnerability", "threat"],
-            "data_analysis": ["data", "analysis", "statistics", "visualization", "insights", "patterns"],
-            "tech_support": ["technical", "support", "troubleshooting", "hardware", "software", "IT"],
-            "software_development": ["software", "development", "coding", "programming", "application", "system"],
-            
-            # Daily life domains (12 domains from config)
-            "parenting": ["parent", "child", "family", "kids", "parenting", "children", "raising"],
-            "relationships": ["relationship", "partner", "love", "dating", "marriage", "communication"],
-            "personal_assistant": ["assistant", "help", "organize", "schedule", "reminder", "task"],
-            "communication": ["communication", "conversation", "speaking", "listening", "interpersonal", "social"],
-            "home_management": ["home", "household", "cleaning", "organization", "maintenance", "domestic"],
-            "shopping": ["shopping", "purchase", "budget", "deals", "comparison", "consumer"],
-            "planning": ["planning", "organization", "goals", "priorities", "time", "schedule"],
-            "transportation": ["transportation", "travel", "commute", "vehicle", "public transport", "navigation"],
-            "time_management": ["time", "management", "productivity", "efficiency", "scheduling", "priorities"],
-            "decision_making": ["decision", "choice", "options", "evaluation", "judgment", "analysis"],
-            "conflict_resolution": ["conflict", "resolution", "mediation", "negotiation", "problem solving", "peace"],
-            "work_life_balance": ["work", "life", "balance", "stress", "wellness", "productivity"],
-            
-            # Specialized domains (4 domains from config)
-            "legal": ["legal", "law", "attorney", "court", "case", "lawyer", "legal advice"],
-            "financial": ["financial", "finance", "money", "investment", "banking", "advisor"],
-            "scientific_research": ["research", "science", "study", "experiment", "analysis", "data"],
-            "engineering": ["engineering", "design", "technical", "systems", "problem solving", "innovation"]
-        }
-        
-        return domain_keywords.get(domain, ["professional", "assistance", "help", "guidance"])
+        """Get domain-specific keywords from config/domain_keywords.yaml"""
+        try:
+            import yaml
+            config_path = self.project_root / "config" / "domain_keywords.yaml"
+            if not config_path.exists():
+                self.logger.warning(f"Domain keywords config not found at {config_path}")
+                return ["professional", "assistance", "help", "guidance"]
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config_data = yaml.safe_load(f)
+            domains_config = config_data.get('domains', {})
+            domain_config = domains_config.get(domain, {})
+            keywords = domain_config.get('keywords', [])
+            if keywords:
+                self.logger.debug(f"Loaded {len(keywords)} keywords for domain '{domain}'")
+                return keywords
+            else:
+                self.logger.warning(f"No keywords found for domain '{domain}' in config")
+                return ["professional", "assistance", "help", "guidance"]
+        except Exception as e:
+            self.logger.error(f"Error loading domain keywords for {domain}: {e}")
+            return ["professional", "assistance", "help", "guidance"]
 
     def create_training_data(self, domain: str, size: int = None,environment: str = 'dev') -> List[str]:
         """Generate training data matching TARA Universal Model quality and scale"""

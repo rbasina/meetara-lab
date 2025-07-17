@@ -1,11 +1,11 @@
 {
-  "session_id": "music_1752556608",
-  "timestamp": "2025-07-15T05:16:48.029611",
+  "session_id": "music_1752629161",
+  "timestamp": "2025-07-16T01:26:01.600808",
   "total_domains_processed": 1,
   "successful_domains": 1,
   "failed_domains": 0,
   "overall_quality_score": 0.0,
-  "average_training_time": 68.15562582015991,
+  "average_training_time": 529.0093042850494,
   "total_cost": 0.0,
   "domain_breakdown": {
     "successful_domains": [
