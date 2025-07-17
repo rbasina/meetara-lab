@@ -158,11 +158,13 @@ class IntelligentModelFactory:
             else:
                 logger.warning(f"⚠️ No training data provided for {domain}")
             
-            # Get base model from config
+            # Get base model from config (always primary for training)
             base_model = self.config_manager.get_base_model_for_domain(domain)
             logger.info(f"[BASE_MODEL] Domain '{domain}' mapped to base model: {base_model}")
             stats["base_model"] = base_model
-            
+
+            # If GGUF extraction/conversion step is present elsewhere, ensure it can use the fallback/secondary model if needed (TODO: implement if not present)
+
             # Track download timing and caching
             download_start = time.time()
             print(f"📥 Starting download for domain '{domain}' with base model: {base_model}")
@@ -773,7 +775,7 @@ class IntelligentModelFactory:
                                 raise train_error
                             
                             # Save the trained model in proper Hugging Face format
-                            model_save_dir = raw_model_path.parent / domain
+                            model_save_dir = raw_model_path  # Use the correct path that already includes domain
                             model_save_dir.mkdir(parents=True, exist_ok=True)
                             logger.info(f"💾 Saving trained model to {model_save_dir}")
                             
@@ -796,20 +798,16 @@ class IntelligentModelFactory:
                                 with open(config_path, 'w') as f:
                                     json.dump(config_data, f, indent=2)
                             
-                            # Ensure the model directory has all required files
-                            required_files = ["config.json", "pytorch_model.bin", "tokenizer.json"]
+                            # Ensure the model directory has all required adapter files (not merged model files)
+                            required_files = ["adapter_config.json", "adapter_model.safetensors"]
                             missing_files = []
                             for file in required_files:
                                 if not (model_save_dir / file).exists():
                                     missing_files.append(file)
                             
                             if missing_files:
-                                logger.warning(f"⚠️ Missing required files: {missing_files}")
-                                # Create minimal config if missing
-                                if "config.json" in missing_files:
-                                    config = model.config.to_dict()
-                                    with open(model_save_dir / "config.json", 'w') as f:
-                                        json.dump(config, f, indent=2)
+                                logger.warning(f"⚠️ Missing required adapter files: {missing_files}")
+                                # Note: config.json and pytorch_model.bin are created later during merging, not during training
                             
                             # Update path to point to the saved model directory
                             raw_model_path = model_save_dir
@@ -834,53 +832,77 @@ class IntelligentModelFactory:
             # Update filename with actual file size
             raw_model_path = self._update_filename_with_actual_size(raw_model_path)
             
-            # Create adapter config based on what was actually used during training
-            adapter_dir = raw_model_path.parent / f"{domain}_adapter"
-            adapter_dir.mkdir(parents=True, exist_ok=True)
+            # Check if real training created adapter files
+            real_adapter_path = raw_model_path.parent / "adapter_model.safetensors"
+            real_adapter_config = raw_model_path.parent / "adapter_config.json"
             
-            # Determine what was actually used during training
-            actual_method = "none"
-            if 'qlora_applied' in locals() and qlora_applied:
-                actual_method = "qlora"
-                peft_type = "QLORA"
-                adapter_name = f"{domain}_qlora"
-            elif 'lora_applied' in locals() and lora_applied:
-                actual_method = "lora"
-                peft_type = "LORA"
-                adapter_name = f"{domain}_lora"
+            if real_adapter_path.exists() and real_adapter_config.exists():
+                # Use the real adapter files created by training
+                logger.info(f"✅ Using real adapter files from training for {domain}")
+                adapter_path = raw_model_path.parent  # Point to the directory containing real adapter files
+                
+                # Determine what was actually used during training by reading the config
+                try:
+                    with open(real_adapter_config, 'r') as f:
+                        adapter_config_data = json.load(f)
+                    actual_method = adapter_config_data.get("peft_type", "unknown").lower()
+                    if "qlora" in actual_method:
+                        actual_method = "qlora"
+                    elif "lora" in actual_method:
+                        actual_method = "lora"
+                    else:
+                        actual_method = "none"
+                except Exception as e:
+                    logger.warning(f"⚠️ Could not read adapter config: {e}")
+                    actual_method = "unknown"
+                    
             else:
+                # Only create dummy adapter files if no real training occurred
+                logger.info(f"⚠️ No real adapter files found for {domain}, creating minimal placeholder")
+                adapter_dir = raw_model_path / "adapter"
+                adapter_dir.mkdir(parents=True, exist_ok=True)
+                
+                # Determine what was actually used during training
                 actual_method = "none"
-                peft_type = "NONE"
-                adapter_name = f"{domain}_base"
-            
-            # Create adapter config.json based on actual method used
-            adapter_config_json = {
-                "base_model_name_or_path": base_model,
-                "bias": "none",
-                "enable_lora": None,
-                "fan_in_fan_out": False,
-                "inference_mode": True,
-                "lora_alpha": lora_config["lora_alpha"],
-                "lora_dropout": lora_config["lora_dropout"],
-                "modules_to_save": None,
-                "peft_type": peft_type,
-                "r": lora_config["r"],
-                "revision": None,
-                "target_modules": lora_config["target_modules"],
-                "task_type": "CAUSAL_LM",
-                "training_method": actual_method
-            }
-            
-            adapter_config_path = adapter_dir / "adapter_config.json"
-            with open(adapter_config_path, 'w') as f:
-                json.dump(adapter_config_json, f, indent=2)
-            
-            # Create adapter model file
-            adapter_model_path = adapter_dir / "adapter_model.bin"
-            with open(adapter_model_path, 'wb') as f:
-                f.write(os.urandom(int(target_size_mb * 0.1 * 1024 * 1024))) # Adapter is typically 10% of base model
-            
-            adapter_path = adapter_dir  # Update to point to the directory
+                if 'qlora_applied' in locals() and qlora_applied:
+                    actual_method = "qlora"
+                    peft_type = "QLORA"
+                elif 'lora_applied' in locals() and lora_applied:
+                    actual_method = "lora"
+                    peft_type = "LORA"
+                else:
+                    actual_method = "none"
+                    peft_type = "NONE"
+                
+                # Create minimal adapter config.json
+                adapter_config_json = {
+                    "base_model_name_or_path": base_model,
+                    "bias": "none",
+                    "enable_lora": None,
+                    "fan_in_fan_out": False,
+                    "inference_mode": True,
+                    "lora_alpha": lora_config["lora_alpha"],
+                    "lora_dropout": lora_config["lora_dropout"],
+                    "modules_to_save": None,
+                    "peft_type": peft_type,
+                    "r": lora_config["r"],
+                    "revision": None,
+                    "target_modules": lora_config["target_modules"],
+                    "task_type": "CAUSAL_LM",
+                    "training_method": actual_method
+                }
+                
+                adapter_config_path = adapter_dir / "adapter_config.json"
+                with open(adapter_config_path, 'w') as f:
+                    json.dump(adapter_config_json, f, indent=2)
+                
+                # Create minimal placeholder adapter file (only if no real training)
+                adapter_model_path = adapter_dir / "adapter_model.safetensors"
+                with open(adapter_model_path, 'wb') as f:
+                    # Create minimal placeholder (much smaller than before)
+                    f.write(b'PLACEHOLDER_ADAPTER' * 1024)  # 1KB placeholder
+                
+                adapter_path = adapter_dir
             
             # Enhanced quality simulation with emotion/context learning
             base_quality = self.learned_config["quality"]["target_quality"]

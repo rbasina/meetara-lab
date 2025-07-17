@@ -331,11 +331,22 @@ class TrainingOrchestrator:
             domain_start = time.time()
             
             try:
-                # Initialize enhanced trainer
-                trainer = EnhancedTrinityTrainer(
-                    domain=domain,
-                    output_dir=f"models/{domain}/enhanced_training"
-                )
+                # Get domain category from config
+                from trinity_core.core_components.config_manager import SmartTrinityConfigManager
+                config_manager = SmartTrinityConfigManager()
+                domain_details = config_manager._get_domain_details(domain)
+                category = domain_details.get("category", "unknown_category")
+            except Exception as e:
+                logger.warning(f"⚠️ Could not get category for domain {domain}: {e}")
+                category = "unknown_category"
+
+            # Use correct path structure: data/production/trained/<category>/<domain>/
+            output_dir = f"data/production/trained/{category}/{domain}"
+
+            trainer = EnhancedTrinityTrainer(
+                domain=domain,
+                output_dir=output_dir
+            )
                 
                 # Check for checkpoint if resuming
                 checkpoint_path = None

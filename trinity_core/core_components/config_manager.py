@@ -9,6 +9,7 @@ import logging
 import os
 from pathlib import Path
 from enum import Enum
+from typing import Dict
 
 class UniversalModelArchitecture(Enum):
     """
@@ -39,6 +40,21 @@ class MultiBaseModel(Enum):
         """Get the actual model name from configuration file."""
         model_mapping = config_manager._config.get('model_names', {})
         return model_mapping.get(self.value, self.value)
+
+def parse_domain_model_entry(model_entry: str):
+    """
+    Parses a model entry from config.
+    Returns (primary_model, fallback_model) tuple.
+    If only one model is present, fallback_model is None.
+    """
+    if ',' in model_entry:
+        models = [m.strip() for m in model_entry.split(',')]
+        return models[0], models[1] if len(models) > 1 else None
+    elif '|' in model_entry:
+        models = [m.strip() for m in model_entry.split('|')]
+        return models[0], models[1] if len(models) > 1 else None
+    else:
+        return model_entry.strip(), None
 
 class SmartTrinityConfigManager:
     _instance = None
@@ -167,16 +183,28 @@ class SmartTrinityConfigManager:
                 # Handle both string and dict domain entries
                 if isinstance(domain_entry, str):
                     # If domain entry is a string (base model), use it directly
-                    base_model = domain_entry
+                    base_model_entry = domain_entry
+                    primary_model, fallback_model = parse_domain_model_entry(base_model_entry)
+                    base_model = primary_model  # Use primary for backward compatibility
                     logging.debug(f"ConfigManager: Using string base model: {base_model}")
+                    if fallback_model:
+                        logging.debug(f"ConfigManager: Fallback model available: {fallback_model}")
                 elif isinstance(domain_entry, dict):
                     # If domain entry is a dict, get base_model from it
-                    base_model = domain_entry.get('base_model', category_config.get('base_model'))
+                    base_model_entry = domain_entry.get('base_model', category_config.get('base_model'))
+                    primary_model, fallback_model = parse_domain_model_entry(base_model_entry)
+                    base_model = primary_model  # Use primary for backward compatibility
                     logging.debug(f"ConfigManager: Using dict base model: {base_model}")
+                    if fallback_model:
+                        logging.debug(f"ConfigManager: Fallback model available: {fallback_model}")
                 else:
                     # Fallback to category base model
-                    base_model = category_config.get('base_model')
+                    base_model_entry = category_config.get('base_model')
+                    primary_model, fallback_model = parse_domain_model_entry(base_model_entry)
+                    base_model = primary_model  # Use primary for backward compatibility
                     logging.debug(f"ConfigManager: Using category fallback base model: {base_model}")
+                    if fallback_model:
+                        logging.debug(f"ConfigManager: Fallback model available: {fallback_model}")
                 
                 if not base_model:
                     raise ValueError(f"Configuration error: No base model found for domain '{domain_name}' in category '{category_name}'.")
@@ -198,11 +226,13 @@ class SmartTrinityConfigManager:
                     generate_synthetic = category_config.get('generate_synthetic_data', 
                         self._global_params.get('generate_synthetic_data', False))
 
+                # Add both models to the returned dict for downstream use
                 domain_details = {
                     'base_model': base_model,
-                    'tier_name': tier_name,
+                    'primary_model': primary_model,
+                    'fallback_model': fallback_model,
                     'category': category_name,
-                    'generate_synthetic_data': generate_synthetic
+                    'tier_name': tier_name
                 }
                 
                 # Cache the result
@@ -300,13 +330,28 @@ class SmartTrinityConfigManager:
             all_domains.extend(domains.keys())
         return all_domains
 
-    def get_base_model_for_domain(self, domain_name: str) -> str:
+    def get_models_for_domain(self, domain_name: str) -> Dict[str, str]:
         """
-        Gets the base model for a specific domain.
-        This is the method that the model factory calls.
+        Gets both primary and fallback models for a specific domain.
+        Returns a dictionary with 'primary_model' and 'fallback_model' keys.
         """
         domain_details = self._get_domain_details(domain_name)
-        return domain_details['base_model']
+        return {
+            'primary_model': domain_details['primary_model'],
+            'fallback_model': domain_details['fallback_model']
+        }
+
+    def get_base_model_for_domain(self, domain_name: str, check_memory: bool = True) -> str:
+        """
+        Gets the base model for a specific domain.
+        Always returns the primary model for training, regardless of memory.
+        Fails with an error if the primary model cannot be loaded due to memory constraints.
+        Only fallback to the secondary model if explicitly configured for that domain.
+        """
+        domain_details = self._get_domain_details(domain_name)
+        primary_model = domain_details['primary_model']
+        # Fallback logic is not used for training; always return primary_model
+        return primary_model
 
     def get_tier_config(self, domain_name: str) -> dict:
         """

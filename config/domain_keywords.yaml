@@ -1,0 +1,275 @@
+# Domain Keywords Configuration
+# This file contains keywords for each domain to guide data generation
+# Categories and tiers are defined in trinity_config.yaml
+
+domains:
+  # Healthcare Category (Premium Tier)
+  general_health:
+    keywords: ["health", "medical", "doctor", "symptoms", "diagnosis", "treatment", "medicine", "wellness", "prevention", "checkup", "vaccination", "disease", "infection", "recovery", "ling"]
+  
+  mental_health:
+    keywords: ["mental health", "psychology", "therapy", "counseling", "depression", "anxiety", "stress", "emotions", "mindfulness", "meditation", "psychiatrist", "psychologist", "mental wellness", "cognitive behavioral therapy", "self-care"]
+  
+  nutrition:
+    keywords: ["nutrition", "diet", "food", "vitamins", "minerals", "protein", "carbohydrates", "fats", "calories", "meal planning", "healthy eating", "supplements", "nutritional advice", "dietary restrictions", "food allergies"]
+  
+  sleep:
+    keywords: ["sleep", "insomnia", "sleep hygiene", "sleep disorders", "rest", "bedtime routine", "sleep quality", "sleep cycles", "sleep apnea", "dreams", "sleep medicine", "sleep environment", "sleep schedule", "sleep deprivation"]
+  
+  stress_management:
+    keywords: ["stress", "stress management", "relaxation", "breathing exercises", "meditation", "yoga", "mindfulness", "coping strategies", "work-life balance", "burnout", "anxiety relief", "stress reduction", "mental wellness"]
+  
+  preventive_care:
+    keywords: ["preventive care", "prevention", "screening", "vaccination", "health checkup", "early detection", "risk factors", "lifestyle changes", "health maintenance", "wellness", "preventive medicine", "health education"]
+  
+  chronic_conditions:
+    keywords: ["chronic conditions", "hypertension", "arthritis", "asthma", "heart disease", "chronic pain", "long-term care", "disease management", "medication adherence", "lifestyle modifications", "chronic illness"]
+  
+  medication_management:
+    keywords: ["medication", "prescription", "dosage", "side effects", "drug interactions", "medication adherence", "pharmacy", "drug safety", "drug administration", "medication schedule", "prescription refills"]
+  
+  emergency_care:
+    keywords: ["emergency", "urgent care", "first aid", "emergency response", "trauma", "accident", "injury", "emergency room", "ambulance", "critical care", "emergency medicine", "life-threatening", "emergency procedures"]
+  
+  women_health:
+    keywords: ["women's health", "gynecology", "pregnancy", "menstruation", "fertility", "breast health", "reproductive health", "prenatal care", "postpartum", "women's wellness", "gynecological care", "womens medicine"]
+  
+  senior_health:
+    keywords: ["senior health", "aging", "elderly care", "geriatrics", "age-related conditions", "mobility", "cognitive health", "senior wellness", "elderly nutrition", "aging gracefully", "senior fitness", "elderly medicine"]
+
+  # Daily Life Category (Quality Tier)
+  parenting:
+    keywords: ["parenting", "childcare", "children", "family", "child development", "pline", "education", "parenting tips", "child safety", "family activities", "parenting advice", "child behavior", "family bonding"]
+  
+  relationships:
+    keywords: ["relationships", "dating", "marriage", "communication", "love", "partnership", "romance", "relationship advice", "conflict resolution", "emotional intimacy", "trust", "relationship building", "couples therapy"]
+  
+  personal_assistant:
+    keywords: ["personal assistant", "organization", "productivity", "time management", "scheduling", "task management", "efficiency", "personal organization", "life management", "assistant tools", "personal productivity"]
+  
+  communication:
+    keywords: ["communication", "public speaking", "conversation", "interpersonal skills", "listening", "verbal communication", "nonverbal communication", "communication skills", "effective communication", "speech", "presentation skills"]
+  
+  home_management:
+    keywords: ["home management", "housekeeping", "cleaning", "organization", "home maintenance", "household chores", "home improvement", "domestic tasks", "home efficiency", "household management", "home organization"]
+  
+  shopping:
+    keywords: ["shopping", "consumer behavior", "purchasing", "retail buying", "decisions", "product research", "shopping tips", "consumer advice", "shopping strategies", "retail therapy", "smart shopping"]
+  
+  planning:
+    keywords: ["planning", "goalsetting", "strategic planning", "project planning", "event planning", "financial planning", "life planning", "planning tools", "organizational skills", "planning strategies"]
+  
+  transportation:
+    keywords: ["transportation", "travel", "commuting", "public transit", "driving", "transportation planning", "travel arrangements", "commuting strategies", "vehicle maintenance", "public transportation", "navigation help", "sportation options", "travel planning", "commute optimization", "transportation guidance", "travel support", "transportation advice", "igation assistance", "transportation planning"]
+  
+  time_management:
+    keywords: ["time management", "productivity", "scheduling", "prioritization", "efficiency", "time optimization", "work-life balance", "time tracking", "productivity tools", "time planning", "efficient use of time"]
+  decision_making:
+    keywords: ["decision making", "choices", "problem solving", "critical thinking", "analysis", "decision process", "evaluation", "decision strategies", "problem analysis", "decision frameworks", "logical thinking"]
+  
+  conflict_resolution:
+    keywords: ["conflict resolution", "mediation", "negotiation", "dispute resolution", "communication", "problem solving", "conflict management", "peaceful resolution", "conflict strategies", "resolution techniques"]
+  
+  work_life_balance:
+    keywords: ["work-life balance", "stress management", "time management", "wellness", "burnout prevention", "life balance", "work stress", "personal time", "professional life", "work-life integration", "balance strategies"]
+
+  # Business Category (Expert Tier)
+  entrepreneurship:
+    keywords: ["entrepreneurship", "startup", "business ownership", "venture", "business development", "entrepreneurial skills", "business planning", "market research", "business strategy", "entrepreneurial mindset"]
+  
+  marketing:
+    keywords: ["marketing", "advertising", "branding", "market research", "customer acquisition", "digital marketing", "marketing strategy", "promotion", "market analysis", "marketing campaigns", "brand development"]
+  
+  sales:
+    keywords: ["sales", "selling", "customer relations", "sales techniques", "negotiation", "customer acquisition", "sales strategy", "closing deals", "sales process", "customer service", "sales training"]
+  
+  customer_service:
+    keywords: ["customer service", "customer support", "client relations", "customer satisfaction", "service quality", "customer experience", "support systems", "customer care", "service excellence", "customer relations"]
+  
+  project_management:
+    keywords: ["project management", "project planning", "team leadership", "project coordination", "resource management", "project execution", "project monitoring", "project delivery", "project methodology", "project success"]
+  
+  team_leadership:
+    keywords: ["team leadership", "management", "team building", "leadership skills", "team motivation", "employee development", "ational leadership", "team dynamics", "leadership development", "team management"]
+  financial_planning:
+    keywords: ["financial planning", "budgeting", "financial management", "wealth management", "financial strategy", "financial advice", "money management", "financial security", "financial goals"]
+  
+  operations:
+    keywords: ["operations", "operational efficiency", "process improvement", "business operations", "operational management", "efficiency optimization", "operational strategy", "business processes", "operational excellence"]
+  
+  hr_management:
+    keywords: ["human resources", "HR management", "employee relations", "recruitment", "talent management", "workplace culture", "employee development", "HR policies", "workforce management", "employee engagement"]
+  strategy:
+    keywords: ["strategy", "strategic planning", "business strategy", "competitive analysis", "strategic thinking", "market strategy", "strategic development", "business planning", "strategic management", "strategy execution"]
+  
+  consulting:
+    keywords: ["consulting", "business consulting", "advisory services", "professional advice", "business analysis", "consulting services", "strategic consulting", "business advisory", "consulting expertise", "professional guidance"]
+  
+  legal_business:
+    keywords: ["business law", "legal compliance", "contracts", "business regulations", "legal requirements", "legal issues", "regulatory compliance", "legal advice", "legal counsel"]
+
+  # Education Category (Expert Tier)
+  academic_tutoring:
+    keywords: ["academic tutoring", "education", "learning", "study skills", "academic support", "tutoring", "educational assistance", "academic improvement", "learning strategies", "educational guidance"]
+  
+  skill_development:
+    keywords: ["skill development", "learning", "training", "professional development", "skill building", "competency development", "learning new skills", "skill enhancement", "professional growth", "skill acquisition"]
+  
+  career_guidance:
+    keywords: ["career guidance", "career planning", "professional development", "career advice", "job search", "career path", "professional growth", "career counseling", "career strategy", "professional guidance"]
+  
+  exam_preparation:
+    keywords: ["exam preparation", "test preparation", "study techniques", "exam strategies", "testtaking", "academic preparation", "exam readiness", "study methods", "test preparation", "academic success"]
+  
+  language_learning:
+    keywords: ["language learning", "language education", "linguistics", "language acquisition", "language teaching", "language skills", "language development", "educational linguistics", "language instruction", "language proficiency"]
+  
+  research_assistance:
+    keywords: ["research assistance", "academic research", "research methods", "data analysis", "research support", "academic writing", "research methodology", "research guidance", "academic assistance", "research skills"]
+  
+  study_techniques:
+    keywords: ["study techniques", "learning methods", "study skills", "academic strategies", "learning techniques", "study habits", "educational methods", "learning strategies", "study approaches", "academic learning"]
+  
+  educational_technology:
+    keywords: ["educational technology", "edtech", "digital learning", "online education", "learning technology", "educational software", "digital education", "technology in education", "educational innovation"]
+
+  # Creative Category (Quality Tier)
+  writing:
+    keywords: ["writing", "creative writing", "content creation", "writing skills", "writing techniques", "writing process", "writing style", "writing improvement", "writing craft", "writing development"]
+  
+  storytelling:
+    keywords: ["storytelling", "narrative", "story creation", "creative narrative", "story development", "narrative techniques", "story structure", "creative storytelling", "narrative skills", "story crafting"]
+  
+  content_creation:
+    keywords: ["content creation", "content development", "creative content", "content strategy", "content production", "creative development", "content planning", "content design", "creative production", "content building"]
+  
+  social_media:
+    keywords: ["social media", "digital marketing", "social media management", "online presence", "social media strategy", "digital communication", "social media marketing", "online engagement", "social media content", "digital strategy"]
+  
+  design_thinking:
+    keywords: ["design thinking", "creative problem solving", "design process", "innovation", "creative thinking", "design methodology", "problem solving", "creative approach", "design strategy", "innovation process"]
+  
+  photography:
+    keywords: ["photography", "photo techniques", "camera skills", "visual arts", "photo composition", "photography skills", "visual storytelling", "photo editing", "photography tips", "visual communication"]
+  
+  music:
+    keywords: ["music", "musical composition", "music theory", "musical performance", "music creation", "musical skills", "music production", "musical expression", "music education", "musical development"]
+  
+  art_appreciation:
+    keywords: ["art appreciation", "art history", "visual arts", "artistic expression", "art analysis", "cultural arts", "artistic appreciation", "visual culture", "art education", "artistic understanding"]
+  
+  mythology:
+    keywords: ["mythology", "myth", "cultural stories", "ancient tales", "mythological stories", "cultural narratives", "mythological themes", "ancient mythology", "cultural mythology", "mythological traditions"]
+  
+  spiritual:
+    keywords: ["spiritual", "spirituality", "meditation", "mindfulness", "spiritual practices", "inner peace", "spiritual growth", "spiritual development", "spiritual wellness", "spiritual guidance"]
+
+  # Psychology & Wellness Category (Quality Tier)
+  psychology:
+    keywords: ["psychology", "mental health", "behavioral science", "psychological concepts", "mental processes", "psychological understanding", "behavioral analysis", "psychological principles", "mental wellness", "psychological health"]
+  
+  yoga:
+    keywords: ["yoga", "mindfulness", "meditation", "physical wellness", "yoga practice", "mind-body connection", "yoga philosophy", "yoga techniques", "wellness practices", "yoga benefits"]
+  
+  life_coaching:
+    keywords: ["life coaching", "personal development", "goal setting", "life guidance", "personal growth", "coaching techniques", "life improvement", "personal coaching", "life strategies", "personal development"]
+  
+  social_support:
+    keywords: ["social support", "community", "social connections", "emotional support", "social relationships", "community support", "social wellness", "interpersonal support", "social networks", "community building"]
+
+  # Sports & Recreation Category (Quality Tier)
+  sports_recreation:
+    keywords: ["sports", "exercise", "fitness", "sports activities", "recreational activities", "physical recreation", "sports participation", "recreational sports", "physical fitness"]
+  
+  fitness_healthcare:
+    keywords: ["fitness", "physical health", "exercise", "workout", "physical wellness", "fitness training", "health fitness", "physical activity", "fitness health", "exercise wellness"]
+
+  # Business Professional Category (Expert Tier)
+  remote_work:
+    keywords: ["remote work", "telecommuting", "virtual work", "work from home", "remote collaboration", "virtual workplace", "remote productivity", "digital work", "remote management", "virtual teams"]
+  
+  social_media_management:
+    keywords: ["social media management", "digital marketing", "social media strategy", "online presence", "social media marketing", "digital communication", "social media content", "online engagement", "social media planning", "digital strategy"]
+  
+  digital_literacy:
+    keywords: ["digital literacy", "technology skills", "digital skills", "computer literacy", "digital competence", "technology education", "digital knowledge", "computer skills", "digital proficiency", "technology literacy"]
+  
+  language_learning_professional:
+    keywords: ["language learning", "professional development", "language skills", "linguistic development", "professional language", "language acquisition", "linguistic skills", "professional communication", "language proficiency", "linguistic competence"]
+
+  # Research & Academic Category (Expert Tier)
+  research:
+    keywords: ["research", "academic research", "research methods", "data analysis", "research methodology", "academic investigation", "research process", "scientific research", "research skills", "academic inquiry"]
+  
+  academic_tutoring_research:
+    keywords: ["academic tutoring", "research assistance", "educational support", "academic guidance", "research tutoring", "educational research", "academic assistance", "research guidance", "educational tutoring", "academic research support"]
+
+  # Legal & Financial Category (Premium Tier)
+  legal_assistance:
+    keywords: ["legal assistance", "legal advice", "law", "legal guidance", "legal support", "legal consultation", "legal matters", "egal help", "legal services", "legal counsel"]
+  
+  insurance:
+    keywords: ["insurance", "risk management", "coverage", "insurance policies", "risk protection", "insurance planning", "coverage options", "insurance advice", "risk assessment", "insurance guidance"]
+  
+  real_estate:
+    keywords: ["real estate", "property", "housing", "real estate investment", "property management", "real estate market", "property development", "real estate planning", "property investment", "real estate guidance"]
+
+  # Emergency & Crisis Category (Premium Tier)
+  crisis_management:
+    keywords: ["crisis management", "emergency response", "crisis intervention", "emergency management", "crisis planning", "emergency procedures", "crisis communication", "emergency coordination", "crisis response", "emergency planning"]
+  
+  disaster_preparedness:
+    keywords: ["disaster preparedness", "emergency planning", "disaster response", "emergency preparedness", "disaster management", "emergency readiness", "disaster planning", "emergency procedures", "disaster response", "emergency management"]
+  
+  emergency_response:
+    keywords: ["emergency response", "emergency services", "emergency procedures", "emergency management", "emergency coordination", "emergency planning", "emergency services", "emergency procedures", "emergency response", "emergency management"]
+  
+  safety_security:
+    keywords: ["safety", "security", "safety measures", "security protocols", "safety planning", "security measures", "safety procedures", "security planning", "safety guidelines", "security procedures"]
+
+  # Aerospace & Transportation Category (Expert Tier)
+  aeronautics:
+    keywords: ["aeronautics", "aviation", "aerospace", "flight", "aircraft", "aviation technology", "aerospace engineering", "flight technology", "aviation science", "aerospace technology"]
+  
+  automobile:
+    keywords: ["automobile", "vehicles", "automotive", "car technology", "vehicle maintenance", "automotive industry", "car care", "vehicle technology", "automotive engineering", "car maintenance"]
+  
+  space_technology:
+    keywords: ["space technology", "space exploration", "aerospace", "space science", "space engineering", "space research", "space exploration", "space technology", "aerospace technology", "space science"]
+
+  # Industrial & Manufacturing Category (Expert Tier)
+  agriculture:
+    keywords: ["agriculture", "farming", "agricultural technology", "crop production", "agricultural science", "farming techniques", "agricultural innovation", "crop management", "agricultural practices", "farming technology"]
+  
+  manufacturing:
+    keywords: ["manufacturing", "industrial production", "manufacturing processes", "industrial technology", "production methods", "manufacturing technology", "industrial processes", "production technology", "manufacturing systems", "industrial manufacturing"]
+
+  # Travel & Tourism Category (Quality Tier)
+  travel_tourism:
+    keywords: ["travel", "tourism", "travel planning", "tourism industry", "travel destinations", "tourism services", "travel experiences", "tourism planning", "travel guidance", "tourism development"]
+
+  # Technology Category (Expert Tier)
+  programming:
+    keywords: ["programming", "coding", "software development", "computer programming", "code development", "programming languages", "software engineering", "codewriting", "programming skills", "software creation"]
+  
+  ai_ml:
+    keywords: ["artificial intelligence", "machine learning", "AIML", "data science", "AI technology", "machine learning algorithms", "AI development", "ML models", "artificial intelligence systems"]
+  
+  cybersecurity:
+    keywords: ["cybersecurity", "information security", "digital security", "cyber protection", "security measures", "cyber defense", "information protection", "digital safety", "cyber security", "security protocols"]
+  
+  data_analysis:
+    keywords: ["data analysis", "data science", "analytics", "data processing", "statistical analysis", "data interpretation", "data mining", "data visualization", "data insights", "analytical methods"]
+  
+  tech_support:
+    keywords: ["tech support", "technical support", "port", "technology assistance", "technical help", "IT assistance", "technology support", "technical guidance", "IT guidance", "technology help"]
+  
+  software_development:
+    keywords: ["software development", "programming", "software engineering", "application development", "software creation", "development process", "software design", "application creation", "software building", "development methodology"]
+
+  # Specialized Category (Premium Tier)
+  scientific_research:
+    keywords: ["scientific research", "research methodology", "scientific investigation", "research methods", "scientific inquiry", "research process", "scientific analysis", "research techniques", "scientific methodology", "research investigation"]
+  
+  engineering:
+    keywords: ["engineering", "technical design", "engineering principles", "technical engineering", "engineering design", "technical development", "engineering technology", "technical solutions", "engineering innovation", "technical engineering"] 

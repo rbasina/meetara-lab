@@ -266,7 +266,7 @@ domain_config:
     category_tier: expert
     base_model: Qwen/Qwen2.5-14B-Instruct
     domains:
-      entrepreneurship: Qwen/Qwen2.5-14B-Instruct
+      entrepreneurship: Qwen/Qwen2.5-14B-Instruct,Qwen/Qwen2.5-7B-Instruct
       marketing: Qwen/Qwen2.5-7B-Instruct
       sales: Qwen/Qwen2.5-7B-Instruct
       customer_service: Qwen/Qwen2.5-7B-Instruct

@@ -1,7 +1,7 @@
 {
   "session_info": {
-    "session_id": "music_1752556608",
-    "start_time": "2025-07-15T05:16:48.029611",
+    "session_id": "music_1752629161",
+    "start_time": "2025-07-16T01:26:01.600808",
     "total_domains_in_config": 87,
     "is_valid": true
   },
@@ -77,10 +77,10 @@
   },
   "performance_metrics": {
     "speed_improvements": {
-      "speed_improvement": "6.4x faster",
+      "speed_improvement": "0.8x faster",
       "baseline_time": 435.0,
-      "optimized_time": 68.15562582015991,
-      "time_saved": 366.8443741798401
+      "optimized_time": 529.0093042850494,
+      "time_saved": -94.00930428504944
     },
     "cost_optimization": {
       "total_cost": 0.0,
@@ -99,8 +99,8 @@
     }
   },
   "file_paths": {
-    "reports": "reports/session_music_1752556608",
-    "manifests": "manifests/session_music_1752556608",
+    "reports": "reports/session_music_1752629161",
+    "manifests": "manifests/session_music_1752629161",
     "models": "models/production",
     "logs": "logs/production"
   },

@@ -242,6 +242,13 @@ class FlexibleTrainingPipeline:
             params = self.config_manager.get_tara_proven_params(domain)
             model_name = params['base_model']
             category = params['category']
+            # Parse for dual-strategy
+            from trinity_core.core_components.config_manager import parse_domain_model_entry
+            primary_model, fallback_model = parse_domain_model_entry(model_name)
+            logger.info(f"🤖 Primary Model: {primary_model}")
+            if fallback_model:
+                logger.info(f"🤖 Fallback/Small Model: {fallback_model}")
+            # Use primary_model for training, fallback_model for extraction if needed
         except ValueError as e:
             logger.error(f"❌ Could not get training parameters for domain '{domain}': {e}")
             return None
