@@ -774,13 +774,27 @@ class IntelligentModelFactory:
                                 logger.error(f"❌ Training failed for {domain}: {train_error}")
                                 raise train_error
                             
-                            # Save the trained model in proper Hugging Face format
+                            # Save the trained model in proper HuggingFace format
                             model_save_dir = raw_model_path  # Use the correct path that already includes domain
                             model_save_dir.mkdir(parents=True, exist_ok=True)
                             logger.info(f"💾 Saving trained model to {model_save_dir}")
+                            logger.info(f"🔧 Absolute model_save_dir: {model_save_dir.absolute()}")
+                            logger.info(f"🔧 Current working directory: {Path.cwd()}")
                             
-                            # Save model in proper Hugging Face format with complete directory structure
-                            trainer.save_model(str(model_save_dir))
+                            # Ensure we're in the right directory for training
+                            original_cwd = Path.cwd()
+                            try:
+                                # Change to the model directory for training
+                                os.chdir(str(model_save_dir.parent))
+                                logger.info(f"🔧 Changed to directory: {Path.cwd()}")
+                                
+                                trainer.save_model(str(model_save_dir.name))
+                                logger.info(f"✅ Model saved successfully")
+                                
+                            finally:
+                                # Restore original working directory
+                                os.chdir(str(original_cwd))
+                                logger.info(f"🔧 Restored to directory: {Path.cwd()}")
                             
                             # Also save tokenizer to the same directory
                             tokenizer.save_pretrained(str(model_save_dir))

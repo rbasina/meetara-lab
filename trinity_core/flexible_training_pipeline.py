@@ -448,8 +448,11 @@ class FlexibleTrainingPipeline:
         output_dir = project_root / "data" / "production" / "trained" / category / domain
         output_dir.mkdir(parents=True, exist_ok=True)
         
+        print(f"🔧 Setting output_dir to: {output_dir}")
+        print(f"🔧 Absolute path: {output_dir.absolute()}")
+        
         training_args = TrainingArguments(
-            output_dir=output_dir,
+            output_dir=str(output_dir),  # Ensure it's a string
             per_device_train_batch_size=self.batch_size,
             gradient_accumulation_steps=max(1, tara_params['batch_size'] // self.batch_size),
             max_steps=tara_params['max_steps'],
