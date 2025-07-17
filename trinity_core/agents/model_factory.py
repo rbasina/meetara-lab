@@ -784,6 +784,21 @@ class IntelligentModelFactory:
                             trainer.save_model(str(model_save_dir.absolute()))
                             logger.info(f"✅ Model saved successfully")
                             
+                            # Move adapter files to adapter subfolder
+                            adapter_dir = model_save_dir / "adapter"
+                            adapter_dir.mkdir(exist_ok=True)
+                            
+                            # Move adapter files to subfolder
+                            adapter_files = ["adapter_config.json", "adapter_model.safetensors"]
+                            for file_name in adapter_files:
+                                source_file = model_save_dir / file_name
+                                target_file = adapter_dir / file_name
+                                if source_file.exists():
+                                    source_file.rename(target_file)
+                                    logger.info(f"📁 Moved {file_name} to adapter subfolder")
+                            
+                            logger.info(f"✅ Adapter files organized in subfolder")
+                            
                             # Also save tokenizer to the same directory
                             tokenizer.save_pretrained(str(model_save_dir))
                             
