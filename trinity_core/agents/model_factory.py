@@ -833,13 +833,13 @@ class IntelligentModelFactory:
             raw_model_path = self._update_filename_with_actual_size(raw_model_path)
             
             # Check if real training created adapter files
-            real_adapter_path = raw_model_path.parent / "adapter_model.safetensors"
-            real_adapter_config = raw_model_path.parent / "adapter_config.json"
+            real_adapter_path = raw_model_path / "adapter_model.safetensors"
+            real_adapter_config = raw_model_path / "adapter_config.json"
             
             if real_adapter_path.exists() and real_adapter_config.exists():
                 # Use the real adapter files created by training
                 logger.info(f"✅ Using real adapter files from training for {domain}")
-                adapter_path = raw_model_path.parent  # Point to the directory containing real adapter files
+                adapter_path = raw_model_path  # Point to the domain directory containing real adapter files
                 
                 # Determine what was actually used during training by reading the config
                 try:
