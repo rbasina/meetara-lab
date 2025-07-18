@@ -188,7 +188,13 @@ class EnhancedTrinityTrainer:
             report_to=None,
             run_name=f"{self.domain}_enhanced_training",
             dataloader_pin_memory=False,
-            remove_unused_columns=False
+            remove_unused_columns=False,
+            # Ensure checkpoints are saved in the output directory
+            save_strategy="steps",
+            save_on_each_node=False,
+            # Ensure adapter files are saved properly
+            load_best_model_at_end=False,
+            metric_for_best_model=None
         )
         
         # Custom trainer with production validation callbacks
@@ -347,42 +353,43 @@ class TrainingOrchestrator:
                 domain=domain,
                 output_dir=output_dir
             )
-                
-                # Check for checkpoint if resuming
-                checkpoint_path = None
-                if resume_from_checkpoint:
-                    checkpoint_dir = f"models/{domain}/enhanced_training"
-                    if os.path.exists(checkpoint_dir):
-                        checkpoints = [d for d in os.listdir(checkpoint_dir) if d.startswith("checkpoint-")]
-                        if checkpoints:
-                            latest_checkpoint = max(checkpoints, key=lambda x: int(x.split("-")[-1]))
-                            checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
-                            logger.info(f"Found checkpoint for {domain}: {checkpoint_path}")
-                
-                # Train with validation
-                results = await trainer.train_with_validation(
-                    train_data=training_data[domain],
-                    resume_from_checkpoint=checkpoint_path
-                )
-                
-                domain_duration = time.time() - domain_start
-                
-                # Record progress
-                self.training_progress[domain] = {
-                    "status": "completed",
-                    "duration": domain_duration,
-                    "results": results,
-                    "resumed_from": checkpoint_path
-                }
-                
-                logger.info(f"✅ {domain} training completed in {domain_duration:.2f} seconds")
-                
-            except Exception as e:
-                logger.error(f"❌ {domain} training failed: {e}")
-                self.training_progress[domain] = {
-                    "status": "failed",
-                    "error": str(e)
-                }
+            
+            # Check for checkpoint if resuming
+            checkpoint_path = None
+            if resume_from_checkpoint:
+                # Use the actual output directory for checkpoint lookup
+                checkpoint_dir = os.path.join(output_dir, "checkpoint")
+                if os.path.exists(checkpoint_dir):
+                    checkpoints = [d for d in os.listdir(checkpoint_dir) if d.startswith("checkpoint-")]
+                    if checkpoints:
+                        latest_checkpoint = max(checkpoints, key=lambda x: int(x.split("-")[-1]))
+                        checkpoint_path = os.path.join(checkpoint_dir, latest_checkpoint)
+                        logger.info(f"Found checkpoint for {domain}: {checkpoint_path}")
+            
+            # Train with validation
+            results = await trainer.train_with_validation(
+                train_data=training_data[domain],
+                resume_from_checkpoint=checkpoint_path
+            )
+            
+            domain_duration = time.time() - domain_start
+        try:    
+            # Record progress
+            self.training_progress[domain] = {
+                "status": "completed",
+                "duration": domain_duration,
+                "results": results,
+                "resumed_from": checkpoint_path
+            }
+            
+            logger.info(f"✅ {domain} training completed in {domain_duration:.2f} seconds")
+            
+        except Exception as e:
+            logger.error(f"❌ {domain} training failed: {e}")
+            self.training_progress[domain] = {
+                "status": "failed",
+                "error": str(e)
+            }
         
         total_duration = time.time() - start_time
         logger.info(f"\n🎉 All domain training completed in {total_duration:.2f} seconds")
