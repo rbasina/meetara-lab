@@ -5,16 +5,185 @@
 domains:
   # Healthcare Category (Premium Tier)
   general_health:
-    keywords: ["health", "medical", "doctor", "symptoms", "diagnosis", "treatment", "medicine", "wellness", "prevention", "checkup", "vaccination", "disease", "infection", "recovery", "ling"]
+    keywords: [
+      # Core Health Concepts
+      "health", "medical", "doctor", "symptoms", "diagnosis", "treatment", "medicine", "wellness", "prevention", 
+      "checkup", "vaccination", "disease", "infection", "recovery", "healing", "healthcare", "medical care",
+      
+      # Body Systems & Anatomy
+      "cardiovascular", "respiratory", "digestive", "nervous", "immune", "endocrine", "musculoskeletal",
+      "heart", "lungs", "stomach", "brain", "liver", "kidneys", "blood", "bones", "muscles", "joints",
+      
+      # Common Health Issues
+      "fever", "pain", "inflammation", "allergy", "asthma", "diabetes", "hypertension", "arthritis",
+      "headache", "back pain", "cough", "sore throat", "nausea", "dizziness", "fatigue", "insomnia",
+      
+      # Medical Procedures & Tests
+      "blood test", "x-ray", "mri", "ct scan", "ultrasound", "biopsy", "surgery", "physical exam",
+      "vaccination", "screening", "monitoring", "therapy", "rehabilitation", "emergency care",
+      
+      # Medications & Treatment
+      "antibiotics", "painkillers", "anti-inflammatory", "prescription", "dosage", "side effects",
+      "medication", "treatment plan", "therapy", "surgery", "rehabilitation", "preventive care",
+      
+      # Health Monitoring & Prevention
+      "vital signs", "blood pressure", "heart rate", "temperature", "weight", "exercise", "diet",
+      "lifestyle", "prevention", "screening", "early detection", "risk factors", "health maintenance",
+      
+      # Medical Specialties
+      "cardiology", "dermatology", "neurology", "orthopedics", "pediatrics", "geriatrics", "oncology",
+      "psychiatry", "surgery", "emergency medicine", "family medicine", "internal medicine",
+      
+      # Health Education & Communication
+      "patient education", "health literacy", "medical terminology", "health communication", "informed consent",
+      "second opinion", "medical advice", "health guidance", "patient rights", "medical ethics",
+      
+      # Emergency & Critical Care
+      "emergency", "urgent care", "critical care", "trauma", "resuscitation", "emergency response",
+      "ambulance", "emergency room", "intensive care", "life support", "emergency procedures",
+      
+      # Health Technology & Innovation
+      "telemedicine", "digital health", "health apps", "medical devices", "health monitoring",
+      "artificial intelligence in healthcare", "precision medicine", "genomics", "biotechnology",
+      
+      # Public Health & Epidemiology
+      "public health", "epidemiology", "outbreak", "pandemic", "vaccination", "herd immunity",
+      "contact tracing", "quarantine", "social distancing", "health policy", "healthcare system"
+    ]
   
   mental_health:
-    keywords: ["mental health", "psychology", "therapy", "counseling", "depression", "anxiety", "stress", "emotions", "mindfulness", "meditation", "psychiatrist", "psychologist", "mental wellness", "cognitive behavioral therapy", "self-care"]
+    keywords: [
+      # Core Mental Health Concepts
+      "mental health", "psychology", "therapy", "counseling", "depression", "anxiety", "stress", "emotions", 
+      "mindfulness", "meditation", "psychiatrist", "psychologist", "mental wellness", "cognitive behavioral therapy", "self-care",
+      
+      # Mental Health Conditions
+      "bipolar disorder", "schizophrenia", "ptsd", "ocd", "adhd", "autism", "eating disorders", "personality disorders",
+      "mood disorders", "anxiety disorders", "panic attacks", "social anxiety", "generalized anxiety", "major depression",
+      
+      # Therapeutic Approaches
+      "cognitive behavioral therapy", "cbt", "dialectical behavior therapy", "dbt", "psychoanalysis", "psychodynamic therapy",
+      "humanistic therapy", "gestalt therapy", "family therapy", "group therapy", "art therapy", "music therapy", "play therapy",
+      
+      # Mental Health Treatment
+      "psychotherapy", "psychiatric medication", "antidepressants", "antianxiety", "mood stabilizers", "antipsychotics",
+      "medication management", "therapy sessions", "treatment plan", "recovery", "relapse prevention", "crisis intervention",
+      
+      # Emotional & Behavioral Skills
+      "emotional regulation", "distress tolerance", "interpersonal effectiveness", "mindfulness skills", "coping strategies",
+      "stress management", "anger management", "communication skills", "assertiveness", "boundary setting", "self-compassion",
+      
+      # Mental Health Assessment
+      "psychological assessment", "mental health evaluation", "diagnostic criteria", "symptom tracking", "mood monitoring",
+      "behavioral analysis", "risk assessment", "suicide prevention", "crisis evaluation", "mental status exam",
+      
+      # Support Systems & Resources
+      "mental health support", "peer support", "family support", "mental health hotlines", "crisis services",
+      "mental health advocacy", "stigma reduction", "mental health education", "community mental health", "recovery community",
+      
+      # Prevention & Wellness
+      "mental health prevention", "resilience building", "protective factors", "mental health promotion", "wellness strategies",
+      "stress reduction", "work-life balance", "healthy relationships", "self-care practices", "mental health maintenance",
+      
+      # Professional Mental Health
+      "clinical psychology", "psychiatry", "mental health nursing", "social work", "mental health counseling",
+      "psychiatric nursing", "mental health case management", "crisis counseling", "mental health consultation",
+      
+      # Specialized Mental Health Areas
+      "child psychology", "adolescent mental health", "geriatric psychiatry", "forensic psychology", "sports psychology",
+      "health psychology", "neuropsychology", "community psychology", "industrial psychology", "school psychology"
+    ]
   
   nutrition:
-    keywords: ["nutrition", "diet", "food", "vitamins", "minerals", "protein", "carbohydrates", "fats", "calories", "meal planning", "healthy eating", "supplements", "nutritional advice", "dietary restrictions", "food allergies"]
+    keywords: [
+      # Core Nutrition Concepts
+      "nutrition", "diet", "food", "vitamins", "minerals", "protein", "carbohydrates", "fats", "calories", 
+      "meal planning", "healthy eating", "supplements", "nutritional advice", "dietary restrictions", "food allergies",
+      
+      # Macronutrients & Micronutrients
+      "proteins", "amino acids", "essential amino acids", "complete proteins", "carbohydrates", "simple carbs", "complex carbs",
+      "fiber", "dietary fiber", "fats", "saturated fats", "unsaturated fats", "omega-3", "omega-6", "trans fats",
+      "vitamins", "vitamin a", "vitamin b", "vitamin c", "vitamin d", "vitamin e", "vitamin k", "minerals", "calcium", "iron",
+      
+      # Dietary Patterns & Plans
+      "mediterranean diet", "keto diet", "paleo diet", "vegan diet", "vegetarian diet", "low-carb diet", "high-protein diet",
+      "intermittent fasting", "dash diet", "plant-based diet", "raw food diet", "gluten-free diet", "dairy-free diet",
+      
+      # Food Groups & Categories
+      "fruits", "vegetables", "grains", "whole grains", "legumes", "beans", "nuts", "seeds", "dairy", "meat", "fish",
+      "poultry", "eggs", "healthy fats", "superfoods", "organic foods", "processed foods", "junk food",
+      
+      # Nutritional Science
+      "nutrient density", "caloric density", "glycemic index", "glycemic load", "antioxidants", "phytochemicals",
+      "probiotics", "prebiotics", "enzymes", "metabolism", "digestion", "absorption", "nutrient bioavailability",
+      
+      # Health Conditions & Nutrition
+      "diabetes nutrition", "heart disease nutrition", "cancer nutrition", "celiac disease", "lactose intolerance",
+      "food intolerances", "weight management", "obesity", "eating disorders", "sports nutrition", "prenatal nutrition",
+      
+      # Meal Planning & Preparation
+      "meal prep", "cooking", "recipe planning", "portion control", "food safety", "food storage", "meal timing",
+      "snack planning", "dietary planning", "nutritional analysis", "food tracking", "calorie counting",
+      
+      # Supplements & Fortification
+      "dietary supplements", "vitamin supplements", "mineral supplements", "protein powder", "omega-3 supplements",
+      "probiotic supplements", "multivitamins", "vitamin d supplements", "calcium supplements", "iron supplements",
+      
+      # Food Labels & Information
+      "nutrition facts", "food labels", "ingredient lists", "allergen information", "organic certification",
+      "non-gmo", "gluten-free labeling", "dairy-free labeling", "kosher", "halal", "vegan certification",
+      
+      # Nutrition Education & Counseling
+      "nutrition education", "dietary counseling", "nutritional assessment", "diet analysis", "nutritional guidance",
+      "healthy eating habits", "nutritional literacy", "food literacy", "cooking skills", "nutritional knowledge",
+      
+      # Specialized Nutrition Areas
+      "pediatric nutrition", "geriatric nutrition", "clinical nutrition", "sports nutrition", "performance nutrition",
+      "weight loss nutrition", "muscle building nutrition", "recovery nutrition", "pre-workout nutrition", "post-workout nutrition"
+    ]
   
   sleep:
-    keywords: ["sleep", "insomnia", "sleep hygiene", "sleep disorders", "rest", "bedtime routine", "sleep quality", "sleep cycles", "sleep apnea", "dreams", "sleep medicine", "sleep environment", "sleep schedule", "sleep deprivation"]
+    keywords: [
+      # Core Sleep Concepts
+      "sleep", "insomnia", "sleep hygiene", "sleep disorders", "rest", "bedtime routine", "sleep quality", 
+      "sleep cycles", "sleep apnea", "dreams", "sleep medicine", "sleep environment", "sleep schedule", "sleep deprivation",
+      
+      # Sleep Stages & Cycles
+      "rem sleep", "deep sleep", "light sleep", "sleep stages", "sleep architecture", "sleep cycles", "circadian rhythm",
+      "sleep onset", "sleep maintenance", "sleep efficiency", "sleep latency", "sleep fragmentation", "sleep continuity",
+      
+      # Sleep Disorders & Conditions
+      "insomnia", "sleep apnea", "restless leg syndrome", "narcolepsy", "sleepwalking", "night terrors", "sleep paralysis",
+      "sleep bruxism", "sleep talking", "sleep eating", "circadian rhythm disorders", "shift work sleep disorder",
+      
+      # Sleep Environment & Factors
+      "sleep environment", "bedroom", "mattress", "pillow", "bedding", "room temperature", "lighting", "noise",
+      "sleep position", "sleep surface", "sleep accessories", "sleep technology", "sleep tracking", "sleep monitoring",
+      
+      # Sleep Hygiene & Habits
+      "sleep hygiene", "bedtime routine", "sleep schedule", "sleep consistency", "sleep preparation", "relaxation techniques",
+      "sleep rituals", "pre-sleep activities", "sleep habits", "sleep discipline", "sleep optimization",
+      
+      # Sleep & Health
+      "sleep and health", "sleep and immunity", "sleep and recovery", "sleep and performance", "sleep and mood",
+      "sleep and memory", "sleep and learning", "sleep and metabolism", "sleep and hormones", "sleep and aging",
+      
+      # Sleep Medicine & Treatment
+      "sleep medicine", "sleep specialists", "sleep clinics", "sleep studies", "polysomnography", "sleep therapy",
+      "sleep medication", "sleep aids", "sleep treatment", "sleep intervention", "sleep counseling",
+      
+      # Sleep Science & Research
+      "sleep science", "sleep research", "sleep physiology", "sleep psychology", "sleep neuroscience", "sleep genetics",
+      "sleep biomarkers", "sleep patterns", "sleep behavior", "sleep epidemiology", "sleep public health",
+      
+      # Sleep Technology & Tools
+      "sleep tracking", "sleep apps", "sleep devices", "sleep monitors", "sleep wearables", "smart sleep technology",
+      "sleep analytics", "sleep data", "sleep optimization tools", "sleep coaching apps", "sleep improvement technology",
+      
+      # Sleep Across Life Stages
+      "infant sleep", "child sleep", "adolescent sleep", "adult sleep", "elderly sleep", "pregnancy sleep",
+      "sleep development", "sleep maturation", "sleep changes", "age-related sleep changes", "developmental sleep patterns"
+    ]
   
   stress_management:
     keywords: ["stress", "stress management", "relaxation", "breathing exercises", "meditation", "yoga", "mindfulness", "coping strategies", "work-life balance", "burnout", "anxiety relief", "stress reduction", "mental wellness"]
@@ -75,13 +244,169 @@ domains:
 
   # Business Category (Expert Tier)
   entrepreneurship:
-    keywords: ["entrepreneurship", "startup", "business ownership", "venture", "business development", "entrepreneurial skills", "business planning", "market research", "business strategy", "entrepreneurial mindset"]
+    keywords: [
+      # Core Entrepreneurship Concepts
+      "entrepreneurship", "startup", "business ownership", "venture", "business development", 
+      "entrepreneurial skills", "business planning", "market research", "business strategy", "entrepreneurial mindset",
+      
+      # Business Fundamentals
+      "business model", "revenue", "profit", "loss", "cash flow", "break-even", "pricing", "cost structure",
+      "value proposition", "competitive advantage", "market positioning", "business plan", "financial projections",
+      
+      # Startup & Innovation
+      "innovation", "disruption", "product-market fit", "minimum viable product", "mvp", "pivot", "iteration",
+      "lean startup", "agile methodology", "customer development", "user feedback", "prototype", "beta testing",
+      
+      # Funding & Investment
+      "funding", "investment", "venture capital", "angel investor", "seed funding", "series a", "series b",
+      "crowdfunding", "bootstrapping", "equity", "debt financing", "capital raising", "pitch deck",
+      
+      # Market & Competition
+      "market analysis", "competitive analysis", "market size", "target market", "customer segments",
+      "market penetration", "market share", "competitive landscape", "industry analysis", "market trends",
+      
+      # Business Operations
+      "operations", "supply chain", "inventory", "logistics", "quality control", "process optimization",
+      "efficiency", "scalability", "automation", "outsourcing", "partnerships", "strategic alliances",
+      
+      # Leadership & Management
+      "leadership", "team building", "hiring", "talent acquisition", "employee retention", "company culture",
+      "organizational structure", "decision making", "risk management", "crisis management", "change management",
+      
+      # Marketing & Sales
+      "marketing strategy", "branding", "customer acquisition", "customer retention", "sales funnel",
+      "digital marketing", "content marketing", "social media marketing", "email marketing", "seo", "ppc",
+      
+      # Technology & Digital
+      "digital transformation", "e-commerce", "online business", "technology stack", "software development",
+      "data analytics", "business intelligence", "automation tools", "crm", "erp", "saas", "platform business",
+      
+      # Legal & Compliance
+      "business law", "intellectual property", "patents", "trademarks", "copyrights", "contracts",
+      "regulatory compliance", "taxation", "business licenses", "liability", "insurance", "legal structure",
+      
+      # Growth & Scaling
+      "growth strategy", "scaling", "expansion", "international business", "franchising", "acquisitions",
+      "mergers", "joint ventures", "market expansion", "product development", "service expansion",
+      
+      # Exit Strategies
+      "exit strategy", "ipo", "acquisition", "merger", "sale", "succession planning", "valuation",
+      "due diligence", "deal structure", "negotiation", "closing", "transition planning"
+    ]
   
   marketing:
-    keywords: ["marketing", "advertising", "branding", "market research", "customer acquisition", "digital marketing", "marketing strategy", "promotion", "market analysis", "marketing campaigns", "brand development"]
+    keywords: [
+      # Core Marketing Concepts
+      "marketing", "advertising", "branding", "market research", "customer acquisition", "digital marketing", 
+      "marketing strategy", "promotion", "market analysis", "marketing campaigns", "brand development",
+      
+      # Digital Marketing & Technology
+      "digital marketing", "social media marketing", "email marketing", "content marketing", "seo", "search engine optimization",
+      "ppc", "pay-per-click", "google ads", "facebook ads", "instagram marketing", "linkedin marketing", "twitter marketing",
+      "video marketing", "youtube marketing", "tiktok marketing", "influencer marketing", "affiliate marketing",
+      
+      # Traditional Marketing
+      "print advertising", "tv advertising", "radio advertising", "outdoor advertising", "billboard advertising", "direct mail",
+      "telemarketing", "trade shows", "event marketing", "public relations", "pr", "media relations", "press releases",
+      
+      # Marketing Strategy & Planning
+      "marketing strategy", "marketing plan", "marketing mix", "4ps", "product", "price", "place", "promotion",
+      "target market", "market segmentation", "customer personas", "value proposition", "competitive analysis",
+      "market positioning", "brand positioning", "marketing objectives", "marketing goals", "kpi tracking",
+      
+      # Brand Management
+      "branding", "brand identity", "brand awareness", "brand loyalty", "brand equity", "brand guidelines",
+      "brand messaging", "brand voice", "brand personality", "brand architecture", "brand extension",
+      "rebranding", "brand refresh", "brand consistency", "brand recognition", "brand reputation",
+      
+      # Customer & Market Research
+      "market research", "customer research", "consumer behavior", "market analysis", "competitive research",
+      "customer surveys", "focus groups", "data analytics", "market trends", "customer insights", "user research",
+      "market segmentation", "demographic analysis", "psychographic analysis", "behavioral analysis",
+      
+      # Content & Creative Marketing
+      "content marketing", "content strategy", "content creation", "blog marketing", "video content", "infographics",
+      "white papers", "case studies", "ebooks", "webinars", "podcast marketing", "storytelling", "creative campaigns",
+      "visual marketing", "graphic design", "copywriting", "creative briefs", "brand storytelling",
+      
+      # Performance Marketing & Analytics
+      "marketing analytics", "roi", "return on investment", "conversion rate", "click-through rate", "ctr",
+      "cost per acquisition", "cpa", "customer lifetime value", "clv", "marketing attribution", "a/b testing",
+      "marketing automation", "lead scoring", "marketing funnel", "sales funnel", "customer journey",
+      
+      # B2B & B2C Marketing
+      "b2b marketing", "business-to-business", "b2c marketing", "business-to-consumer", "account-based marketing",
+      "lead generation", "lead nurturing", "sales enablement", "customer acquisition", "customer retention",
+      "loyalty programs", "customer experience", "cx", "customer satisfaction", "customer service marketing",
+      
+      # International & Global Marketing
+      "international marketing", "global marketing", "localization", "cultural marketing", "multilingual marketing",
+      "export marketing", "international branding", "global brand strategy", "cross-cultural marketing",
+      "international market entry", "global market expansion", "international advertising",
+      
+      # Emerging Marketing Trends
+      "ai marketing", "artificial intelligence marketing", "machine learning marketing", "chatbot marketing",
+      "voice search optimization", "virtual reality marketing", "ar marketing", "augmented reality marketing",
+      "blockchain marketing", "cryptocurrency marketing", "sustainability marketing", "green marketing",
+      "cause marketing", "social responsibility marketing", "ethical marketing"
+    ]
   
   sales:
-    keywords: ["sales", "selling", "customer relations", "sales techniques", "negotiation", "customer acquisition", "sales strategy", "closing deals", "sales process", "customer service", "sales training"]
+    keywords: [
+      # Core Sales Concepts
+      "sales", "selling", "customer relations", "sales techniques", "negotiation", "customer acquisition", 
+      "sales strategy", "closing deals", "sales process", "customer service", "sales training",
+      
+      # Sales Process & Methodology
+      "sales process", "sales pipeline", "sales funnel", "lead generation", "lead qualification", "prospecting",
+      "cold calling", "warm calling", "sales presentation", "demo", "product demonstration", "sales proposal",
+      "quote", "pricing", "sales negotiation", "closing", "deal closing", "follow-up", "sales cycle",
+      
+      # Sales Techniques & Skills
+      "consultative selling", "solution selling", "relationship selling", "challenger sale", "spin selling",
+      "sandler selling", "needs analysis", "pain points", "objection handling", "sales objections", "closing techniques",
+      "sales psychology", "persuasion", "influence", "active listening", "questioning techniques", "sales discovery",
+      
+      # Sales Types & Approaches
+      "b2b sales", "business-to-business", "b2c sales", "business-to-consumer", "inside sales", "outside sales",
+      "field sales", "territory sales", "account management", "key account management", "enterprise sales",
+      "retail sales", "e-commerce sales", "direct sales", "indirect sales", "channel sales", "partner sales",
+      
+      # Sales Technology & Tools
+      "crm", "customer relationship management", "salesforce", "hubspot", "sales automation", "sales enablement",
+      "sales analytics", "sales reporting", "sales forecasting", "sales dashboards", "sales metrics", "kpi",
+      "sales crm", "lead management", "opportunity management", "sales tracking", "sales performance",
+      
+      # Sales Management & Leadership
+      "sales management", "sales leadership", "sales coaching", "sales training", "sales team", "sales performance",
+      "sales quotas", "sales targets", "sales goals", "sales motivation", "sales incentives", "commission",
+      "sales compensation", "sales territory", "sales territory management", "sales forecasting", "sales planning",
+      
+      # Customer Relationship & Service
+      "customer relationship", "customer service", "customer satisfaction", "customer experience", "customer success",
+      "customer retention", "customer loyalty", "customer advocacy", "customer feedback", "customer support",
+      "account management", "relationship building", "trust building", "customer communication",
+      
+      # Sales Communication & Presentation
+      "sales communication", "sales presentation", "pitch deck", "sales pitch", "elevator pitch", "sales storytelling",
+      "value proposition", "unique selling proposition", "usp", "sales messaging", "sales copy", "sales collateral",
+      "sales materials", "case studies", "testimonials", "references", "social proof",
+      
+      # Sales Negotiation & Closing
+      "sales negotiation", "negotiation skills", "price negotiation", "terms negotiation", "contract negotiation",
+      "win-win negotiation", "bargaining", "compromise", "deal structure", "payment terms", "delivery terms",
+      "closing techniques", "trial close", "assumptive close", "alternative close", "urgency close",
+      
+      # Sales Analytics & Performance
+      "sales analytics", "sales metrics", "conversion rate", "close rate", "average deal size", "sales velocity",
+      "sales cycle length", "win rate", "loss rate", "sales forecasting", "sales pipeline value", "sales performance",
+      "sales productivity", "sales efficiency", "sales effectiveness", "roi", "return on investment",
+      
+      # Industry-Specific Sales
+      "saas sales", "software sales", "technology sales", "medical sales", "pharmaceutical sales", "real estate sales",
+      "financial services sales", "insurance sales", "consulting sales", "manufacturing sales", "retail sales",
+      "e-commerce sales", "digital sales", "virtual sales", "remote sales", "hybrid sales"
+    ]
   
   customer_service:
     keywords: ["customer service", "customer support", "client relations", "customer satisfaction", "service quality", "customer experience", "support systems", "customer care", "service excellence", "customer relations"]
@@ -110,7 +435,57 @@ domains:
 
   # Education Category (Expert Tier)
   academic_tutoring:
-    keywords: ["academic tutoring", "education", "learning", "study skills", "academic support", "tutoring", "educational assistance", "academic improvement", "learning strategies", "educational guidance"]
+    keywords: [
+      # Core Academic Tutoring Concepts
+      "academic tutoring", "education", "learning", "study skills", "academic support", "tutoring", 
+      "educational assistance", "academic improvement", "learning strategies", "educational guidance",
+      
+      # Academic Subjects & Disciplines
+      "mathematics", "algebra", "geometry", "calculus", "statistics", "trigonometry", "linear algebra", "discrete math",
+      "english", "literature", "grammar", "writing", "composition", "reading comprehension", "vocabulary", "essay writing",
+      "science", "physics", "chemistry", "biology", "earth science", "astronomy", "environmental science", "anatomy",
+      "history", "world history", "american history", "european history", "ancient history", "geography", "social studies",
+      
+      # Learning Strategies & Techniques
+      "study methods", "note-taking", "active reading", "critical thinking", "problem-solving", "time management",
+      "memory techniques", "mnemonics", "mind mapping", "summarization", "outlining", "flashcards", "practice tests",
+      "test preparation", "exam strategies", "test-taking skills", "academic writing", "research skills", "citation",
+      
+      # Educational Technology & Tools
+      "online tutoring", "virtual learning", "educational software", "learning management systems", "lms",
+      "digital textbooks", "educational apps", "interactive learning", "multimedia learning", "adaptive learning",
+      "personalized learning", "blended learning", "flipped classroom", "distance education", "e-learning",
+      
+      # Academic Assessment & Evaluation
+      "academic assessment", "progress monitoring", "learning evaluation", "skill assessment", "academic testing",
+      "standardized tests", "aptitude tests", "achievement tests", "diagnostic assessment", "formative assessment",
+      "summative assessment", "portfolio assessment", "rubric-based evaluation", "academic performance tracking",
+      
+      # Specialized Academic Support
+      "special education", "learning disabilities", "adhd support", "dyslexia", "autism spectrum", "gifted education",
+      "english language learners", "ell", "esl", "remedial education", "developmental education", "academic intervention",
+      "college preparation", "sat prep", "act prep", "ap courses", "ib programs", "dual enrollment",
+      
+      # Academic Skills Development
+      "reading skills", "writing skills", "mathematical skills", "scientific reasoning", "historical analysis",
+      "research methodology", "academic integrity", "plagiarism prevention", "academic citation", "bibliography",
+      "critical analysis", "logical reasoning", "quantitative reasoning", "qualitative analysis", "academic discourse",
+      
+      # Educational Psychology & Learning Theory
+      "learning theory", "cognitive development", "constructivism", "behaviorism", "social learning theory",
+      "multiple intelligences", "learning styles", "motivation", "self-efficacy", "metacognition", "learning transfer",
+      "scaffolding", "zone of proximal development", "mastery learning", "inquiry-based learning",
+      
+      # Academic Support Services
+      "academic advising", "career counseling", "college planning", "academic coaching", "study skills workshops",
+      "writing centers", "math labs", "science tutoring", "language labs", "academic mentoring", "peer tutoring",
+      "academic success programs", "retention programs", "academic intervention", "remedial programs",
+      
+      # Assessment & Testing
+      "standardized testing", "college entrance exams", "graduate school exams", "professional certification",
+      "academic placement", "credit by examination", "advanced placement", "international baccalaureate",
+      "academic competitions", "scholarship exams", "entrance examinations", "proficiency testing"
+    ]
   
   skill_development:
     keywords: ["skill development", "learning", "training", "professional development", "skill building", "competency development", "learning new skills", "skill enhancement", "professional growth", "skill acquisition"]
@@ -135,7 +510,66 @@ domains:
 
   # Creative Category (Quality Tier)
   writing:
-    keywords: ["writing", "creative writing", "content creation", "writing skills", "writing techniques", "writing process", "writing style", "writing improvement", "writing craft", "writing development"]
+    keywords: [
+      # Core Writing Concepts
+      "writing", "creative writing", "content creation", "writing skills", "writing techniques", 
+      "writing process", "writing style", "writing improvement", "writing craft", "writing development",
+      
+      # Writing Genres & Types
+      "fiction writing", "non-fiction writing", "poetry", "drama", "screenwriting", "playwriting", "journalism",
+      "academic writing", "business writing", "technical writing", "creative nonfiction", "memoir", "autobiography",
+      "blog writing", "article writing", "essay writing", "report writing", "proposal writing", "grant writing",
+      
+      # Writing Elements & Techniques
+      "plot", "character development", "setting", "theme", "point of view", "narrative voice", "dialogue",
+      "description", "exposition", "rising action", "climax", "falling action", "resolution", "conflict",
+      "foreshadowing", "flashback", "symbolism", "metaphor", "simile", "imagery", "tone", "mood",
+      
+      # Writing Process & Methodology
+      "prewriting", "brainstorming", "outlining", "drafting", "revising", "editing", "proofreading",
+      "peer review", "workshop", "critique", "feedback", "revision", "rewriting", "polishing",
+      "writing schedule", "writing routine", "writing discipline", "writer's block", "inspiration",
+      
+      # Writing Skills & Mechanics
+      "grammar", "punctuation", "spelling", "sentence structure", "paragraph development", "transitions",
+      "coherence", "unity", "clarity", "conciseness", "active voice", "passive voice", "verb tense",
+      "subject-verb agreement", "pronoun reference", "parallel structure", "modifiers", "clauses",
+      
+      # Creative Writing Techniques
+      "show don't tell", "scene writing", "summary", "pacing", "rhythm", "flow", "voice", "style",
+      "creative expression", "artistic writing", "experimental writing", "stream of consciousness",
+      "free writing", "automatic writing", "collaborative writing", "interactive fiction",
+      
+      # Writing for Different Audiences
+      "audience analysis", "reader engagement", "target audience", "writing for children", "young adult writing",
+      "adult fiction", "professional writing", "academic audience", "general audience", "specialized audience",
+      "cross-cultural writing", "multilingual writing", "accessible writing", "inclusive writing",
+      
+      # Digital & Modern Writing
+      "digital writing", "online content", "social media writing", "email writing", "web content",
+      "seo writing", "content marketing", "copywriting", "advertising copy", "brand messaging",
+      "technical documentation", "user manuals", "instructional writing", "procedural writing",
+      
+      # Writing Tools & Technology
+      "word processors", "writing software", "grammar checkers", "spell checkers", "writing apps",
+      "collaborative writing tools", "version control", "cloud writing", "mobile writing", "dictation software",
+      "writing analytics", "readability tools", "writing assessment", "plagiarism detection",
+      
+      # Writing Business & Publishing
+      "publishing", "self-publishing", "traditional publishing", "literary agents", "query letters",
+      "manuscript preparation", "book proposals", "copyright", "intellectual property", "royalties",
+      "writing contracts", "author platform", "marketing writing", "book promotion",
+      
+      # Writing Education & Development
+      "writing workshops", "writing classes", "writing courses", "writing mentorship", "writing coaching",
+      "writing groups", "writing communities", "writing conferences", "writing retreats", "writing residencies",
+      "writing degrees", "creative writing programs", "professional writing", "academic writing programs",
+      
+      # Specialized Writing Areas
+      "scientific writing", "medical writing", "legal writing", "financial writing", "travel writing",
+      "food writing", "sports writing", "music writing", "art writing", "environmental writing",
+      "political writing", "religious writing", "philosophical writing", "historical writing"
+    ]
   
   storytelling:
     keywords: ["storytelling", "narrative", "story creation", "creative narrative", "story development", "narrative techniques", "story structure", "creative storytelling", "narrative skills", "story crafting"]
@@ -153,7 +587,60 @@ domains:
     keywords: ["photography", "photo techniques", "camera skills", "visual arts", "photo composition", "photography skills", "visual storytelling", "photo editing", "photography tips", "visual communication"]
   
   music:
-    keywords: ["music", "musical composition", "music theory", "musical performance", "music creation", "musical skills", "music production", "musical expression", "music education", "musical development"]
+    keywords: [
+      # Core Music Concepts
+      "music", "musical composition", "music theory", "musical performance", "music creation", 
+      "musical skills", "music production", "musical expression", "music education", "musical development",
+      
+      # Musical Elements
+      "melody", "harmony", "rhythm", "tempo", "beat", "pitch", "tone", "chord", "scale", "key",
+      "time signature", "meter", "dynamics", "articulation", "phrasing", "timbre", "texture",
+      
+      # Music Genres & Styles
+      "classical music", "jazz", "rock", "pop", "blues", "folk", "country", "electronic music",
+      "hip hop", "reggae", "soul", "funk", "punk", "metal", "indie", "alternative", "ambient",
+      
+      # Instruments & Performance
+      "piano", "guitar", "violin", "drums", "bass", "saxophone", "trumpet", "flute", "clarinet",
+      "voice", "singing", "vocal", "instrumental", "orchestra", "band", "ensemble", "solo",
+      
+      # Music Theory & Analysis
+      "chord progression", "cadence", "modulation", "transposition", "counterpoint", "fugue",
+      "sonata", "symphony", "concerto", "etude", "prelude", "interlude", "bridge", "verse",
+      "chorus", "refrain", "coda", "theme", "motif", "leitmotif", "development", "recapitulation",
+      
+      # Music Production & Technology
+      "recording", "mixing", "mastering", "audio engineering", "sound design", "synthesis",
+      "sampling", "sequencing", "arrangement", "orchestration", "soundtrack", "score",
+      
+      # Musical Concepts & Techniques
+      "improvisation", "composition", "arrangement", "orchestration", "conducting", "sight reading",
+      "ear training", "sight singing", "music notation", "sheet music", "tablature", "chord charts",
+      
+      # Music History & Culture
+      "music history", "musical periods", "baroque", "classical period", "romantic", "modern",
+      "contemporary", "traditional music", "world music", "cultural music", "folk traditions",
+      
+      # Music Education & Learning
+      "music lessons", "music teacher", "music student", "practice", "rehearsal", "performance",
+      "audition", "recital", "concert", "music school", "conservatory", "music degree",
+      
+      # Music Business & Industry
+      "music industry", "record label", "music publishing", "copyright", "royalties", "licensing",
+      "music marketing", "music distribution", "streaming", "music technology", "music software",
+      
+      # Advanced Musical Concepts
+      "polyrhythm", "syncopation", "dissonance", "consonance", "atonality", "serialism",
+      "minimalism", "experimental music", "avant-garde", "microtonal", "extended techniques",
+      
+      # Music Psychology & Emotion
+      "musical emotion", "mood", "atmosphere", "musical tension", "release", "musical narrative",
+      "musical storytelling", "emotional expression", "musical communication", "audience engagement",
+      
+      # Performance & Technique
+      "technique", "fingering", "breathing", "posture", "stage presence", "performance anxiety",
+      "musical interpretation", "artistic expression", "musical sensitivity", "musical taste"
+    ]
   
   art_appreciation:
     keywords: ["art appreciation", "art history", "visual arts", "artistic expression", "art analysis", "cultural arts", "artistic appreciation", "visual culture", "art education", "artistic understanding"]
@@ -250,10 +737,126 @@ domains:
 
   # Technology Category (Expert Tier)
   programming:
-    keywords: ["programming", "coding", "software development", "computer programming", "code development", "programming languages", "software engineering", "codewriting", "programming skills", "software creation"]
+    keywords: [
+      # Core Programming Concepts
+      "programming", "coding", "software development", "computer programming", "code development", 
+      "programming languages", "software engineering", "codewriting", "programming skills", "software creation",
+      
+      # Programming Languages
+      "python", "javascript", "java", "c++", "c#", "php", "ruby", "go", "rust", "swift", "kotlin", "typescript",
+      "html", "css", "sql", "r", "matlab", "scala", "perl", "bash", "powershell", "assembly", "cobol", "fortran",
+      
+      # Web Development
+      "web development", "frontend development", "backend development", "full-stack development", "web applications",
+      "responsive design", "progressive web apps", "single page applications", "spa", "web services", "apis",
+      "rest api", "graphql", "microservices", "web frameworks", "react", "angular", "vue", "node.js", "django",
+      
+      # Software Development Methodologies
+      "agile development", "scrum", "kanban", "waterfall", "devops", "continuous integration", "ci/cd",
+      "test-driven development", "tdd", "behavior-driven development", "bdd", "extreme programming", "xp",
+      "lean development", "rapid application development", "rad", "spiral model", "v-model",
+      
+      # Software Architecture & Design
+      "software architecture", "design patterns", "object-oriented programming", "oop", "functional programming",
+      "procedural programming", "event-driven programming", "aspect-oriented programming", "clean code",
+      "solid principles", "dry principle", "kiss principle", "software design", "system design",
+      
+      # Data Structures & Algorithms
+      "data structures", "algorithms", "arrays", "linked lists", "stacks", "queues", "trees", "graphs",
+      "hash tables", "heaps", "sorting algorithms", "searching algorithms", "dynamic programming",
+      "greedy algorithms", "divide and conquer", "recursion", "complexity analysis", "big o notation",
+      
+      # Database & Data Management
+      "databases", "sql", "nosql", "mysql", "postgresql", "mongodb", "redis", "oracle", "sql server",
+      "database design", "data modeling", "normalization", "indexing", "query optimization", "data migration",
+      "etl", "data warehousing", "data lakes", "big data", "data analytics",
+      
+      # Development Tools & Technologies
+      "version control", "git", "github", "gitlab", "bitbucket", "ide", "integrated development environment",
+      "visual studio", "intellij", "eclipse", "vim", "emacs", "docker", "kubernetes", "cloud computing",
+      "aws", "azure", "google cloud", "serverless", "containers", "virtualization",
+      
+      # Testing & Quality Assurance
+      "software testing", "unit testing", "integration testing", "system testing", "acceptance testing",
+      "test automation", "selenium", "junit", "pytest", "mocha", "jest", "manual testing", "qa",
+      "quality assurance", "code review", "static analysis", "dynamic analysis", "performance testing",
+      
+      # Mobile & App Development
+      "mobile development", "ios development", "android development", "react native", "flutter", "xamarin",
+      "mobile apps", "native apps", "hybrid apps", "cross-platform development", "app store", "google play",
+      "mobile ui/ux", "mobile testing", "mobile performance", "mobile security",
+      
+      # Emerging Technologies
+      "artificial intelligence", "machine learning", "deep learning", "neural networks", "computer vision",
+      "natural language processing", "nlp", "blockchain", "cryptocurrency", "iot", "internet of things",
+      "edge computing", "quantum computing", "augmented reality", "virtual reality", "5g", "cybersecurity",
+      
+      # Programming Paradigms & Concepts
+      "imperative programming", "declarative programming", "concurrent programming", "parallel programming",
+      "distributed systems", "microservices", "serverless architecture", "event-driven architecture",
+      "domain-driven design", "ddd", "hexagonal architecture", "clean architecture", "monolith", "legacy systems"
+    ]
   
   ai_ml:
-    keywords: ["artificial intelligence", "machine learning", "AIML", "data science", "AI technology", "machine learning algorithms", "AI development", "ML models", "artificial intelligence systems"]
+    keywords: [
+      # Core AI/ML Concepts
+      "artificial intelligence", "machine learning", "AIML", "data science", "AI technology", 
+      "machine learning algorithms", "AI development", "ML models", "artificial intelligence systems",
+      
+      # Machine Learning Types
+      "supervised learning", "unsupervised learning", "semi-supervised learning", "reinforcement learning",
+      "deep learning", "neural networks", "convolutional neural networks", "cnn", "recurrent neural networks", "rnn",
+      "long short-term memory", "lstm", "transformer models", "attention mechanisms", "generative adversarial networks", "gan",
+      
+      # AI/ML Algorithms & Techniques
+      "linear regression", "logistic regression", "decision trees", "random forests", "support vector machines", "svm",
+      "k-means clustering", "hierarchical clustering", "principal component analysis", "pca", "naive bayes",
+      "gradient boosting", "xgboost", "lightgbm", "ensemble methods", "bagging", "boosting", "cross-validation",
+      
+      # Natural Language Processing
+      "natural language processing", "nlp", "text processing", "sentiment analysis", "named entity recognition", "ner",
+      "text classification", "text generation", "language models", "bert", "gpt", "transformer", "word embeddings",
+      "tokenization", "lemmatization", "stemming", "part-of-speech tagging", "syntax analysis", "semantic analysis",
+      
+      # Computer Vision
+      "computer vision", "image processing", "image classification", "object detection", "image segmentation",
+      "face recognition", "optical character recognition", "ocr", "facial recognition", "image generation",
+      "video analysis", "medical imaging", "satellite imagery", "autonomous vehicles", "robotics vision",
+      
+      # Data Science & Analytics
+      "data science", "data analytics", "predictive analytics", "descriptive analytics", "prescriptive analytics",
+      "data mining", "data preprocessing", "feature engineering", "feature selection", "dimensionality reduction",
+      "data visualization", "statistical analysis", "hypothesis testing", "a/b testing", "experimental design",
+      
+      # AI/ML Tools & Frameworks
+      "tensorflow", "pytorch", "scikit-learn", "keras", "pandas", "numpy", "matplotlib", "seaborn", "plotly",
+      "jupyter notebooks", "google colab", "hugging face", "spark", "hadoop", "kafka", "airflow", "mlflow",
+      
+      # AI Applications & Use Cases
+      "recommendation systems", "fraud detection", "anomaly detection", "predictive maintenance", "demand forecasting",
+      "customer segmentation", "churn prediction", "credit scoring", "risk assessment", "automatic speech recognition",
+      "machine translation", "chatbots", "virtual assistants", "autonomous systems", "expert systems",
+      
+      # AI Ethics & Responsible AI
+      "ai ethics", "responsible ai", "ai bias", "fairness", "transparency", "explainable ai", "xai",
+      "ai governance", "ai regulation", "privacy-preserving ai", "federated learning", "differential privacy",
+      "ai safety", "robustness", "adversarial attacks", "ai alignment", "human-ai collaboration",
+      
+      # AI Infrastructure & Deployment
+      "mlops", "machine learning operations", "model deployment", "model serving", "model monitoring",
+      "model versioning", "a/b testing", "canary deployments", "blue-green deployments", "model drift",
+      "data pipelines", "feature stores", "model registries", "experiment tracking", "hyperparameter tuning",
+      
+      # Advanced AI Concepts
+      "transfer learning", "few-shot learning", "zero-shot learning", "meta-learning", "active learning",
+      "online learning", "incremental learning", "continual learning", "lifelong learning", "multi-task learning",
+      "multi-modal learning", "graph neural networks", "knowledge graphs", "semantic web", "ontologies",
+      
+      # AI Research & Development
+      "ai research", "machine learning research", "deep learning research", "neural network research",
+      "computer vision research", "nlp research", "robotics research", "ai conferences", "neurips", "icml", "iclr",
+      "ai papers", "research methodology", "experimental design", "reproducibility", "open source ai"
+    ]
   
   cybersecurity:
     keywords: ["cybersecurity", "information security", "digital security", "cyber protection", "security measures", "cyber defense", "information protection", "digital safety", "cyber security", "security protocols"]

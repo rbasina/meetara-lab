@@ -143,6 +143,19 @@ class IntelligentModelFactory:
         tokenizer = None
         
         try:
+            # Completely disable W&B to avoid any interference
+            import os
+            os.environ["WANDB_DISABLED"] = "true"
+            os.environ["WANDB_MODE"] = "disabled"
+            os.environ["WANDB_SILENT"] = "true"
+            
+            # Initialize QLoRA manager at the beginning to ensure it's always available
+            from trinity_core.core_components.qlora_manager import QLoRAManager
+            qlora_manager = QLoRAManager(self.config_manager)
+            
+            # Initialize recommended_method at the beginning to ensure it's always available
+            recommended_method = "none"  # Default fallback
+            
             domain = request.get("domain", "unknown")
             training_data = request.get("training_data", []) # Assuming training data is provided
             is_simulation = request.get("simulation", False) # Get simulation flag from request
@@ -389,6 +402,9 @@ class IntelligentModelFactory:
             raw_model_path = self._generate_raw_model_path(domain, target_size_mb, is_simulation, category, request.get("environment", "dev")) # Pass environment parameter
             raw_model_path.parent.mkdir(parents=True, exist_ok=True)
             
+            # Define model_save_dir at the beginning to ensure it's always available
+            model_save_dir = raw_model_path  # Use the correct path that already includes domain
+            
             if is_simulation:
                 # Simulation mode: Create placeholder file
                 with open(raw_model_path, 'wb') as f:
@@ -408,8 +424,6 @@ class IntelligentModelFactory:
                         model_loading_config = self.config_manager._config.get('model_loading_config', {})
                         
                         # Check if QLoRA will be used to determine loading strategy
-                        from trinity_core.core_components.qlora_manager import QLoRAManager
-                        qlora_manager = QLoRAManager(self.config_manager)
                         gpu_capabilities = qlora_manager.detect_gpu_capabilities()
                         recommended_method = qlora_manager.get_recommended_method(base_model, gpu_capabilities)
                         
@@ -444,6 +458,9 @@ class IntelligentModelFactory:
                     else:
                         model = self.model_cache[base_model]
                         logger.info(f"✅ Using cached base model: {base_model}")
+                        # Ensure recommended_method is set even when using cached model
+                        gpu_capabilities = qlora_manager.detect_gpu_capabilities()
+                        recommended_method = qlora_manager.get_recommended_method(base_model, gpu_capabilities)
                     
                     # Load tokenizer if not cached
                     if base_model not in self.tokenizer_cache:
@@ -581,12 +598,20 @@ class IntelligentModelFactory:
                                 batch = {}
                                 for key in features[0].keys():
                                     if key in ["input_ids", "attention_mask", "labels"]:
-                                        # Stack tensors - keep integer tensors as integers
-                                        tensors = [torch.tensor(f[key], dtype=torch.long) for f in features]
+                                        # Stack tensors - use proper tensor conversion to avoid warnings
+                                        tensors = []
+                                        for f in features:
+                                            if isinstance(f[key], torch.Tensor):
+                                                tensors.append(f[key].clone().detach())
+                                            else:
+                                                tensors.append(torch.tensor(f[key], dtype=torch.long))
                                         batch[key] = torch.stack(tensors)
-                                        # Only set requires_grad for float tensors (not input_ids/attention_mask)
-                                        if key == "labels" and batch[key].dtype == torch.float32:
-                                            batch[key].requires_grad_(True)
+                                        # Ensure labels are properly formatted for causal LM training
+                                        if key == "labels":
+                                            # For causal LM, labels should be the same as input_ids
+                                            batch[key] = batch[key].clone()
+                                            # Set requires_grad to False for labels (they're targets, not parameters)
+                                            batch[key].requires_grad_(False)
                                 return batch
                             
                             logger.info(f"✅ Created tokenized training dataset with {len(dataset)} samples")
@@ -599,10 +624,17 @@ class IntelligentModelFactory:
                             effective_batch_size = training_config.get("per_device_train_batch_size", 1) * training_config.get("gradient_accumulation_steps", 8)
                             max_steps = max(1, total_samples // effective_batch_size)
                             
+                            # Calculate optimal save_steps based on max_steps
+                            # Save at least 2-3 times during training, but not too frequently
+                            save_steps = max(1, min(max_steps // 3, 50))  # Save every 1/3 of training or every 50 steps, whichever is smaller
+                            
                             # Get training parameters from config
                             batch_size = training_config.get("per_device_train_batch_size", 1)
                             gradient_accumulation_steps = training_config.get("gradient_accumulation_steps", 8)
                             learning_rate = training_config.get("learning_rate", 5e-5)
+                            
+                            # Ensure model_save_dir is ready for training
+                            model_save_dir.mkdir(parents=True, exist_ok=True)
                             
                             # Configure training arguments with proper output directory
                             training_args = TrainingArguments(
@@ -611,23 +643,34 @@ class IntelligentModelFactory:
                                 gradient_accumulation_steps=gradient_accumulation_steps,
                                 max_steps=max_steps,
                                 learning_rate=learning_rate,
-                                fp16=torch.cuda.is_available(),
-                                gradient_checkpointing=True,
+                                fp16=False,  # Disable FP16 to avoid gradient unscaling issues
+                                bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),  # Use BF16 if supported
+                                gradient_checkpointing=False,  # Temporarily disable to avoid gradient issues
                                 dataloader_pin_memory=torch.cuda.is_available(),
-                                save_steps=200,
+                                save_steps=save_steps,  # Use calculated optimal save_steps
                                 logging_steps=50,
                                 remove_unused_columns=False,
-                                report_to=None,  # Disable wandb
+                                report_to=[],  # Completely disable all reporting (wandb, tensorboard, etc.)
                                 # Ensure checkpoints go to the correct directory
                                 save_strategy="steps",
                                 save_total_limit=2,  # Keep only last 2 checkpoints
+                                # Add gradient clipping to prevent gradient explosion
+                                max_grad_norm=1.0,
+                                # Use deterministic training for reproducibility
+                                dataloader_drop_last=True,
+                                # Optimize for memory usage
+                                dataloader_num_workers=0,  # Reduce worker processes
                             )
                             
                             # Universal memory management - works for all model types
                             if torch.cuda.is_available():
                                 model = model.cuda()
+                                # Clear GPU cache before training
+                                torch.cuda.empty_cache()
+                                logger.info(f"✅ Model moved to GPU and cache cleared")
                             else:
                                 model = model.cpu()
+                                logger.info(f"✅ Model moved to CPU")
                             logger.info(f"✅ Auto-configured memory management for universal model")
                             
                             # Apply QLoRA/LoRA based on capabilities
@@ -666,6 +709,13 @@ class IntelligentModelFactory:
                             
                             # Final verification: Ensure model is ready for training
                             model.train()
+                            
+                            # Ensure all trainable parameters have requires_grad=True
+                            for name, param in model.named_parameters():
+                                if param.requires_grad:
+                                    param.requires_grad_(True)
+                                    logger.debug(f"✅ Parameter {name} is trainable")
+                            
                             trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
                             total_params = sum(p.numel() for p in model.parameters())
                             
@@ -678,13 +728,49 @@ class IntelligentModelFactory:
                                 logger.error("❌ No trainable parameters found - model cannot be trained")
                                 return {"error": "Model has no trainable parameters"}
                             
+                            # Verify that we have trainable parameters
+                            logger.info(f"✅ Model has {trainable_params:,} trainable parameters ready for training")
+                            
+                            # Ensure model is in training mode and gradients are enabled
+                            model.train()
+                            for param in model.parameters():
+                                if param.requires_grad:
+                                    param.requires_grad_(True)
+                            
+                            # Test forward pass to ensure gradients work
+                            logger.info("🔧 Testing forward pass to verify gradients...")
+                            try:
+                                # Create a small test batch
+                                test_batch = {
+                                    'input_ids': torch.randint(0, 1000, (1, 10), dtype=torch.long),
+                                    'attention_mask': torch.ones(1, 10, dtype=torch.long),
+                                    'labels': torch.randint(0, 1000, (1, 10), dtype=torch.long)
+                                }
+                                
+                                # Move to same device as model
+                                device = next(model.parameters()).device
+                                test_batch = {k: v.to(device) for k, v in test_batch.items()}
+                                
+                                # Test forward pass
+                                with torch.enable_grad():
+                                    outputs = model(**test_batch)
+                                    loss = outputs.loss
+                                    loss.backward()
+                                
+                                logger.info("✅ Forward pass test successful - gradients working")
+                                
+                            except Exception as test_error:
+                                logger.error(f"❌ Forward pass test failed: {test_error}")
+                                return {"error": f"Model forward pass test failed: {str(test_error)}"}
+                            
                             # Create trainer with better error handling
                             trainer = Trainer(
                                 model=model,
                                 args=training_args,
                                 train_dataset=dataset,
                                 tokenizer=tokenizer,
-                                data_collator=custom_data_collator,
+                                # Use default data collator to avoid gradient issues
+                                # data_collator=custom_data_collator,
                             )
                             
                             # Train the model
@@ -713,7 +799,9 @@ class IntelligentModelFactory:
                                 
                                 # Start training with progress tracking
                                 logger.info(f"⏱️ Training timeout set to {training_timeout} seconds")
-                                logger.info(f"📊 Expected steps: {max_steps}")
+                                logger.info(f"📊 Training steps: max_steps={max_steps}, save_steps={save_steps}")
+                                logger.info(f"📊 Dataset: {total_samples} samples, effective_batch_size={effective_batch_size}")
+                                logger.info(f"🔧 Training config: batch_size={batch_size}, lr={learning_rate}, fp16=False")
                                 
                                 start_time = time.time()
                                 trainer.train()
@@ -730,11 +818,23 @@ class IntelligentModelFactory:
                                 raise timeout_error
                             except Exception as train_error:
                                 logger.error(f"❌ Training failed for {domain}: {train_error}")
+                                logger.error(f"❌ Error details: {type(train_error).__name__}: {str(train_error)}")
+                                
+                                # Additional debugging for gradient issues
+                                if "grad" in str(train_error).lower():
+                                    logger.error("🔍 Gradient debugging info:")
+                                    logger.error(f"   → Model training mode: {model.training}")
+                                    logger.error(f"   → Trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad):,}")
+                                    logger.error(f"   → Total parameters: {sum(p.numel() for p in model.parameters()):,}")
+                                    
+                                    # Check if QLoRA/LoRA was applied correctly
+                                    if lora_applied:
+                                        logger.error(f"   → LoRA applied: {lora_applied}")
+                                        logger.error(f"   → QLoRA applied: {qlora_applied}")
+                                
                                 raise train_error
                             
                             # Save the trained model in proper HuggingFace format
-                            model_save_dir = raw_model_path  # Use the correct path that already includes domain
-                            model_save_dir.mkdir(parents=True, exist_ok=True)
                             logger.info(f"💾 Saving trained model to {model_save_dir}")
                             logger.info(f"🔧 Absolute model_save_dir: {model_save_dir.absolute()}")
                             
@@ -773,16 +873,8 @@ class IntelligentModelFactory:
                                 with open(config_path, 'w') as f:
                                     json.dump(config_data, f, indent=2)
                             
-                            # Ensure the model directory has all required adapter files (not merged model files)
-                            required_files = ["adapter_config.json", "adapter_model.safetensors"]
-                            missing_files = []
-                            for file in required_files:
-                                if not (model_save_dir / file).exists():
-                                    missing_files.append(file)
-                            
-                            if missing_files:
-                                logger.warning(f"⚠️ Missing required adapter files: {missing_files}")
-                                # Note: config.json and pytorch_model.bin are created later during merging, not during training
+                            # Note: Adapter files have been moved to adapter subfolder and will be checked later
+                            # config.json and pytorch_model.bin are created later during merging, not during training
                             
                             # Update path to point to the saved model directory
                             raw_model_path = model_save_dir
