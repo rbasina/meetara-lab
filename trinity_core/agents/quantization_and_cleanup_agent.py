@@ -357,7 +357,9 @@ class QuantizationAndCleanupAgent:
             # Step 3: Determine optimal quantization and compression strategy
             # 🚀 OPTIMAL QUANTIZATION STRATEGY: Advanced quantization for best quality/size balance
             quantization_strategies = ["Q4_K_M", "Q3_K_M", "Q2_K"]  # Advanced quantization supported by quantize tool
-            compression_strategy = self._determine_optimal_compression(model_size_mb, domain, architecture_type)
+            # Get model size from the merged model directory
+            merged_model_size_mb = self._get_model_size_mb(merged_output_dir)
+            compression_strategy = self._determine_optimal_compression(merged_model_size_mb, domain, architecture_type)
 
             # Step 4: Perform GGUF conversion and quantization for each strategy
             # Fix: Use merged_model_path instead of raw_model_path
@@ -368,7 +370,7 @@ class QuantizationAndCleanupAgent:
                 logger.info(f"🔄 Adjusted path from file to directory: {merged_output_dir} → {merged_model_dir}")
             
             final_gguf_paths = await self._perform_gguf_conversion_and_quantization(
-                str(merged_model_dir), domain, quantization_strategies, compression_strategy, model_size_mb, architecture_type, is_simulation
+                str(merged_model_dir), domain, quantization_strategies, compression_strategy, merged_model_size_mb, architecture_type, is_simulation
             )
 
             # Step 5: Enhanced GGUF validation with llama.cpp
@@ -377,7 +379,7 @@ class QuantizationAndCleanupAgent:
             # Step 6: Generate comprehensive quality report
             quality_report = self._generate_quality_report(domain, final_gguf_paths, validation_results, model_size_mb)
 
-            total_processing_time = time.time() - start_time
+            total_processing_time = time.time() - os.startfile
             logger.info(f"✅ Enhanced model finalization complete for {domain}. GGUF paths: {final_gguf_paths}. Time: {total_processing_time:.2f}s")
 
             return {
@@ -574,14 +576,20 @@ class QuantizationAndCleanupAgent:
                     device_map="auto"
                 )
                 
-                # Load adapter
+                # Load adapter from the adapter subfolder
                 raw_model_dir = Path(raw_model_path)
-                adapter_config = PeftConfig.from_pretrained(str(raw_model_dir))
+                adapter_dir = raw_model_dir / "adapter"
+                
+                if not adapter_dir.exists():
+                    logger.error(f"❌ Adapter directory not found: {adapter_dir}")
+                    return None
+                
+                adapter_config = PeftConfig.from_pretrained(str(adapter_dir))
                 logger.info(f"📋 Adapter type: {adapter_config.peft_type}")
                 
                 # Load and merge adapter with subset
                 logger.info("🔗 Loading adapter and merging with domain subset...")
-                adapter_model = PeftModel.from_pretrained(subset_model, str(raw_model_dir))
+                adapter_model = PeftModel.from_pretrained(subset_model, str(adapter_dir))
                 
                 # Merge adapter with subset
                 logger.info("🔄 Merging adapter weights with domain subset...")
@@ -718,6 +726,26 @@ class QuantizationAndCleanupAgent:
         logger.info(f"   → Compression ratio: {quality_report['compression_ratio']:.2f}x")
         
         return quality_report
+
+    def _get_model_size_mb(self, model_path: str) -> float:
+        """
+        Get the size of a model in MB.
+        """
+        try:
+            model_dir = Path(model_path)
+            if model_dir.is_file():
+                return model_dir.stat().st_size / (1024 * 1024)
+            elif model_dir.is_dir():
+                total_size = 0
+                for file_path in model_dir.rglob("*"):
+                    if file_path.is_file():
+                        total_size += file_path.stat().st_size
+                return total_size / (1024 * 1024)
+            else:
+                return 1000.0  # Default size if path doesn't exist
+        except Exception as e:
+            logger.warning(f"Could not determine model size for {model_path}: {e}")
+            return 1000.0  # Default size
 
     def _generate_quality_recommendations(self, validation_results: List[Dict], domain: str) -> List[str]:
         """
