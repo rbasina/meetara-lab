@@ -1,0 +1,30 @@
+{
+  "session_id": "creative_1752817766",
+  "timestamp": "2025-07-18T01:49:26.971939",
+  "total_domains_processed": 10,
+  "successful_domains": 0,
+  "failed_domains": 10,
+  "overall_quality_score": 0.0,
+  "average_training_time": 8.892690181732178,
+  "total_cost": 0.0,
+  "domain_breakdown": {
+    "successful_domains": [],
+    "failed_domains": [
+      "writing",
+      "storytelling",
+      "content_creation",
+      "social_media",
+      "design_thinking",
+      "photography",
+      "music",
+      "art_appreciation",
+      "mythology",
+      "spiritual"
+    ],
+    "quality_scores": {}
+  },
+  "quality_threshold_met": false,
+  "emotion_context_learning": true,
+  "lora_integration": true,
+  "contextual_intelligence_baked": true
+}

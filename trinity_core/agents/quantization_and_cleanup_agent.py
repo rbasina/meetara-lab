@@ -413,7 +413,6 @@ class QuantizationAndCleanupAgent:
                 )
                 
                 # Get domain keywords
-                from pathlib import Path
                 import yaml
                 
                 config_path = Path(__file__).resolve().parents[2] / "config" / "domain_keywords.yaml"
@@ -448,36 +447,22 @@ class QuantizationAndCleanupAgent:
     
     def _create_domain_subset_model(self, base_model, domain_keywords: List[str], domain: str):
         """
-        Create a domain-specific subset of the base model using domain keywords.
-        This extracts domain-relevant knowledge from the base model.
+        Create a domain-specific subset by EXTRACTING relevant layers from base model.
+        This creates a smaller model with only domain-relevant parameters.
         """
         logger.info(f"🎯 Creating domain-specific subset for {domain} using keywords: {domain_keywords[:5]}...")
         
-        # Get base model config
-        config = base_model.config
-        
-        # Step 1: Analyze domain relevance of layers using attention patterns
+        # Step 1: Analyze domain relevance of layers using complexity indicators from config
         domain_relevant_layers = self._identify_domain_relevant_layers(base_model, domain_keywords, domain)
         
-        # Step 2: Create subset config with domain-relevant layers
-        subset_config = AutoConfig.from_pretrained(
-            config._name_or_path,
-            num_hidden_layers=len(domain_relevant_layers),  # Use only relevant layers
-            hidden_size=config.hidden_size,
-            num_attention_heads=config.num_attention_heads,
-            intermediate_size=config.intermediate_size,
-            vocab_size=config.vocab_size,
-            max_position_embeddings=config.max_position_embeddings
-        )
-        
-        # Step 3: Create subset model with domain-relevant architecture
-        from transformers import AutoModelForCausalLM
-        subset_model = AutoModelForCausalLM.from_config(subset_config)
-        
-        # Step 4: Copy domain-relevant parameters from base model
-        self._copy_domain_relevant_parameters(base_model, subset_model, domain_relevant_layers, domain_keywords)
+        # Step 2: Create subset by REMOVING unwanted layers from base model (FIXED APPROACH)
+        subset_model = self._extract_subset_from_base_model(base_model, domain_relevant_layers, domain)
         
         logger.info(f"🎯 Created domain-specific subset for {domain} with {len(domain_relevant_layers)} relevant layers")
+        logger.info(f"   → Base model layers: {base_model.config.num_hidden_layers}")
+        logger.info(f"   → Subset model layers: {subset_model.config.num_hidden_layers}")
+        logger.info(f"   → Size reduction: {base_model.config.num_hidden_layers - subset_model.config.num_hidden_layers} layers removed")
+        
         return subset_model
     
     def _identify_domain_relevant_layers(self, base_model, domain_keywords: List[str], domain: str) -> List[int]:
@@ -487,42 +472,81 @@ class QuantizationAndCleanupAgent:
         logger.info(f"🔍 Analyzing domain relevance for {domain} with {len(domain_keywords)} keywords...")
         
         total_layers = base_model.config.num_hidden_layers
+
+        # --- FIX: Load domain_config from YAML so it is always defined ---
+        domain_config = None
+        try:
+            import yaml
+            config_path = Path(__file__).resolve().parents[2] / "config" / "domain_keywords.yaml"
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+            domain_config = config.get("domains", {}).get(domain, {})
+        except Exception as e:
+            logger.warning(f"⚠️ Could not load domain config for {domain}: {e}")
+            domain_config = None
+        # ---------------------------------------------------------------
         
         # Enhanced domain-specific layer selection based on keyword categories
         if domain == "music":
-            # Music: Comprehensive layer selection for creative and technical aspects
-            # Early layers: Basic musical concepts (melody, rhythm, pitch)
-            # Middle layers: Complex theory and composition
-            # Later layers: Advanced concepts and interpretation
-            early_layers = list(range(0, total_layers // 6))  # Basic concepts
-            middle_layers = list(range(total_layers // 6, 5 * total_layers // 6))  # Core music knowledge
-            late_layers = list(range(5 * total_layers // 6, total_layers))  # Advanced interpretation
-            relevant_layers = early_layers + middle_layers + late_layers
+            # Music: Analyze keyword complexity to determine layer coverage
+            # More complex keywords = more layers needed
+            keyword_complexity = self._analyze_keyword_complexity(domain_keywords, domain)
             
+            # Get layer coverage configuration from config file
+            layer_coverage_config = domain_config.get('layer_coverage', {}) if domain_config else {}
+            
+            high_threshold = layer_coverage_config.get('high_complexity_threshold', 0.7)
+            medium_threshold = layer_coverage_config.get('medium_complexity_threshold', 0.4)
+            high_coverage = layer_coverage_config.get('high_coverage_percentage', 67)
+            medium_coverage = layer_coverage_config.get('medium_coverage_percentage', 50)
+            low_coverage = layer_coverage_config.get('low_coverage_percentage', 33)
+            
+            if keyword_complexity > high_threshold:  # High complexity
+                # Comprehensive coverage for complex knowledge
+                coverage_ratio = high_coverage / 100.0
+                start_layer = int(total_layers * (1 - coverage_ratio) / 2)
+                end_layer = int(total_layers * (1 + coverage_ratio) / 2)
+                relevant_layers = list(range(start_layer, end_layer))
+                logger.info(f"🎯 High complexity detected ({keyword_complexity:.2f} > {high_threshold}), using {high_coverage}% coverage")
+            elif keyword_complexity > medium_threshold:  # Medium complexity
+                # Balanced coverage for moderate knowledge
+                coverage_ratio = medium_coverage / 100.0
+                start_layer = int(total_layers * (1 - coverage_ratio) / 2)
+                end_layer = int(total_layers * (1 + coverage_ratio) / 2)
+                relevant_layers = list(range(start_layer, end_layer))
+                logger.info(f"🎯 Medium complexity detected ({keyword_complexity:.2f} > {medium_threshold}), using {medium_coverage}% coverage")
+            else:  # Low complexity
+                # Focused coverage for basic concepts
+                coverage_ratio = low_coverage / 100.0
+                start_layer = int(total_layers * (1 - coverage_ratio) / 2)
+                end_layer = int(total_layers * (1 + coverage_ratio) / 2)
+                relevant_layers = list(range(start_layer, end_layer))
+                logger.info(f"🎯 Low complexity detected ({keyword_complexity:.2f} ≤ {medium_threshold}), using {low_coverage}% coverage")
+        
         elif domain in ["healthcare", "medical", "mental_health", "general_health", "nutrition", "sleep"]:
             # Healthcare: Focus on reasoning and factual knowledge
             relevant_layers = list(range(total_layers // 3, total_layers))  # Later layers for reasoning
-            
+        
         elif domain in ["business", "entrepreneurship", "marketing", "sales", "finance"]:
             # Business: Strategic and analytical thinking
             relevant_layers = list(range(total_layers // 4, 3 * total_layers // 4))  # Middle layers for strategy
-            
+        
         elif domain in ["writing", "storytelling", "content_creation", "art_appreciation"]:
             # Creative: Balanced for both creativity and structure
             relevant_layers = list(range(total_layers // 6, 5 * total_layers // 6))  # Creative middle layers
-            
+        
         elif domain in ["programming", "ai_ml", "cybersecurity", "data_analysis"]:
             # Technology: Technical and logical reasoning
             relevant_layers = list(range(total_layers // 3, total_layers))  # Later layers for logic
-            
+        
         elif domain in ["education", "academic_tutoring", "skill_development", "language_learning"]:
             # Education: Comprehensive learning support
             relevant_layers = list(range(total_layers // 6, 5 * total_layers // 6))  # Balanced for teaching
-            
+        
         elif domain in ["psychology", "life_coaching", "social_support", "stress_management"]:
             # Psychology: Emotional and social understanding
             relevant_layers = list(range(total_layers // 4, 3 * total_layers // 4))  # Middle layers for empathy
-            
+        
         else:
             # Default: Balanced approach for unknown domains
             relevant_layers = list(range(total_layers // 4, 3 * total_layers // 4))
@@ -585,6 +609,277 @@ class QuantizationAndCleanupAgent:
         logger.info(f"   → Copied parameters: {copied_params}")
         logger.info(f"   → Skipped parameters: {skipped_params}")
         logger.info(f"   → Success rate: {copied_params/(copied_params+skipped_params)*100:.1f}%")
+    
+    def _copy_domain_relevant_parameters_fixed(self, base_model, subset_model, relevant_layers: List[int], domain_keywords: List[str]):
+        """
+        Copy ONLY domain-relevant parameters from base model to subset model (FIXED VERSION).
+        This ensures the subset model is actually smaller than the base model.
+        """
+        logger.info(f"📋 Copying ONLY domain-relevant parameters with {len(domain_keywords)} keywords...")
+        
+        # Get state dictionaries
+        base_state_dict = base_model.state_dict()
+        subset_state_dict = subset_model.state_dict()
+        
+        # Track copying statistics
+        copied_params = 0
+        skipped_params = 0
+        
+        # Step 1: Copy ONLY the selected layers (not all layers)
+        for i, layer_idx in enumerate(relevant_layers):
+            for param_name, param in base_state_dict.items():
+                if f"layers.{layer_idx}." in param_name:
+                    # Map to corresponding layer in subset (layer i in subset = layer layer_idx in base)
+                    subset_layer_idx = i
+                    subset_param_name = param_name.replace(f"layers.{layer_idx}.", f"layers.{subset_layer_idx}.")
+                    
+                    if subset_param_name in subset_state_dict:
+                        try:
+                            subset_state_dict[subset_param_name].copy_(param.data)
+                            copied_params += 1
+                        except Exception as e:
+                            logger.debug(f"⚠️ Could not copy {param_name}: {e}")
+                            skipped_params += 1
+        
+        # Step 2: Copy essential components (always needed)
+        essential_components = ["embed_tokens", "lm_head", "norm", "model.embed_tokens", "model.norm"]
+        for param_name, param in base_state_dict.items():
+            if any(key in param_name for key in essential_components):
+                if param_name in subset_state_dict:
+                    try:
+                        subset_state_dict[param_name].copy_(param.data)
+                        copied_params += 1
+                    except Exception as e:
+                        logger.debug(f"⚠️ Could not copy {param_name}: {e}")
+                        skipped_params += 1
+        
+        # Step 3: Copy domain-specific attention patterns if available
+        domain_specific_patterns = self._identify_domain_specific_patterns(base_model, domain_keywords)
+        if domain_specific_patterns:
+            logger.info(f"🎯 Found {len(domain_specific_patterns)} domain-specific patterns")
+        
+        logger.info(f"✅ FIXED: Only domain-relevant parameters copied successfully")
+        logger.info(f"   → Copied parameters: {copied_params}")
+        logger.info(f"   → Skipped parameters: {skipped_params}")
+        logger.info(f"   → Success rate: {copied_params/(copied_params+skipped_params)*100:.1f}%")
+        logger.info(f"   → Subset model should now be SMALLER than base model")
+    
+    def _extract_subset_from_base_model(self, base_model, relevant_layers: List[int], domain: str):
+        """
+        Extract a subset from base model by REMOVING unwanted layers.
+        This creates a smaller model with only domain-relevant layers.
+        """
+        logger.info(f"🔧 Extracting subset from base model for {domain}")
+        
+        # Get base model config
+        config = base_model.config
+        total_layers = config.num_hidden_layers
+        
+        # Calculate subset size based on relevant layers
+        subset_layers = len(relevant_layers)
+        removed_layers = total_layers - subset_layers
+        
+        logger.info(f"📊 Layer Analysis for {domain}:")
+        logger.info(f"   → Total layers in base model: {total_layers}")
+        logger.info(f"   → Relevant layers for {domain}: {subset_layers}")
+        logger.info(f"   → Layers to remove: {removed_layers}")
+        logger.info(f"   → Size reduction: {removed_layers/total_layers*100:.1f}%")
+        
+        # Create subset config with reduced layers
+        subset_config = AutoConfig.from_pretrained(
+            config._name_or_path,
+            num_hidden_layers=subset_layers,  # Use only relevant layers
+            hidden_size=config.hidden_size,
+            num_attention_heads=config.num_attention_heads,
+            intermediate_size=config.intermediate_size,
+            vocab_size=config.vocab_size,
+            max_position_embeddings=config.max_position_embeddings
+        )
+        
+        # FIXED: Create subset model by copying base model and removing unwanted layers
+        # This ensures we start with proper weights instead of random weights
+        from transformers import AutoModelForCausalLM
+        import copy
+        
+        # Create a deep copy of the base model to avoid modifying the original
+        subset_model = copy.deepcopy(base_model)
+        
+        # Update the config to reflect the reduced layer count
+        subset_model.config.num_hidden_layers = subset_layers
+        
+        # Remove unwanted layers from the model
+        self._remove_unwanted_layers(subset_model, relevant_layers, domain)
+        
+        logger.info(f"✅ Subset extraction complete for {domain}")
+        logger.info(f"   → Base model size: {total_layers} layers")
+        logger.info(f"   → Subset model size: {subset_layers} layers")
+        logger.info(f"   → Size reduction achieved: {removed_layers} layers removed")
+        
+        return subset_model
+    
+    def _copy_only_relevant_layers(self, base_model, subset_model, relevant_layers: List[int], domain: str):
+        """
+        Copy ONLY the relevant layers from base model to subset model.
+        This ensures the subset is actually smaller than the base model.
+        """
+        logger.info(f"📋 Copying ONLY relevant layers for {domain}")
+        
+        # Get state dictionaries
+        base_state_dict = base_model.state_dict()
+        subset_state_dict = subset_model.state_dict()
+        
+        # Track copying statistics
+        copied_params = 0
+        skipped_params = 0
+        
+        # Step 1: Copy ONLY the selected layers (not all layers)
+        for i, layer_idx in enumerate(relevant_layers):
+            for param_name, param in base_state_dict.items():
+                if f"layers.{layer_idx}." in param_name:
+                    # Map to corresponding layer in subset (layer i in subset = layer layer_idx in base)
+                    subset_layer_idx = i
+                    subset_param_name = param_name.replace(f"layers.{layer_idx}.", f"layers.{subset_layer_idx}.")
+                    
+                    if subset_param_name in subset_state_dict:
+                        try:
+                            subset_state_dict[subset_param_name].copy_(param.data)
+                            copied_params += 1
+                        except Exception as e:
+                            logger.debug(f"⚠️ Could not copy {param_name}: {e}")
+                            skipped_params += 1
+        
+        # Step 2: Copy essential components (always needed)
+        essential_components = ["embed_tokens", "lm_head", "norm", "model.embed_tokens", "model.norm"]
+        for param_name, param in base_state_dict.items():
+            if any(key in param_name for key in essential_components):
+                if param_name in subset_state_dict:
+                    try:
+                        subset_state_dict[param_name].copy_(param.data)
+                        copied_params += 1
+                    except Exception as e:
+                        logger.debug(f"⚠️ Could not copy {param_name}: {e}")
+                        skipped_params += 1
+        
+        logger.info(f"✅ ONLY relevant layers copied successfully for {domain}")
+        logger.info(f"   → Copied parameters: {copied_params}")
+        logger.info(f"   → Skipped parameters: {skipped_params}")
+        logger.info(f"   → Success rate: {copied_params/(copied_params+skipped_params)*100:.1f}%")
+        logger.info(f"   → Subset model is now SMALLER than base model")
+    
+    def _remove_unwanted_layers(self, subset_model, relevant_layers: List[int], domain: str):
+        """
+        Remove unwanted layers from the subset model, keeping only the relevant layers.
+        This ensures the subset model has proper weights and is smaller than the base model.
+        """
+        logger.info(f"🗑️ Removing unwanted layers for {domain}")
+        
+        # Get the model's state dict
+        state_dict = subset_model.state_dict()
+        
+        # Track removal statistics
+        removed_params = 0
+        kept_params = 0
+        
+        # Create a new state dict with only relevant layers
+        new_state_dict = {}
+        
+        # Step 1: Keep only the relevant layers
+        for i, layer_idx in enumerate(relevant_layers):
+            for param_name, param in state_dict.items():
+                if f"layers.{layer_idx}." in param_name:
+                    # Map to new layer index (layer i in subset = layer layer_idx in base)
+                    new_layer_idx = i
+                    new_param_name = param_name.replace(f"layers.{layer_idx}.", f"layers.{new_layer_idx}.")
+                    new_state_dict[new_param_name] = param
+                    kept_params += 1
+        
+        # Step 2: Keep essential components (always needed)
+        essential_components = ["embed_tokens", "lm_head", "norm", "model.embed_tokens", "model.norm"]
+        for param_name, param in state_dict.items():
+            if any(key in param_name for key in essential_components):
+                new_state_dict[param_name] = param
+                kept_params += 1
+        
+        # Step 3: Update the model's state dict
+        subset_model.load_state_dict(new_state_dict, strict=False)
+        
+        # Step 4: Update the model's layers to match the new architecture
+        # This is model-specific and may need adjustment for different architectures
+        if hasattr(subset_model, 'model') and hasattr(subset_model.model, 'layers'):
+            # Keep only the relevant layers in the model's layer list
+            subset_model.model.layers = subset_model.model.layers[:len(relevant_layers)]
+        
+        logger.info(f"✅ Unwanted layers removed successfully for {domain}")
+        logger.info(f"   → Kept parameters: {kept_params}")
+        logger.info(f"   → Removed parameters: {removed_params}")
+        logger.info(f"   → Subset model now has {len(relevant_layers)} layers")
+        logger.info(f"   → Subset model is now SMALLER than base model")
+    
+    def _analyze_keyword_complexity(self, domain_keywords: List[str], domain: str) -> float:
+        """
+        Analyze the complexity of domain keywords using config file definitions.
+        Reads complexity indicators and thresholds from domain_keywords.yaml.
+        """
+        import yaml
+        from pathlib import Path
+        
+        complexity_score = 0.0
+        total_keywords = len(domain_keywords)
+        
+        # Load domain configuration from config file
+        config_path = Path("config/domain_keywords.yaml")
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+            
+            # Find domain configuration
+            domain_config = None
+            for domain_name, domain_data in config.get('domains', {}).items():
+                if domain_name == domain or domain in domain_name:
+                    domain_config = domain_data
+                    break
+            
+            if domain_config and 'complexity_indicators' in domain_config:
+                # Use config file complexity indicators
+                high_complexity = domain_config['complexity_indicators'].get('high_complexity', [])
+                medium_complexity = domain_config['complexity_indicators'].get('medium_complexity', [])
+                low_complexity = domain_config['complexity_indicators'].get('low_complexity', [])
+                
+                logger.info(f"📋 Using config file complexity indicators for {domain}")
+            else:
+                # Fallback to default complexity analysis
+                high_complexity = ["theory", "analysis", "research", "advanced", "complex", "sophisticated"]
+                medium_complexity = ["practice", "technique", "method", "process", "application", "development"]
+                low_complexity = ["basic", "simple", "fundamental", "elementary", "beginner", "intro"]
+                
+                logger.info(f"⚠️ No config found for {domain}, using default complexity indicators")
+                
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to load config file: {e}, using default complexity indicators")
+            # Fallback to default complexity analysis
+            high_complexity = ["theory", "analysis", "research", "advanced", "complex", "sophisticated"]
+            medium_complexity = ["practice", "technique", "method", "process", "application", "development"]
+            low_complexity = ["basic", "simple", "fundamental", "elementary", "beginner", "intro"]
+        
+        # Count keywords by complexity level
+        high_complexity_count = sum(1 for keyword in domain_keywords 
+                                  if any(indicator in keyword.lower() for indicator in high_complexity))
+        medium_complexity_count = sum(1 for keyword in domain_keywords 
+                                    if any(indicator in keyword.lower() for indicator in medium_complexity))
+        low_complexity_count = sum(1 for keyword in domain_keywords 
+                                 if any(indicator in keyword.lower() for indicator in low_complexity))
+        
+        # Calculate complexity score (0.0 to 1.0)
+        if total_keywords > 0:
+            complexity_score = (high_complexity_count * 0.8 + medium_complexity_count * 0.5 + low_complexity_count * 0.2) / total_keywords
+        
+        logger.info(f"🎯 Domain-specific keyword complexity analysis for {domain}:")
+        logger.info(f"   → High complexity: {high_complexity_count} keywords")
+        logger.info(f"   → Medium complexity: {medium_complexity_count} keywords")
+        logger.info(f"   → Low complexity: {low_complexity_count} keywords")
+        logger.info(f"   → Complexity score: {complexity_score:.2f}")
+        
+        return complexity_score
     
     def _identify_domain_specific_patterns(self, base_model, domain_keywords: List[str]) -> List[str]:
         """

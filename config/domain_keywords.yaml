@@ -50,6 +50,21 @@ domains:
       "public health", "epidemiology", "outbreak", "pandemic", "vaccination", "herd immunity",
       "contact tracing", "quarantine", "social distancing", "health policy", "healthcare system"
     ]
+    complexity_indicators:
+      high_complexity: ["diagnosis", "treatment", "pathology", "pharmacology", "surgery", "research", 
+                       "clinical", "therapeutic", "intervention", "assessment", "epidemiology", 
+                       "biotechnology", "genomics", "precision medicine", "critical care", "trauma"]
+      medium_complexity: ["symptoms", "care", "management", "prevention", "recovery", "monitoring", 
+                         "evaluation", "support", "guidance", "education", "therapy", "rehabilitation",
+                         "screening", "early detection", "risk factors", "health maintenance"]
+      low_complexity: ["basic", "simple", "health", "wellness", "exercise", "diet", "rest", "pain",
+                      "fever", "headache", "cough", "fatigue", "sleep", "vital signs", "weight"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   mental_health:
     keywords: [
@@ -93,6 +108,23 @@ domains:
       "child psychology", "adolescent mental health", "geriatric psychiatry", "forensic psychology", "sports psychology",
       "health psychology", "neuropsychology", "community psychology", "industrial psychology", "school psychology"
     ]
+    complexity_indicators:
+      high_complexity: ["psychology", "therapy", "counseling", "depression", "anxiety", "bipolar", "schizophrenia", 
+                       "ptsd", "ocd", "adhd", "autism", "eating disorders", "personality disorders", "psychoanalysis", 
+                       "psychodynamic", "clinical", "psychiatric", "assessment", "diagnostic", "crisis", "forensic", 
+                       "neuropsychology", "psychopathology", "therapeutic", "intervention", "psychopharmacology"]
+      medium_complexity: ["stress", "emotions", "mindfulness", "meditation", "self-care", "coping", "wellness", 
+                         "support", "prevention", "resilience", "protective", "promotion", "maintenance", "counseling", 
+                         "nursing", "case management", "consultation", "child", "adolescent", "geriatric", "sports", 
+                         "health psychology", "community", "industrial", "school"]
+      low_complexity: ["basic", "simple", "mental", "health", "wellness", "stress", "emotions", "mindfulness", 
+                      "meditation", "self-care", "support", "prevention", "maintenance", "basic", "simple", "mental"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   nutrition:
     keywords: [
@@ -141,6 +173,39 @@ domains:
       "pediatric nutrition", "geriatric nutrition", "clinical nutrition", "sports nutrition", "performance nutrition",
       "weight loss nutrition", "muscle building nutrition", "recovery nutrition", "pre-workout nutrition", "post-workout nutrition"
     ]
+    complexity_indicators:
+      high_complexity: ["nutrition", "diet", "vitamins", "minerals", "protein", "carbohydrates", "amino acids", 
+                       "essential amino acids", "complete proteins", "fiber", "dietary fiber", "saturated fats", 
+                       "unsaturated fats", "omega-3", "omega-6", "trans fats", "nutrient density", "caloric density", 
+                       "glycemic index", "glycemic load", "antioxidants", "phytochemicals", "probiotics", "prebiotics", 
+                       "enzymes", "metabolism", "digestion", "absorption", "nutrient bioavailability", "diabetes nutrition", 
+                       "heart disease nutrition", "cancer nutrition", "celiac disease", "lactose intolerance", "clinical nutrition", 
+                       "nutritional assessment", "diet analysis", "nutritional guidance", "nutritional literacy", "food literacy"]
+      medium_complexity: ["food", "calories", "meal planning", "healthy eating", "supplements", "nutritional advice", 
+                         "dietary restrictions", "food allergies", "simple carbs", "complex carbs", "fats", "vitamins", 
+                         "minerals", "calcium", "iron", "mediterranean diet", "keto diet", "paleo diet", "vegan diet", 
+                         "vegetarian diet", "low-carb diet", "high-protein diet", "intermittent fasting", "dash diet", 
+                         "plant-based diet", "raw food diet", "gluten-free diet", "dairy-free diet", "fruits", "vegetables", 
+                         "grains", "whole grains", "legumes", "beans", "nuts", "seeds", "dairy", "meat", "fish", "poultry", 
+                         "eggs", "healthy fats", "superfoods", "organic foods", "processed foods", "junk food", "food intolerances", 
+                         "weight management", "obesity", "eating disorders", "sports nutrition", "prenatal nutrition", "meal prep", 
+                         "cooking", "recipe planning", "portion control", "food safety", "food storage", "meal timing", 
+                         "snack planning", "dietary planning", "nutritional analysis", "food tracking", "calorie counting", 
+                         "dietary supplements", "vitamin supplements", "mineral supplements", "protein powder", "omega-3 supplements", 
+                         "probiotic supplements", "multivitamins", "vitamin d supplements", "calcium supplements", "iron supplements", 
+                         "nutrition facts", "food labels", "ingredient lists", "allergen information", "organic certification", 
+                         "non-gmo", "gluten-free labeling", "dairy-free labeling", "kosher", "halal", "vegan certification", 
+                         "nutrition education", "dietary counseling", "healthy eating habits", "cooking skills", "nutritional knowledge", 
+                         "pediatric nutrition", "geriatric nutrition", "performance nutrition", "weight loss nutrition", 
+                         "muscle building nutrition", "recovery nutrition", "pre-workout nutrition", "post-workout nutrition"]
+      low_complexity: ["basic", "simple", "food", "eating", "healthy", "meal", "cooking", "basic", "simple", "food", 
+                      "eating", "healthy", "meal", "cooking", "basic", "simple", "food", "eating", "healthy", "meal", "cooking"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   sleep:
     keywords: [
@@ -184,31 +249,139 @@ domains:
       "infant sleep", "child sleep", "adolescent sleep", "adult sleep", "elderly sleep", "pregnancy sleep",
       "sleep development", "sleep maturation", "sleep changes", "age-related sleep changes", "developmental sleep patterns"
     ]
+    complexity_indicators:
+      high_complexity: ["sleep disorders", "sleep apnea", "narcolepsy", "sleepwalking", "night terrors", "sleep paralysis", 
+                       "sleep bruxism", "circadian rhythm disorders", "shift work sleep disorder", "sleep medicine", 
+                       "sleep specialists", "sleep clinics", "sleep studies", "polysomnography", "sleep therapy", 
+                       "sleep medication", "sleep intervention", "sleep counseling", "sleep science", "sleep research", 
+                       "sleep physiology", "sleep psychology", "sleep neuroscience", "sleep genetics", "sleep biomarkers", 
+                       "sleep patterns", "sleep behavior", "sleep epidemiology", "sleep public health", "sleep architecture", 
+                       "sleep cycles", "sleep onset", "sleep maintenance", "sleep efficiency", "sleep latency", 
+                       "sleep fragmentation", "sleep continuity", "sleep development", "sleep maturation", "sleep changes", 
+                       "age-related sleep changes", "developmental sleep patterns"]
+      medium_complexity: ["insomnia", "sleep hygiene", "sleep cycles", "sleep quality", "rem sleep", "deep sleep", 
+                         "light sleep", "sleep stages", "circadian rhythm", "sleep environment", "bedtime routine", 
+                         "sleep schedule", "sleep consistency", "sleep preparation", "relaxation techniques", "sleep rituals", 
+                         "pre-sleep activities", "sleep habits", "sleep discipline", "sleep optimization", "sleep and health", 
+                         "sleep and immunity", "sleep and recovery", "sleep and performance", "sleep and mood", "sleep and memory", 
+                         "sleep and learning", "sleep and metabolism", "sleep and hormones", "sleep and aging", "sleep tracking", 
+                         "sleep apps", "sleep devices", "sleep monitors", "sleep wearables", "smart sleep technology", 
+                         "sleep analytics", "sleep data", "sleep optimization tools", "sleep coaching apps", "sleep improvement technology", 
+                         "infant sleep", "child sleep", "adolescent sleep", "adult sleep", "elderly sleep", "pregnancy sleep"]
+      low_complexity: ["sleep", "rest", "dreams", "bedroom", "mattress", "pillow", "bedding", "room temperature", 
+                      "lighting", "noise", "sleep position", "sleep surface", "sleep accessories", "sleep technology", 
+                      "basic", "simple", "sleep", "rest", "dreams", "bedroom", "mattress", "pillow", "bedding"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   stress_management:
     keywords: ["stress", "stress management", "relaxation", "breathing exercises", "meditation", "yoga", "mindfulness", "coping strategies", "work-life balance", "burnout", "anxiety relief", "stress reduction", "mental wellness"]
+    complexity_indicators:
+      high_complexity: ["stress management", "coping strategies", "work-life balance", "burnout", "anxiety relief", "stress reduction"]
+      medium_complexity: ["relaxation", "breathing exercises", "meditation", "yoga", "mindfulness", "mental wellness"]
+      low_complexity: ["stress", "basic", "simple", "stress", "basic", "simple"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   preventive_care:
     keywords: ["preventive care", "prevention", "screening", "vaccination", "health checkup", "early detection", "risk factors", "lifestyle changes", "health maintenance", "wellness", "preventive medicine", "health education"]
+    complexity_indicators:
+      high_complexity: ["preventive care", "prevention", "screening", "vaccination", "early detection", "risk factors", "preventive medicine", "health education"]
+      medium_complexity: ["health checkup", "lifestyle changes", "health maintenance", "wellness"]
+      low_complexity: ["basic", "simple", "health", "basic", "simple", "health"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   chronic_conditions:
     keywords: ["chronic conditions", "hypertension", "arthritis", "asthma", "heart disease", "chronic pain", "long-term care", "disease management", "medication adherence", "lifestyle modifications", "chronic illness"]
+    complexity_indicators:
+      high_complexity: ["chronic conditions", "hypertension", "arthritis", "asthma", "heart disease", "chronic pain", "disease management", "medication adherence", "lifestyle modifications", "chronic illness"]
+      medium_complexity: ["long-term care"]
+      low_complexity: ["basic", "simple", "health", "basic", "simple", "health"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   medication_management:
     keywords: ["medication", "prescription", "dosage", "side effects", "drug interactions", "medication adherence", "pharmacy", "drug safety", "drug administration", "medication schedule", "prescription refills"]
+    complexity_indicators:
+      high_complexity: ["medication", "prescription", "dosage", "side effects", "drug interactions", "medication adherence", "drug safety", "drug administration", "medication schedule", "prescription refills"]
+      medium_complexity: ["pharmacy"]
+      low_complexity: ["basic", "simple", "medicine", "basic", "simple", "medicine"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   emergency_care:
     keywords: ["emergency", "urgent care", "first aid", "emergency response", "trauma", "accident", "injury", "emergency room", "ambulance", "critical care", "emergency medicine", "life-threatening", "emergency procedures"]
+    complexity_indicators:
+      high_complexity: ["emergency", "urgent care", "emergency response", "trauma", "critical care", "emergency medicine", "life-threatening", "emergency procedures"]
+      medium_complexity: ["first aid", "accident", "injury", "emergency room", "ambulance"]
+      low_complexity: ["basic", "simple", "help", "basic", "simple", "help"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   women_health:
     keywords: ["women's health", "gynecology", "pregnancy", "menstruation", "fertility", "breast health", "reproductive health", "prenatal care", "postpartum", "women's wellness", "gynecological care", "womens medicine"]
+    complexity_indicators:
+      high_complexity: ["women's health", "gynecology", "pregnancy", "fertility", "breast health", "reproductive health", "prenatal care", "postpartum", "gynecological care", "womens medicine"]
+      medium_complexity: ["menstruation", "women's wellness"]
+      low_complexity: ["basic", "simple", "health", "basic", "simple", "health"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   senior_health:
     keywords: ["senior health", "aging", "elderly care", "geriatrics", "age-related conditions", "mobility", "cognitive health", "senior wellness", "elderly nutrition", "aging gracefully", "senior fitness", "elderly medicine"]
+    complexity_indicators:
+      high_complexity: ["senior health", "aging", "elderly care", "geriatrics", "age-related conditions", "cognitive health", "elderly nutrition", "elderly medicine"]
+      medium_complexity: ["mobility", "senior wellness", "aging gracefully", "senior fitness"]
+      low_complexity: ["basic", "simple", "health", "basic", "simple", "health"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
 
   # Daily Life Category (Quality Tier)
   parenting:
     keywords: ["parenting", "childcare", "children", "family", "child development", "pline", "education", "parenting tips", "child safety", "family activities", "parenting advice", "child behavior", "family bonding"]
+    complexity_indicators:
+      high_complexity: ["parenting", "childcare", "child development", "education", "parenting tips", "child safety", "parenting advice", "child behavior"]
+      medium_complexity: ["children", "family", "family activities", "family bonding"]
+      low_complexity: ["basic", "simple", "family", "basic", "simple", "family"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   relationships:
     keywords: ["relationships", "dating", "marriage", "communication", "love", "partnership", "romance", "relationship advice", "conflict resolution", "emotional intimacy", "trust", "relationship building", "couples therapy"]
@@ -641,6 +814,23 @@ domains:
       "technique", "fingering", "breathing", "posture", "stage presence", "performance anxiety",
       "musical interpretation", "artistic expression", "musical sensitivity", "musical taste"
     ]
+    complexity_indicators:
+      high_complexity: ["theory", "composition", "production", "analysis", "harmony", "counterpoint", 
+                       "orchestration", "arrangement", "modulation", "cadence", "fugue", "sonata",
+                       "counterpoint", "polyrhythm", "syncopation", "dissonance", "consonance", 
+                       "atonality", "serialism", "minimalism", "experimental", "avant-garde"]
+      medium_complexity: ["performance", "technique", "practice", "skill", "interpretation", 
+                         "expression", "dynamics", "articulation", "phrasing", "timbre", "improvisation",
+                         "conducting", "sight reading", "ear training", "sight singing", "recording",
+                         "mixing", "mastering", "audio engineering", "sound design", "synthesis"]
+      low_complexity: ["basic", "simple", "fundamental", "melody", "rhythm", "beat", "pitch", "tone",
+                      "tempo", "chord", "scale", "key", "meter", "texture", "practice", "rehearsal"]
+    layer_coverage:
+      high_complexity_threshold: 0.7
+      medium_complexity_threshold: 0.4
+      high_coverage_percentage: 67
+      medium_coverage_percentage: 50
+      low_coverage_percentage: 33
   
   art_appreciation:
     keywords: ["art appreciation", "art history", "visual arts", "artistic expression", "art analysis", "cultural arts", "artistic appreciation", "visual culture", "art education", "artistic understanding"]
