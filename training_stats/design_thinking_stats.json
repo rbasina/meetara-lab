@@ -1,0 +1,6 @@
+{
+  "domain": "design_thinking",
+  "config_path": "config/trinity_config.yaml",
+  "base_model": "Qwen/Qwen2.5-7B-Instruct",
+  "model_path": "data\\production\\trained\\creative"
+}
