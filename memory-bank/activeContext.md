@@ -707,4 +707,5 @@ def _get_domain_keywords(self, domain: str) -> List[str]:
 - ✅ **Real Production Mode**: No simulation, no fallbacks - production-only operations with real llama.cpp tools 
 - ✅ **Config-Driven Domain Layer Selection**: Universal coverage for all 60+ domains using category tiers instead of hardcoded logic 
 - ✅ **Method Signature Fix**: Removed is_simulation parameter from process_and_finalize_model and updated all callers 
-- ✅ **Reverted to Original**: Removed standalone implementation and direct merge approach, restored original subset-based quantization flow 
+- ✅ **Reverted to Original**: Removed standalone implementation and direct merge approach, restored original subset-based quantization flow
+- ✅ **Completely Config-Driven**: Removed ALL hardcoded Qwen/Qwen2.5-7B-Instruct references, added _get_config_tokenizer_model() helper method 

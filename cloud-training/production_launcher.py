@@ -311,8 +311,8 @@ async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], sess
                 },
                 "B_universal_lite": {
                     "enabled": True,
-                    "base_model": self.config_manager.get_config_dict().get('global_tara_params', {}).get('fallback_base_model', 
-                list(self.config_manager.get_config_dict().get('model_names', {}).values())[0] if self.config_manager.get_config_dict().get('model_names') else None),
+                    "base_model": config_manager.get_config_dict().get('global_tara_params', {}).get('fallback_base_model', 
+                list(config_manager.get_config_dict().get('model_names', {}).values())[0] if config_manager.get_config_dict().get('model_names') else None),
                     "domains": 62,
                     "size_mb": 800,
                     "purpose": "Fast universal responses"

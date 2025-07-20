@@ -73,7 +73,7 @@ class GPUTrainingConfig:
         from pathlib import Path
         sys.path.append(str(Path(__file__).parent.parent / "trinity_core"))
         
-        from core_components.config_manager import SmartTrinityConfigManager
+        from trinity_core.core_components.config_manager import SmartTrinityConfigManager
         
         config_manager = SmartTrinityConfigManager()
         model_names = config_manager.get_config_dict().get('model_names', {})
