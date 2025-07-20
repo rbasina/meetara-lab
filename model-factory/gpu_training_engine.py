@@ -143,11 +143,11 @@ class GPUTrainingEngine:
         
         # Update speed target based on GPU type
         gpu_name = torch.cuda.get_device_properties(best_gpu).name.lower()
-        if "a100" in gpu_name:
+        if "a100" in gpu_name.lower():
             self.config.target_speed_improvement = 151.0
-        elif "v100" in gpu_name:
+        elif "v100" in gpu_name.lower():
             self.config.target_speed_improvement = 75.0
-        elif "t4" in gpu_name:
+        elif "t4" in gpu_name.lower():
             self.config.target_speed_improvement = 37.0
         else:
             self.config.target_speed_improvement = 20.0
@@ -331,14 +331,14 @@ class GPUTrainingEngine:
         
         return stats
     
-    def estimate_training_cost(self, gpu_type: str = "auto") -> Dict[str, Any]:
+    def estimate_training_cost(self, gpu_type="auto"):
         """Estimate training cost for different GPU providers"""
         if gpu_type == "auto" and torch.cuda.is_available():
             gpu_name = torch.cuda.get_device_properties(self.device).name.lower()
-            if "a100" in gpu_name:
+            if "a100" in gpu_name.lower():
                 gpu_type = "A100"
-            elif "v100" in gpu_name:
-                gpu_type = "V100" 
+            elif "v100" in gpu_name.lower():
+                gpu_type = "V100"
             else:
                 gpu_type = "T4"
         elif gpu_type == "auto":
@@ -351,7 +351,7 @@ class GPUTrainingEngine:
             "A100": {"runpod": 3.20, "lambda_labs": 4.00, "vast_ai": 2.50}
         }
         
-        # Training time estimates (hours)
+        # Estimated training time in hours
         training_times = {
             "T4": (self.config.max_steps * 8.2) / 3600,
             "V100": (self.config.max_steps * 4.0) / 3600,
@@ -361,27 +361,18 @@ class GPUTrainingEngine:
         gpu_costs = costs.get(gpu_type, costs["T4"])
         training_time = training_times.get(gpu_type, training_times["T4"])
         
+        # Calculate costs for each provider
         cost_estimates = {}
         for provider, cost_per_hour in gpu_costs.items():
-            total_cost = cost_per_hour * training_time
+            total_cost = training_time * cost_per_hour
             cost_estimates[provider] = {
                 "cost_per_hour": cost_per_hour,
                 "training_time_hours": training_time,
                 "total_cost": total_cost,
-                "monthly_cost_60_domains": total_cost * 60
+                "gpu_type": gpu_type
             }
         
-        cheapest = min(cost_estimates.items(), key=lambda x: x[1]["total_cost"])
-        
-        return {
-            "gpu_type": gpu_type,
-            "estimates": cost_estimates,
-            "cheapest_option": {
-                "provider": cheapest[0],
-                "details": cheapest[1]
-            },
-            "budget_compliant": cheapest[1]["monthly_cost_60_domains"] < 50.0
-        }
+        return cost_estimates
 
 def create_sample_training_data(domain: str = "general", size: int = 100) -> List[str]:
     """Create sample training data for testing"""

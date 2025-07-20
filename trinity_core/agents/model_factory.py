@@ -249,25 +249,29 @@ class IntelligentModelFactory:
                             
                             # Determine GPU type and settings
                             if "t4" in gpu_name:
-                                gpu_type = "t4"
+                                gpu_type = "T4"
                                 speed_factor = "37x"
                             elif "v100" in gpu_name:
-                                gpu_type = "v100"
+                                gpu_type = "V100"
                                 speed_factor = "75x"
                             elif "a100" in gpu_name:
-                                gpu_type = "a100"
+                                gpu_type = "A100"
                                 speed_factor = "151x"
                             else:
-                                gpu_type = "t4"  # Default to T4 settings
+                                gpu_type = "T4"  # Default to T4 settings
                                 speed_factor = "37x"
                             
-                            # Get GPU-specific settings
-                            gpu_performance = gpu_config.get('performance', {}).get(gpu_type, {})
-                            batch_size = gpu_performance.get('batch_size', 4)
-                            max_memory_gb = gpu_performance.get('max_memory_gb', 12)
+                            # Get GPU-specific settings from ACTUAL config structure
+                            gpu_configs = self.config_manager._config.get('gpu_configs', {})
+                            gpu_settings = gpu_configs.get(gpu_type, gpu_configs.get('T4', {}))
+                            batch_size = gpu_settings.get('batch_size', 4)
+                            max_model_size_gb = gpu_settings.get('max_model_size_gb', 12)
+                            memory_buffer_gb = gpu_settings.get('memory_buffer_gb', 2.0)
+                            quantization = gpu_settings.get('quantization', '4bit')
                             
-                            print(f"⚡ GPU Type: {gpu_type.upper()} | Speed: {speed_factor} | Batch Size: {batch_size}")
-                            print(f"💾 GPU Memory: {max_memory_gb}GB allocated | Buffer: {gpu_config.get('gpu_memory_buffer_gb', 2.0)}GB reserved")
+                            print(f"⚡ GPU Type: {gpu_type} | Speed: {speed_factor} | Batch Size: {batch_size}")
+                            print(f"💾 GPU Memory: {max_model_size_gb}GB max model | Buffer: {memory_buffer_gb}GB reserved")
+                            print(f"🔧 Quantization: {quantization} | Max Model Size: {max_model_size_gb}GB")
                         else:
                             print("⚠️ No GPU detected - using CPU fallback")
                             gpu_type = "cpu"
@@ -428,18 +432,40 @@ class IntelligentModelFactory:
                         recommended_method = qlora_manager.get_recommended_method(base_model, gpu_capabilities)
                         
                         if recommended_method == "qlora":
-                            # Load with 4-bit quantization for QLoRA
+                            # Load with GPU-specific quantization for QLoRA
                             from transformers import BitsAndBytesConfig
-                            bnb_config = BitsAndBytesConfig(
-                                load_in_4bit=True,
-                                bnb_4bit_use_double_quant=True,
-                                bnb_4bit_quant_type="nf4",
-                                bnb_4bit_compute_dtype=torch.float16
-                            )
-                            logger.info("🚀 Loading model with 4-bit quantization for QLoRA")
+                            
+                            if quantization == "4bit":
+                                bnb_config = BitsAndBytesConfig(
+                                    load_in_4bit=True,
+                                    bnb_4bit_use_double_quant=True,
+                                    bnb_4bit_quant_type="nf4",
+                                    bnb_4bit_compute_dtype=torch.float16
+                                )
+                                logger.info(f"🚀 Loading model with 4-bit quantization for QLoRA on {gpu_type}")
+                            elif quantization == "8bit":
+                                bnb_config = BitsAndBytesConfig(
+                                    load_in_8bit=True,
+                                    bnb_8bit_compute_dtype=torch.float16
+                                )
+                                logger.info(f"🚀 Loading model with 8-bit quantization for QLoRA on {gpu_type}")
+                            elif quantization == "16bit":
+                                # A100: Use 16-bit precision (better for large models)
+                                bnb_config = None
+                                logger.info(f"🚀 Loading model with 16-bit precision for {gpu_type} (no quantization)")
+                            else:
+                                bnb_config = BitsAndBytesConfig(
+                                    load_in_4bit=True,
+                                    bnb_4bit_use_double_quant=True,
+                                    bnb_4bit_quant_type="nf4",
+                                    bnb_4bit_compute_dtype=torch.float16
+                                )
+                                logger.info(f"🚀 Loading model with default 4-bit quantization for QLoRA")
+                            
                             model = AutoModelForCausalLM.from_pretrained(
                                 base_model,
                                 quantization_config=bnb_config,
+                                torch_dtype=torch.float16 if quantization == "16bit" else None,
                                 device_map=model_loading_config.get('device_map', "auto"),
                                 trust_remote_code=True,
                                 low_cpu_mem_usage=model_loading_config.get('low_cpu_mem_usage', True)
@@ -628,8 +654,16 @@ class IntelligentModelFactory:
                             # Save at least 2-3 times during training, but not too frequently
                             save_steps = max(1, min(max_steps // 3, 50))  # Save every 1/3 of training or every 50 steps, whichever is smaller
                             
-                            # Get training parameters from config
-                            batch_size = training_config.get("per_device_train_batch_size", 1)
+                            # Get training parameters from config with GPU-specific overrides
+                            config_batch_size = training_config.get("per_device_train_batch_size", 1)
+                            # Use GPU-specific batch size if available, otherwise use config
+                            if 'batch_size' in locals() and batch_size > config_batch_size:
+                                actual_batch_size = batch_size  # From GPU config (A100: 16, V100: 8, T4: 4)
+                                logger.info(f"🚀 Using {gpu_type} optimized batch size: {actual_batch_size}")
+                            else:
+                                actual_batch_size = config_batch_size
+                                logger.info(f"📊 Using config batch size: {actual_batch_size}")
+                            
                             gradient_accumulation_steps = training_config.get("gradient_accumulation_steps", 8)
                             learning_rate = training_config.get("learning_rate", 5e-5)
                             
@@ -639,7 +673,7 @@ class IntelligentModelFactory:
                             # Configure training arguments with proper output directory
                             training_args = TrainingArguments(
                                 output_dir=str(model_save_dir.absolute()),  # Use absolute path
-                                per_device_train_batch_size=batch_size,
+                                per_device_train_batch_size=actual_batch_size,
                                 gradient_accumulation_steps=gradient_accumulation_steps,
                                 max_steps=max_steps,
                                 learning_rate=learning_rate,
