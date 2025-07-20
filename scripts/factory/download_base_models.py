@@ -18,19 +18,20 @@ import torch
 logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(name)s:%(message)s')
 logger = logging.getLogger(__name__)
 
-# Base models from your config (corrected names)
-BASE_MODELS = [
-    "Qwen/Qwen2.5-7B-Instruct",
-    "Qwen/Qwen2.5-14B-Instruct",
-    "mistralai/Mistral-7B-Instruct-v0.2",
-    "HuggingFaceTB/SmolLM2-1.7B",
-    "meta-llama/Llama-2-7b-chat-hf",
-    "meta-llama/Llama-2-13b-chat-hf",
-    "meta-llama/Llama-3-8B-Instruct",
-    "meta-llama/Llama-3-70B-Instruct",
-    "codellama/CodeLlama-7b-Instruct-hf",
-    "codellama/CodeLlama-13b-Instruct-hf"
-]
+# Load base models from config instead of hardcoding
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent.parent / "trinity_core"))
+
+from core_components.config_manager import SmartTrinityConfigManager
+
+config_manager = SmartTrinityConfigManager()
+model_names = config_manager.get_config_dict().get('model_names', {})
+if not model_names:
+    raise ValueError("❌ No model_names configured")
+
+BASE_MODELS = list(model_names.values())
+logger.info(f"✅ Loading {len(BASE_MODELS)} models from config")
 
 # Removed Phi-3 models due to LoRA compatibility issues and Colab import errors
 # Removed: "microsoft/Phi-3-medium-4k-instruct",

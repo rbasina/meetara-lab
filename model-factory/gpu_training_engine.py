@@ -68,18 +68,19 @@ class GPUTrainingConfig:
     max_training_time_hours: float = 3.0
 
     def validate(self):
-        supported_models = [
-            "Qwen/Qwen2.5-7B-Instruct",
-            "Qwen/Qwen2.5-14B-Instruct",
-            "HuggingFaceTB/SmolLM2-1.7B",
-            "mistralai/Mistral-7B-Instruct-v0.2",
-            "meta-llama/Llama-2-7b-chat-hf",
-            "meta-llama/Llama-2-13b-chat-hf",
-            "meta-llama/Llama-3-8B-Instruct",
-            "meta-llama/Llama-3-70B-Instruct",
-            "codellama/CodeLlama-7b-Instruct-hf",
-            "codellama/CodeLlama-13b-Instruct-hf"
-        ]
+        # Load supported models from config instead of hardcoding
+        import sys
+        from pathlib import Path
+        sys.path.append(str(Path(__file__).parent.parent / "trinity_core"))
+        
+        from core_components.config_manager import SmartTrinityConfigManager
+        
+        config_manager = SmartTrinityConfigManager()
+        model_names = config_manager.get_config_dict().get('model_names', {})
+        if not model_names:
+            raise ValueError("❌ No model_names configured")
+        
+        supported_models = list(model_names.values())
         if not self.base_model or self.base_model not in supported_models:
             raise ValueError(f"Invalid or missing base_model: {self.base_model}. Must be set from config and be a supported model.")
         print(f"[INFO] Using base model for domain '{self.domain}': {self.base_model}")

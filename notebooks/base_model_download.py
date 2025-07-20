@@ -1,15 +1,21 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
+import sys
+from pathlib import Path
 
-# Only the base models actually used in your training configs
+# Add project root to path
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root / "trinity_core"))
 
-base_models = [
-    "microsoft/Phi-3-medium-4k-instruct",
-    "Qwen/Qwen2.5-14B-Instruct",
-    "microsoft/Phi-3-mini-4k-instruct",
-    "Qwen/Qwen2.5-7B-Instruct",
-    "microsoft/Phi-3.5-mini-instruct",
-    "HuggingFaceTB/SmolLM2-1.7B",
-]
+from core_components.config_manager import SmartTrinityConfigManager
+
+# Load base models from config instead of hardcoding
+config_manager = SmartTrinityConfigManager()
+model_names = config_manager.get_config_dict().get('model_names', {})
+if not model_names:
+    raise ValueError("❌ No model_names configured")
+
+base_models = list(model_names.values())
+print(f"✅ Loading {len(base_models)} models from config:")
 
 for model_name in base_models:
     print(f"📥 Downloading {model_name} ...")
