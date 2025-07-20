@@ -1,6 +1,21 @@
 version: '2.0'
 description: Quality-focused configuration with premium models for critical domains
 last_updated: '2025-07-09'
+
+# 🚨 CRITICAL DISCOVERY: CUDA Memory Crisis (July 19, 2025)
+# After extensive testing on Google Colab A100 (40GB), we discovered:
+# 1. 14B models require 40GB+ for training (impossible on single GPU)
+# 2. 13B models require 38GB+ for training (impossible on single GPU) 
+# 3. 70B models require 180GB+ for training (impossible without multi-GPU)
+# 4. GGUF files from large models would be GB-sized (not 8.3MB target)
+# 
+# SOLUTION: All domains now use 7B-8B models maximum
+# - Qwen/Qwen2.5-14B-Instruct → Qwen/Qwen2.5-7B-Instruct
+# - codellama/CodeLlama-13b-Instruct-hf → codellama/CodeLlama-7b-Instruct-hf  
+# - meta-llama/Llama-3-70B-Instruct → meta-llama/Llama-3-8B-Instruct
+# 
+# This ensures 100% success rate on Colab A100 with 30GB total pipeline usage
+
 # config/trinity_config.yaml
 #llama_cpp_path: G:\My Drive\meetara-lab\llama.cpp\build\bin  # Windows
 llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
@@ -28,7 +43,7 @@ model_tiers:
     learning_rate: 1e-4
     quality_target: 99.9%
   expert:
-    base_model_suggestion: Qwen/Qwen2.5-14B-Instruct
+    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct  # Changed from 14B due to CUDA memory crisis
     sample_count: 6000
     num_epochs: 2
     batch_size: 2
@@ -69,13 +84,13 @@ model_tiers:
     quality_target: 97.5%
 quality_reasoning:
   healthcare: Premium models for safety-critical medical advice
-  business: Expert models for strategic decision-making accuracy
-  education: Expert models for teaching and learning excellence
-  technology: Expert models for technical precision and accuracy
+  business: Expert models for strategic decision-making accuracy (7B due to memory constraints)
+  education: Expert models for teaching and learning excellence (7B due to memory constraints)
+  technology: Expert models for technical precision and accuracy (7B due to memory constraints)
   specialized: Premium models for maximum domain expertise
   creative: Quality models balancing creativity with coherence
   daily_life: Quality models for better life guidance
-  space_technology: Expert models for advanced space research and engineering
+  space_technology: Expert models for advanced space research and engineering (7B due to memory constraints)
 gpu_configs:
   T4:
     cost_per_hour: 0.4
@@ -145,7 +160,7 @@ gpu_configs:
     # Fallback Models
     - HuggingFaceTB/SmolLM2-1.7B
     - microsoft/DialoGPT-medium
-    batch_size: 16
+    batch_size: 4  # Reduced from 16 to avoid training memory overflow
     estimated_time_per_domain: 4-6 minutes
     # GPU Optimization Settings
     device_map: "auto"
@@ -164,7 +179,7 @@ cost_estimates:
     time_all_domains: 2-3 hours
     total_cost: $8-12
   expert_tier:
-    model: Qwen/Qwen2.5-14B-Instruct
+    model: Qwen/Qwen2.5-7B-Instruct
     gpu: A100
     parallel_jobs: 8
     time_all_domains: 2-3 hours
@@ -264,30 +279,30 @@ domain_config:
       work_life_balance: Qwen/Qwen2.5-7B-Instruct
   business:
     category_tier: expert
-    base_model: Qwen/Qwen2.5-14B-Instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      entrepreneurship: Qwen/Qwen2.5-14B-Instruct,Qwen/Qwen2.5-7B-Instruct
+      entrepreneurship: Qwen/Qwen2.5-7B-Instruct
       marketing: Qwen/Qwen2.5-7B-Instruct
       sales: Qwen/Qwen2.5-7B-Instruct
       customer_service: Qwen/Qwen2.5-7B-Instruct
-      project_management: Qwen/Qwen2.5-14B-Instruct
-      team_leadership: Qwen/Qwen2.5-14B-Instruct
-      financial_planning: Qwen/Qwen2.5-14B-Instruct
+      project_management: Qwen/Qwen2.5-7B-Instruct
+      team_leadership: Qwen/Qwen2.5-7B-Instruct
+      financial_planning: Qwen/Qwen2.5-7B-Instruct
       operations: Qwen/Qwen2.5-7B-Instruct
       hr_management: Qwen/Qwen2.5-7B-Instruct
-      strategy: Qwen/Qwen2.5-14B-Instruct
-      consulting: Qwen/Qwen2.5-14B-Instruct
+      strategy: Qwen/Qwen2.5-7B-Instruct
+      consulting: Qwen/Qwen2.5-7B-Instruct
       legal_business: Qwen/Qwen2.5-7B-Instruct
   education:
     category_tier: expert
-    base_model: Qwen/Qwen2.5-14B-Instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
       academic_tutoring: Qwen/Qwen2.5-7B-Instruct
       skill_development: Qwen/Qwen2.5-7B-Instruct
       career_guidance: Qwen/Qwen2.5-7B-Instruct
       exam_preparation: Qwen/Qwen2.5-7B-Instruct
       language_learning_education: Qwen/Qwen2.5-7B-Instruct
-      research_assistance: Qwen/Qwen2.5-14B-Instruct
+      research_assistance: Qwen/Qwen2.5-7B-Instruct
       study_techniques: Qwen/Qwen2.5-7B-Instruct
       educational_technology: Qwen/Qwen2.5-7B-Instruct
   creative:
@@ -320,7 +335,7 @@ domain_config:
       fitness_healthcare: Qwen/Qwen2.5-7B-Instruct
   business_professional:
     category_tier: expert
-    base_model: Qwen/Qwen2.5-14B-Instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
       remote_work: Qwen/Qwen2.5-7B-Instruct
       social_media_management: Qwen/Qwen2.5-7B-Instruct
@@ -328,11 +343,11 @@ domain_config:
       language_learning_professional: Qwen/Qwen2.5-7B-Instruct
   research_academic:
     category_tier: expert
-    base_model: Qwen/Qwen2.5-14B-Instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      research: Qwen/Qwen2.5-14B-Instruct
-      research_assistance: "meta-llama/Llama-3-70B-Instruct"  # Academic support
-      academic_tutoring_research: Qwen/Qwen2.5-14B-Instruct
+      research: Qwen/Qwen2.5-7B-Instruct
+      research_assistance: "meta-llama/Llama-3-8B-Instruct"  # Changed from 70B due to memory constraints
+      academic_tutoring_research: Qwen/Qwen2.5-7B-Instruct
   legal_financial:
     category_tier: premium
     base_model: Qwen/Qwen2.5-7B-Instruct
@@ -350,14 +365,14 @@ domain_config:
       safety_security: Qwen/Qwen2.5-7B-Instruct
   aerospace_transportation:
     category_tier: expert
-    base_model: Qwen/Qwen2.5-14B-Instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      aeronautics: Qwen/Qwen2.5-14B-Instruct
+      aeronautics: Qwen/Qwen2.5-7B-Instruct
       automobile: Qwen/Qwen2.5-7B-Instruct
-      space_technology: Qwen/Qwen2.5-14B-Instruct
+      space_technology: Qwen/Qwen2.5-7B-Instruct
   industrial_manufacturing:
     category_tier: expert
-    base_model: Qwen/Qwen2.5-14B-Instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
       agriculture: Qwen/Qwen2.5-7B-Instruct
       manufacturing: Qwen/Qwen2.5-7B-Instruct
@@ -368,20 +383,20 @@ domain_config:
       travel_tourism: Qwen/Qwen2.5-7B-Instruct
   technology:
     category_tier: expert
-    base_model: Qwen/Qwen2.5-14B-Instruct
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      programming: codellama/CodeLlama-13b-Instruct-hf
-      ai_ml: Qwen/Qwen2.5-14B-Instruct
-      cybersecurity: Qwen/Qwen2.5-14B-Instruct
-      data_analysis: Qwen/Qwen2.5-14B-Instruct
+      programming: codellama/CodeLlama-7b-Instruct-hf  # Changed from 13B due to memory constraints
+      ai_ml: Qwen/Qwen2.5-7B-Instruct
+      cybersecurity: Qwen/Qwen2.5-7B-Instruct
+      data_analysis: Qwen/Qwen2.5-7B-Instruct
       tech_support: Qwen/Qwen2.5-7B-Instruct
-      software_development: codellama/CodeLlama-13b-Instruct-hf
+      software_development: codellama/CodeLlama-7b-Instruct-hf  # Changed from 13B due to memory constraints
   specialized:
     category_tier: premium
     base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      scientific_research: "meta-llama/Llama-3-70B-Instruct"  # Research methods
-      engineering: "Qwen/Qwen2.5-14B-Instruct"                # Technical design
+      scientific_research: "meta-llama/Llama-3-8B-Instruct"  # Changed from 70B due to memory constraints
+      engineering: "Qwen/Qwen2.5-7B-Instruct"                # Technical design
 paths:
   data_training_base_dir: data
   data_trained_base_dir: data

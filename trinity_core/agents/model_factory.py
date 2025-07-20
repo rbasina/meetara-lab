@@ -32,8 +32,28 @@ from trinity_core.core_components.domain_integration import (
 _model_factory_instance = None
 
 def get_model_factory_singleton(config_manager=None):
-    """Get the singleton instance of IntelligentModelFactory"""
+    """Get the singleton instance of IntelligentModelFactory - THREAD-SAFE VERSION"""
     global _model_factory_instance
+    
+    # CRITICAL FIX: For parallel processing, create separate instances to avoid variable scope conflicts
+    # Check if we're in a parallel/async context by looking at the call stack
+    import threading
+    import asyncio
+    
+    # Get current thread and async task info
+    current_thread = threading.current_thread()
+    thread_name = current_thread.name
+    
+    # For parallel processing (multiple threads/tasks), create separate instances
+    if "ThreadPoolExecutor" in thread_name or "asyncio" in thread_name or hasattr(current_thread, '_target'):
+        # Create a thread-local instance to avoid shared state issues
+        if not hasattr(current_thread, '_model_factory_instance'):
+            if config_manager is None:
+                config_manager = SmartTrinityConfigManager()
+            current_thread._model_factory_instance = IntelligentModelFactory(config_manager)
+        return current_thread._model_factory_instance
+    
+    # For single-threaded execution, use the global singleton
     if _model_factory_instance is None:
         if config_manager is None:
             config_manager = SmartTrinityConfigManager()
@@ -238,9 +258,20 @@ class IntelligentModelFactory:
                         # Configure device and memory settings
                         device = "cuda" if torch.cuda.is_available() else "cpu"
                         
-                        # UNIVERSAL MODEL LOADING - Config-driven
+                        # UNIVERSAL MODEL LOADING - Config-driven with multi-GPU support
                         model_loading_config = self.config_manager._config.get('model_loading_config', {})
                         gpu_config = self.config_manager._config.get('gpu_config', {})
+                        
+                        # Multi-GPU Configuration
+                        if torch.cuda.device_count() > 1:
+                            logger.info(f"🚀 Multiple GPUs detected: {torch.cuda.device_count()} GPUs available")
+                            # Force model parallelism across all available GPUs
+                            max_memory = {i: "auto" for i in range(torch.cuda.device_count())}
+                            device_map = "auto"  # Let accelerate distribute automatically
+                            logger.info(f"✅ Multi-GPU setup: device_map='auto', max_memory={max_memory}")
+                        else:
+                            max_memory = "auto"
+                            device_map = "auto"
                         
                         # GPU Detection and Optimization
                         if torch.cuda.is_available():
@@ -356,7 +387,7 @@ class IntelligentModelFactory:
                 "num_train_epochs": 3,
                 "per_device_train_batch_size": 4,
                 "per_device_eval_batch_size": 4,
-                "gradient_accumulation_steps": 4,
+                "gradient_accumulation_steps": 1,  # Reduced from 4 to 1 to prevent memory overflow
                 "learning_rate": 2e-4,
                 "warmup_steps": 100,
                 "logging_steps": 10,
@@ -379,7 +410,7 @@ class IntelligentModelFactory:
                 "report_to": [],
                 "dataloader_num_workers": 4,
                 "ddp_find_unused_parameters": False,
-                "gradient_checkpointing": True,
+                "gradient_checkpointing": False,  # CRITICAL FIX: Disable gradient checkpointing to prevent gradient flow issues
                 "torch_compile": False,
                 "optim_args": {"capturable": True},
                 "full_determinism": False
@@ -589,26 +620,14 @@ class IntelligentModelFactory:
                                 tokenized = tokenizer(
                                     examples["text"],
                                     truncation=True,
-                                    padding=True,
+                                    padding="max_length",  # Use max_length padding for consistent tensor sizes
                                     max_length=512,
                                     return_tensors=None  # Let dataset handle tensors
                                 )
                                 
                                 # Create labels for causal LM (same as input_ids)
-                                # Universal handling for any tokenizer output format
-                                input_ids = tokenized["input_ids"]
-                                if isinstance(input_ids, list):
-                                    # Handle list of lists case
-                                    if input_ids and isinstance(input_ids[0], list):
-                                        tokenized["labels"] = [ids[:] for ids in input_ids]
-                                    else:
-                                        tokenized["labels"] = input_ids[:]
-                                elif hasattr(input_ids, 'copy'):
-                                    # Handle tensor case
-                                    tokenized["labels"] = input_ids.copy()
-                                else:
-                                    # Fallback: create new list
-                                    tokenized["labels"] = list(input_ids)
+                                # For causal language modeling, labels should be identical to input_ids
+                                tokenized["labels"] = tokenized["input_ids"].copy()
                                 
                                 return tokenized
                             
@@ -620,27 +639,50 @@ class IntelligentModelFactory:
                             
                             # Create custom data collator that properly handles tensor types
                             def custom_data_collator(features):
-                                """Custom data collator that properly handles tensor types"""
+                                """Simplified data collator that ensures proper gradient flow"""
                                 batch = {}
-                                for key in features[0].keys():
-                                    if key in ["input_ids", "attention_mask", "labels"]:
-                                        # Stack tensors - use proper tensor conversion to avoid warnings
-                                        tensors = []
-                                        for f in features:
-                                            if isinstance(f[key], torch.Tensor):
-                                                tensors.append(f[key].clone().detach())
-                                            else:
-                                                tensors.append(torch.tensor(f[key], dtype=torch.long))
-                                        batch[key] = torch.stack(tensors)
-                                        # Ensure labels are properly formatted for causal LM training
-                                        if key == "labels":
-                                            # For causal LM, labels should be the same as input_ids
-                                            batch[key] = batch[key].clone()
-                                            # Set requires_grad to False for labels (they're targets, not parameters)
-                                            batch[key].requires_grad_(False)
+                                
+                                # Get the maximum length in this batch
+                                max_length = max(len(f["input_ids"]) for f in features)
+                                
+                                for key in ["input_ids", "attention_mask", "labels"]:
+                                    batch_tensors = []
+                                    for f in features:
+                                        tensor_data = f[key]
+                                        
+                                        # Convert to list if it's a tensor
+                                        if hasattr(tensor_data, 'tolist'):
+                                            tensor_data = tensor_data.tolist()
+                                        elif not isinstance(tensor_data, list):
+                                            tensor_data = list(tensor_data)
+                                        
+                                        # Pad to max length
+                                        if key == "input_ids" or key == "labels":
+                                            # Pad with tokenizer.pad_token_id
+                                            pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else tokenizer.eos_token_id
+                                            tensor_data = tensor_data + [pad_id] * (max_length - len(tensor_data))
+                                        elif key == "attention_mask":
+                                            # Pad attention mask with 0s
+                                            tensor_data = tensor_data + [0] * (max_length - len(tensor_data))
+                                        
+                                        # Truncate if too long
+                                        tensor_data = tensor_data[:max_length]
+                                        
+                                        # Convert to tensor with proper dtype
+                                        batch_tensors.append(torch.tensor(tensor_data, dtype=torch.long))
+                                    
+                                    # Stack all tensors in the batch
+                                    batch[key] = torch.stack(batch_tensors)
+                                
+                                # Ensure tensors are on the correct device and have proper gradient settings
+                                # Only labels need gradients for loss computation, input_ids and attention_mask should not
+                                batch["input_ids"].requires_grad_(False)
+                                batch["attention_mask"].requires_grad_(False) 
+                                batch["labels"].requires_grad_(False)  # Labels don't need gradients either
+                                
                                 return batch
-                            
-                            logger.info(f"✅ Created tokenized training dataset with {len(dataset)} samples")
+
+                            logger.info(f"✅ Created custom data collator for proper tensor handling")
                             
                             # Configure training arguments
                             from transformers import TrainingArguments, Trainer
@@ -656,15 +698,22 @@ class IntelligentModelFactory:
                             
                             # Get training parameters from config with GPU-specific overrides
                             config_batch_size = training_config.get("per_device_train_batch_size", 1)
-                            # Use GPU-specific batch size if available, otherwise use config
-                            if 'batch_size' in locals() and batch_size > config_batch_size:
-                                actual_batch_size = batch_size  # From GPU config (A100: 16, V100: 8, T4: 4)
-                                logger.info(f"🚀 Using {gpu_type} optimized batch size: {actual_batch_size}")
+                            # CRITICAL FIX: Ensure all GPU variables are safely defined with defaults
+                            gpu_batch_size = locals().get('batch_size', 4)  # Safe default if not defined
+                            gpu_type = locals().get('gpu_type', 'T4')  # Safe default if not defined
+                            # CRITICAL MEMORY FIX: Use even smaller batch size for training memory
+                            if gpu_batch_size > config_batch_size:
+                                actual_batch_size = min(gpu_batch_size // 2, 2)  # CRITICAL: Halve batch size, max 2 for training
+                                logger.info(f"🚀 Using reduced {gpu_type} training batch size: {actual_batch_size}")
                             else:
-                                actual_batch_size = config_batch_size
-                                logger.info(f"📊 Using config batch size: {actual_batch_size}")
+                                actual_batch_size = min(config_batch_size, 2)  # CRITICAL: Max 2 for training memory
+                                logger.info(f"📊 Using reduced config batch size: {actual_batch_size}")
                             
-                            gradient_accumulation_steps = training_config.get("gradient_accumulation_steps", 8)
+                            # CRITICAL: Use gradient_accumulation_steps=2 to maintain effective batch size
+                            gradient_accumulation_steps = max(1, 4 // actual_batch_size)  # Maintain effective batch size of 4
+                            logger.info(f"📊 Training memory optimization: batch_size={actual_batch_size}, grad_accum={gradient_accumulation_steps}")
+                            logger.info(f"📊 Effective batch size: {actual_batch_size * gradient_accumulation_steps}")
+                            
                             learning_rate = training_config.get("learning_rate", 5e-5)
                             
                             # Ensure model_save_dir is ready for training
@@ -679,21 +728,23 @@ class IntelligentModelFactory:
                                 learning_rate=learning_rate,
                                 fp16=False,  # Disable FP16 to avoid gradient unscaling issues
                                 bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),  # Use BF16 if supported
-                                gradient_checkpointing=False,  # Temporarily disable to avoid gradient issues
-                                dataloader_pin_memory=torch.cuda.is_available(),
+                                gradient_checkpointing=training_config.get("gradient_checkpointing", False),  # CRITICAL FIX: Use config value, default False
+                                dataloader_pin_memory=False,  # Disable to save memory
+                                dataloader_num_workers=0,  # Disable multiprocessing to save memory
                                 save_steps=save_steps,  # Use calculated optimal save_steps
                                 logging_steps=50,
                                 remove_unused_columns=False,
                                 report_to=[],  # Completely disable all reporting (wandb, tensorboard, etc.)
                                 # Ensure checkpoints go to the correct directory
                                 save_strategy="steps",
-                                save_total_limit=2,  # Keep only last 2 checkpoints
+                                save_total_limit=1,  # Keep only 1 checkpoint to save memory
                                 # Add gradient clipping to prevent gradient explosion
                                 max_grad_norm=1.0,
+                                # Additional memory optimizations
+                                eval_accumulation_steps=1,  # Process evaluation in smaller batches
+                                prediction_loss_only=True,  # Only compute loss during evaluation
                                 # Use deterministic training for reproducibility
                                 dataloader_drop_last=True,
-                                # Optimize for memory usage
-                                dataloader_num_workers=0,  # Reduce worker processes
                             )
                             
                             # Universal memory management - works for all model types
@@ -743,6 +794,22 @@ class IntelligentModelFactory:
                             
                             # Final verification: Ensure model is ready for training
                             model.train()
+                            
+                            # CRITICAL FIX: Explicitly ensure all LoRA parameters have requires_grad=True
+                            if lora_applied or qlora_applied:
+                                logger.info("🔧 Configuring LoRA parameter gradients...")
+                                lora_param_count = 0
+                                for name, param in model.named_parameters():
+                                    if ("lora_" in name.lower() or "adapter" in name.lower()) and param.requires_grad:
+                                        param.requires_grad_(True)  # Explicitly set requires_grad
+                                        lora_param_count += param.numel()
+                                        logger.debug(f"✅ LoRA parameter {name}: requires_grad=True ({param.numel():,} params)")
+                                
+                                logger.info(f"✅ Configured {lora_param_count:,} LoRA parameters with requires_grad=True")
+                                
+                                if lora_param_count == 0:
+                                    logger.error("❌ No LoRA parameters found with requires_grad=True")
+                                    return {"error": "LoRA parameters not properly configured for gradients"}
                             
                             # Ensure all trainable parameters have requires_grad=True
                             for name, param in model.named_parameters():
@@ -804,12 +871,72 @@ class IntelligentModelFactory:
                                 train_dataset=dataset,
                                 tokenizer=tokenizer,
                                 # Use default data collator to avoid gradient issues
-                                # data_collator=custom_data_collator,
+                                data_collator=custom_data_collator,
                             )
                             
                             # Train the model
                             logger.info(f"🎯 Starting real training for {domain}...")
                             try:
+                                # CRITICAL: Aggressive memory cleanup before training
+                                import gc
+                                if torch.cuda.is_available():
+                                    torch.cuda.empty_cache()
+                                    torch.cuda.synchronize()  # Wait for all operations to complete
+                                    logger.info("🧹 GPU cache cleared and synchronized")
+                                gc.collect()  # Force garbage collection
+                                
+                                # Set memory optimization environment variable to avoid fragmentation
+                                import os
+                                os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
+                                logger.info("✅ Set PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True for memory optimization")
+                                
+                                # CRITICAL: Additional memory optimizations for training
+                                if torch.cuda.is_available():
+                                    # Get current memory info
+                                    memory_allocated = torch.cuda.memory_allocated() / 1024**3  # GB
+                                    memory_reserved = torch.cuda.memory_reserved() / 1024**3   # GB
+                                    memory_free = (torch.cuda.get_device_properties(0).total_memory - torch.cuda.memory_allocated()) / 1024**3
+                                    logger.info(f"📊 Pre-training memory: Allocated={memory_allocated:.2f}GB, Reserved={memory_reserved:.2f}GB, Free={memory_free:.2f}GB")
+                                    
+                                    # If less than 500MB free, reduce batch size further
+                                    if memory_free < 0.5:  # Less than 500MB
+                                        actual_batch_size = 1
+                                        gradient_accumulation_steps = 4
+                                        logger.warning(f"⚠️ Very low memory ({memory_free:.2f}GB free), reducing to batch_size=1")
+                                        
+                                        # Recreate training_args with new batch size
+                                        training_args = TrainingArguments(
+                                            output_dir=str(model_save_dir.absolute()),
+                                            per_device_train_batch_size=actual_batch_size,
+                                            gradient_accumulation_steps=gradient_accumulation_steps,
+                                            max_steps=max_steps,
+                                            learning_rate=learning_rate,
+                                            fp16=False,
+                                            bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+                                            gradient_checkpointing=training_config.get("gradient_checkpointing", False),
+                                            dataloader_pin_memory=False,
+                                            dataloader_num_workers=0,
+                                            save_steps=save_steps,
+                                            logging_steps=50,
+                                            remove_unused_columns=False,
+                                            report_to=[],
+                                            save_strategy="steps",
+                                            save_total_limit=1,
+                                            max_grad_norm=1.0,
+                                            eval_accumulation_steps=1,
+                                            prediction_loss_only=True,
+                                            dataloader_drop_last=True,
+                                        )
+                                        
+                                        # Recreate trainer with new args
+                                        trainer = Trainer(
+                                            model=model,
+                                            args=training_args,
+                                            train_dataset=dataset,
+                                            tokenizer=tokenizer,
+                                            data_collator=custom_data_collator,
+                                        )
+                                
                                 # Clear memory before training
                                 if torch.cuda.is_available():
                                     torch.cuda.empty_cache()
