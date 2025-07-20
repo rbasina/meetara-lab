@@ -311,7 +311,7 @@ async def _generate_comprehensive_manifest(overall_results: Dict[str, Any], sess
                 },
                 "B_universal_lite": {
                     "enabled": True,
-                    "base_model": "Qwen/Qwen2.5-7B-Instruct",
+                    "base_model":"Qwen/Qwen2.5-7B-Instruct",
                     "domains": 62,
                     "size_mb": 800,
                     "purpose": "Fast universal responses"

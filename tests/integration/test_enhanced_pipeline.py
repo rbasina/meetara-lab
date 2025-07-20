@@ -172,8 +172,7 @@ class EnhancedPipelineTester:
                 raw_model_path=str(test_raw_model),
                 domain="general_health",  # Use real domain from config
                 model_size_mb=8.3,
-                architecture_type="domain_specific",
-                is_simulation=True
+                architecture_type="domain_specific"
             )
             
             assert result["status"] == "success", f"Quantization failed: {result.get('error')}"

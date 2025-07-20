@@ -314,8 +314,7 @@ class TrinityPrimaryConductor:
                         raw_model_path=raw_model_path,
                         domain=domain,
                         model_size_mb=model_size_mb,
-                        architecture_type=architecture_type,
-                        is_simulation=False # Always False for finalization
+                        architecture_type=architecture_type
                     )
                     finalized_domain_results[domain] = {
                         "raw_model_result": result,
@@ -422,8 +421,7 @@ class TrinityPrimaryConductor:
                 raw_model_path=model_result.get("raw_model_path"),
                 domain=domain,
                 model_size_mb=model_result.get("model_size_mb", 8.3),
-                architecture_type="domain_specific",
-                is_simulation=simulation
+                architecture_type="domain_specific"
             )
             
             if quantization_result.get("error"):
