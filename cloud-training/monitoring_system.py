@@ -146,7 +146,7 @@ class MonitoringSystem(BaseAgent):
         
         # Performance regression detection
         self.performance_baselines = {
-            "training_speed": {"t4": 37.0, "v100": 75.0, "a100": 151.0},
+            "training_speed": {"T4": 37.0, "V100": 75.0, "A100": 151.0},
             "quality_scores": 101.0,
             "cost_efficiency": 0.10,  # $0.10 per domain
             "model_size": 8.3  # MB
@@ -579,7 +579,7 @@ class MonitoringSystem(BaseAgent):
         regression_issues = []
         
         # Check training speed baselines
-        current_speeds = {"t4": 35.0, "v100": 73.0, "a100": 148.0}  # Slightly lower than baseline
+        current_speeds = {"T4": 35.0, "V100": 73.0, "A100": 148.0}  # Slightly lower than baseline
         
         for gpu_type, current_speed in current_speeds.items():
             baseline_speed = self.performance_baselines["training_speed"][gpu_type]
