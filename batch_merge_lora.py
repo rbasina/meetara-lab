@@ -111,7 +111,22 @@ def batch_merge_lora_models(base_model_name: str, trained_path: str, output_base
 
 if __name__ == "__main__":
     # Configuration
-    base_model_name = "Qwen/Qwen2.5-7B-Instruct"
+    # Load base model name from config instead of hardcoding
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent / "trinity_core"))
+    from core_components.config_manager import SmartTrinityConfigManager
+    
+    config_manager = SmartTrinityConfigManager()
+    global_params = config_manager.get_config_dict().get('global_tara_params', {})
+    base_model_name = global_params.get('fallback_base_model')
+    if not base_model_name:
+        model_names = config_manager.get_config_dict().get('model_names', {})
+        if model_names:
+            base_model_name = list(model_names.values())[0]
+        else:
+            raise ValueError("❌ No base model configured")
+    print(f"✅ Using config-driven base model: {base_model_name}")
     trained_path = "G:/My Drive/meetara-lab/data/production/trained"
     output_base_path = "G:/My Drive/meetara-lab/data/production/trained_merged"
     
