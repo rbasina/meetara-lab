@@ -91,6 +91,13 @@ async def main():
         help='Skip the quantization and GGUF creation step (train adapters only)'
     )
     
+    # NEW: Base model override argument
+    parser.add_argument(
+        '--base-model',
+        type=str,
+        help='Override base model selection from config (e.g., "Qwen/Qwen2.5-14B-Instruct")'
+    )
+    
     args = parser.parse_args()
 
     # Initialize configuration manager
@@ -189,7 +196,8 @@ async def main():
         simulation=args.simulation, # Corrected argument name
         generate_synthetic=args.generate_synthetic, # Pass the generate_synthetic flag
         environment=environment, # Pass environment to downstream components
-        skip_quantization=args.skip_quantization # Pass skip_quantization flag
+        skip_quantization=args.skip_quantization, # Pass skip_quantization flag
+        base_model_override=args.base_model # NEW: Pass base model override
     )
     
     # Enhanced reporting and documentation
