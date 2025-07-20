@@ -1,0 +1,21 @@
+{
+  "session_id": "music_1752982263",
+  "timestamp": "2025-07-19T23:31:03.973409",
+  "total_domains_processed": 1,
+  "successful_domains": 0,
+  "failed_domains": 1,
+  "overall_quality_score": 0.0,
+  "average_training_time": 2.019016981124878,
+  "total_cost": 0.0,
+  "domain_breakdown": {
+    "successful_domains": [],
+    "failed_domains": [
+      "music"
+    ],
+    "quality_scores": {}
+  },
+  "quality_threshold_met": false,
+  "emotion_context_learning": true,
+  "lora_integration": true,
+  "contextual_intelligence_baked": true
+}
