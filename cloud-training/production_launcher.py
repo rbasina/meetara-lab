@@ -84,6 +84,13 @@ async def main():
         help='Generate synthetically realistic data for training instead of loading real data or using basic simulation. Data will still be saved to appropriate dev/production paths.'
     )
     
+    # NEW: Skip quantization argument
+    parser.add_argument(
+        '--skip-quantization',
+        action='store_true',
+        help='Skip the quantization and GGUF creation step (train adapters only)'
+    )
+    
     args = parser.parse_args()
 
     # Initialize configuration manager
@@ -125,7 +132,10 @@ async def main():
     logger.log_config_loading(yaml_loaded=True, total_domains=total_domains_in_config)
 
     # Initialize the complete agent ecosystem
-    ecosystem = CompleteAgentEcosystem()
+    ecosystem = CompleteAgentEcosystem(
+        simulation_mode=args.simulation,
+        skip_quantization=args.skip_quantization
+    )
 
     # Determine domains to process
     domains_to_process = []
@@ -178,7 +188,8 @@ async def main():
         target_domains=domains_to_process, # Corrected argument name
         simulation=args.simulation, # Corrected argument name
         generate_synthetic=args.generate_synthetic, # Pass the generate_synthetic flag
-        environment=environment # Pass environment to downstream components
+        environment=environment, # Pass environment to downstream components
+        skip_quantization=args.skip_quantization # Pass skip_quantization flag
     )
     
     # Enhanced reporting and documentation
