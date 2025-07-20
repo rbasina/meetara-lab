@@ -360,7 +360,14 @@ class TrinityPrimaryConductor:
                     "processing_time": time.time() - start_time
                 }
             
-            base_model = domain_details.get('base_model', self.config_manager._global_params.get('fallback_base_model'))
+            # Apply base model override if provided, otherwise use config
+            if base_model_override:
+                base_model = base_model_override
+                logger.info(f"🔄 Using base model override: {base_model_override} for domain '{domain}'")
+            else:
+                base_model = domain_details.get('base_model', self.config_manager._global_params.get('fallback_base_model'))
+                logger.info(f"📦 Using config-driven base model: {base_model} for domain '{domain}'")
+            
             tier_name = domain_details.get('tier_name', 'balanced')
             
             # Update intelligence hub environment for this domain processing
