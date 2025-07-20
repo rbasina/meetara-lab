@@ -96,7 +96,7 @@ class PipelineConfig:
             'sequence_length': self.sequence_length or domain_params.get('sequence_length', 64),
             'lora_r': self.lora_r or domain_params.get('lora_r', 8),
             'learning_rate': self.learning_rate or domain_params.get('learning_rate', 2e-4),
-            'samples_per_domain': self.samples_per_domain or domain_params.get('sample_count', 200),
+            'samples_per_domain': self.samples_per_domain or domain_params.get('sample_count', 4000),  # FIXED: Changed from 200 to 4000
             'quality_threshold': self.quality_threshold or 0.7,
             'target_accuracy': self.target_accuracy or 99.99,
             'target_validation_score': self.target_validation_score or 101.0,
@@ -826,8 +826,8 @@ def main():
                        help="Maximum training steps (default: 468)")
     parser.add_argument("--batch-size", type=int, default=2,
                        help="Training batch size (default: 2)")
-    parser.add_argument("--samples", type=int, default=200,
-                       help="Number of training samples per domain (default: 200)")
+    parser.add_argument("--samples", type=int, default=4000,  # FIXED: Changed from 200 to 4000
+                       help="Number of training samples per domain (default: 4000)")
     
     args = parser.parse_args()
     
