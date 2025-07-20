@@ -111,8 +111,9 @@ class EnhancedTrinityTrainer:
             print("🔄 Continuing training without LoRA...")
             self.model = base_model  # Use base model without LoRA
         
-        if self.gradient_checkpointing:
-            self.model.gradient_checkpointing_enable()
+        # CRITICAL FIX: Disable gradient checkpointing to prevent gradient flow issues
+        # if self.gradient_checkpointing:
+        #     self.model.gradient_checkpointing_enable()
 
     def prepare_dataset(self, data: list) -> list:
         """Prepare dataset for training."""
