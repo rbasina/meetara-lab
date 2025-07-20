@@ -338,7 +338,10 @@ class TrinityPrimaryConductor:
     async def _process_domain_optimized(self, domain: str, category: str, 
                                       allocation: Dict[str, Any], simulation: bool = False, 
                                       generate_synthetic: bool = False, # Added generate_synthetic
-                                      environment: str = "dev") -> Dict[str, Any]: # Added environment
+                                      environment: str = "dev", # Added environment
+                                      base_model_override: str = None, # Added base model override
+                                      output_dir: str = "data/production", # Added output directory
+                                      skip_quantization: bool = False) -> Dict[str, Any]: # NEW: Skip quantization
         """
         Process a single domain with enhanced optimization and resource awareness.
         """
@@ -366,7 +369,13 @@ class TrinityPrimaryConductor:
             
             # Step 1: Generate intelligent training data with emotion/context learning
             logger.info(f"📊 Step 1: Generating intelligent training data for {domain}")
-            data_result = self.data_generator.generate_domain_data(domain, samples_per_domain=200)
+            
+            # Get config-driven sample count based on tier (NO MORE HARDCODED 200!)
+            tier_config = self.config_manager.get_config_dict().get('model_tiers', {}).get(tier_name, {})
+            sample_count = tier_config.get('sample_count', 4000)  # Default to 4000 if not found
+            logger.info(f"📈 Using config-driven sample count: {sample_count} samples for tier '{tier_name}'")
+            
+            data_result = self.data_generator.generate_domain_data(domain, samples_per_domain=sample_count)
             conversations = data_result.get("conversations", [])
             if not conversations and data_result.get("output_path"):
                 # Fallback: load from file if not present in result
@@ -415,23 +424,32 @@ class TrinityPrimaryConductor:
                     "processing_time": time.time() - start_time
                 }
             
-            # Step 3: Quantize and create GGUF with validation
-            logger.info(f"🔧 Step 3: Quantizing and creating GGUF for {domain}")
-            quantization_result = await self.quantization_cleanup_agent.process_and_finalize_model(
-                raw_model_path=model_result.get("raw_model_path"),
-                domain=domain,
-                model_size_mb=model_result.get("model_size_mb", 8.3),
-                architecture_type="domain_specific"
-            )
-            
-            if quantization_result.get("error"):
-                logger.error(f"❌ Quantization failed for {domain}: {quantization_result.get('error')}")
-                return {
-                    "status": "error",
-                    "domain": domain,
-                    "error": f"Quantization failed: {quantization_result.get('error')}",
-                    "processing_time": time.time() - start_time
+            # Step 3: Quantize and create GGUF with validation (CONDITIONAL)
+            if skip_quantization:
+                logger.info(f"🔧 Step 3: SKIPPING quantization for {domain} (--skip-quantization enabled)")
+                quantization_result = {
+                    "status": "skipped",
+                    "message": "Quantization skipped by user request",
+                    "raw_model_path": model_result.get("raw_model_path"),
+                    "gguf_path": None
                 }
+            else:
+                logger.info(f"🔧 Step 3: Quantizing and creating GGUF for {domain}")
+                quantization_result = await self.quantization_cleanup_agent.process_and_finalize_model(
+                    raw_model_path=model_result.get("raw_model_path"),
+                    domain=domain,
+                    model_size_mb=model_result.get("model_size_mb", 8.3),
+                    architecture_type="domain_specific"
+                )
+                
+                if quantization_result.get("error"):
+                    logger.error(f"❌ Quantization failed for {domain}: {quantization_result.get('error')}")
+                    return {
+                        "status": "error",
+                        "domain": domain,
+                        "error": f"Quantization failed: {quantization_result.get('error')}",
+                        "processing_time": time.time() - start_time
+                    }
             
             # Step 4: Validate and optimize results
             logger.info(f"✅ Step 4: Validating and optimizing results for {domain}")
@@ -777,7 +795,10 @@ class TrinityPrimaryConductor:
                                              training_mode: str = "optimized", 
                                              simulation: bool = False, # Existing parameter
                                              generate_synthetic: bool = False, # Added generate_synthetic
-                                             environment: str = "dev") -> Dict[str, Any]: # Added environment
+                                             environment: str = "dev", # Added environment
+                                             base_model_override: str = None, # Added base model override
+                                             output_dir: str = "data/production", # Added output directory
+                                             skip_quantization: bool = False) -> Dict[str, Any]: # NEW: Skip quantization
         """
         Orchestrates the end-to-end intelligent training pipeline.
         
@@ -787,6 +808,9 @@ class TrinityPrimaryConductor:
             simulation (bool, optional): If True, runs in simulation mode, generating simulated data and saving to dev/.
             generate_synthetic (bool, optional): If True, generates synthetically realistic data instead of loading real data.
             environment (str, optional): Environment for data paths ("dev" or "production"). Defaults to "dev".
+            base_model_override (str, optional): Override base model selection from config.
+            output_dir (str, optional): Output directory for trained models. Defaults to "data/production".
+            skip_quantization (bool, optional): If True, skips quantization and GGUF creation step. Defaults to False.
 
         Returns:
             Dict[str, Any]: Overall training results and performance metrics.
@@ -804,6 +828,11 @@ class TrinityPrimaryConductor:
             logger.info("Simulation mode is ENABLED. Data will be simulated and models saved to dev/.")
         if generate_synthetic:
             logger.info("Synthetic data generation is ENABLED. Data will be generated synthetically.")
+        if skip_quantization:
+            logger.info("🔧 Quantization is DISABLED. Only LoRA adapters will be created.")
+        if base_model_override:
+            logger.info(f"📦 Base model override: {base_model_override}")
+        logger.info(f"📁 Output directory: {output_dir}")
 
         # Stage 1: Intelligent Batch Creation
         logger.info("✨ Stage 1: Creating intelligent training batches...")
@@ -828,14 +857,17 @@ class TrinityPrimaryConductor:
         for batch in batches:
             for domain in batch.domains:
                 category = self.config_manager.get_tara_proven_params(domain)['category']
-                # Pass simulation, generate_synthetic, and environment flags
+                # Pass all parameters including skip_quantization
                 tasks.append(self._process_domain_optimized(
                     domain=domain,
                     category=category,
                     allocation=resource_plan.get(batch.batch_id, {}),
                     simulation=simulation,
                     generate_synthetic=generate_synthetic, # Pass the flag here
-                    environment=environment # Pass environment parameter
+                    environment=environment, # Pass environment parameter
+                    base_model_override=base_model_override,
+                    output_dir=output_dir,
+                    skip_quantization=skip_quantization # NEW: Pass skip quantization
                 ))
         
         # Execute all domain processing tasks in parallel

@@ -49,14 +49,16 @@ class CompleteAgentEcosystem:
     Fully aligned with ALL requirements from NEW_CURSOR_AI_PROMPT.md
     """
     
-    def __init__(self):
+    def __init__(self, config_manager=None, simulation_mode=False, skip_quantization=False):
         self.ecosystem_id = "MEETARA_COMPLETE_ECOSYSTEM_V3"
         self.initialization_time = datetime.now()
+        self.simulation_mode = simulation_mode
+        self.skip_quantization = skip_quantization
         
         # --- Initialize Super Agents ---
         self.intelligence_hub = TrinityIntelligenceHub() # Instantiate the class
         self.trinity_conductor = trinity_conductor
-        self.config_manager = SmartTrinityConfigManager()
+        self.config_manager = config_manager or SmartTrinityConfigManager()
         self.model_factory = IntelligentModelFactory(self.config_manager)
         
         
@@ -64,35 +66,49 @@ class CompleteAgentEcosystem:
         logger.info(f"   → Intelligence Hub: ACTIVE")
         logger.info(f"   → Trinity Conductor: ACTIVE")
         logger.info(f"   → Model Factory: ACTIVE")
+        logger.info(f"   → Simulation Mode: {simulation_mode}")
+        logger.info(f"   → Skip Quantization: {skip_quantization}")
         
-    async def coordinate_complete_training(self, domains_to_train: List[str] = None, simulation: bool = False, generate_synthetic: bool = False) -> Dict[str, Any]:
+    async def coordinate_complete_training(self, target_domains: List[str] = None, base_model_override: str = None, output_dir: str = "data/production", simulation: bool = None, generate_synthetic: bool = False, environment: str = "colab", skip_quantization: bool = None) -> Dict[str, Any]:
         """Coordinate complete training for all domains with Super-Agent flow"""
         
-        if domains_to_train is None:
-            domains_to_train = get_all_domains()
+        # Use instance defaults if not provided
+        if simulation is None:
+            simulation = self.simulation_mode
+        if skip_quantization is None:
+            skip_quantization = self.skip_quantization
             
-        logger.info(f"🎯 Coordinating training for {len(domains_to_train)} domains")
+        if target_domains is None:
+            target_domains = get_all_domains()
+            
+        logger.info(f"🎯 Coordinating training for {len(target_domains)} domains")
+        logger.info(f"📊 Mode: {'Simulation' if simulation else 'Production'}")
+        logger.info(f"🔧 Quantization: {'Skipped' if skip_quantization else 'Enabled'}")
         
         results = {
             "ecosystem_id": self.ecosystem_id,
             "start_time": datetime.now().isoformat(),
-            "domains_to_train": domains_to_train,
+            "domains_to_train": target_domains,
             "trinity_architecture_enabled": True,
+            "skip_quantization": skip_quantization,
             "domain_results": {},
             "overall_metrics": {
                 "total_cost": 0,
-                "total_domains": len(domains_to_train),
+                "total_domains": len(target_domains),
                 "success_rate": 0,
             }
         }
         
         # The Trinity Conductor now orchestrates the main training flow.
-        # We need to pass the simulation and generate_synthetic flags to it.
-
+        # Pass ALL parameters including skip_quantization
         conductor_results = await self.trinity_conductor.orchestrate_intelligent_training(
-            target_domains=domains_to_train,
+            target_domains=target_domains,
             training_mode="simulation" if simulation else "optimized",
-            generate_synthetic=generate_synthetic # Pass the new flag here
+            generate_synthetic=generate_synthetic,
+            base_model_override=base_model_override,
+            output_dir=output_dir,
+            environment=environment,
+            skip_quantization=skip_quantization  # NEW: Pass skip quantization to conductor
         )
         
         # Process results from the conductor
@@ -100,13 +116,13 @@ class CompleteAgentEcosystem:
         results['overall_metrics']['total_cost'] = conductor_results.get('optimization_gains', {}).get('total_cost', 0)
         
         successful_domains = sum(1 for r in results["domain_results"].values() if r.get("status") == "success")
-        if len(domains_to_train) > 0:
-            results["overall_metrics"]["success_rate"] = successful_domains / len(domains_to_train)
+        if len(target_domains) > 0:
+            results["overall_metrics"]["success_rate"] = successful_domains / len(target_domains)
         
         results["end_time"] = datetime.now().isoformat()
         results["status"] = "✅ COMPLETE - All Requirements Met"
         
-        logger.info(f"🏆 Training completed: {successful_domains}/{len(domains_to_train)} domains successful")
+        logger.info(f"🏆 Training completed: {successful_domains}/{len(target_domains)} domains successful")
         
         return results
 
