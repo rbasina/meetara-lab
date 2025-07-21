@@ -947,8 +947,8 @@ class IntelligentModelFactory:
                                 import threading
                                 import time
                                 
-                                # Set a timeout for training (30 minutes max)
-                                training_timeout = 1800  # 30 minutes
+                                # Set a timeout for training (60 minutes max for large datasets)
+                                training_timeout = 3600  # 60 minutes
                                 
                                 def timeout_handler(signum, frame):
                                     raise TimeoutError(f"Training timeout after {training_timeout} seconds")
