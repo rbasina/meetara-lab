@@ -47,6 +47,8 @@ pipeline_output/
 logs/
 *.log
 
+manifests/
+reports/
 # Temporary files
 temp/
 tmp/
