@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-🚀 Enhanced GGUF Factory - Pure Orchestration Layer
-Delegates ALL functionality to Trinity Super Agents
-No hardcoded values - everything from config files
+🚀 Enhanced GGUF Factory - Current Trained Adapters Approach
+Reads trained adapters from data/production/trained/
+Groups by base model and merges adapters with base model
+Creates GGUF files from merged models
 """
 
 import sys
@@ -38,7 +39,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class EnhancedGGUFFactory:
-    """Pure orchestration layer - delegates ALL functionality to Trinity Super Agents"""
+    """Current approach: Merge trained adapters with base model to create GGUF files"""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -54,13 +55,15 @@ class EnhancedGGUFFactory:
         # Get configuration-driven paths
         self.base_dir = Path(__file__).parent.parent.parent
         self.models_dir = self.base_dir / "models"
+        self.trained_dir = self.base_dir / "data" / "production" / "trained"
         self.temp_dir = Path(tempfile.mkdtemp(prefix="gguf_factory_"))
         
         # Load all configuration from config files
         self._load_orchestration_config()
         
-        self.logger.info("Enhanced GGUF Factory initialized (Pure Orchestration)")
+        self.logger.info("Enhanced GGUF Factory initialized (Current Trained Adapters Approach)")
         self.logger.info(f"   Models directory: {self.models_dir}")
+        self.logger.info(f"   Trained adapters directory: {self.trained_dir}")
         self.logger.info(f"   Temporary directory: {self.temp_dir}")
         self.logger.info(f"   Configuration-driven: All values from config files")
         self.logger.info(f"   Agent delegation: Model Factory, Speech Factory, Translation Factory")
@@ -171,8 +174,8 @@ class EnhancedGGUFFactory:
             (getattr(self, "logger", logger)).info(f"Cleaned up temporary directory: {self.temp_dir}")
     
     def create_all_models(self) -> Dict[str, Any]:
-        """Orchestrate creation of all models using Trinity Super Agents"""
-        self.logger.info("Starting comprehensive model creation (Agent Orchestration)...")
+        """Orchestrate creation of all models using trained adapters approach"""
+        self.logger.info("Starting comprehensive model creation (Trained Adapters Approach)...")
         self.logger.info("=" * 80)
         
         results = {
@@ -184,10 +187,10 @@ class EnhancedGGUFFactory:
         }
         
         try:
-            # Step 1: Create model variants (delegate to IntelligentModelFactory)
-            self.logger.info("STEP 1: Creating model variants (IntelligentModelFactory)...")
-            results["model_variants"] = self._orchestrate_model_variants()
-            self.logger.info("STEP 1: Model variants completed")
+            # Step 1: Process trained adapters and create GGUF files
+            self.logger.info("STEP 1: Processing trained adapters and creating GGUF files...")
+            results["model_variants"] = self._process_trained_adapters()
+            self.logger.info("STEP 1: Trained adapters processing completed")
             
             # Step 2: Create speech models (delegate to SpeechModelsFactory)
             self.logger.info("STEP 2: Creating speech models (SpeechModelsFactory)...")
@@ -218,68 +221,149 @@ class EnhancedGGUFFactory:
         
         return results
     
-    def _orchestrate_model_variants(self) -> Dict[str, Any]:
-        """Orchestrate creation of all model variants with universal device support"""
-        self.logger.info("🏭 Orchestrating model variants with universal device support...")
+    def _process_trained_adapters(self) -> Dict[str, Any]:
+        """Process trained adapters and create GGUF files from merged models"""
+        self.logger.info("🏭 Processing trained adapters and creating GGUF files...")
         
-        results = {}
+        results = {
+            "base_models_processed": {},
+            "gguf_files_created": {},
+            "total_adapters_processed": 0,
+            "total_gguf_files_created": 0
+        }
         
         try:
-            # Get model variants configuration
-            model_variants = self.model_variants_config.get("model_variants", {})
+            # Step 1: Discover all trained adapters
+            trained_adapters = self._discover_trained_adapters()
+            self.logger.info(f"   Discovered {len(trained_adapters)} trained adapters")
             
-            for variant_name, variant_config in model_variants.items():
-                if variant_config.get("enabled", True):
-                    self.logger.info(f"🏭 Creating {variant_name}...")
+            # Step 2: Group adapters by base model
+            adapters_by_base_model = self._group_adapters_by_base_model(trained_adapters)
+            self.logger.info(f"   Grouped into {len(adapters_by_base_model)} base model groups")
+            
+            # Step 3: Process each base model group
+            for base_model_name, adapters in adapters_by_base_model.items():
+                self.logger.info(f"   Processing base model: {base_model_name}")
+                self.logger.info(f"   Adapters to merge: {len(adapters)}")
+                
+                # Create request for merging adapters with base model
+                request = self._create_adapter_merge_request(base_model_name, adapters)
+                
+                # Delegate to IntelligentModelFactory for merging
+                merge_result = self.model_factory.merge_adapters_with_base_model(request)
+                
+                if merge_result.get("success", False):
+                    # Create GGUF file from merged model
+                    gguf_result = self._create_gguf_from_merged_model(base_model_name, merge_result)
                     
-                    # Create model variant request with universal device optimization
-                    request = self._create_model_variant_request(variant_name, variant_config)
-                    
-                    # Delegate to IntelligentModelFactory
-                    variant_result = self.model_factory.create_model_variant(request)
-                    
-                    # Add universal device support metrics
-                    variant_result["universal_device_support"] = {
-                        "mobile_optimized": True,
-                        "desktop_optimized": True,
-                        "browser_optimized": True,
-                        "edge_optimized": True,
-                        "cross_platform_compatibility": True,
-                        "memory_efficiency": variant_result.get("memory_efficiency", "optimal"),
-                        "inference_speed": variant_result.get("inference_speed", "fast"),
-                        "quality_preservation": variant_result.get("quality_preservation", "high")
+                    results["base_models_processed"][base_model_name] = {
+                        "adapters_merged": len(adapters),
+                        "merge_success": True,
+                        "gguf_created": gguf_result.get("success", False),
+                        "gguf_file": gguf_result.get("gguf_file", None),
+                        "gguf_size_mb": gguf_result.get("size_mb", 0)
                     }
                     
-                    results[variant_name] = variant_result
-                    self.logger.info(f"✅ {variant_name} created successfully")
+                    if gguf_result.get("success", False):
+                        results["gguf_files_created"][base_model_name] = gguf_result
+                        results["total_gguf_files_created"] += 1
+                    
+                    results["total_adapters_processed"] += len(adapters)
                 else:
-                    self.logger.info(f"⏭️ {variant_name} disabled, skipping")
+                    self.logger.error(f"   Failed to merge adapters for base model: {base_model_name}")
+                    results["base_models_processed"][base_model_name] = {
+                        "adapters_merged": 0,
+                        "merge_success": False,
+                        "error": merge_result.get("error", "Unknown error")
+                    }
             
-            self.logger.info(f"✅ Model variants orchestration completed: {len(results)} variants created")
+            self.logger.info(f"✅ Trained adapters processing completed:")
+            self.logger.info(f"   Total adapters processed: {results['total_adapters_processed']}")
+            self.logger.info(f"   Total GGUF files created: {results['total_gguf_files_created']}")
+            
             return results
             
         except Exception as e:
-            self.logger.error(f"❌ Model variants orchestration failed: {e}")
+            self.logger.error(f"❌ Trained adapters processing failed: {e}")
             return {"error": str(e)}
     
-    def _create_model_variant_request(self, variant_name: str, variant_config: Dict[str, Any]) -> Dict[str, Any]:
-        """Create enhanced model variant request with universal device support"""
+    def _discover_trained_adapters(self) -> List[Dict[str, Any]]:
+        """Discover all trained adapters in data/production/trained/"""
+        adapters = []
         
-        # Enhanced request with universal device optimization
+        if not self.trained_dir.exists():
+            self.logger.warning(f"   Trained directory does not exist: {self.trained_dir}")
+            return adapters
+        
+        # Walk through all category directories
+        for category_dir in self.trained_dir.iterdir():
+            if category_dir.is_dir():
+                category = category_dir.name
+                self.logger.info(f"   Scanning category: {category}")
+                
+                # Walk through all domain directories
+                for domain_dir in category_dir.iterdir():
+                    if domain_dir.is_dir():
+                        domain = domain_dir.name
+                        adapter_dir = domain_dir / "adapter"
+                        
+                        if adapter_dir.exists():
+                            adapter_config_file = adapter_dir / "adapter_config.json"
+                            adapter_model_file = adapter_dir / "adapter_model.safetensors"
+                            
+                            if adapter_config_file.exists() and adapter_model_file.exists():
+                                # Read adapter config to get base model info
+                                try:
+                                    with open(adapter_config_file, 'r', encoding='utf-8') as f:
+                                        adapter_config = json.load(f)
+                                    
+                                    adapter_info = {
+                                        "category": category,
+                                        "domain": domain,
+                                        "adapter_path": str(adapter_dir),
+                                        "base_model": adapter_config.get("base_model_name_or_path", "unknown"),
+                                        "adapter_config": adapter_config,
+                                        "model_size_mb": adapter_model_file.stat().st_size / (1024 * 1024)
+                                    }
+                                    
+                                    adapters.append(adapter_info)
+                                    self.logger.info(f"     Found adapter: {domain} ({adapter_info['model_size_mb']:.1f}MB)")
+                                    
+                                except Exception as e:
+                                    self.logger.error(f"     Failed to read adapter config for {domain}: {e}")
+        
+        return adapters
+    
+    def _group_adapters_by_base_model(self, adapters: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+        """Group adapters by their base model"""
+        adapters_by_base_model = {}
+        
+        for adapter in adapters:
+            base_model = adapter.get("base_model", "unknown")
+            if base_model not in adapters_by_base_model:
+                adapters_by_base_model[base_model] = []
+            adapters_by_base_model[base_model].append(adapter)
+        
+        return adapters_by_base_model
+    
+    def _create_adapter_merge_request(self, base_model_name: str, adapters: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Create request for merging adapters with base model"""
+        
+        # Get base model configuration from config
+        base_model_config = self.config_manager._global_params.get('fallback_base_model', base_model_name)
+        
         request = {
-            "variant_name": variant_name,
-            "base_model": variant_config.get("base_model", self.config_manager._global_params.get('fallback_base_model')),
-            "domains": variant_config.get("domains", 62),
-            "target_size_mb": variant_config.get("target_size_mb", 8.3),
-            "quantization_type": variant_config.get("quantization_type", "Q4_K_M"),
-            "universal_device_support": {
-                "mobile_optimization": True,
-                "desktop_optimization": True,
-                "browser_optimization": True,
-                "edge_optimization": True,
-                "memory_efficiency": "optimal",
-                "inference_speed": "fast",
-                "quality_preservation": "high"
+            "base_model_name": base_model_name,
+            "base_model_path": base_model_config,
+            "adapters": adapters,
+            "merge_strategy": "weighted_average",  # or "sequential", "parallel"
+            "quantization_type": "Q4_K_M",
+            "target_size_mb": 8.3,
+            "quality_targets": {
+                "minimum_quality": 0.70,
+                "target_accuracy": 99.99,
+                "validation_required": True,
+                "llama_cpp_compatibility": True
             },
             "trinity_enhancements": {
                 "contextual_intelligence": True,
@@ -287,39 +371,51 @@ class EnhancedGGUFFactory:
                 "crisis_intervention": True,
                 "professional_boundaries": True,
                 "dynamic_ratio_optimization": True
-            },
-            "quality_targets": {
-                "minimum_quality": 0.70,
-                "target_accuracy": 99.99,
-                "validation_required": True,
-                "llama_cpp_compatibility": True
             }
         }
         
-        # Add variant-specific optimizations
-        if variant_name == "A_universal_full":
-            request.update({
-                "purpose": "Maximum intelligence",
-                "optimization_focus": "capability",
-                "memory_priority": "high",
-                "speed_priority": "medium"
-            })
-        elif variant_name == "B_universal_lite":
-            request.update({
-                "purpose": "Fast universal responses",
-                "optimization_focus": "speed",
-                "memory_priority": "medium",
-                "speed_priority": "high"
-            })
-        elif variant_name == "C_category_specific":
-            request.update({
-                "purpose": "Healthcare specialist",
-                "optimization_focus": "specialization",
-                "memory_priority": "low",
-                "speed_priority": "very_high"
-            })
-        
         return request
+    
+    def _create_gguf_from_merged_model(self, base_model_name: str, merge_result: Dict[str, Any]) -> Dict[str, Any]:
+        """Create GGUF file from merged model"""
+        
+        try:
+            # Get merged model path from merge result
+            merged_model_path = merge_result.get("merged_model_path")
+            if not merged_model_path:
+                return {"success": False, "error": "No merged model path provided"}
+            
+            # Create GGUF creation request
+            request = {
+                "model_path": merged_model_path,
+                "output_path": str(self.models_dir / "production" / f"{base_model_name}_merged.gguf"),
+                "quantization_type": "Q4_K_M",
+                "target_size_mb": 8.3,
+                "llama_cpp_compatibility": True
+            }
+            
+            # Delegate to IntelligentModelFactory for GGUF creation
+            gguf_result = self.model_factory.create_gguf_from_model(request)
+            
+            if gguf_result.get("success", False):
+                gguf_file = gguf_result.get("gguf_file")
+                size_mb = gguf_result.get("size_mb", 0)
+                
+                self.logger.info(f"   ✅ GGUF created: {gguf_file} ({size_mb:.1f}MB)")
+                
+                return {
+                    "success": True,
+                    "gguf_file": gguf_file,
+                    "size_mb": size_mb,
+                    "base_model": base_model_name
+                }
+            else:
+                self.logger.error(f"   ❌ GGUF creation failed: {gguf_result.get('error', 'Unknown error')}")
+                return {"success": False, "error": gguf_result.get("error", "Unknown error")}
+                
+        except Exception as e:
+            self.logger.error(f"   ❌ GGUF creation failed: {e}")
+            return {"success": False, "error": str(e)}
     
     def _orchestrate_speech_models(self) -> Dict[str, Any]:
         """Orchestrate speech models creation using SpeechModelsFactory"""
@@ -432,7 +528,9 @@ class EnhancedGGUFFactory:
                     "model_factory": "IntelligentModelFactory",
                     "speech_factory": "SpeechModelsFactory", 
                     "translation_factory": "TranslationFactory"
-                }
+                },
+                "approach": "trained_adapters_merge",
+                "trained_adapters_source": str(self.trained_dir)
             }
             
             # Save manifest using paths config
@@ -484,7 +582,7 @@ class WorkingEnhancedFactory:
 
 def main():
     """Main orchestration function"""
-    logger.info("🚀 Starting Enhanced GGUF Factory (Pure Orchestration)")
+    logger.info("🚀 Starting Enhanced GGUF Factory (Trained Adapters Approach)")
     logger.info("=" * 80)
     
     try:
@@ -497,7 +595,8 @@ def main():
         # Report results
         if results.get("success", False):
             logger.info("✅ All models created successfully!")
-            logger.info(f"   Model variants: {len(results.get('model_variants', {}).get('variants', {}))}")
+            logger.info(f"   Base models processed: {len(results.get('model_variants', {}).get('base_models_processed', {}))}")
+            logger.info(f"   GGUF files created: {results.get('model_variants', {}).get('total_gguf_files_created', 0)}")
             logger.info(f"   Speech models: {results.get('speech_models', {}).get('success', False)}")
             logger.info(f"   Translation models: {results.get('translation', {}).get('success', False)}")
             logger.info(f"   Garbage collection: {results.get('garbage_collection', {}).get('success', False)}")
