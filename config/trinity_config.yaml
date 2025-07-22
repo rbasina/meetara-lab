@@ -305,6 +305,8 @@ domain_config:
       research_assistance: Qwen/Qwen2.5-7B-Instruct
       study_techniques: Qwen/Qwen2.5-7B-Instruct
       educational_technology: Qwen/Qwen2.5-7B-Instruct
+      teaching: Qwen/Qwen2.5-7B-Instruct
+      education: Qwen/Qwen2.5-7B-Instruct
   creative:
     category_tier: quality
     base_model: Qwen/Qwen2.5-7B-Instruct
@@ -319,6 +321,7 @@ domain_config:
       art_appreciation: Qwen/Qwen2.5-7B-Instruct
       mythology: Qwen/Qwen2.5-7B-Instruct
       spiritual: Qwen/Qwen2.5-7B-Instruct
+      creative_writing: Qwen/Qwen2.5-7B-Instruct
   psychology_wellness:
     category_tier: quality
     base_model: Qwen/Qwen2.5-7B-Instruct
@@ -355,6 +358,8 @@ domain_config:
       legal_assistance: Qwen/Qwen2.5-7B-Instruct
       insurance: Qwen/Qwen2.5-7B-Instruct
       real_estate: Qwen/Qwen2.5-7B-Instruct
+      legal: Qwen/Qwen2.5-7B-Instruct
+      financial: Qwen/Qwen2.5-7B-Instruct
   emergency_crisis:
     category_tier: premium
     base_model: Qwen/Qwen2.5-7B-Instruct
@@ -370,6 +375,7 @@ domain_config:
       aeronautics: Qwen/Qwen2.5-7B-Instruct
       automobile: Qwen/Qwen2.5-7B-Instruct
       space_technology: Qwen/Qwen2.5-7B-Instruct
+      aerospace_engineering: Qwen/Qwen2.5-7B-Instruct
   industrial_manufacturing:
     category_tier: expert
     base_model: Qwen/Qwen2.5-7B-Instruct

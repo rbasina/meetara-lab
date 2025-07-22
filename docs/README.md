@@ -55,6 +55,10 @@ meetara-lab/
 ├── notebooks/                # 📚 Jupyter notebooks + connections
 ├── tests/                    # 🧪 All tests + intelligence validation
 ├── docs/                     # 📖 Documentation + demos + archive
+│   ├── TRAINING_PROCESS_DEEP_DIVE.md  # 🚀 Complete training methodology
+│   ├── ARCHITECTURE.md       # 🏗️ Technical architecture
+│   ├── GUIDE.md              # 🎯 User guide and instructions
+│   └── DEVELOPMENT.md        # 🔧 Developer guide and workflow
 └── memory-bank/              # 🧠 Complete project memory
 ```
 

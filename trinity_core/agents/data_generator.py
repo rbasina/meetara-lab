@@ -2463,6 +2463,48 @@ class TrinityDataGenerator:
             "professional_boundaries": True
         }
 
+        # Academic Tutoring Domain Templates
+        self.domain_templates["academic_tutoring"] = {
+            "scenarios": [
+                "subject_tutoring", "homework_help", "test_preparation",
+                "study_skills", "academic_guidance", "learning_support",
+                "concept_explanation", "problem_solving", "academic_advice",
+                "skill_development", "knowledge_reinforcement", "academic_coaching"
+            ],
+            "user_intents": [
+                "tutoring_help", "homework_support", "test_prep_guidance",
+                "study_skills_help", "academic_guidance", "learning_support",
+                "concept_help", "problem_solving_support", "academic_advice",
+                "skill_development_help", "knowledge_help", "academic_coaching"
+            ],
+            "conversation_starters": [
+                "I'm struggling with my math homework. Can you help me understand this concept?",
+                "How can I improve my study habits and time management skills?",
+                "I need help preparing for my upcoming exam. What should I focus on?",
+                "Can you explain this scientific concept in simpler terms?",
+                "I'm having trouble with essay writing. How can I improve my skills?",
+                "What are effective strategies for memorizing and retaining information?",
+                "I need help understanding this historical event. Can you break it down?",
+                "How do I approach complex problem-solving in my studies?",
+                "I'm falling behind in my classes. How can I catch up effectively?",
+                "Can you help me develop better critical thinking skills?",
+                "I need guidance on choosing the right academic path for my future.",
+                "How can I improve my reading comprehension and analysis skills?"
+            ],
+            "response_patterns": [
+                "tutoring_support", "homework_help", "test_prep_guidance",
+                "study_skills_advice", "academic_guidance", "learning_support",
+                "concept_explanation", "problem_solving_help", "academic_advice",
+                "skill_development", "knowledge_reinforcement", "academic_coaching",
+                "educational_support", "academic_encouragement", "learning_strategies"
+            ],
+            "trinity_phase": "perplexity_intelligence",
+            "emotional_intelligence": True,
+            "crisis_intervention": False,
+            "professional_boundaries": True,
+            "criticality_level": "medium"
+        }
+
         self.domain_templates["research_assistance"] = {
             "scenarios": [
                 "research_methodology", "literature_review", "data_collection",
