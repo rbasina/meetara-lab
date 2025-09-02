@@ -11,6 +11,14 @@ from datetime import datetime
 import re
 from dataclasses import dataclass
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # If python-dotenv is not installed, just use system environment variables
+    pass
+
 # Trinity Architecture imports
 from trinity_core.agents.coordination.lightweight_mcp_v2 import LightweightMCPv2, MCPMessage
 from trinity_core.intelligence_layer.intelligence.comprehensive_intelligence import TARAComprehensiveIntelligence
@@ -66,6 +74,7 @@ class TrinityDataGenerator:
         self._initialize_user_intent_urgency()
         self._initialize_dynamic_ratio_config()
         self._initialize_templates()
+        self._initialize_realtime_sources()
 
     def _initialize_urgency_patterns(self) -> None:
         """Initialize urgency pattern analysis for Trinity Architecture."""
@@ -132,8 +141,8 @@ class TrinityDataGenerator:
         # Use comprehensive domain templates from original TARA Universal Model
         self.domain_templates = COMPREHENSIVE_DOMAIN_TEMPLATES.copy()
         
-        logger.info(f"✅ Loaded comprehensive templates for {len(self.domain_templates)} domains from original TARA Universal Model")
-        logger.info("🎯 All domains now have rich multi-scenario format with Trinity Architecture enhancements")
+        logger.info(f"Γ£à Loaded comprehensive templates for {len(self.domain_templates)} domains from original TARA Universal Model")
+        logger.info("≡ƒÄ» All domains now have rich multi-scenario format with Trinity Architecture enhancements")
         
         # ===== HEALTHCARE DOMAINS =====
         
@@ -2463,48 +2472,6 @@ class TrinityDataGenerator:
             "professional_boundaries": True
         }
 
-        # Academic Tutoring Domain Templates
-        self.domain_templates["academic_tutoring"] = {
-            "scenarios": [
-                "subject_tutoring", "homework_help", "test_preparation",
-                "study_skills", "academic_guidance", "learning_support",
-                "concept_explanation", "problem_solving", "academic_advice",
-                "skill_development", "knowledge_reinforcement", "academic_coaching"
-            ],
-            "user_intents": [
-                "tutoring_help", "homework_support", "test_prep_guidance",
-                "study_skills_help", "academic_guidance", "learning_support",
-                "concept_help", "problem_solving_support", "academic_advice",
-                "skill_development_help", "knowledge_help", "academic_coaching"
-            ],
-            "conversation_starters": [
-                "I'm struggling with my math homework. Can you help me understand this concept?",
-                "How can I improve my study habits and time management skills?",
-                "I need help preparing for my upcoming exam. What should I focus on?",
-                "Can you explain this scientific concept in simpler terms?",
-                "I'm having trouble with essay writing. How can I improve my skills?",
-                "What are effective strategies for memorizing and retaining information?",
-                "I need help understanding this historical event. Can you break it down?",
-                "How do I approach complex problem-solving in my studies?",
-                "I'm falling behind in my classes. How can I catch up effectively?",
-                "Can you help me develop better critical thinking skills?",
-                "I need guidance on choosing the right academic path for my future.",
-                "How can I improve my reading comprehension and analysis skills?"
-            ],
-            "response_patterns": [
-                "tutoring_support", "homework_help", "test_prep_guidance",
-                "study_skills_advice", "academic_guidance", "learning_support",
-                "concept_explanation", "problem_solving_help", "academic_advice",
-                "skill_development", "knowledge_reinforcement", "academic_coaching",
-                "educational_support", "academic_encouragement", "learning_strategies"
-            ],
-            "trinity_phase": "perplexity_intelligence",
-            "emotional_intelligence": True,
-            "crisis_intervention": False,
-            "professional_boundaries": True,
-            "criticality_level": "medium"
-        }
-
         self.domain_templates["research_assistance"] = {
             "scenarios": [
                 "research_methodology", "literature_review", "data_collection",
@@ -3834,6 +3801,63 @@ class TrinityDataGenerator:
             "professional_boundaries": True
         }
 
+    def _initialize_realtime_sources(self) -> None:
+        """Initialize AI service APIs for enhanced training data generation."""
+        try:
+            # AI Service API Keys - Load ONLY from environment variables
+            self.openai_api_key = os.getenv("OPENAI_API_KEY")
+            self.gemini_api_key = os.getenv("GEMINI_API_KEY")
+            self.deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
+            
+            # AI Service configuration - Load from config or use defaults
+            ai_config = self.config.get("ai_services", {})
+            self.ai_services = {
+                "openai": {
+                    "enabled": bool(self.openai_api_key),
+                    "model": ai_config.get("openai_model", "gpt-4o-mini"),
+                    "max_tokens": ai_config.get("openai_max_tokens", 2000),
+                    "temperature": ai_config.get("openai_temperature", 0.7)
+                },
+                "gemini": {
+                    "enabled": bool(self.gemini_api_key),
+                    "model": ai_config.get("gemini_model", "gemini-1.5-flash"),
+                    "max_tokens": ai_config.get("gemini_max_tokens", 2000),
+                    "temperature": ai_config.get("gemini_temperature", 0.7)
+                },
+                "deepseek": {
+                    "enabled": bool(self.deepseek_api_key),
+                    "model": ai_config.get("deepseek_model", "deepseek-chat"),
+                    "max_tokens": ai_config.get("deepseek_max_tokens", 2000),
+                    "temperature": ai_config.get("deepseek_temperature", 0.7)
+                }
+            }
+            
+            # AI-generated content cache
+            self.ai_content_cache = {}
+            self.ai_cache_timestamps = {}
+            
+            # AI service configuration - Load from config or use defaults
+            ai_config_settings = self.config.get("ai_config", {})
+            self.ai_config = {
+                "cache_duration": ai_config_settings.get("cache_duration", 3600),  # 1 hour cache for AI-generated content
+                "max_scenarios_per_domain": ai_config_settings.get("max_scenarios_per_domain", 100),
+                "enable_ai_enhancement": any(service["enabled"] for service in self.ai_services.values()),
+                "fallback_to_templates": ai_config_settings.get("fallback_to_templates", True),  # Use existing templates if AI services fail
+                "quality_threshold": ai_config_settings.get("quality_threshold", 0.8)  # Minimum quality score for AI-generated content
+            }
+            
+            # Log available AI services
+            enabled_services = [name for name, config in self.ai_services.items() if config["enabled"]]
+            if enabled_services:
+                logger.info(f"✅ AI services initialized: {', '.join(enabled_services)}")
+                logger.info("🔑 API keys loaded from environment/config")
+            else:
+                logger.warning("⚠️ No AI services configured - falling back to template-based generation")
+            
+        except Exception as e:
+            logger.error(f"❌ Error initializing AI services: {e}")
+            self.ai_config = {"enable_ai_enhancement": False, "fallback_to_templates": True}
+
     def _create_domain_expert_agent(self, domain: str) -> Dict[str, Any]:
         """
         Create a domain expert agent with Trinity Architecture enhancements.
@@ -3860,14 +3884,14 @@ class TrinityDataGenerator:
         Generate comprehensive training data for a specific domain with Trinity Architecture enhancements.
         Includes emotion/context learning, intelligent routing, and robust data generation.
         """
-        logger.info(f"🎯 Generating intelligent training data for domain: {domain}")
+        logger.info(f"≡ƒÄ» Generating intelligent training data for domain: {domain}")
         start_time = time.time()
         
         try:
             # Get domain configuration
             domain_details = self.config_manager._get_domain_details(domain)
             if domain_details is None:
-                logger.error(f"❌ Could not get domain details for '{domain}' - domain not found in configuration")
+                logger.error(f"Γ¥î Could not get domain details for '{domain}' - domain not found in configuration")
                 return {
                     "status": "error",
                     "domain": domain,
@@ -3883,7 +3907,7 @@ class TrinityDataGenerator:
             # Get domain templates with Trinity enhancements
             domain_config = self.domain_templates.get(domain, {})
             if not domain_config:
-                logger.warning(f"⚠️ No templates found for domain {domain}, using default templates")
+                logger.warning(f"ΓÜá∩╕Å No templates found for domain {domain}, using default templates")
                 domain_config = self._get_default_domain_config(domain)
             
             # Analyze urgency patterns and domain criticality
@@ -3984,14 +4008,14 @@ class TrinityDataGenerator:
                 }
             }
             
-            logger.info(f"✅ Generated {combined_data['total_samples']} samples for {domain} in {processing_time:.2f}s")
-            logger.info(f"   → Real-time ratio: {realtime_ratio:.2%}, Criticality: {domain_criticality:.2f}")
-            logger.info(f"   → Quality metrics: Diversity={combined_data['quality_metrics']['diversity_score']:.2f}")
+            logger.info(f"Γ£à Generated {combined_data['total_samples']} samples for {domain} in {processing_time:.2f}s")
+            logger.info(f"   ΓåÆ Real-time ratio: {realtime_ratio:.2%}, Criticality: {domain_criticality:.2f}")
+            logger.info(f"   ΓåÆ Quality metrics: Diversity={combined_data['quality_metrics']['diversity_score']:.2f}")
             
             return result
             
         except Exception as e:
-            logger.error(f"❌ Data generation failed for domain {domain}: {e}")
+            logger.error(f"Γ¥î Data generation failed for domain {domain}: {e}")
             return {
                 "status": "error",
                 "domain": domain,
@@ -4098,7 +4122,7 @@ class TrinityDataGenerator:
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"💾 Saved training data to: {output_file}")
+        logger.info(f"≡ƒÆ╛ Saved training data to: {output_file}")
         return output_file
 
     def _analyze_urgency_patterns(self, conversation_starters: List[str]) -> float:
@@ -4520,18 +4544,18 @@ class TrinityDataGenerator:
         """Enhance crisis response with Trinity Architecture."""
         if domain_expert.get("crisis_intervention"):
             crisis_enhancement = "\n\n[CRISIS INTERVENTION ACTIVE]"
-            crisis_enhancement += "\n• Immediate safety assessment"
-            crisis_enhancement += "\n• Professional referral provided"
-            crisis_enhancement += "\n• Emergency protocols activated"
+            crisis_enhancement += "\nΓÇó Immediate safety assessment"
+            crisis_enhancement += "\nΓÇó Professional referral provided"
+            crisis_enhancement += "\nΓÇó Emergency protocols activated"
             return base_response + crisis_enhancement
         return base_response
 
     def _enhance_general_response(self, base_response: str, domain_expert: Dict) -> str:
         """Enhance general response with Trinity Architecture."""
         general_enhancement = "\n\n[TRINITY ARCHITECTURE ENHANCEMENT]"
-        general_enhancement += f"\n• Phase: {domain_expert['trinity_phase']}"
-        general_enhancement += f"\n• Safety Level: {domain_expert.get('safety_level', 'standard')}"
-        general_enhancement += f"\n• Privacy Level: {domain_expert.get('privacy_level', 'standard')}"
+        general_enhancement += f"\nΓÇó Phase: {domain_expert['trinity_phase']}"
+        general_enhancement += f"\nΓÇó Safety Level: {domain_expert.get('safety_level', 'standard')}"
+        general_enhancement += f"\nΓÇó Privacy Level: {domain_expert.get('privacy_level', 'standard')}"
         return base_response + general_enhancement
 
     def _generate_original_assistant_response(self, user_message: str, domain: str, 

@@ -89,6 +89,33 @@ meetara-lab/
 
 ---
 
+## 🤖 **AI SERVICES INTEGRATION**
+
+### **Enhanced Training Data Generation:**
+- **OpenAI GPT-4o-mini**: Realistic conversation scenarios and emotional intelligence
+- **Google Gemini 1.5 Flash**: Context-aware responses and domain expertise
+- **DeepSeek Chat**: Specialized reasoning and problem-solving scenarios
+
+### **Configuration & Security:**
+- **Environment Variables**: Secure API key management via `.env` files
+- **Automatic Fallback**: Template-based generation if AI services fail
+- **Cost Optimization**: Configurable usage limits and caching
+- **Zero Hardcoding**: No API keys in source code or configuration files
+
+### **Setup:**
+```bash
+# Copy environment template
+cp env.template .env
+
+# Edit .env with your API keys
+# Never commit .env to version control!
+
+# Test configuration
+python tests/test_ai_services_setup.py
+```
+
+---
+
 ## 🎯 **DOMAIN COVERAGE**
 
 ### **62 Total Domains Across 7 Categories:**

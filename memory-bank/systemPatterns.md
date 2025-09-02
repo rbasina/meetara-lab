@@ -1,7 +1,91 @@
 # MeeTARA Lab - System Patterns & Architecture
 *System architecture, key technical decisions, design patterns, component relationships*
 
-## 🚀 LATEST PATTERN: QLoRA INTEGRATION & CONFIGURATION-DRIVEN ARCHITECTURE
+## 🚀 LATEST PATTERN: AI SERVICES INTEGRATION & SECURE CREDENTIAL MANAGEMENT
+
+### **AI Services Integration Pattern**
+**Status**: ✅ **IMPLEMENTED** - Multi-AI service integration with secure credential management
+
+```
+Pattern: Multiple AI services with automatic fallback and secure credential handling
+Implementation: TrinityDataGenerator with AI service integration
+
+AI Services Architecture:
+TrinityDataGenerator (Enhanced Data Generation)
+├── OpenAI GPT-4o-mini (Realistic scenarios & emotional intelligence)
+├── Google Gemini 1.5 Flash (Context-aware responses & domain expertise)
+├── DeepSeek Chat (Specialized reasoning & problem-solving)
+├── Automatic Fallback (Template-based generation if AI fails)
+├── Intelligent Caching (Response caching to minimize API calls)
+└── Secure Credential Management (Environment variables only)
+
+Credential Security Pattern:
+.env File (Local Development)
+├── OPENAI_API_KEY (Secure API key storage)
+├── GEMINI_API_KEY (Secure API key storage)
+├── DEEPSEEK_API_KEY (Secure API key storage)
+└── Other Configuration (Environment settings)
+
+Configuration Files (Service Settings Only)
+├── ai_services_config.yaml (Models, tokens, temperature)
+├── No API Keys (Zero credential exposure)
+└── Service Configuration (Performance settings)
+```
+
+### **Secure Environment Variable Pattern**
+**Status**: ✅ **IMPLEMENTED** - Zero hardcoded credentials with environment variable management
+
+```
+Pattern: All credentials from environment variables, zero hardcoded values
+Implementation: python-dotenv integration with automatic loading
+
+Security Implementation:
+Before (Anti-pattern):
+openai_api_key = "sk-proj-your-actual-key-here"  # ❌ Hardcoded
+
+After (Correct pattern):
+openai_api_key = os.getenv("OPENAI_API_KEY")  # ✅ Environment variable
+
+Environment Loading:
+data_generator.py (Automatic Loading)
+├── from dotenv import load_dotenv
+├── load_dotenv() (Automatic .env file loading)
+├── os.getenv() (Secure credential access)
+└── Zero hardcoded values (Complete security)
+
+.gitignore Protection:
+.env (Never committed)
+├── Local development only
+├── Version control exclusion
+└── Secure credential storage
+```
+
+### **AI Service Fallback Pattern**
+**Status**: ✅ **IMPLEMENTED** - Intelligent fallback system for reliability
+
+```
+Pattern: AI service enhancement with automatic fallback to proven templates
+Implementation: Hybrid approach ensuring system reliability
+
+Fallback Strategy:
+Primary: AI Services (Enhanced generation)
+├── OpenAI (Realistic scenarios)
+├── Gemini (Emotional intelligence)
+└── DeepSeek (Domain expertise)
+
+Fallback: Template System (Proven reliability)
+├── Existing domain templates (100% tested)
+├── Trinity Architecture enhancements (Crisis, emotional intelligence)
+└── Guaranteed functionality (No AI dependency)
+
+Quality Assurance:
+├── AI Enhancement (When available)
+├── Template Fallback (When AI fails)
+├── Consistent Quality (Maintained standards)
+└── System Reliability (Always functional)
+```
+
+## 🚀 PREVIOUS PATTERN: QLoRA INTEGRATION & CONFIGURATION-DRIVEN ARCHITECTURE
 
 ### **QLoRA Manager Pattern**
 **Status**: ✅ **IMPLEMENTED** - Centralized QLoRA/LoRA management with configuration-driven approach
