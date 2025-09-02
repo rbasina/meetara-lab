@@ -1,0 +1,75 @@
+{
+  "speech_recognition": {
+    "enabled": true,
+    "real_time_mode": true,
+    "sample_rate": 16000,
+    "chunk_size": 1024,
+    "silence_threshold": 500,
+    "max_recording_time": 30.0,
+    "domain_awareness": true
+  },
+  "voice_mappings": {
+    "hi": {
+      "language_name": "Hindi",
+      "voice_id": "hi-IN-Standard-A",
+      "gender": "female",
+      "speed": 1.0,
+      "pitch": 1.0,
+      "enabled": true
+    },
+    "te": {
+      "language_name": "Telugu", 
+      "voice_id": "te-IN-Standard-A",
+      "gender": "female",
+      "speed": 1.0,
+      "pitch": 1.0,
+      "enabled": true
+    },
+    "ta": {
+      "language_name": "Tamil",
+      "voice_id": "ta-IN-Standard-A", 
+      "gender": "female",
+      "speed": 1.0,
+      "pitch": 1.0,
+      "enabled": true
+    },
+    "kn": {
+      "language_name": "Kannada",
+      "voice_id": "kn-IN-Standard-A",
+      "gender": "female", 
+      "speed": 1.0,
+      "pitch": 1.0,
+      "enabled": true
+    },
+    "en": {
+      "language_name": "English",
+      "voice_id": "en-US-Standard-A",
+      "gender": "female",
+      "speed": 1.0,
+      "pitch": 1.0,
+      "enabled": true
+    }
+  },
+  "domain_keywords": {
+    "healthcare": [
+      "doctor", "hospital", "medicine", "symptoms", "treatment",
+      "डॉक्टर", "हॉस्पिटल", "दवा", "लक्षण", "उपचार",
+      "డాక్టర్", "హాస్పిటల్", "మందు", "లక్షణాలు", "చికిత్స"
+    ],
+    "education": [
+      "study", "learn", "teacher", "student", "course",
+      "पढ़ाई", "सीखना", "शिक्षक", "छात्र", "कोर्स",
+      "చదువు", "నేర్చుకోవడం", "ఉపాధ్యాయుడు", "విద్యార్థి", "కోర్సు"
+    ],
+    "general": [
+      "hello", "help", "information", "question", "answer",
+      "नमस्ते", "मदद", "जानकारी", "प्रश्न", "उत्तर",
+      "నమస్కారం", "సహాయం", "సమాచారం", "ప్రశ్న", "సమాధానం"
+    ]
+  },
+  "trinity_enhancements": {
+    "arc_reactor_optimization": true,
+    "perplexity_context_awareness": true,
+    "einstein_fusion_amplification": true
+  }
+}

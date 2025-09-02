@@ -14,6 +14,11 @@ last_updated: '2025-07-09'
 # - codellama/CodeLlama-13b-Instruct-hf → codellama/CodeLlama-7b-Instruct-hf  
 # - meta-llama/Llama-3-70B-Instruct → meta-llama/Llama-3-8B-Instruct
 # 
+# 🚀 QWEN3 UPGRADE COMPLETE (July 20, 2025)
+# Enhanced models with superior instruction-following and reasoning capabilities:
+# - Qwen/Qwen3-Instruct-2507: Premium instruction-following for all tiers
+# - Qwen/Qwen3-Thinking-2507: Advanced reasoning for complex scenarios
+# 
 # This ensures 100% success rate on Colab A100 with 30GB total pipeline usage
 
 # config/trinity_config.yaml
@@ -22,6 +27,8 @@ llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
 
 # Model name mappings (centralized model definitions)
 model_names:
+  qwen3_7b_instruct: "Qwen/Qwen3-Instruct-2507"
+  qwen3_7b_thinking: "Qwen/Qwen3-Thinking-2507"
   qwen_7b_instruct: "Qwen/Qwen2.5-7B-Instruct"
   qwen_14b_instruct: "Qwen/Qwen2.5-14B-Instruct"
   mistral_7b_instruct: "mistralai/Mistral-7B-Instruct-v0.2"
@@ -35,7 +42,7 @@ model_names:
 
 model_tiers:
   premium:
-    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct
+    base_model_suggestion: Qwen/Qwen3-Instruct-2507
     sample_count: 8000
     num_epochs: 2
     batch_size: 1
@@ -43,7 +50,7 @@ model_tiers:
     learning_rate: 1e-4
     quality_target: 99.9%
   expert:
-    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct  # Changed from 14B due to CUDA memory crisis
+    base_model_suggestion: Qwen/Qwen3-Instruct-2507  # Enhanced instruction-following capabilities
     sample_count: 6000
     num_epochs: 2
     batch_size: 2
@@ -51,7 +58,7 @@ model_tiers:
     learning_rate: 0.00015
     quality_target: 99.5%
   quality:
-    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct
+    base_model_suggestion: Qwen/Qwen3-Instruct-2507
     sample_count: 5000
     num_epochs: 1
     batch_size: 4
@@ -59,7 +66,7 @@ model_tiers:
     learning_rate: 2e-4
     quality_target: 99.0%
   balanced:
-    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct
+    base_model_suggestion: Qwen/Qwen3-Instruct-2507
     sample_count: 4000
     num_epochs: 1
     batch_size: 6
@@ -67,7 +74,7 @@ model_tiers:
     learning_rate: 0.00025
     quality_target: 98.5%
   fast:
-    base_model_suggestion: Qwen/Qwen2.5-7B-Instruct
+    base_model_suggestion: Qwen/Qwen3-Instruct-2507
     sample_count: 3000
     num_epochs: 1
     batch_size: 8
@@ -206,7 +213,7 @@ global_tara_params:
   validation_target: 101.0
   output_format: Q4_K_M
   target_gguf_size_mb: 8.3
-  fallback_base_model: Qwen/Qwen2.5-7B-Instruct
+  fallback_base_model: Qwen/Qwen3-Instruct-2507
   generate_synthetic_data: false
   quality_focus: true
   environment: dev
