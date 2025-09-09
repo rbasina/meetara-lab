@@ -1,0 +1,155 @@
+{
+  "timestamp": "2025-09-09T02:11:54.590320",
+  "dry_run": true,
+  "folders_to_remove": [
+    {
+      "path": "models/dev",
+      "size_mb": 7.85,
+      "reason": "Obsolete/duplicate model structure"
+    },
+    {
+      "path": "models/base_models",
+      "size_mb": 2673.74,
+      "reason": "Obsolete/duplicate model structure"
+    },
+    {
+      "path": "models/production/A_universal_full",
+      "size_mb": 4466.13,
+      "reason": "Obsolete/duplicate model structure"
+    },
+    {
+      "path": "models/production/C_category_specific",
+      "size_mb": 0.0,
+      "reason": "Obsolete/duplicate model structure"
+    },
+    {
+      "path": "models/production/D_domain_specific",
+      "size_mb": 0.0,
+      "reason": "Obsolete/duplicate model structure"
+    },
+    {
+      "path": "models/production/speech_models",
+      "size_mb": 1822.14,
+      "reason": "Obsolete/duplicate model structure"
+    },
+    {
+      "path": "models/production/translation_models",
+      "size_mb": 0.0,
+      "reason": "Obsolete/duplicate model structure"
+    },
+    {
+      "path": "models/reflection_system",
+      "size_mb": 0.01,
+      "reason": "Obsolete/duplicate model structure"
+    },
+    {
+      "path": "data/dev/training",
+      "size_mb": 0.67,
+      "reason": "Old development training data (can be regenerated)"
+    },
+    {
+      "path": "logs\\dev",
+      "size_mb": 0.0,
+      "reason": "Old log files (>7 days)"
+    },
+    {
+      "path": "__pycache__",
+      "size_mb": 0.02,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "scripts\\__pycache__",
+      "size_mb": 0.02,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "core\\__pycache__",
+      "size_mb": 0.03,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "factory\\__pycache__",
+      "size_mb": 0.06,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "deployment\\__pycache__",
+      "size_mb": 0.02,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "core\\agents\\__pycache__",
+      "size_mb": 1.33,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "core\\intelligence_layer\\__pycache__",
+      "size_mb": 0.0,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "core\\core_components\\__pycache__",
+      "size_mb": 0.21,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "core\\intelligence_layer\\intelligence\\__pycache__",
+      "size_mb": 0.26,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "core\\agents\\coordination\\__pycache__",
+      "size_mb": 0.04,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "core\\agents\\system_integration\\__pycache__",
+      "size_mb": 0.01,
+      "reason": "Python cache directory"
+    },
+    {
+      "path": "llama.cpp\\gguf-py\\gguf\\__pycache__",
+      "size_mb": 0.42,
+      "reason": "Python cache directory"
+    }
+  ],
+  "files_to_remove": [
+    {
+      "path": "models\\production\\mobile\\meetara-Qwen3-4B-Thinking-2507-Q4_K_M-20250909.gguf",
+      "size_mb": 4082.11,
+      "reason": "Individual model (replaced by universal)"
+    },
+    {
+      "path": "models\\production\\mobile\\meetara-Qwen3-4B-Instruct-2507-Q4_K_M-20250909.gguf",
+      "size_mb": 4082.11,
+      "reason": "Individual model (replaced by universal)"
+    },
+    {
+      "path": "models\\production\\desktop\\meetara-Qwen3-8B-Q4_K_M-20250909.gguf",
+      "size_mb": 4793.47,
+      "reason": "Individual model (replaced by universal)"
+    },
+    {
+      "path": "deployment/colab_real_gguf_setup.py",
+      "size_mb": 0.0,
+      "reason": "Obsolete/redundant deployment file"
+    },
+    {
+      "path": "deployment/simple_production_launcher.py",
+      "size_mb": 0.01,
+      "reason": "Obsolete/redundant deployment file"
+    },
+    {
+      "path": "deployment/meetara_production_launcher_notebook.txt",
+      "size_mb": 0.01,
+      "reason": "Obsolete/redundant deployment file"
+    }
+  ],
+  "space_freed_mb": 21930.680330238338,
+  "preserved_essential_files": [
+    "models/production/mobile/meetara_mobile_universal-model-Q4_K_M-20250909.gguf",
+    "models/production/desktop/meetara_desktop_universal-model-Q4_K_M-20250909.gguf",
+    "models/production/model_manifest.json",
+    "models/production/mobile_desktop_manifest.json"
+  ]
+}
