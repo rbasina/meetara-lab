@@ -36,6 +36,17 @@ class Qwen3ModelDownloader:
         self.mobile_dir = self.base_dir / "mobile"
         self.desktop_dir = self.base_dir / "desktop"
         
+        # Resolve Hugging Face cache directory
+        hf_cache_env = os.getenv("HF_HUB_CACHE")
+        if hf_cache_env:
+            self.hf_cache_dir = Path(hf_cache_env)
+        else:
+            hf_home = os.getenv("HF_HOME")
+            if hf_home:
+                self.hf_cache_dir = Path(hf_home) / "hub"
+            else:
+                self.hf_cache_dir = Path.home() / ".cache" / "huggingface" / "hub"
+        
         # Model specifications
         self.mobile_models = {
             "Qwen3-4B-Thinking-2507": "Qwen/Qwen3-4B-Thinking-2507",
@@ -43,8 +54,8 @@ class Qwen3ModelDownloader:
         }
         
         self.desktop_models = {
-            "Qwen3-8B-Thinking-2507": "Qwen/Qwen3-8B-Thinking-2507", 
-            "Qwen3-8B-Instruct-2507": "Qwen/Qwen3-8B-Instruct-2507"
+            "Qwen3-8B": "Qwen/Qwen3-8B",  # This IS the instruct-tuned version
+            "Qwen3-8B-Base": "Qwen/Qwen3-8B-Base"  # Pure foundation model
         }
         
         # Ensure directories exist
@@ -54,26 +65,26 @@ class Qwen3ModelDownloader:
         logger.info("Qwen3ModelDownloader initialized")
     
     def download_model(self, model_name: str, model_id: str) -> Path:
-        """Download a model from Hugging Face"""
+        """Download a model to the HF cache and return local snapshot path"""
         logger.info(f"📥 Downloading {model_name}...")
         
         try:
             # Use huggingface-hub to download
             from huggingface_hub import snapshot_download
             
-            # Download to a temporary directory
-            temp_dir = Path(f"temp_models/{model_name}")
-            temp_dir.mkdir(parents=True, exist_ok=True)
+            # Ensure cache directory exists
+            self.hf_cache_dir.mkdir(parents=True, exist_ok=True)
             
-            # Download the model
-            snapshot_download(
+            # Download to cache; returns snapshot path
+            snapshot_path = snapshot_download(
                 repo_id=model_id,
-                local_dir=str(temp_dir),
+                cache_dir=str(self.hf_cache_dir),
+                local_dir=None,
                 local_dir_use_symlinks=False
             )
             
-            logger.info(f"✅ Downloaded {model_name}")
-            return temp_dir
+            logger.info(f"✅ Downloaded {model_name} to cache: {snapshot_path}")
+            return Path(snapshot_path)
             
         except Exception as e:
             logger.error(f"❌ Failed to download {model_name}: {str(e)}")
@@ -89,8 +100,8 @@ class Qwen3ModelDownloader:
             output_filename = f"meetara-{model_name}-Q4_K_M-{timestamp}.gguf"
             output_path = output_dir / output_filename
             
-            # Find the convert script
-            convert_script = Path("llama.cpp/convert_hf_to_gguf.py")
+            # Find the convert script (use absolute path, no cwd to avoid double path issues)
+            convert_script = Path("llama.cpp") / "convert_hf_to_gguf.py"
             if not convert_script.exists():
                 logger.error(f"❌ Convert script not found: {convert_script}")
                 return None
@@ -100,11 +111,11 @@ class Qwen3ModelDownloader:
                 "python", str(convert_script),
                 str(model_dir),
                 "--outfile", str(output_path),
-                "--outtype", "q4_k_m"
+                "--outtype", "q8_0"  # Fixed: use valid quantization type
             ]
             
             logger.info(f"Running: {' '.join(cmd)}")
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd="llama.cpp")
+            result = subprocess.run(cmd, capture_output=True, text=True)
             
             if result.returncode == 0:
                 logger.info(f"✅ Converted {model_name} to GGUF")
@@ -134,14 +145,27 @@ class Qwen3ModelDownloader:
                 if gguf_path:
                     created_models[model_name] = str(gguf_path)
                 
-                # Cleanup temp directory
-                shutil.rmtree(model_dir, ignore_errors=True)
+                # Keep HF cache; do not delete
                 
             except Exception as e:
                 logger.error(f"❌ Error creating mobile model {model_name}: {str(e)}")
         
         return created_models
     
+    def _get_fallback_desktop_model(self) -> str:
+        """Get fallback desktop model id from config or use Llama-3-8B-Instruct."""
+        try:
+            import yaml  # already a dependency above
+            config_path = Path("config/trinity_config.yaml")
+            if config_path.exists():
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    cfg = yaml.safe_load(f) or {}
+                names = (cfg.get('model_names') or {})
+                return names.get('llama3_8b_instruct', 'meta-llama/Llama-3-8B-Instruct')
+        except Exception as e:
+            logger.warning(f"⚠️ Could not load fallback from config: {e}")
+        return 'meta-llama/Llama-3-8B-Instruct'
+
     def create_desktop_models(self):
         """Create desktop models (8B parameters)"""
         logger.info("🖥️ Creating desktop models...")
@@ -152,15 +176,22 @@ class Qwen3ModelDownloader:
                 # Download model
                 model_dir = self.download_model(model_name, model_id)
                 if not model_dir:
-                    continue
+                    # Fallback to a compatible desktop model if Qwen3 8B repo not found
+                    fallback_id = self._get_fallback_desktop_model()
+                    fallback_name = fallback_id.split('/')[-1]
+                    logger.warning(f"⚠️ Falling back to {fallback_id} for {model_name}")
+                    model_dir = self.download_model(fallback_name, fallback_id)
+                    if not model_dir:
+                        continue
+                    # Override output model_name to reflect the actual downloaded model
+                    model_name = fallback_name
                 
                 # Convert to GGUF
                 gguf_path = self.convert_to_gguf(model_dir, model_name, self.desktop_dir)
                 if gguf_path:
                     created_models[model_name] = str(gguf_path)
                 
-                # Cleanup temp directory
-                shutil.rmtree(model_dir, ignore_errors=True)
+                # Keep HF cache; do not delete
                 
             except Exception as e:
                 logger.error(f"❌ Error creating desktop model {model_name}: {str(e)}")
