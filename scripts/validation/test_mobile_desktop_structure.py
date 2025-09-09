@@ -151,8 +151,7 @@ class ModelStructureValidator:
         logger.info("🏭 Validating factory scripts...")
         
         scripts = {
-            "mobile_desktop_model_factory.py": "scripts/factory/mobile_desktop_model_factory.py",
-            "launch_mobile_desktop_models.py": "scripts/launch_mobile_desktop_models.py"
+            "download_and_convert_qwen3.py": "scripts/factory/download_and_convert_qwen3.py"
         }
         
         results = {}

@@ -309,30 +309,30 @@ domain_config:
     category_tier: premium
     base_model: Qwen/Qwen3-4B-Thinking-2507
     mobile_models:
-      general_health: Qwen/Qwen3-4B-Base
-      mental_health: Qwen/Qwen3-4B-Base
-      nutrition: Qwen/Qwen3-4B-Base
-      sleep: Qwen/Qwen3-4B-Base
-      stress_management: Qwen/Qwen3-4B-Base
-      preventive_care: Qwen/Qwen3-4B-Base
+      general_health: Qwen/Qwen3-4B-Thinking-2507
+      mental_health: Qwen/Qwen3-4B-Instruct-2507
+      nutrition: Qwen/Qwen3-4B-Thinking-2507
+      sleep: Qwen/Qwen3-4B-Instruct-2507
+      stress_management: Qwen/Qwen3-4B-Thinking-2507
+      preventive_care: Qwen/Qwen3-4B-Instruct-2507
     desktop_models:
-      chronic_conditions: Qwen/Qwen3-8B-Base
-      medication_management: Qwen/Qwen3-8B-Base
-      emergency_care: Qwen/Qwen3-8B-Base
-      women_health: Qwen/Qwen3-8B-Base
-      senior_health: Qwen/Qwen3-8B-Base
+      chronic_conditions: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      medication_management: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      emergency_care: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      women_health: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      senior_health: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
     domains:
-      general_health: Qwen/Qwen3-4B-Base
-      mental_health: Qwen/Qwen3-4B-Base
-      nutrition: Qwen/Qwen3-4B-Base
-      sleep: Qwen/Qwen3-4B-Base
-      stress_management: Qwen/Qwen3-4B-Base
-      preventive_care: Qwen/Qwen3-4B-Base
-      chronic_conditions: Qwen/Qwen3-8B-Base
-      medication_management: Qwen/Qwen3-8B-Base
-      emergency_care: Qwen/Qwen3-8B-Base
-      women_health: Qwen/Qwen3-8B-Base
-      senior_health: Qwen/Qwen3-8B-Base
+      general_health: Qwen/Qwen3-4B-Thinking-2507
+      mental_health: Qwen/Qwen3-4B-Instruct-2507
+      nutrition: Qwen/Qwen3-4B-Thinking-2507
+      sleep: Qwen/Qwen3-4B-Instruct-2507
+      stress_management: Qwen/Qwen3-4B-Thinking-2507
+      preventive_care: Qwen/Qwen3-4B-Instruct-2507
+      chronic_conditions: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      medication_management: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      emergency_care: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      women_health: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      senior_health: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
   daily_life:
     category_tier: quality
     base_model: Qwen/Qwen3-4B-Thinking-2507

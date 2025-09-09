@@ -10,13 +10,13 @@ MeeTARA Lab now features a comprehensive local model structure optimized for dif
 models/production/
 ├── mobile/                                    # 📱 Mobile-Optimized Models (4B parameters)
 │   ├── meetara_mobile_universal-model-Q4_K_M-20250809.gguf
-│   ├── meetara-Qwen3-4B-Thinking-2507-Q4_K_M-20250809.gguf
-│   └── meetara-Qwen3-4B-Instruct-2507-Q4_K_M-20250809.gguf
+│   ├──--- meetara-Qwen3-4B-Thinking-2507-Q4_K_M-20250809.gguf
+│   └──--- meetara-Qwen3-4B-Instruct-2507-Q4_K_M-20250809.gguf
 │
 ├── desktop/                                   # 🖥️ Desktop-Powered Models (8B parameters)
 │   ├── meetara_desktop_universal-model-Q4_K_M-20250809.gguf
-│   ├── meetara-Qwen3-8B-Thinking-2507-Q4_K_M-20250809.gguf
-│   └── meetara-Qwen3-8B-Instruct-2507-Q4_K_M-20250809.gguf
+│   ├──--- meetara-Qwen3-8B-Thinking-2507-Q4_K_M-20250809.gguf
+│   └──--- meetara-Qwen3-8B-Instruct-2507-Q4_K_M-20250809.gguf
 │
 └── speech_models/                             # 🎤 Complete Speech Intelligence
     ├── emotion/                               # Emotion Detection Models
