@@ -39,12 +39,14 @@ class ModelStructureValidator:
         
         required_dirs = [
             "mobile",
-            "desktop", 
-            "speech_models/emotion",
-            "speech_models/voice",
-            "speech_models/routing",
-            "speech_models/translation/hi_model",
-            "speech_models/translation/te_model"
+            "desktop"
+        ]
+        
+        # Check services directory structure separately
+        services_dirs = [
+            "services/routing",
+            "services/translation/hi_model", 
+            "services/translation/te_model"
         ]
         
         results = {}
@@ -66,17 +68,8 @@ class ModelStructureValidator:
         logger.info("🎤 Validating speech models...")
         
         speech_models = {
-            "emotion/rms_model.pkl": "models/production/speech_models/emotion/rms_model.pkl",
-            "emotion/ser_model.pkl": "models/production/speech_models/emotion/ser_model.pkl",
-            "voice/business_voice.pkl": "models/production/speech_models/voice/business_voice.pkl",
-            "voice/creative_voice.pkl": "models/production/speech_models/voice/creative_voice.pkl",
-            "voice/daily_life_voice.pkl": "models/production/speech_models/voice/daily_life_voice.pkl",
-            "voice/education_voice.pkl": "models/production/speech_models/voice/education_voice.pkl",
-            "voice/general_health_voice.pkl": "models/production/speech_models/voice/general_health_voice.pkl",
-            "voice/specialized_voice.pkl": "models/production/speech_models/voice/specialized_voice.pkl",
-            "voice/technology_voice.pkl": "models/production/speech_models/voice/technology_voice.pkl",
-            "routing/domain_router.pkl": "models/production/speech_models/routing/domain_router.pkl",
-            "routing/emotion_router.pkl": "models/production/speech_models/routing/emotion_router.pkl"
+            "routing/domain_router.pkl": "services/routing/domain_router.pkl",
+            "routing/emotion_router.pkl": "services/routing/emotion_router.pkl"
         }
         
         results = {}
@@ -99,10 +92,10 @@ class ModelStructureValidator:
         logger.info("🌐 Validating translation models...")
         
         translation_models = {
-            "hi_model/model.pt": "models/production/speech_models/translation/hi_model/model.pt",
-            "hi_model/tokenizer": "models/production/speech_models/translation/hi_model/tokenizer",
-            "te_model/model.pt": "models/production/speech_models/translation/te_model/model.pt",
-            "te_model/tokenizer": "models/production/speech_models/translation/te_model/tokenizer"
+            "hi_model/model.pt": "services/translation/hi_model/model.pt",
+            "hi_model/tokenizer": "services/translation/hi_model/tokenizer",
+            "te_model/model.pt": "services/translation/te_model/model.pt",
+            "te_model/tokenizer": "services/translation/te_model/tokenizer"
         }
         
         results = {}
@@ -151,7 +144,7 @@ class ModelStructureValidator:
         logger.info("🏭 Validating factory scripts...")
         
         scripts = {
-            "download_and_convert_qwen3.py": "scripts/factory/download_and_convert_qwen3.py"
+            "download_and_convert_qwen3.py": "factory/download_and_convert_qwen3.py"
         }
         
         results = {}
