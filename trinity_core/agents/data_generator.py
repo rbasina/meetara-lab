@@ -3814,36 +3814,46 @@ class TrinityDataGenerator:
             self.ai_services = {
                 "openai": {
                     "enabled": bool(self.openai_api_key),
-                    "model": ai_config.get("openai_model", "gpt-4o-mini"),
-                    "max_tokens": ai_config.get("openai_max_tokens", 2000),
-                    "temperature": ai_config.get("openai_temperature", 0.7)
+                    "model": ai_config.get("openai_model", "gpt-3.5-turbo"),  # Use cost-effective model
+                    "max_tokens": ai_config.get("openai_max_tokens", 1500),  # Reduced for cost efficiency
+                    "temperature": ai_config.get("openai_temperature", 0.8),  # Slightly higher for creativity
+                    "retry_count": 1,  # Minimal retries to avoid quota issues
+                    "timeout": 30
                 },
                 "gemini": {
                     "enabled": bool(self.gemini_api_key),
                     "model": ai_config.get("gemini_model", "gemini-1.5-flash"),
-                    "max_tokens": ai_config.get("gemini_max_tokens", 2000),
-                    "temperature": ai_config.get("gemini_temperature", 0.7)
+                    "max_tokens": ai_config.get("gemini_max_tokens", 1500),
+                    "temperature": ai_config.get("gemini_temperature", 0.8),
+                    "retry_count": 1,  # Minimal retries due to quota limits
+                    "timeout": 25
                 },
                 "deepseek": {
                     "enabled": bool(self.deepseek_api_key),
                     "model": ai_config.get("deepseek_model", "deepseek-chat"),
-                    "max_tokens": ai_config.get("deepseek_max_tokens", 2000),
-                    "temperature": ai_config.get("deepseek_temperature", 0.7)
+                    "max_tokens": ai_config.get("deepseek_max_tokens", 1500),
+                    "temperature": ai_config.get("deepseek_temperature", 0.8),
+                    "retry_count": 2,  # More retries for reliable service
+                    "timeout": 35
                 }
             }
             
             # AI-generated content cache
             self.ai_content_cache = {}
             self.ai_cache_timestamps = {}
+            self.ai_usage_stats = {}
+            self.ai_failure_counts = {"openai": 0, "gemini": 0, "deepseek": 0}  # Track failures
             
             # AI service configuration - Load from config or use defaults
             ai_config_settings = self.config.get("ai_config", {})
             self.ai_config = {
-                "cache_duration": ai_config_settings.get("cache_duration", 3600),  # 1 hour cache for AI-generated content
+                "cache_duration": ai_config_settings.get("cache_duration", 7200),  # 2 hour cache for AI-generated content
                 "max_scenarios_per_domain": ai_config_settings.get("max_scenarios_per_domain", 100),
                 "enable_ai_enhancement": any(service["enabled"] for service in self.ai_services.values()),
                 "fallback_to_templates": ai_config_settings.get("fallback_to_templates", True),  # Use existing templates if AI services fail
-                "quality_threshold": ai_config_settings.get("quality_threshold", 0.8)  # Minimum quality score for AI-generated content
+                "quality_threshold": ai_config_settings.get("quality_threshold", 0.8),  # Minimum quality score for AI-generated content
+                "max_consecutive_failures": ai_config_settings.get("max_consecutive_failures", 3),  # Stop using service after 3 consecutive failures
+                "failure_reset_time": ai_config_settings.get("failure_reset_time", 3600)  # Reset failure count after 1 hour
             }
             
             # Log available AI services
@@ -4399,23 +4409,55 @@ class TrinityDataGenerator:
         # Personalize the message
         personalized_starter = self._personalize_message(starter, "crisis", "panic")
         
-        # Generate crisis response
-        crisis_response = self._generate_blended_assistant_response(
-            personalized_starter, domain, "crisis_intervention", "panic", "crisis"
-        )
+        # Generate crisis response - try AI first, fallback to templates
+        crisis_response = None
+        if self._should_use_ai_generation(domain, "crisis_intervention"):
+            crisis_response = self._generate_ai_content(personalized_starter, domain, "crisis_intervention", "panic")
+        
+        # Fallback to template if AI generation failed
+        if not crisis_response:
+            crisis_response = self._generate_blended_assistant_response(
+                personalized_starter, domain, "crisis_intervention", "panic", "crisis"
+            )
         
         # Generate follow-up
         follow_up = self._generate_followup_user([{
             "role": "user", "content": personalized_starter
         }, {
             "role": "assistant", "content": crisis_response
-        }], "crisis", "anxious")
+        }], "crisis", "anxious", domain)
         
-        follow_up_response = self._generate_blended_followup_assistant([
-            {"role": "user", "content": personalized_starter},
-            {"role": "assistant", "content": crisis_response},
-            {"role": "user", "content": follow_up}
-        ], domain, "crisis_intervention", "crisis")
+        # Generate follow-up response - try AI first, fallback to templates
+        follow_up_response = None
+        if self._should_use_ai_generation(domain, "crisis_intervention"):
+            follow_up_response = self._generate_ai_content(follow_up, domain, "crisis_intervention", "anxious")
+        
+        # Fallback to template if AI generation failed
+        if not follow_up_response:
+            follow_up_response = self._generate_blended_followup_assistant([
+                {"role": "user", "content": personalized_starter},
+                {"role": "assistant", "content": crisis_response},
+                {"role": "user", "content": follow_up}
+            ], domain, "crisis_intervention", "crisis")
+        
+        # Track AI usage and determine which service was used
+        ai_used = False
+        ai_service_used = None
+        
+        # Check if AI was used for responses
+        if self._should_use_ai_generation(domain, "crisis_intervention"):
+            # Check if responses are different from template responses
+            template_crisis = self._generate_blended_assistant_response(personalized_starter, domain, "crisis_intervention", "panic", "crisis")
+            template_followup = self._generate_blended_followup_assistant([
+                {"role": "user", "content": personalized_starter},
+                {"role": "assistant", "content": crisis_response},
+                {"role": "user", "content": follow_up}
+            ], domain, "crisis_intervention", "crisis")
+            
+            if crisis_response != template_crisis or follow_up_response != template_followup:
+                ai_used = True
+                # Determine which service was used (this will be set during actual AI generation)
+                ai_service_used = "ai_generated"
         
         conversation = {
             "conversation_id": str(uuid.uuid4()),
@@ -4427,7 +4469,9 @@ class TrinityDataGenerator:
                 {"role": "assistant", "content": crisis_response, "emotion": "calm", "intent": "crisis_intervention"},
                 {"role": "user", "content": follow_up, "emotion": "anxious", "intent": "crisis_followup"},
                 {"role": "assistant", "content": follow_up_response, "emotion": "supportive", "intent": "crisis_guidance"}
-            ]
+            ],
+            "ai_enhanced": ai_used,
+            "ai_service_used": ai_service_used
         }
         
         return {
@@ -4446,23 +4490,47 @@ class TrinityDataGenerator:
         # Personalize the message
         personalized_starter = self._personalize_message(starter, "general", "neutral")
         
-        # Generate general response
-        general_response = self._generate_blended_assistant_response(
-            personalized_starter, domain, "general_guidance", "neutral", "general"
-        )
+        # Generate general response - try AI first, fallback to templates
+        general_response = None
+        if self._should_use_ai_generation(domain, "general_guidance"):
+            general_response = self._generate_ai_content(personalized_starter, domain, "general_guidance", "neutral")
+        
+        # Fallback to template if AI generation failed
+        if not general_response:
+            general_response = self._generate_blended_assistant_response(
+                personalized_starter, domain, "general_guidance", "neutral", "general"
+            )
         
         # Generate follow-up
         follow_up = self._generate_followup_user([{
             "role": "user", "content": personalized_starter
         }, {
             "role": "assistant", "content": general_response
-        }], "general", "interested")
+        }], "general", "interested", domain)
         
-        follow_up_response = self._generate_blended_followup_assistant([
-            {"role": "user", "content": personalized_starter},
-            {"role": "assistant", "content": general_response},
-            {"role": "user", "content": follow_up}
-        ], domain, "general_guidance", "general")
+        # Generate follow-up response - try AI first, fallback to templates
+        follow_up_response = None
+        if self._should_use_ai_generation(domain, "general_guidance"):
+            follow_up_response = self._generate_ai_content(follow_up, domain, "general_guidance", "interested")
+        
+        # Fallback to template if AI generation failed
+        if not follow_up_response:
+            follow_up_response = self._generate_blended_followup_assistant([
+                {"role": "user", "content": personalized_starter},
+                {"role": "assistant", "content": general_response},
+                {"role": "user", "content": follow_up}
+            ], domain, "general_guidance", "general")
+        
+        # Track AI usage
+        ai_used = any([
+            self._should_use_ai_generation(domain, "general_guidance") and 
+            (general_response != self._generate_blended_assistant_response(personalized_starter, domain, "general_guidance", "neutral", "general") or
+             follow_up_response != self._generate_blended_followup_assistant([
+                 {"role": "user", "content": personalized_starter},
+                 {"role": "assistant", "content": general_response},
+                 {"role": "user", "content": follow_up}
+             ], domain, "general_guidance", "general"))
+        ])
         
         conversation = {
             "conversation_id": str(uuid.uuid4()),
@@ -4474,7 +4542,9 @@ class TrinityDataGenerator:
                 {"role": "assistant", "content": general_response, "emotion": "helpful", "intent": "general_guidance"},
                 {"role": "user", "content": follow_up, "emotion": "interested", "intent": "followup_inquiry"},
                 {"role": "assistant", "content": follow_up_response, "emotion": "supportive", "intent": "detailed_guidance"}
-            ]
+            ],
+            "ai_enhanced": ai_used,
+            "ai_service_used": "openai" if ai_used else None
         }
         
         return {
@@ -4583,31 +4653,142 @@ class TrinityDataGenerator:
         return response
 
     def _generate_crisis_intervention_response(self, user_message: str, domain_expert: Dict) -> str:
-        """Generate crisis intervention response."""
-        if domain_expert["domain"] == "general_health":
-            return ("I understand this is an emergency situation. Please call 911 immediately if this is a medical emergency. "
-                   "While waiting for emergency services, I can provide general guidance, but this is not a substitute for professional medical care.")
-        elif domain_expert["domain"] == "mental_health":
-            return ("I hear how much pain you're in, and I want you to know that you're not alone. "
-                   "Please call the National Suicide Prevention Lifeline at 988 immediately, or go to the nearest emergency room. "
-                   "Your life has value, and there are people who want to help you through this.")
+        """Generate enhanced crisis intervention response with domain-specific guidance."""
+        domain = domain_expert["domain"]
+        
+        # Enhanced entrepreneurship crisis responses
+        if domain == "entrepreneurship":
+            if "team" in user_message.lower() or "hire" in user_message.lower():
+                return ("I understand you're feeling overwhelmed about building your startup team. Let's approach this systematically. [Trinity Architecture: einstein_fusion - problem decomposition]\n\n"
+                       "First, identify your immediate critical needs. What roles are absolutely essential for your startup's survival in the next 30 days? Is it a technical co-founder for your MVP, a sales person to generate revenue, or a marketing specialist to build brand awareness? [Trinity Architecture: einstein_fusion - prioritization]\n\n"
+                       "Next, leverage your existing network strategically. Reach out to former colleagues, university connections, or industry contacts. Consider equity-based compensation (10-20% for co-founders, 1-5% for early employees) to attract top talent. [Trinity Architecture: einstein_fusion - resource optimization]\n\n"
+                       "For immediate needs, explore platforms like AngelList Talent, LinkedIn, or local startup meetups. Consider contractors or freelancers for short-term projects while you build your permanent team. [Trinity Architecture: einstein_fusion - iterative approach]\n\n"
+                       "Remember, your first hires will shape your company culture. Focus on cultural fit, adaptability, and shared vision rather than just technical skills. Start with 2-3 key roles and expand gradually.")
+            
+            elif "fund" in user_message.lower() or "money" in user_message.lower() or "cash" in user_message.lower():
+                return ("I can see you're feeling panicked about funding, and that's completely understandable. Let's create a strategic funding roadmap. [Trinity Architecture: einstein_fusion - crisis management]\n\n"
+                       "First, assess your current runway. How many months of operations can you sustain with existing resources? This will determine your funding urgency. [Trinity Architecture: einstein_fusion - resource assessment]\n\n"
+                       "For immediate funding needs (0-3 months):\n"
+                       "• Personal savings and credit cards (if you have good credit)\n"
+                       "• Friends and family round (typically $5K-$50K)\n"
+                       "• Revenue-based financing for existing customers\n\n"
+                       "For short-term funding (3-12 months):\n"
+                       "• Angel investors through platforms like AngelList or local angel groups\n"
+                       "• Crowdfunding on Kickstarter/Indiegogo for product-based businesses\n"
+                       "• Small Business Administration (SBA) loans\n\n"
+                       "[Trinity Architecture: einstein_fusion - strategic planning] Remember, each funding source has different requirements and timelines. Focus on the one that best matches your current stage and timeline.")
+            
+            elif "validate" in user_message.lower() or "test" in user_message.lower() or "idea" in user_message.lower():
+                return ("I understand the pressure to validate your idea quickly, but let's approach this systematically to avoid costly mistakes. [Trinity Architecture: einstein_fusion - risk mitigation]\n\n"
+                       "Start with a Minimum Viable Product (MVP) that tests your core hypothesis. For a SaaS business, this might be a simple landing page with a waitlist. For a physical product, it could be a 3D prototype or mockup. [Trinity Architecture: einstein_fusion - iterative development]\n\n"
+                       "Conduct customer discovery interviews with 20-30 potential customers. Ask open-ended questions about their pain points, current solutions, and willingness to pay. Use frameworks like the Jobs-to-be-Done methodology. [Trinity Architecture: einstein_fusion - customer research]\n\n"
+                       "Test your value proposition through:\n"
+                       "• A/B testing landing pages\n"
+                       "• Social media polls and surveys\n"
+                       "• Beta testing with 5-10 early adopters\n"
+                       "• Competitor analysis and gap identification\n\n"
+                       "[Trinity Architecture: einstein_fusion - validation framework] Remember, validation isn't about proving you're right - it's about discovering what you're wrong about. Embrace the feedback and iterate quickly.")
+            
+            elif "market" in user_message.lower() or "promote" in user_message.lower() or "advertise" in user_message.lower():
+                return ("I can see you're feeling overwhelmed about marketing, but let's create a focused, achievable strategy. [Trinity Architecture: einstein_fusion - strategic focus]\n\n"
+                       "Start with a Minimum Viable Marketing Plan (MVMP) focused on one channel and one objective. For B2B startups, LinkedIn is often most effective. For B2C, consider Instagram or TikTok depending on your audience. [Trinity Architecture: einstein_fusion - channel selection]\n\n"
+                       "Create a 30-day marketing sprint:\n"
+                       "• Week 1: Define your unique value proposition and target audience\n"
+                       "• Week 2: Create 3 pieces of content (video, post, lead magnet)\n"
+                       "• Week 3: Launch and monitor engagement metrics\n"
+                       "• Week 4: Analyze results and iterate\n\n"
+                       "[Trinity Architecture: einstein_fusion - execution framework] Focus on consistency over perfection. Post 3-5 times per week on your chosen channel. Track metrics like engagement rate, click-through rate, and lead generation. Remember, marketing is a marathon, not a sprint.")
+            
+            else:
+                # Generic entrepreneurship crisis response
+                return ("I understand you're feeling overwhelmed about your startup. Let's break this down systematically. [Trinity Architecture: einstein_fusion - crisis management]\n\n"
+                       "First, take a deep breath. Panic won't help solve the problem. What's the most immediate threat to your business right now? [Trinity Architecture: einstein_fusion - problem identification]\n\n"
+                       "Next, let's prioritize. What absolutely must be addressed in the next 24-48 hours? Focus on one critical issue at a time. [Trinity Architecture: einstein_fusion - prioritization]\n\n"
+                       "Remember, many successful entrepreneurs faced similar crises. This is temporary, and you have the skills to navigate through it. [Trinity Architecture: einstein_fusion - emotional support]")
+        
+        # Enhanced healthcare crisis responses
+        elif domain == "general_health":
+            return ("I understand this is an emergency situation. Please call 911 immediately if this is a medical emergency. [Trinity Architecture: einstein_fusion - crisis intervention]\n\n"
+                   "While waiting for emergency services, I can provide general guidance, but this is not a substitute for professional medical care. [Trinity Architecture: einstein_fusion - safety first]\n\n"
+                   "What specific symptoms are you experiencing? This will help me provide appropriate guidance while you wait for professional help.")
+        
+        elif domain == "mental_health":
+            return ("I hear how much pain you're in, and I want you to know that you're not alone. [Trinity Architecture: einstein_fusion - emotional support]\n\n"
+                   "Please call the National Suicide Prevention Lifeline at 988 immediately, or go to the nearest emergency room. [Trinity Architecture: einstein_fusion - crisis intervention]\n\n"
+                   "Your life has value, and there are people who want to help you through this. [Trinity Architecture: einstein_fusion - hope reinforcement]")
+        
         else:
-            return ("I understand this is a serious situation. Please contact appropriate emergency services or professionals immediately. "
-                   "I'm here to provide support and guidance while you get the help you need.")
+            return ("I understand this is a serious situation. Please contact appropriate emergency services or professionals immediately. [Trinity Architecture: einstein_fusion - crisis intervention]\n\n"
+                   "I'm here to provide support and guidance while you get the help you need. [Trinity Architecture: einstein_fusion - emotional support]\n\n"
+                   "What specific aspect of this crisis would you like to discuss while we wait for professional assistance?")
 
     def _generate_general_guidance_response(self, user_message: str, domain_expert: Dict) -> str:
-        """Generate general guidance response."""
+        """Generate enhanced general guidance response with domain-specific expertise."""
         domain = domain_expert["domain"]
-        if domain == "general_health":
-            return ("I can provide general health information and wellness guidance. "
-                   "For specific medical advice, please consult with a qualified healthcare professional. "
-                   "What aspect of health and wellness would you like to discuss?")
+        
+        # Enhanced entrepreneurship guidance
+        if domain == "entrepreneurship":
+            if "risk" in user_message.lower() or "manage" in user_message.lower():
+                return ("Managing startup risks requires a systematic approach. [Trinity Architecture: arc_reactor_foundation - risk assessment]\n\n"
+                       "Start by conducting a comprehensive risk assessment across these areas:\n"
+                       "• Financial risks: Cash flow, funding gaps, revenue volatility\n"
+                       "• Operational risks: Team turnover, technology failures, supply chain issues\n"
+                       "• Market risks: Competition, market shifts, regulatory changes\n"
+                       "• Strategic risks: Product-market fit, scaling challenges, partnership risks\n\n"
+                       "[Trinity Architecture: arc_reactor_foundation - risk mitigation] For each identified risk:\n"
+                       "• Assess probability and impact (high/medium/low)\n"
+                       "• Develop mitigation strategies\n"
+                       "• Create contingency plans\n"
+                       "• Set up monitoring systems\n\n"
+                       "Consider diversifying your revenue streams, building emergency funds (3-6 months of expenses), and obtaining appropriate insurance coverage. Regular risk reviews (monthly) will help you stay ahead of potential issues.")
+            
+            elif "competition" in user_message.lower() or "differentiate" in user_message.lower():
+                return ("Analyzing competition effectively requires a structured approach. [Trinity Architecture: einstein_fusion - competitive intelligence]\n\n"
+                       "Start with a competitive landscape analysis:\n"
+                       "• Direct competitors: Same product/service, same market\n"
+                       "• Indirect competitors: Different solutions to same problem\n"
+                       "• Potential competitors: Large companies that could enter your space\n"
+                       "• Substitute products: Alternative solutions customers might choose\n\n"
+                       "[Trinity Architecture: einstein_fusion - differentiation strategy] To differentiate effectively:\n"
+                       "• Identify your unique value proposition (UVP)\n"
+                       "• Focus on underserved customer segments\n"
+                       "• Develop proprietary technology or processes\n"
+                       "• Build strong customer relationships and loyalty\n"
+                       "• Create switching costs through integration or customization\n\n"
+                       "Remember, differentiation isn't just about being different - it's about being better in ways that matter to your customers.")
+            
+            elif "scale" in user_message.lower() or "grow" in user_message.lower():
+                return ("Scaling requires careful timing and strategic planning. [Trinity Architecture: arc_reactor_foundation - growth assessment]\n\n"
+                       "Key indicators that you're ready to scale:\n"
+                       "• Consistent revenue growth (20%+ month-over-month)\n"
+                       "• Strong product-market fit (high customer satisfaction)\n"
+                       "• Efficient customer acquisition (low CAC, high LTV)\n"
+                       "• Scalable business model and processes\n"
+                       "• Adequate funding and team capacity\n\n"
+                       "[Trinity Architecture: arc_reactor_foundation - scaling framework] When scaling, focus on:\n"
+                       "• Process optimization and automation\n"
+                       "• Team expansion and training\n"
+                       "• Market expansion strategies\n"
+                       "• Technology infrastructure scaling\n"
+                       "• Financial planning and risk management\n\n"
+                       "Remember, scaling too quickly can strain resources and quality. Scale sustainably by focusing on one area at a time and ensuring each expansion is profitable before moving to the next.")
+            
+            else:
+                return ("I can help with entrepreneurship strategy, business development, and startup guidance. [Trinity Architecture: arc_reactor_foundation - business foundation]\n\n"
+                       "What specific aspect of entrepreneurship would you like to explore? Whether it's funding, team building, product development, marketing, or scaling, I can provide targeted guidance based on your current stage and challenges.")
+        
+        elif domain == "general_health":
+            return ("I can provide general health information and wellness guidance. [Trinity Architecture: arc_reactor_foundation - health foundation]\n\n"
+                   "For specific medical advice, please consult with a qualified healthcare professional. [Trinity Architecture: einstein_fusion - professional boundaries]\n\n"
+                   "What aspect of health and wellness would you like to discuss? I can help with nutrition, exercise, mental wellness, and preventive care strategies.")
+        
         elif domain == "business":
-            return ("I can help with business strategy, professional development, and market insights. "
-                   "What specific business challenge or opportunity would you like to explore?")
+            return ("I can help with business strategy, professional development, and market insights. [Trinity Architecture: arc_reactor_foundation - business foundation]\n\n"
+                   "What specific business challenge or opportunity would you like to explore? I can provide guidance on strategy, operations, marketing, finance, and organizational development.")
+        
         else:
-            return (f"I can provide guidance and support for {domain} related questions. "
-                   "What specific aspect would you like to discuss?")
+            return (f"I can provide guidance and support for {domain} related questions. [Trinity Architecture: arc_reactor_foundation - domain foundation]\n\n"
+                   "What specific aspect would you like to discuss? I'm here to help you navigate challenges and explore opportunities in your field.")
 
     def _generate_professional_guidance_response(self, user_message: str, domain_expert: Dict) -> str:
         """Generate professional guidance response."""
@@ -4622,35 +4803,59 @@ class TrinityDataGenerator:
                "What would you like to know or discuss?")
 
     def _enhance_with_emotional_intelligence(self, base_response: str, user_emotion: str) -> str:
-        """Enhance response with emotional intelligence."""
+        """Enhanced emotional intelligence with domain-specific support."""
         if user_emotion == "panic":
-            return f"I understand you're feeling panicked. {base_response} Take a deep breath - we'll work through this together."
+            return f"I understand you're feeling panicked, and that's completely valid. [Trinity Architecture: einstein_fusion - emotional regulation] {base_response} Take a deep breath - we'll work through this together step by step."
         elif user_emotion == "anxious":
-            return f"I hear your anxiety. {base_response} Let's approach this step by step."
+            return f"I hear your anxiety, and it's completely understandable in this situation. [Trinity Architecture: einstein_fusion - emotional support] {base_response} Let's approach this systematically to reduce your stress."
         elif user_emotion == "frustrated":
-            return f"I understand your frustration. {base_response} Let's find a solution together."
+            return f"I understand your frustration, and it's completely valid given the circumstances. [Trinity Architecture: einstein_fusion - emotional validation] {base_response} Let's find a solution together that addresses your concerns."
+        elif user_emotion == "overwhelmed":
+            return f"I can see you're feeling overwhelmed, and that's completely normal when facing complex challenges. [Trinity Architecture: einstein_fusion - emotional support] {base_response} Let's break this down into manageable pieces."
         else:
             return base_response
 
     def _generate_followup_user(self, conversation_history: List[Dict], 
-                               scenario: str, emotion: str) -> str:
+                               scenario: str, emotion: str, domain: str = None) -> str:
         """
-        Generate follow-up user message with Trinity Architecture.
+        Generate enhanced follow-up user message with Trinity Architecture and domain-specific content.
         """
         if scenario == "crisis":
-            followup_options = [
-                "What should I do next?",
-                "I'm still really worried. Can you help me more?",
-                "Should I call someone?",
-                "I don't know what to do."
-            ]
+            if domain == "entrepreneurship":
+                followup_options = [
+                    "What should I do next?",
+                    "I'm still really worried. Can you help me more?",
+                    "Should I call someone?",
+                    "I don't know what to do.",
+                    "How do I prioritize these steps?",
+                    "What if I can't afford this right now?",
+                    "How do I know if I'm making the right decision?"
+                ]
+            else:
+                followup_options = [
+                    "What should I do next?",
+                    "I'm still really worried. Can you help me more?",
+                    "Should I call someone?",
+                    "I don't know what to do."
+                ]
         else:
-            followup_options = [
-                "Can you tell me more about that?",
-                "What else should I consider?",
-                "How can I apply this?",
-                "What are the next steps?"
-            ]
+            if domain == "entrepreneurship":
+                followup_options = [
+                    "Can you tell me more about that?",
+                    "What else should I consider?",
+                    "How can I apply this?",
+                    "What are the next steps?",
+                    "How do I measure success?",
+                    "What resources do I need?",
+                    "How long will this take?"
+                ]
+            else:
+                followup_options = [
+                    "Can you tell me more about that?",
+                    "What else should I consider?",
+                    "How can I apply this?",
+                    "What are the next steps?"
+                ]
         
         followup = random.choice(followup_options)
         return self._personalize_message(followup, scenario, emotion)
@@ -4746,4 +4951,408 @@ class TrinityDataGenerator:
         low_diff = abs(low_urgency - ideal_low) / ideal_low
         
         return 1.0 - (high_diff + medium_diff + low_diff) / 3
+
+    # ============================================================================
+    # AI CONTENT GENERATION METHODS
+    # ============================================================================
+    
+    def _generate_ai_content(self, prompt: str, domain: str, scenario: str, emotion: str) -> str:
+        """
+        Generate content using AI services (OpenAI, Gemini, DeepSeek).
+        Uses intelligent service selection and falls back to templates if all fail.
+        """
+        try:
+            # Get available AI services
+            available_services = []
+            for service_name, config in self.ai_services.items():
+                if config.get("enabled"):
+                    available_services.append(service_name)
+            
+            if not available_services:
+                logger.warning("No AI services available, falling back to templates")
+                return None
+            
+            # Intelligent service selection based on domain and scenario
+            service_priority = self._get_service_priority(domain, scenario, emotion)
+            
+            # Try services in priority order with failure tracking
+            for service in service_priority:
+                if service in available_services:
+                    logger.info(f"🔄 Trying {service} for {domain} - {scenario}")
+                    
+                    try:
+                        if service == "openai":
+                            content = self._generate_openai_content(prompt, domain, scenario, emotion)
+                        elif service == "gemini":
+                            content = self._generate_gemini_content(prompt, domain, scenario, emotion)
+                        elif service == "deepseek":
+                            content = self._generate_deepseek_content(prompt, domain, scenario, emotion)
+                        else:
+                            continue
+                        
+                        if content:
+                            logger.info(f"✅ {service} successfully generated content for {domain}")
+                            # Reset failure count on success
+                            self.ai_failure_counts[service] = 0
+                            return content
+                        else:
+                            # Increment failure count
+                            self.ai_failure_counts[service] = self.ai_failure_counts.get(service, 0) + 1
+                            logger.warning(f"⚠️ {service} failed for {domain}, failure count: {self.ai_failure_counts[service]}")
+                            
+                            # Check if service should be temporarily blocked
+                            if self.ai_failure_counts[service] >= self.ai_config.get("max_consecutive_failures", 3):
+                                logger.warning(f"🚫 {service} temporarily blocked due to {self.ai_failure_counts[service]} consecutive failures")
+                            
+                    except Exception as e:
+                        logger.error(f"Error with {service}: {e}")
+                        self.ai_failure_counts[service] = self.ai_failure_counts.get(service, 0) + 1
+                        continue
+            
+            # All AI services failed
+            logger.warning("All AI services failed, falling back to templates")
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error in AI content generation: {e}")
+            return None
+
+    def _get_service_priority(self, domain: str, scenario: str, emotion: str) -> List[str]:
+        """
+        Determine the priority order for AI services based on domain, scenario, and emotion.
+        Optimized for cost-effectiveness and reliability.
+        """
+        # Get enabled services only
+        enabled_services = [name for name, config in self.ai_services.items() if config.get("enabled")]
+        
+        if not enabled_services:
+            return []
+        
+        # Check for services that have exceeded failure limits
+        available_services = []
+        for service in enabled_services:
+            failure_count = self.ai_failure_counts.get(service, 0)
+            max_failures = self.ai_config.get("max_consecutive_failures", 3)
+            if failure_count < max_failures:
+                available_services.append(service)
+        
+        if not available_services:
+            # Reset failure counts if all services are blocked
+            logger.warning("All services blocked due to failures, resetting failure counts")
+            self.ai_failure_counts = {"openai": 0, "gemini": 0, "deepseek": 0}
+            available_services = enabled_services
+        
+        # Priority order: Cost-effective first, then reliable, then fast
+        # DeepSeek is most cost-effective, OpenAI most reliable, Gemini fastest
+        if "deepseek" in available_services:
+            # Start with DeepSeek for cost efficiency
+            priority = ["deepseek"]
+            if "openai" in available_services:
+                priority.append("openai")
+            if "gemini" in available_services:
+                priority.append("gemini")
+        elif "openai" in available_services:
+            # OpenAI as fallback for reliability
+            priority = ["openai"]
+            if "gemini" in available_services:
+                priority.append("gemini")
+        else:
+            # Only Gemini available
+            priority = ["gemini"]
+        
+        logger.info(f"🎯 Service priority for {domain}: {priority}")
+        return priority
+
+    def _generate_openai_content(self, prompt: str, domain: str, scenario: str, emotion: str) -> str:
+        """Generate content using OpenAI API."""
+        try:
+            from openai import OpenAI
+            
+            # Initialize OpenAI client
+            client = OpenAI(api_key=self.openai_api_key)
+            
+            # Create enhanced prompt with Trinity Architecture context
+            enhanced_prompt = f"""
+            Generate a realistic, domain-specific response for the following scenario:
+            
+            Domain: {domain}
+            Scenario: {scenario}
+            User Emotion: {emotion}
+            Context: {prompt}
+            
+            Requirements:
+            - Be specific to {domain} domain
+            - Address the {emotion} emotion appropriately
+            - Include Trinity Architecture annotations: [Trinity Architecture: einstein_fusion]
+            - Maintain professional boundaries and safety
+            - Provide actionable, helpful guidance
+            - Keep response under 200 words
+            
+            Response:
+            """
+            
+            response = client.chat.completions.create(
+                model=self.ai_services["openai"]["model"],
+                messages=[
+                    {"role": "system", "content": "You are a specialized AI assistant for the MeeTARA Lab training data generation system. Generate realistic, domain-specific responses with Trinity Architecture enhancements."},
+                    {"role": "user", "content": enhanced_prompt}
+                ],
+                max_tokens=self.ai_services["openai"]["max_tokens"],
+                temperature=self.ai_services["openai"]["temperature"]
+            )
+            
+            content = response.choices[0].message.content.strip()
+            logger.info(f"✅ OpenAI generated content for {domain} - {scenario}")
+            self._track_ai_usage(domain, "openai", True)
+            return content
+            
+        except Exception as e:
+            logger.error(f"OpenAI generation failed: {e}")
+            self._track_ai_usage(domain, "openai", False)
+            return None
+
+    def _generate_gemini_content(self, prompt: str, domain: str, scenario: str, emotion: str) -> str:
+        """Generate content using Google Gemini API."""
+        try:
+            import google.generativeai as genai
+            
+            # Configure Gemini
+            genai.configure(api_key=self.gemini_api_key)
+            model = genai.GenerativeModel(self.ai_services["gemini"]["model"])
+            
+            # Create enhanced prompt
+            enhanced_prompt = f"""
+            Generate a realistic, domain-specific response for the following scenario:
+            
+            Domain: {domain}
+            Scenario: {scenario}
+            User Emotion: {emotion}
+            Context: {prompt}
+            
+            Requirements:
+            - Be specific to {domain} domain
+            - Address the {emotion} emotion appropriately
+            - Include Trinity Architecture annotations: [Trinity Architecture: einstein_fusion]
+            - Maintain professional boundaries and safety
+            - Provide actionable, helpful guidance
+            - Keep response under 200 words
+            
+            Response:
+            """
+            
+            response = model.generate_content(enhanced_prompt)
+            content = response.text.strip()
+            logger.info(f"✅ Gemini generated content for {domain} - {scenario}")
+            self._track_ai_usage(domain, "gemini", True)
+            return content
+            
+        except Exception as e:
+            logger.error(f"Gemini generation failed: {e}")
+            self._track_ai_usage(domain, "gemini", False)
+            return None
+
+    def _generate_deepseek_content(self, prompt: str, domain: str, scenario: str, emotion: str) -> str:
+        """Generate content using DeepSeek API."""
+        try:
+            import requests
+            
+            # DeepSeek API endpoint
+            url = "https://api.deepseek.com/v1/chat/completions"
+            
+            headers = {
+                "Authorization": f"Bearer {self.deepseek_api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            # Create enhanced prompt
+            enhanced_prompt = f"""
+            Generate a realistic, domain-specific response for the following scenario:
+            
+            Domain: {domain}
+            Scenario: {scenario}
+            User Emotion: {emotion}
+            Context: {prompt}
+            
+            Requirements:
+            - Be specific to {domain} domain
+            - Address the {emotion} emotion appropriately
+            - Include Trinity Architecture annotations: [Trinity Architecture: einstein_fusion]
+            - Maintain professional boundaries and safety
+            - Provide actionable, helpful guidance
+            - Keep response under 200 words
+            
+            Response:
+            """
+            
+            data = {
+                "model": self.ai_services["deepseek"]["model"],
+                "messages": [
+                    {"role": "system", "content": "You are a specialized AI assistant for the MeeTARA Lab training data generation system. Generate realistic, domain-specific responses with Trinity Architecture enhancements."},
+                    {"role": "user", "content": enhanced_prompt}
+                ],
+                "max_tokens": self.ai_services["deepseek"]["max_tokens"],
+                "temperature": self.ai_services["deepseek"]["temperature"]
+            }
+            
+            response = requests.post(url, headers=headers, json=data, timeout=30)
+            response.raise_for_status()
+            
+            result = response.json()
+            content = result["choices"][0]["message"]["content"].strip()
+            logger.info(f"✅ DeepSeek generated content for {domain} - {scenario}")
+            self._track_ai_usage(domain, "deepseek", True)
+            return content
+            
+        except Exception as e:
+            logger.error(f"DeepSeek generation failed: {e}")
+            self._track_ai_usage(domain, "deepseek", False)
+            return None
+
+    def _enhance_conversation_with_ai(self, conversation: Dict, domain: str) -> Dict:
+        """
+        Enhance existing conversation with AI-generated content.
+        """
+        try:
+            # Get the user's question/context
+            user_content = conversation.get("turns", [{}])[0].get("content", "")
+            
+            # Generate AI-enhanced response
+            ai_response = self._generate_ai_content(user_content, domain, 
+                                                 conversation.get("scenario", "general_guidance"),
+                                                 conversation.get("primary_emotion", "neutral"))
+            
+            if ai_response:
+                # Update the conversation with AI-generated content
+                if "turns" in conversation and len(conversation["turns"]) > 1:
+                    conversation["turns"][1]["content"] = ai_response
+                    conversation["ai_enhanced"] = True
+                    conversation["ai_service_used"] = "openai"  # Track which service was used
+                
+                logger.info(f"✅ AI-enhanced conversation for {domain}")
+            
+            return conversation
+            
+        except Exception as e:
+            logger.error(f"Error enhancing conversation with AI: {e}")
+            return conversation
+
+    def _should_use_ai_generation(self, domain: str, scenario: str) -> bool:
+        """
+        Determine if AI generation should be used for this domain/scenario.
+        """
+        # Use AI for premium and expert domains
+        premium_domains = ["healthcare", "legal", "financial", "emergency_care", "specialized"]
+        expert_domains = ["business", "education", "technology", "space_technology"]
+        
+        domain_category = self._get_domain_category(domain)
+        
+        if domain_category in premium_domains or domain_category in expert_domains:
+            return True
+        
+        # Use AI for crisis scenarios
+        if "crisis" in scenario.lower():
+            return True
+        
+        # Use AI for emotional scenarios
+        emotional_scenarios = ["panic", "anxious", "crisis", "emergency"]
+        if any(emotion in scenario.lower() for emotion in emotional_scenarios):
+            return True
+        
+        return False
+
+    def _get_domain_category(self, domain: str) -> str:
+        """Get the category for a given domain."""
+        domain_mapping = {
+            # Healthcare
+            "general_health": "healthcare", "mental_health": "healthcare", "nutrition": "healthcare",
+            "sleep": "healthcare", "stress_management": "healthcare", "preventive_care": "healthcare",
+            "chronic_conditions": "healthcare", "medication_management": "healthcare",
+            "emergency_care": "healthcare", "women_health": "healthcare", "senior_health": "healthcare",
+            
+            # Business
+            "entrepreneurship": "business", "marketing": "business", "sales": "business",
+            "customer_service": "business", "project_management": "business", "team_leadership": "business",
+            "financial_planning": "business", "operations": "business", "hr_management": "business",
+            "strategy": "business", "consulting": "business", "legal_business": "business",
+            
+            # Education
+            "academic_tutoring": "education", "skill_development": "education", "career_guidance": "education",
+            "exam_preparation": "education", "language_learning_education": "education",
+            "research_assistance": "education", "study_techniques": "education",
+            "educational_technology": "education", "teaching": "education", "education": "education",
+            
+            # Technology
+            "programming": "technology", "ai_ml": "technology", "cybersecurity": "technology",
+            "data_analysis": "technology", "tech_support": "technology", "software_development": "technology",
+            
+            # Specialized
+            "scientific_research": "specialized", "engineering": "specialized", "crisis_management": "specialized",
+            "disaster_preparedness": "specialized", "emergency_response": "specialized", "safety_security": "specialized"
+        }
+        
+        return domain_mapping.get(domain, "general")
+
+    def _track_ai_usage(self, domain: str, ai_service: str, success: bool):
+        """Track AI service usage for monitoring and optimization."""
+        if not hasattr(self, 'ai_usage_stats'):
+            self.ai_usage_stats = {}
+        
+        if domain not in self.ai_usage_stats:
+            self.ai_usage_stats[domain] = {}
+        
+        if ai_service not in self.ai_usage_stats[domain]:
+            self.ai_usage_stats[domain][ai_service] = {"success": 0, "failure": 0}
+        
+        if success:
+            self.ai_usage_stats[domain][ai_service]["success"] += 1
+        else:
+            self.ai_usage_stats[domain][ai_service]["failure"] += 1
+
+    def _generate_realistic_business_scenarios(self, domain: str) -> List[str]:
+        """Generate realistic business scenarios based on industry standards."""
+        if domain == "entrepreneurship":
+            return [
+                # Financial Crisis Scenarios (Industry Standard)
+                "cash_flow_emergency", "investor_pullout", "bankruptcy_threat", "tax_audit_crisis",
+                "insurance_claim_denied", "vendor_payment_default", "payroll_funding_shortfall",
+                
+                # Operational Crisis Scenarios (Industry Standard)
+                "key_employee_resignation", "supply_chain_disruption", "cybersecurity_breach",
+                "data_loss_incident", "facility_damage", "equipment_failure", "regulatory_violation",
+                
+                # Market Crisis Scenarios (Industry Standard)
+                "major_competitor_entry", "market_crash_impact", "customer_mass_exodus",
+                "reputation_damage", "social_media_crisis", "product_recall", "service_outage",
+                
+                # Legal Crisis Scenarios (Industry Standard)
+                "lawsuit_filing", "intellectual_property_theft", "contract_breach",
+                "employment_dispute", "regulatory_fine", "compliance_audit_failure"
+            ]
+        elif domain == "business":
+            return [
+                # Corporate Crisis Scenarios (Industry Standard)
+                "market_crash_impact", "merger_acquisition", "restructuring",
+                "compliance_audit", "stakeholder_conflict", "technology_outage",
+                "brand_crisis", "financial_reporting_error", "employee_misconduct",
+                
+                # Strategic Crisis Scenarios (Industry Standard)
+                "disruptive_technology", "regulatory_changes", "economic_recession",
+                "supply_chain_collapse", "cyber_attack", "executive_succession"
+            ]
+        elif domain == "healthcare":
+            return [
+                # Healthcare Crisis Scenarios (Industry Standard)
+                "patient_safety_incident", "regulatory_compliance_failure", "staff_shortage",
+                "equipment_malfunction", "data_breach", "medication_error",
+                "infection_outbreak", "financial_instability", "legal_liability"
+            ]
+        elif domain == "technology":
+            return [
+                # Technology Crisis Scenarios (Industry Standard)
+                "system_outage", "data_breach", "security_vulnerability",
+                "performance_degradation", "scalability_issues", "vendor_failure",
+                "regulatory_compliance", "intellectual_property_dispute"
+            ]
+        else:
+            return ["general_crisis", "operational_issue", "strategic_challenge"]
 

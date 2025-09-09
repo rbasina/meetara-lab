@@ -322,8 +322,16 @@ class IntelligentLogger:
         self.main_logger.info(f"   Speed Improvement: {optimization_gains.get('speed_improvement', 'N/A')}")
         self.main_logger.info(f"   Success Rate: {optimization_gains.get('success_rate', 0.0):.2%}")
         self.main_logger.info(f"   Baseline Time: {optimization_gains.get('baseline_time', 'N/A')}s")
-        self.main_logger.info(f"   Optimized Time: {optimization_gains.get('optimized_time', 'N/A'):.2f}s")
-        self.main_logger.info(f"   Time Saved: {optimization_gains.get('time_saved', 'N/A'):.2f}s")
+        optimized_time = optimization_gains.get('optimized_time', 'N/A')
+        if isinstance(optimized_time, (int, float)):
+            self.main_logger.info(f"   Optimized Time: {optimized_time:.2f}s")
+        else:
+            self.main_logger.info(f"   Optimized Time: {optimized_time}")
+        time_saved = optimization_gains.get('time_saved', 'N/A')
+        if isinstance(time_saved, (int, float)):
+            self.main_logger.info(f"   Time Saved: {time_saved:.2f}s")
+        else:
+            self.main_logger.info(f"   Time Saved: {time_saved}")
 
         # Quality Validation Summary
         quality_validation = overall_results.get("overall_quality_validation", {})

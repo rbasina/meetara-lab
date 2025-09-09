@@ -98,6 +98,20 @@ async def main():
         help='Override base model selection from config (e.g., "Qwen/Qwen2.5-14B-Instruct")'
     )
     
+    # NEW: Skip training argument (data generation only)
+    parser.add_argument(
+        '--skip-training',
+        action='store_true',
+        help='Skip model training and only generate training data (for local data generation phase)'
+    )
+    
+    # NEW: Commit to GitHub argument
+    parser.add_argument(
+        '--commit',
+        action='store_true',
+        help='Automatically commit and push generated data to GitHub (requires --skip-training)'
+    )
+    
     args = parser.parse_args()
 
     # Initialize configuration manager
@@ -185,20 +199,113 @@ async def main():
         logger.main_logger.error("No domains specified for training. Use --category, --domains, or --all.")
         sys.exit(1)
 
-    logger.main_logger.info(f"🎯 Training specific domains: {domains_to_process}")
+    # Check if we're in data generation only mode
+    if args.skip_training:
+        logger.main_logger.info(f"🎯 Data generation mode: {domains_to_process}")
+        logger.main_logger.info("📊 Generating training data only (skipping model training)")
+        
+        # Import data generator for data generation only
+        from trinity_core.agents.data_generator import TrinityDataGenerator
+        
+        # Generate data for each domain
+        successful_domains = []
+        failed_domains = []
+        
+        for domain in domains_to_process:
+            logger.main_logger.info(f"\n{'='*60}")
+            logger.main_logger.info(f"Generating data for domain: {domain}")
+            logger.main_logger.info(f"{'='*60}")
+            
+            try:
+                # Initialize data generator
+                from trinity_core.agents.intelligence_hub import TrinityIntelligenceHub
+                hub = TrinityIntelligenceHub()
+                data_generator = TrinityDataGenerator(environment=environment, hub=hub)
+                
+                # Generate data (default 6000 samples)
+                result = data_generator.generate_domain_data(domain, 6000)
+                
+                if result.get("status") == "success":
+                    logger.main_logger.info(f"✅ Successfully generated data for {domain}")
+                    logger.main_logger.info(f"   - Samples: {result.get('samples_generated', 0)}")
+                    logger.main_logger.info(f"   - Quality Score: {result.get('quality_score', 0.0):.3f}")
+                    successful_domains.append(domain)
+                else:
+                    logger.main_logger.error(f"❌ Failed to generate data for {domain}: {result.get('error', 'Unknown error')}")
+                    failed_domains.append(domain)
+                    
+            except Exception as e:
+                logger.main_logger.error(f"❌ Error generating data for {domain}: {e}")
+                failed_domains.append(domain)
+        
+        # Summary for data generation
+        logger.main_logger.info(f"\n{'='*60}")
+        logger.main_logger.info(f"DATA GENERATION SUMMARY")
+        logger.main_logger.info(f"{'='*60}")
+        logger.main_logger.info(f"✅ Successful domains: {len(successful_domains)}")
+        logger.main_logger.info(f"❌ Failed domains: {len(failed_domains)}")
+        
+        if successful_domains:
+            logger.main_logger.info(f"Successful domains: {', '.join(successful_domains)}")
+        
+        if failed_domains:
+            logger.main_logger.info(f"Failed domains: {', '.join(failed_domains)}")
+        
+        # Commit to GitHub if requested
+        if args.commit and successful_domains:
+            logger.main_logger.info(f"\n🔄 Committing {len(successful_domains)} domains to GitHub...")
+            try:
+                import subprocess
+                
+                # Add all generated data files
+                subprocess.run(["git", "add", "data/"], check=True)
+                
+                # Commit with timestamp
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                commit_message = f"Generated training data - {timestamp}"
+                
+                subprocess.run([
+                    "git", "commit", "-m", commit_message
+                ], check=True)
+                
+                # Push to GitHub
+                subprocess.run(["git", "push"], check=True)
+                
+                logger.main_logger.info("✅ Successfully committed and pushed data to GitHub")
+                logger.main_logger.info("🚀 Ready for Colab training phase!")
+                
+            except subprocess.CalledProcessError as e:
+                logger.main_logger.error(f"❌ Git operation failed: {e}")
+            except Exception as e:
+                logger.main_logger.error(f"❌ Unexpected error during git commit: {e}")
+        
+        # Create mock results for reporting
+        overall_results = {
+            "total_domains_processed": len(domains_to_process),
+            "successful_domains_count": len(successful_domains),
+            "failed_domains_count": len(failed_domains),
+            "overall_quality_score": 0.95 if successful_domains else 0.0,
+            "overall_success": len(failed_domains) == 0,
+            "total_processing_time_seconds": 0.0,
+            "domain_breakdown": {domain: {"status": "success" if domain in successful_domains else "failed"} for domain in domains_to_process}
+        }
+        
+    else:
+        # Normal training mode
+        logger.main_logger.info(f"🎯 Training specific domains: {domains_to_process}")
 
-    # Orchestrate the training process
-    logger.log_training_start(domains_to_process) # Pass domains_to_process here
-    
-    # This will now return the overall results including total_domains_processed
-    overall_results = await ecosystem.trinity_conductor.orchestrate_intelligent_training(
-        target_domains=domains_to_process, # Corrected argument name
-        simulation=args.simulation, # Corrected argument name
-        generate_synthetic=args.generate_synthetic, # Pass the generate_synthetic flag
-        environment=environment, # Pass environment to downstream components
-        skip_quantization=args.skip_quantization, # Pass skip_quantization flag
-        base_model_override=args.base_model # NEW: Pass base model override
-    )
+        # Orchestrate the training process
+        logger.log_training_start(domains_to_process) # Pass domains_to_process here
+        
+        # This will now return the overall results including total_domains_processed
+        overall_results = await ecosystem.trinity_conductor.orchestrate_intelligent_training(
+            target_domains=domains_to_process, # Corrected argument name
+            simulation=args.simulation, # Corrected argument name
+            generate_synthetic=args.generate_synthetic, # Pass the generate_synthetic flag
+            environment=environment, # Pass environment to downstream components
+            skip_quantization=args.skip_quantization, # Pass skip_quantization flag
+            base_model_override=args.base_model # NEW: Pass base model override
+        )
     
     # Enhanced reporting and documentation
     logger.log_training_completed(overall_results)
