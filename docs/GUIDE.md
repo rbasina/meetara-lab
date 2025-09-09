@@ -362,8 +362,8 @@ python cloud-training/production_launcher.py --production --domains your_new_dom
 #### **Base Model Integration**
 1. **Add Base Model**:
 ```bash
-# Download new base model
-python scripts/download_base_models.py --model your_model_name
+# Download and convert new models
+python factory/download_and_convert_qwen3.py
 ```
 
 2. **Update Configuration**:
