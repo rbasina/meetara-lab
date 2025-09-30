@@ -10,11 +10,11 @@ last_updated: '2025-07-09'
 # 4. GGUF files from large models would be GB-sized (not 8.3MB target)
 # 
 # SOLUTION: All domains now use 7B-8B models maximum
-# - Qwen/Qwen2.5-14B-Instruct → Qwen/Qwen3-4B-Thinking-2507
+# - Qwen/Qwen2.5-14B-Instruct → Qwen/Qwen2.5-7B-Instruct
 # - codellama/CodeLlama-13b-Instruct-hf → codellama/CodeLlama-7b-Instruct-hf  
 # - meta-llama/Llama-3-70B-Instruct → meta-llama/Llama-3-8B-Instruct
 # 
-# 🚀 QWEN3 UPGRADE COMPLETE (Sep 2, 2025)
+# 🚀 QWEN3 UPGRADE COMPLETE (July 20, 2025)
 # Enhanced models with superior instruction-following and reasoning capabilities:
 # - Qwen/Qwen3-Instruct-2507: Premium instruction-following for all tiers
 # - Qwen/Qwen3-Thinking-2507: Advanced reasoning for complex scenarios
@@ -27,21 +27,10 @@ llama_cpp_path: /content/meetara-lab/llama.cpp/build/bin
 
 # Model name mappings (centralized model definitions)
 model_names:
-  # Mobile Models (4B parameters - lightweight for mobile devices)
-  qwen3_4b_base: "Qwen/Qwen3-4B-Base"
-  qwen3_4b_instruct: "Qwen/Qwen3-4B-Instruct"
-  
-  # Desktop Models (8B parameters - powerful for desktop applications)
-  qwen3_8b_base: "Qwen/Qwen3-8B-Base"
-  qwen3_8b_instruct: "Qwen/Qwen3-8B-Instruct"
-  
-  # Universal Models (7B parameters - balanced performance)
   qwen3_7b_instruct: "Qwen/Qwen3-Instruct-2507"
   qwen3_7b_thinking: "Qwen/Qwen3-Thinking-2507"
-  qwen_7b_instruct: "Qwen/Qwen3-4B-Thinking-2507"
+  qwen_7b_instruct: "Qwen/Qwen2.5-7B-Instruct"
   qwen_14b_instruct: "Qwen/Qwen2.5-14B-Instruct"
-  
-  # Legacy Models (for backward compatibility)
   mistral_7b_instruct: "mistralai/Mistral-7B-Instruct-v0.2"
   llama2_7b_chat: "meta-llama/Llama-2-7b-chat-hf"
   llama2_13b_chat: "meta-llama/Llama-2-13b-chat-hf"
@@ -100,47 +89,6 @@ model_tiers:
     lora_r: 4
     learning_rate: 0.00035
     quality_target: 97.5%
-
-# Mobile & Desktop Specific Tiers
-mobile_tiers:
-  mobile_thinking:
-    base_model_suggestion: Qwen/Qwen3-4B-Thinking-2507
-    sample_count: 3000
-    num_epochs: 1
-    batch_size: 8
-    lora_r: 4
-    learning_rate: 3e-4
-    quality_target: 98.0%
-    description: "Lightweight thinking model for mobile devices"
-  mobile_instruct:
-    base_model_suggestion: Qwen/Qwen3-4B-Instruct-2507
-    sample_count: 2500
-    num_epochs: 1
-    batch_size: 10
-    lora_r: 4
-    learning_rate: 3e-4
-    quality_target: 97.5%
-    description: "Fast instruction-following model for mobile devices"
-
-desktop_tiers:
-  desktop_thinking:
-    base_model_suggestion: Qwen/Qwen3-8B-Thinking-2507
-    sample_count: 6000
-    num_epochs: 2
-    batch_size: 4
-    lora_r: 8
-    learning_rate: 1e-4
-    quality_target: 99.5%
-    description: "Advanced thinking model for desktop applications"
-  desktop_instruct:
-    base_model_suggestion: Qwen/Qwen3-8B-Instruct-2507
-    sample_count: 5000
-    num_epochs: 2
-    batch_size: 6
-    lora_r: 8
-    learning_rate: 1.5e-4
-    quality_target: 99.0%
-    description: "Comprehensive instruction model for desktop applications"
 quality_reasoning:
   healthcare: Premium models for safety-critical medical advice
   business: Expert models for strategic decision-making accuracy (7B due to memory constraints)
@@ -156,7 +104,7 @@ gpu_configs:
     max_parallel_jobs: 2
     recommended_models:
     # Primary Models (Optimized for T4)
-    - Qwen/Qwen3-4B-Thinking-2507
+    - Qwen/Qwen2.5-7B-Instruct
     - HuggingFaceTB/SmolLM2-1.7B
     - meta-llama/Llama-2-7b-chat-hf
     - mistralai/Mistral-7B-Instruct-v0.2
@@ -179,7 +127,7 @@ gpu_configs:
     max_parallel_jobs: 6
     recommended_models:
     # Primary Models (Optimized for V100)
-    - Qwen/Qwen3-4B-Thinking-2507
+    - Qwen/Qwen2.5-7B-Instruct
     - Qwen/Qwen2.5-14B-Instruct
     - meta-llama/Llama-2-7b-chat-hf
     - meta-llama/Llama-2-13b-chat-hf
@@ -207,7 +155,7 @@ gpu_configs:
     recommended_models:
     # Primary Models (Optimized for A100)
     - Qwen/Qwen2.5-14B-Instruct
-    - Qwen/Qwen3-4B-Thinking-2507
+    - Qwen/Qwen2.5-7B-Instruct
     - meta-llama/Llama-3-70B-Instruct
     - meta-llama/Llama-2-13b-chat-hf
     - meta-llama/Llama-3-8B-Instruct
@@ -232,26 +180,26 @@ gpu_configs:
     torch_dtype: "auto"
 cost_estimates:
   premium_tier:
-    model: Qwen/Qwen3-4B-Thinking-2507
+    model: Qwen/Qwen2.5-7B-Instruct
     gpu: A100
     parallel_jobs: 8
     time_all_domains: 2-3 hours
     total_cost: $8-12
   expert_tier:
-    model: Qwen/Qwen3-4B-Thinking-2507
+    model: Qwen/Qwen2.5-7B-Instruct
     gpu: A100
     parallel_jobs: 8
     time_all_domains: 2-3 hours
     total_cost: $8-12
   quality_tier:
-    model: Qwen/Qwen3-4B-Thinking-2507
+    model: Qwen/Qwen2.5-7B-Instruct
     gpu: V100
     parallel_jobs: 6
     time_all_domains: 2-4 hours
     total_cost: $10-20
 verified_licenses:
   HuggingFaceTB/SmolLM2-1.7B: Apache-2.0
-  Qwen/Qwen3-4B-Thinking-2507: Apache-2.0
+  Qwen/Qwen2.5-7B-Instruct: Apache-2.0
   Qwen/Qwen2.5-14B-Instruct: Apache-2.0
   meta-llama/Llama-2-7b-chat-hf: Apache-2.0
   meta-llama/Llama-2-13b-chat-hf: Apache-2.0
@@ -307,270 +255,168 @@ global_tara_params:
 domain_config:
   healthcare:
     category_tier: premium
-    base_model: Qwen/Qwen3-4B-Thinking-2507
-    mobile_models:
-      general_health: Qwen/Qwen3-4B-Thinking-2507
-      mental_health: Qwen/Qwen3-4B-Instruct-2507
-      nutrition: Qwen/Qwen3-4B-Thinking-2507
-      sleep: Qwen/Qwen3-4B-Instruct-2507
-      stress_management: Qwen/Qwen3-4B-Thinking-2507
-      preventive_care: Qwen/Qwen3-4B-Instruct-2507
-    desktop_models:
-      chronic_conditions: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
-      medication_management: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
-      emergency_care: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
-      women_health: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
-      senior_health: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      general_health: Qwen/Qwen3-4B-Thinking-2507
-      mental_health: Qwen/Qwen3-4B-Instruct-2507
-      nutrition: Qwen/Qwen3-4B-Thinking-2507
-      sleep: Qwen/Qwen3-4B-Instruct-2507
-      stress_management: Qwen/Qwen3-4B-Thinking-2507
-      preventive_care: Qwen/Qwen3-4B-Instruct-2507
-      chronic_conditions: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
-      medication_management: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
-      emergency_care: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
-      women_health: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
-      senior_health: Qwen/Qwen3-8B  # Instruction-tuned (thinking + conversation)
+      general_health: Qwen/Qwen2.5-7B-Instruct
+      mental_health: Qwen/Qwen2.5-7B-Instruct
+      nutrition: Qwen/Qwen2.5-7B-Instruct
+      sleep: Qwen/Qwen2.5-7B-Instruct
+      stress_management: Qwen/Qwen2.5-7B-Instruct
+      preventive_care: Qwen/Qwen2.5-7B-Instruct
+      chronic_conditions: Qwen/Qwen2.5-7B-Instruct
+      medication_management: Qwen/Qwen2.5-7B-Instruct
+      emergency_care: Qwen/Qwen2.5-7B-Instruct
+      women_health: Qwen/Qwen2.5-7B-Instruct
+      senior_health: Qwen/Qwen2.5-7B-Instruct
   daily_life:
     category_tier: quality
-    base_model: Qwen/Qwen3-4B-Thinking-2507
-    mobile_models:
-      parenting: Qwen/Qwen3-4B-Thinking-2507
-      relationships: Qwen/Qwen3-4B-Thinking-2507
-      personal_assistant: Qwen/Qwen3-4B-Thinking-2507
-      communication: Qwen/Qwen3-4B-Thinking-2507
-      home_management: Qwen/Qwen3-4B-Thinking-2507
-      shopping: Qwen/Qwen3-4B-Thinking-2507
-      planning: Qwen/Qwen3-4B-Thinking-2507
-      transportation: Qwen/Qwen3-4B-Thinking-2507
-      time_management: Qwen/Qwen3-4B-Thinking-2507
-    desktop_models:
-      decision_making: Qwen/Qwen3-8B-Thinking-2507
-      conflict_resolution: Qwen/Qwen3-8B-Thinking-2507
-      work_life_balance: Qwen/Qwen3-8B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      parenting: Qwen/Qwen3-4B-Thinking-2507
-      relationships: Qwen/Qwen3-4B-Thinking-2507
-      personal_assistant: Qwen/Qwen3-4B-Thinking-2507
-      communication: Qwen/Qwen3-4B-Thinking-2507
-      home_management: Qwen/Qwen3-4B-Thinking-2507
-      shopping: Qwen/Qwen3-4B-Thinking-2507
-      planning: Qwen/Qwen3-4B-Thinking-2507
-      transportation: Qwen/Qwen3-4B-Thinking-2507
-      time_management: Qwen/Qwen3-4B-Thinking-2507
-      decision_making: Qwen/Qwen3-8B-Thinking-2507
-      conflict_resolution: Qwen/Qwen3-8B-Thinking-2507
-      work_life_balance: Qwen/Qwen3-8B-Thinking-2507
+      parenting: Qwen/Qwen2.5-7B-Instruct
+      relationships: Qwen/Qwen2.5-7B-Instruct
+      personal_assistant: Qwen/Qwen2.5-7B-Instruct
+      communication: Qwen/Qwen2.5-7B-Instruct
+      home_management: Qwen/Qwen2.5-7B-Instruct
+      shopping: Qwen/Qwen2.5-7B-Instruct
+      planning: Qwen/Qwen2.5-7B-Instruct
+      transportation: Qwen/Qwen2.5-7B-Instruct
+      time_management: Qwen/Qwen2.5-7B-Instruct
+      decision_making: Qwen/Qwen2.5-7B-Instruct
+      conflict_resolution: Qwen/Qwen2.5-7B-Instruct
+      work_life_balance: Qwen/Qwen2.5-7B-Instruct
   business:
     category_tier: expert
-    base_model: Qwen/Qwen3-4B-Thinking-2507
-    mobile_models:
-      entrepreneurship: Qwen/Qwen3-4B-Thinking-2507
-      marketing: Qwen/Qwen3-4B-Thinking-2507
-      sales: Qwen/Qwen3-4B-Thinking-2507
-      customer_service: Qwen/Qwen3-4B-Thinking-2507
-      project_management: Qwen/Qwen3-4B-Thinking-2507
-    desktop_models:
-      team_leadership: Qwen/Qwen3-8B-Thinking-2507
-      financial_planning: Qwen/Qwen3-8B-Thinking-2507
-      operations: Qwen/Qwen3-8B-Thinking-2507
-      hr_management: Qwen/Qwen3-8B-Thinking-2507
-      strategy: Qwen/Qwen3-8B-Thinking-2507
-      consulting: Qwen/Qwen3-8B-Thinking-2507
-      legal_business: Qwen/Qwen3-8B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      entrepreneurship: Qwen/Qwen3-4B-Thinking-2507
-      marketing: Qwen/Qwen3-4B-Thinking-2507
-      sales: Qwen/Qwen3-4B-Thinking-2507
-      customer_service: Qwen/Qwen3-4B-Thinking-2507
-      project_management: Qwen/Qwen3-4B-Thinking-2507
-      team_leadership: Qwen/Qwen3-8B-Thinking-2507
-      financial_planning: Qwen/Qwen3-8B-Thinking-2507
-      operations: Qwen/Qwen3-8B-Thinking-2507
-      hr_management: Qwen/Qwen3-8B-Thinking-2507
-      strategy: Qwen/Qwen3-8B-Thinking-2507
-      consulting: Qwen/Qwen3-8B-Thinking-2507
-      legal_business: Qwen/Qwen3-8B-Thinking-2507
+      entrepreneurship: Qwen/Qwen2.5-7B-Instruct
+      marketing: Qwen/Qwen2.5-7B-Instruct
+      sales: Qwen/Qwen2.5-7B-Instruct
+      customer_service: Qwen/Qwen2.5-7B-Instruct
+      project_management: Qwen/Qwen2.5-7B-Instruct
+      team_leadership: Qwen/Qwen2.5-7B-Instruct
+      financial_planning: Qwen/Qwen2.5-7B-Instruct
+      operations: Qwen/Qwen2.5-7B-Instruct
+      hr_management: Qwen/Qwen2.5-7B-Instruct
+      strategy: Qwen/Qwen2.5-7B-Instruct
+      consulting: Qwen/Qwen2.5-7B-Instruct
+      legal_business: Qwen/Qwen2.5-7B-Instruct
   education:
     category_tier: expert
-    base_model: Qwen/Qwen3-4B-Thinking-2507
-    mobile_models:
-      academic_tutoring: Qwen/Qwen3-4B-Thinking-2507
-      skill_development: Qwen/Qwen3-4B-Thinking-2507
-      career_guidance: Qwen/Qwen3-4B-Thinking-2507
-      exam_preparation: Qwen/Qwen3-4B-Thinking-2507
-      language_learning_education: Qwen/Qwen3-4B-Thinking-2507
-      study_techniques: Qwen/Qwen3-4B-Thinking-2507
-    desktop_models:
-      research_assistance: Qwen/Qwen3-8B-Thinking-2507
-      educational_technology: Qwen/Qwen3-8B-Thinking-2507
-      teaching: Qwen/Qwen3-8B-Thinking-2507
-      education: Qwen/Qwen3-8B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      academic_tutoring: Qwen/Qwen3-4B-Thinking-2507
-      skill_development: Qwen/Qwen3-4B-Thinking-2507
-      career_guidance: Qwen/Qwen3-4B-Thinking-2507
-      exam_preparation: Qwen/Qwen3-4B-Thinking-2507
-      language_learning_education: Qwen/Qwen3-4B-Thinking-2507
-      research_assistance: Qwen/Qwen3-8B-Thinking-2507
-      study_techniques: Qwen/Qwen3-4B-Thinking-2507
-      educational_technology: Qwen/Qwen3-8B-Thinking-2507
-      teaching: Qwen/Qwen3-8B-Thinking-2507
-      education: Qwen/Qwen3-8B-Thinking-2507
+      academic_tutoring: Qwen/Qwen2.5-7B-Instruct
+      skill_development: Qwen/Qwen2.5-7B-Instruct
+      career_guidance: Qwen/Qwen2.5-7B-Instruct
+      exam_preparation: Qwen/Qwen2.5-7B-Instruct
+      language_learning_education: Qwen/Qwen2.5-7B-Instruct
+      research_assistance: Qwen/Qwen2.5-7B-Instruct
+      study_techniques: Qwen/Qwen2.5-7B-Instruct
+      educational_technology: Qwen/Qwen2.5-7B-Instruct
+      teaching: Qwen/Qwen2.5-7B-Instruct
+      education: Qwen/Qwen2.5-7B-Instruct
   creative:
     category_tier: quality
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      writing: Qwen/Qwen3-4B-Thinking-2507
-      storytelling: Qwen/Qwen3-4B-Thinking-2507
-      content_creation: Qwen/Qwen3-4B-Thinking-2507
-      social_media: Qwen/Qwen3-4B-Thinking-2507
-      design_thinking: Qwen/Qwen3-4B-Thinking-2507
-      photography: Qwen/Qwen3-4B-Thinking-2507
-      music: Qwen/Qwen3-4B-Thinking-2507
-      art_appreciation: Qwen/Qwen3-4B-Thinking-2507
-      mythology: Qwen/Qwen3-4B-Thinking-2507
-      spiritual: Qwen/Qwen3-4B-Thinking-2507
-      creative_writing: Qwen/Qwen3-4B-Thinking-2507
+      writing: Qwen/Qwen2.5-7B-Instruct
+      storytelling: Qwen/Qwen2.5-7B-Instruct
+      content_creation: Qwen/Qwen2.5-7B-Instruct
+      social_media: Qwen/Qwen2.5-7B-Instruct
+      design_thinking: Qwen/Qwen2.5-7B-Instruct
+      photography: Qwen/Qwen2.5-7B-Instruct
+      music: Qwen/Qwen2.5-7B-Instruct
+      art_appreciation: Qwen/Qwen2.5-7B-Instruct
+      mythology: Qwen/Qwen2.5-7B-Instruct
+      spiritual: Qwen/Qwen2.5-7B-Instruct
+      creative_writing: Qwen/Qwen2.5-7B-Instruct
   psychology_wellness:
     category_tier: quality
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      psychology: Qwen/Qwen3-4B-Thinking-2507
-      yoga: Qwen/Qwen3-4B-Thinking-2507
-      life_coaching: Qwen/Qwen3-4B-Thinking-2507
-      social_support: Qwen/Qwen3-4B-Thinking-2507
+      psychology: Qwen/Qwen2.5-7B-Instruct
+      yoga: Qwen/Qwen2.5-7B-Instruct
+      life_coaching: Qwen/Qwen2.5-7B-Instruct
+      social_support: Qwen/Qwen2.5-7B-Instruct
   sports_recreation:
     category_tier: quality
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      sports_recreation: Qwen/Qwen3-4B-Thinking-2507
-      fitness_healthcare: Qwen/Qwen3-4B-Thinking-2507
+      sports_recreation: Qwen/Qwen2.5-7B-Instruct
+      fitness_healthcare: Qwen/Qwen2.5-7B-Instruct
   business_professional:
     category_tier: expert
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      remote_work: Qwen/Qwen3-4B-Thinking-2507
-      social_media_management: Qwen/Qwen3-4B-Thinking-2507
-      digital_literacy: Qwen/Qwen3-4B-Thinking-2507
-      language_learning_professional: Qwen/Qwen3-4B-Thinking-2507
+      remote_work: Qwen/Qwen2.5-7B-Instruct
+      social_media_management: Qwen/Qwen2.5-7B-Instruct
+      digital_literacy: Qwen/Qwen2.5-7B-Instruct
+      language_learning_professional: Qwen/Qwen2.5-7B-Instruct
   research_academic:
     category_tier: expert
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      research: Qwen/Qwen3-4B-Thinking-2507
+      research: Qwen/Qwen2.5-7B-Instruct
       research_assistance: "meta-llama/Llama-3-8B-Instruct"  # Changed from 70B due to memory constraints
-      academic_tutoring_research: Qwen/Qwen3-4B-Thinking-2507
+      academic_tutoring_research: Qwen/Qwen2.5-7B-Instruct
   legal_financial:
     category_tier: premium
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      legal_assistance: Qwen/Qwen3-4B-Thinking-2507
-      insurance: Qwen/Qwen3-4B-Thinking-2507
-      real_estate: Qwen/Qwen3-4B-Thinking-2507
-      legal: Qwen/Qwen3-4B-Thinking-2507
-      financial: Qwen/Qwen3-4B-Thinking-2507
+      legal_assistance: Qwen/Qwen2.5-7B-Instruct
+      insurance: Qwen/Qwen2.5-7B-Instruct
+      real_estate: Qwen/Qwen2.5-7B-Instruct
+      legal: Qwen/Qwen2.5-7B-Instruct
+      financial: Qwen/Qwen2.5-7B-Instruct
   emergency_crisis:
     category_tier: premium
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      crisis_management: Qwen/Qwen3-4B-Thinking-2507
-      disaster_preparedness: Qwen/Qwen3-4B-Thinking-2507
-      emergency_response: Qwen/Qwen3-4B-Thinking-2507
-      safety_security: Qwen/Qwen3-4B-Thinking-2507
+      crisis_management: Qwen/Qwen2.5-7B-Instruct
+      disaster_preparedness: Qwen/Qwen2.5-7B-Instruct
+      emergency_response: Qwen/Qwen2.5-7B-Instruct
+      safety_security: Qwen/Qwen2.5-7B-Instruct
   aerospace_transportation:
     category_tier: expert
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      aeronautics: Qwen/Qwen3-4B-Thinking-2507
-      automobile: Qwen/Qwen3-4B-Thinking-2507
-      space_technology: Qwen/Qwen3-4B-Thinking-2507
-      aerospace_engineering: Qwen/Qwen3-4B-Thinking-2507
+      aeronautics: Qwen/Qwen2.5-7B-Instruct
+      automobile: Qwen/Qwen2.5-7B-Instruct
+      space_technology: Qwen/Qwen2.5-7B-Instruct
+      aerospace_engineering: Qwen/Qwen2.5-7B-Instruct
   industrial_manufacturing:
     category_tier: expert
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      agriculture: Qwen/Qwen3-4B-Thinking-2507
-      manufacturing: Qwen/Qwen3-4B-Thinking-2507
+      agriculture: Qwen/Qwen2.5-7B-Instruct
+      manufacturing: Qwen/Qwen2.5-7B-Instruct
   travel_tourism:
     category_tier: quality
-    base_model: Qwen/Qwen3-4B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      travel_tourism: Qwen/Qwen3-4B-Thinking-2507
+      travel_tourism: Qwen/Qwen2.5-7B-Instruct
   technology:
     category_tier: expert
-    base_model: Qwen/Qwen3-4B-Thinking-2507
-    mobile_models:
-      tech_support: Qwen/Qwen3-4B-Thinking-2507
-      data_analysis: Qwen/Qwen3-4B-Thinking-2507
-    desktop_models:
-      programming: Qwen/Qwen3-8B-Thinking-2507
-      ai_ml: Qwen/Qwen3-8B-Thinking-2507
-      cybersecurity: Qwen/Qwen3-8B-Thinking-2507
-      software_development: Qwen/Qwen3-8B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      programming: Qwen/Qwen3-8B-Thinking-2507
-      ai_ml: Qwen/Qwen3-8B-Thinking-2507
-      cybersecurity: Qwen/Qwen3-8B-Thinking-2507
-      data_analysis: Qwen/Qwen3-4B-Thinking-2507
-      tech_support: Qwen/Qwen3-4B-Thinking-2507
-      software_development: Qwen/Qwen3-8B-Thinking-2507
+      programming: codellama/CodeLlama-7b-Instruct-hf  # Changed from 13B due to memory constraints
+      ai_ml: Qwen/Qwen2.5-7B-Instruct
+      cybersecurity: Qwen/Qwen2.5-7B-Instruct
+      data_analysis: Qwen/Qwen2.5-7B-Instruct
+      tech_support: Qwen/Qwen2.5-7B-Instruct
+      software_development: codellama/CodeLlama-7b-Instruct-hf  # Changed from 13B due to memory constraints
   specialized:
     category_tier: premium
-    base_model: Qwen/Qwen3-4B-Thinking-2507
-    mobile_models:
-      scientific_research: Qwen/Qwen3-4B-Thinking-2507
-    desktop_models:
-      engineering: Qwen/Qwen3-8B-Thinking-2507
+    base_model: Qwen/Qwen2.5-7B-Instruct
     domains:
-      scientific_research: Qwen/Qwen3-4B-Thinking-2507
-      engineering: Qwen/Qwen3-8B-Thinking-2507
-
-# Mobile vs Desktop Model Mapping Strategy
-mobile_desktop_mapping:
-  strategy: "Intelligent model allocation based on complexity and device constraints"
-  
-  mobile_models_4b:
-    description: "Lightweight 4B models for mobile devices - fast, efficient, battery-friendly"
-    use_cases:
-      - "Quick responses and simple tasks"
-      - "Real-time assistance on mobile devices"
-      - "Basic health and daily life guidance"
-      - "Simple technical support"
-      - "General education and tutoring"
-    domains:
-      - "general_health, mental_health, nutrition, sleep, stress_management, preventive_care"
-      - "parenting, relationships, personal_assistant, communication, home_management"
-      - "entrepreneurship, marketing, sales, customer_service, project_management"
-      - "academic_tutoring, skill_development, career_guidance, exam_preparation"
-      - "tech_support, data_analysis"
-      - "scientific_research"
-  
-  desktop_models_8b:
-    description: "Powerful 8B models for desktop applications - complex reasoning, detailed analysis"
-    use_cases:
-      - "Complex problem solving and analysis"
-      - "Detailed research and technical work"
-      - "Strategic planning and decision making"
-      - "Advanced healthcare and emergency situations"
-      - "Professional development and leadership"
-    domains:
-      - "chronic_conditions, medication_management, emergency_care, women_health, senior_health"
-      - "decision_making, conflict_resolution, work_life_balance"
-      - "team_leadership, financial_planning, operations, hr_management, strategy, consulting"
-      - "research_assistance, educational_technology, teaching, education"
-      - "programming, ai_ml, cybersecurity, software_development"
-      - "engineering"
-
+      scientific_research: "meta-llama/Llama-3-8B-Instruct"  # Changed from 70B due to memory constraints
+      engineering: "Qwen/Qwen2.5-7B-Instruct"                # Technical design
 paths:
   data_training_base_dir: data
   data_trained_base_dir: data
 
 model_type_map:
   # Primary Models (Qwen)
-  Qwen/Qwen3-4B-Thinking-2507:
+  Qwen/Qwen2.5-7B-Instruct:
     model_type: qwen
     architecture: Qwen2ForCausalLM
     vocab_size: 32000
@@ -804,7 +650,7 @@ qlora_config:
 approved_models:
   # PRIMARY MODELS (Lowest Risk)
   primary:
-    qwen_7b: "Qwen/Qwen3-4B-Thinking-2507"
+    qwen_7b: "Qwen/Qwen2.5-7B-Instruct"
     qwen_14b: "Qwen/Qwen2.5-14B-Instruct"
   
   # APPROVED MODELS (Low Risk - Apache-2.0 License)
@@ -827,7 +673,7 @@ approved_models:
 # Risk Assessment for MeeTARA Lab
 risk_assessment:
   low_risk_models:
-    - "Qwen/Qwen3-4B-Thinking-2507"
+    - "Qwen/Qwen2.5-7B-Instruct"
     - "Qwen/Qwen2.5-14B-Instruct"
     - "meta-llama/Llama-2-7b-chat-hf"
     - "meta-llama/Llama-2-13b-chat-hf"

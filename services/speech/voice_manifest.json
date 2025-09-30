@@ -1,0 +1,76 @@
+{
+  "service_type": "voice_profiles",
+  "version": "2.0",
+  "created": "2025-09-29T23:56:46.124123",
+  "total_profiles": 16,
+  "categories": {
+    "core": [
+      "general_health",
+      "daily_life",
+      "business",
+      "education",
+      "creative",
+      "technology",
+      "specialized"
+    ],
+    "extended": [
+      "psychology_wellness",
+      "sports_recreation",
+      "business_professional",
+      "research_academic",
+      "legal_financial",
+      "emergency_crisis",
+      "aerospace_transportation",
+      "industrial_manufacturing",
+      "travel_tourism"
+    ]
+  },
+  "voice_models": {
+    "bark_tts": {
+      "enabled": true,
+      "priority": 1,
+      "quality": "high",
+      "model_path": "C:/Users/rames/.cache/suno/bark_v0",
+      "internet_required": false
+    },
+    "piper_tts": {
+      "enabled": true,
+      "priority": 2,
+      "quality": "medium",
+      "model_path": "models/piper_tts",
+      "internet_required": false
+    },
+    "edge_tts": {
+      "enabled": true,
+      "priority": 3,
+      "quality": "high",
+      "cloud_based": true,
+      "internet_required": true,
+      "note": "ENABLED - Provides additional voice variety (requires internet)"
+    },
+    "pyttsx3": {
+      "enabled": true,
+      "priority": 4,
+      "quality": "basic",
+      "local_fallback": true,
+      "internet_required": false
+    }
+  },
+  "features": {
+    "local_only_mode": false,
+    "local_tts_priority": true,
+    "cloud_tts_enabled": true,
+    "dual_tts_support": true,
+    "emotional_adaptation": true,
+    "context_aware_synthesis": true,
+    "domain_specific_voices": true,
+    "intelligent_fallback": true,
+    "offline_capable": false
+  },
+  "trinity_architecture": {
+    "arc_reactor_efficiency": 0.9,
+    "perplexity_intelligence": true,
+    "einstein_fusion_factor": 5.04
+  },
+  "output_directory": "G:\\My Drive\\meetara-lab\\services\\speech\\voice"
+}

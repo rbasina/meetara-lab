@@ -55,6 +55,12 @@ meetara-lab/
 ├── notebooks/                # 📚 Jupyter notebooks + connections
 ├── tests/                    # 🧪 All tests + intelligence validation
 ├── docs/                     # 📖 Documentation + demos + archive
+│   ├── voice-system/        # 🎤 Voice synthesis documentation (NEW!)
+│   │   ├── README.md                              # Voice system index
+│   │   ├── VOICE_SYSTEM_COMPLETE_GUIDE.md         # Complete guide
+│   │   ├── EDGE_TTS_VOICES_REFERENCE.md           # Voice reference
+│   │   ├── MOBILE_DESKTOP_VOICE_INTEGRATION.md    # Platform integration
+│   │   └── IMPLEMENTATION_SUMMARY.md              # Implementation summary
 │   ├── TRAINING_PROCESS_DEEP_DIVE.md  # 🚀 Complete training methodology
 │   ├── ARCHITECTURE.md       # 🏗️ Technical architecture
 │   ├── GUIDE.md              # 🎯 User guide and instructions
@@ -86,6 +92,38 @@ meetara-lab/
 - **Trinity Conductor**: Orchestrates training and model creation
 - **Model Factory**: Creates and optimizes GGUF models
 - **Smart Router**: Intelligent model selection based on query complexity
+
+---
+
+## 🎤 **VOICE SYNTHESIS SYSTEM** (NEW!)
+
+### **Cloud-First Architecture:**
+- **Priority 1**: Edge TTS (cloud, FREE, 90/100 quality, 0 MB)
+- **Priority 2**: Piper TTS (local, 85/100 quality, 120 MB)
+- **Priority 3**: Bark TTS (local, 95/100 quality, 5.1 GB) - OPTIONAL
+- **Priority 4**: PyTTSx3 (system fallback, 60/100 quality)
+
+### **16 Domain Categories:**
+- **Core (7)**: Healthcare, Daily Life, Business, Education, Creative, Technology, Specialized
+- **Extended (9)**: Psychology, Sports, Business Pro, Research, Legal, Emergency, Aerospace, Industrial, Travel
+
+### **Key Features:**
+✅ **97.7% Storage Reduction** (5.2 GB → 120 MB with cloud-first)  
+✅ **100% Verified Voices** (17 Edge TTS voices tested)  
+✅ **Backend ↔ Frontend Integration** (seamless voice generation)  
+✅ **Smart Fallback** (4-tier redundancy)  
+
+### **Quick Start:**
+```bash
+# Generate voice profiles
+python factory/voice_service_factory.py
+
+# Test Edge TTS voices
+python scripts/test_edge_tts.py --all
+
+# See complete documentation
+docs/voice-system/README.md
+```
 
 ---
 

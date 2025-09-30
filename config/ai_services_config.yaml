@@ -3,35 +3,28 @@
 # Never commit the local file with real API keys to version control
 
 ai_services:
-  # OpenAI Configuration - Cost-optimized for training data generation
-  openai_model: "gpt-3.5-turbo"  # Most cost-effective for training data generation
-  openai_max_tokens: 1500  # Reduced for cost efficiency
-  openai_temperature: 0.8  # Slightly higher for creativity
+  # OpenAI Configuration
+  openai_model: "gpt-4o-mini"  # Cost-effective for training data generation
+  openai_max_tokens: 2000
+  openai_temperature: 0.7
   
-  # Google Gemini Configuration - Fast but quota-limited
-  gemini_model: "gemini-1.5-flash"  # Fastest response time
-  gemini_max_tokens: 1500  # Reduced for cost efficiency
-  gemini_temperature: 0.8  # Balanced creativity and consistency
+  # Google Gemini Configuration
+  gemini_model: "gemini-1.5-flash"
+  gemini_max_tokens: 2000
+  gemini_temperature: 0.7
   
-  # DeepSeek Configuration - Most cost-effective option
-  deepseek_model: "deepseek-chat"  # Best value for money
-  deepseek_max_tokens: 1500  # Reduced for cost efficiency
-  deepseek_temperature: 0.8  # Balanced creativity and consistency
+  # DeepSeek Configuration
+  deepseek_model: "deepseek-chat"
+  deepseek_max_tokens: 2000
+  deepseek_temperature: 0.7
 
-# AI Service Settings - Optimized for training data generation
+# AI Service Settings
 ai_config:
-  cache_duration: 7200  # 2 hour cache for AI-generated content
+  cache_duration: 3600  # 1 hour cache for AI-generated content
   max_scenarios_per_domain: 100
   enable_ai_enhancement: true
   fallback_to_templates: true  # Use existing templates if AI services fail
   quality_threshold: 0.8  # Minimum quality score for AI-generated content
-  max_consecutive_failures: 3  # Stop using service after 3 consecutive failures
-  failure_reset_time: 3600  # Reset failure count after 1 hour
-
-# Service Priority (Cost-effectiveness first)
-# 1. DeepSeek - Most cost-effective, reliable
-# 2. OpenAI - Reliable, moderate cost
-# 3. Gemini - Fastest, but quota-limited
 
 # Environment Variables
 # API keys are loaded from environment variables (.env file or system environment)
