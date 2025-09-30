@@ -1,0 +1,9 @@
+{
+  "model_type": "nllb_shared_reference",
+  "language": "ml",
+  "shared_key": "nllb_shared_Q4_K_M",
+  "language_code": "mal_Mlym",
+  "quantization_type": "Q4_K_M",
+  "size_mb": 1009.3046875,
+  "created_at": "2025-09-11T19:35:33.014850"
+}

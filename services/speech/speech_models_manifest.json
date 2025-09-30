@@ -1,0 +1,42 @@
+{
+  "deployment_type": "speech_models_bundle",
+  "created": "2025-09-11T19:35:09.796848",
+  "domain": "universal",
+  "category": "universal",
+  "structure": {
+    "emotion_models": 2,
+    "voice_profiles": 16,
+    "routing_models": 2,
+    "supported_domains": 93,
+    "voice_categories": 16,
+    "config_files": 1,
+    "trinity_enhancements": 1,
+    "total_files": 22
+  },
+  "capabilities": {
+    "speech_recognition": true,
+    "voice_synthesis": true,
+    "emotion_detection": true,
+    "smart_routing": true,
+    "domain_switching": true,
+    "context_awareness": true
+  },
+  "trinity_features": {
+    "arc_reactor_efficiency": 0.9,
+    "perplexity_intelligence": true,
+    "einstein_fusion_factor": 5.04,
+    "emotional_intelligence": true,
+    "smart_routing": true
+  },
+  "compatibility": {
+    "tara_v1": true,
+    "meetara_frontend": true,
+    "deployment_ready": true,
+    "auto_coordination": true
+  },
+  "file_summary": {
+    "total_files": 22,
+    "speech_models_size_mb": 0.021442413330078125,
+    "deployment_ready": true
+  }
+}

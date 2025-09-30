@@ -1,0 +1,376 @@
+{
+  "domains": {
+    "healthcare": [
+      "general_health",
+      "mental_health",
+      "nutrition",
+      "sleep",
+      "stress_management",
+      "preventive_care",
+      "chronic_conditions",
+      "medication_management",
+      "emergency_care",
+      "women_health",
+      "senior_health"
+    ],
+    "daily_life": [
+      "parenting",
+      "relationships",
+      "personal_assistant",
+      "communication",
+      "home_management",
+      "shopping",
+      "planning",
+      "transportation",
+      "time_management",
+      "decision_making",
+      "conflict_resolution",
+      "work_life_balance"
+    ],
+    "business": [
+      "entrepreneurship",
+      "marketing",
+      "sales",
+      "customer_service",
+      "project_management",
+      "team_leadership",
+      "financial_planning",
+      "operations",
+      "hr_management",
+      "strategy",
+      "consulting",
+      "legal_business"
+    ],
+    "education": [
+      "academic_tutoring",
+      "skill_development",
+      "career_guidance",
+      "exam_preparation",
+      "language_learning_education",
+      "research_assistance",
+      "study_techniques",
+      "educational_technology",
+      "teaching",
+      "education"
+    ],
+    "creative": [
+      "writing",
+      "storytelling",
+      "content_creation",
+      "social_media",
+      "design_thinking",
+      "photography",
+      "music",
+      "art_appreciation",
+      "mythology",
+      "spiritual",
+      "creative_writing"
+    ],
+    "psychology_wellness": [
+      "psychology",
+      "yoga",
+      "life_coaching",
+      "social_support"
+    ],
+    "sports_recreation": [
+      "sports_recreation",
+      "fitness_healthcare"
+    ],
+    "business_professional": [
+      "remote_work",
+      "social_media_management",
+      "digital_literacy",
+      "language_learning_professional"
+    ],
+    "research_academic": [
+      "research",
+      "research_assistance",
+      "academic_tutoring_research"
+    ],
+    "legal_financial": [
+      "legal_assistance",
+      "insurance",
+      "real_estate",
+      "legal",
+      "financial"
+    ],
+    "emergency_crisis": [
+      "crisis_management",
+      "disaster_preparedness",
+      "emergency_response",
+      "safety_security"
+    ],
+    "aerospace_transportation": [
+      "aeronautics",
+      "automobile",
+      "space_technology",
+      "aerospace_engineering"
+    ],
+    "industrial_manufacturing": [
+      "agriculture",
+      "manufacturing"
+    ],
+    "travel_tourism": [
+      "travel_tourism"
+    ],
+    "technology": [
+      "programming",
+      "ai_ml",
+      "cybersecurity",
+      "data_analysis",
+      "tech_support",
+      "software_development"
+    ],
+    "specialized": [
+      "scientific_research",
+      "engineering"
+    ]
+  },
+  "routing_logic": {
+    "primary": "domain_detection",
+    "fallback": "emotion_based_routing",
+    "confidence_threshold": 0.85
+  },
+  "category_tiers": {
+    "premium": [
+      "healthcare",
+      "legal_financial",
+      "emergency_crisis",
+      "specialized"
+    ],
+    "expert": [
+      "business",
+      "education",
+      "business_professional",
+      "research_academic",
+      "aerospace_transportation",
+      "industrial_manufacturing",
+      "technology"
+    ],
+    "quality": [
+      "daily_life",
+      "creative",
+      "psychology_wellness",
+      "sports_recreation",
+      "travel_tourism"
+    ],
+    "specialized": []
+  },
+  "total_domains": 93,
+  "total_categories": 16,
+  "mobile_model_routing": {
+    "model_selection": {
+      "thinking_model": "meetara_mobile_thinking_universal-IQ4_XS",
+      "instruct_model": "meetara_mobile_instruct_universal-IQ4_XS",
+      "criteria": {
+        "thinking_preferred": [
+          "Complex reasoning and analysis",
+          "Multi-step problem solving",
+          "Scientific and technical domains",
+          "Crisis management and emergency response",
+          "Financial and legal analysis",
+          "Research and academic work"
+        ],
+        "instruct_preferred": [
+          "Conversational and social interactions",
+          "Step-by-step instructions",
+          "Creative and artistic tasks",
+          "Daily life assistance",
+          "Simple Q&A and explanations",
+          "Entertainment and storytelling"
+        ]
+      }
+    },
+    "domain_model_mapping": {
+      "thinking_domains": [
+        "chronic_conditions",
+        "emergency_care",
+        "mental_health",
+        "medication_management",
+        "preventive_care",
+        "senior_health",
+        "women_health",
+        "ai_ml",
+        "cybersecurity",
+        "data_analysis",
+        "programming",
+        "software_development",
+        "tech_support",
+        "consulting",
+        "entrepreneurship",
+        "financial_planning",
+        "hr_management",
+        "legal_business",
+        "project_management",
+        "strategy",
+        "team_leadership",
+        "academic_tutoring_research",
+        "research",
+        "research_assistance",
+        "scientific_research",
+        "crisis_management",
+        "disaster_preparedness",
+        "emergency_response",
+        "safety_security",
+        "financial",
+        "insurance",
+        "legal",
+        "legal_assistance",
+        "real_estate",
+        "aeronautics",
+        "aerospace_engineering",
+        "automobile",
+        "engineering",
+        "space_technology",
+        "life_coaching",
+        "psychology",
+        "social_support",
+        "agriculture",
+        "manufacturing",
+        "digital_literacy",
+        "language_learning_professional",
+        "remote_work",
+        "social_media_management"
+      ],
+      "instruct_domains": [
+        "communication",
+        "conflict_resolution",
+        "decision_making",
+        "home_management",
+        "parenting",
+        "personal_assistant",
+        "planning",
+        "relationships",
+        "shopping",
+        "time_management",
+        "transportation",
+        "work_life_balance",
+        "art_appreciation",
+        "content_creation",
+        "creative_writing",
+        "design_thinking",
+        "music",
+        "mythology",
+        "photography",
+        "social_media",
+        "spiritual",
+        "storytelling",
+        "writing",
+        "academic_tutoring",
+        "career_guidance",
+        "education",
+        "educational_technology",
+        "exam_preparation",
+        "language_learning_education",
+        "skill_development",
+        "study_techniques",
+        "teaching",
+        "fitness_healthcare",
+        "general_health",
+        "nutrition",
+        "sleep",
+        "stress_management",
+        "yoga",
+        "customer_service",
+        "marketing",
+        "operations",
+        "sales",
+        "sports_recreation",
+        "travel_tourism"
+      ]
+    },
+    "category_model_mapping": {
+      "thinking_categories": [
+        "healthcare",
+        "technology",
+        "business",
+        "research_academic",
+        "emergency_crisis",
+        "legal_financial",
+        "specialized",
+        "psychology_wellness",
+        "industrial_manufacturing",
+        "business_professional"
+      ],
+      "instruct_categories": [
+        "daily_life",
+        "creative",
+        "education",
+        "sports_recreation",
+        "travel_tourism"
+      ]
+    },
+    "routing_rules": {
+      "selection_priority": [
+        "exact_domain_match",
+        "category_match",
+        "keyword_analysis",
+        "default_instruct"
+      ],
+      "keyword_indicators": {
+        "thinking_keywords": [
+          "analyze",
+          "calculate",
+          "compare",
+          "evaluate",
+          "explain why",
+          "how does",
+          "what causes",
+          "research",
+          "investigate",
+          "solve",
+          "troubleshoot",
+          "diagnose",
+          "strategize",
+          "plan",
+          "optimize",
+          "crisis",
+          "emergency",
+          "urgent",
+          "complex",
+          "technical"
+        ],
+        "instruct_keywords": [
+          "how to",
+          "step by step",
+          "guide me",
+          "show me",
+          "tell me about",
+          "what is",
+          "can you help",
+          "explain simply",
+          "basic",
+          "simple",
+          "easy",
+          "quick",
+          "chat",
+          "talk",
+          "conversation",
+          "story",
+          "creative",
+          "write",
+          "create",
+          "make"
+        ]
+      }
+    },
+    "performance": {
+      "switch_cost_ms": 50,
+      "cache_duration_minutes": 30,
+      "fallback_to_instruct": true,
+      "log_level": "INFO"
+    },
+    "analytics": {
+      "track_model_usage": true,
+      "track_switch_frequency": true,
+      "track_performance_metrics": true,
+      "metrics": [
+        "model_selection_time",
+        "model_switch_frequency",
+        "user_satisfaction_by_model",
+        "domain_accuracy_by_model",
+        "response_quality_by_model"
+      ]
+    }
+  }
+}

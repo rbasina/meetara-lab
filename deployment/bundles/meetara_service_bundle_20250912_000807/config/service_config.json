@@ -1,0 +1,94 @@
+{
+  "version": "1.0.0",
+  "bundle_id": "meetara_service_bundle_20250912_000807",
+  "created_at": "2025-09-12T00:09:01.523342",
+  "models": {
+    "mobile": {
+      "thinking_model": {
+        "path": "models/meetara_mobile_thinking_universal.gguf",
+        "type": "GGUF",
+        "size_mb": 2180.4,
+        "use_cases": "Complex reasoning, analysis, problem-solving, crisis management"
+      },
+      "instruct_model": {
+        "path": "models/meetara_mobile_instruct_universal.gguf",
+        "type": "GGUF",
+        "size_mb": 2180.4,
+        "use_cases": "Conversational, instructional, creative tasks, daily assistance"
+      },
+      "routing": "Intelligent domain-based model selection",
+      "domains": "93+ emotional intelligence domains"
+    },
+    "desktop": {
+      "path": "models/meetara_desktop_universal.gguf",
+      "type": "GGUF",
+      "size_mb": 4380.51,
+      "domains": "93+ emotional intelligence domains"
+    }
+  },
+  "services": {
+    "emotion_detection": {
+      "models": [
+        "services/emotion/rms_model.pkl",
+        "services/emotion/ser_model.pkl"
+      ],
+      "api_endpoint": "/api/v1/emotion/detect"
+    },
+    "voice_synthesis": {
+      "models": "services/voice/",
+      "categories": [
+        "healthcare",
+        "daily_life",
+        "business",
+        "education",
+        "creative",
+        "psychology_wellness",
+        "sports_recreation",
+        "business_professional",
+        "research_academic",
+        "legal_financial",
+        "emergency_crisis",
+        "aerospace_transportation",
+        "industrial_manufacturing",
+        "travel_tourism",
+        "technology",
+        "specialized"
+      ],
+      "api_endpoint": "/api/v1/voice/synthesize"
+    },
+    "translation": {
+      "supported_languages": [
+        "hi",
+        "te",
+        "ta",
+        "gu",
+        "bn",
+        "ml",
+        "mr",
+        "pa",
+        "as",
+        "si",
+        "kn",
+        "ur",
+        "ar",
+        "de",
+        "es",
+        "fr",
+        "ja",
+        "ko",
+        "zh"
+      ],
+      "models": "services/translation/",
+      "shared_nllb_model": "services/translation/shared_nllb_model/",
+      "api_endpoint": "/api/v1/translate",
+      "optimization": "99.1% storage reduction with shared NLLB model"
+    },
+    "intelligent_routing": {
+      "models": [
+        "services/routing/domain_router.pkl",
+        "services/routing/emotion_router.pkl"
+      ],
+      "api_endpoint": "/api/v1/route"
+    }
+  }
+}

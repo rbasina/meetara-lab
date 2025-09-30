@@ -1,0 +1,21 @@
+learning:
+  adaptation_rate: 0.1
+  enabled: true
+  pattern_memory: 100
+  performance_tracking: true
+model_sizing:
+  base_size_mb: 8.3
+  compression_preference: lzma
+  quantization_strategy: quality_adaptive
+  scaling_factor: 1.0
+  strategy: adaptive
+performance:
+  batch_size_strategy: dynamic
+  memory_efficiency_target: 0.9
+  parallel_processing: true
+  target_utilization: 0.85
+quality:
+  minimum_acceptable: 0.7
+  quality_vs_size_tradeoff: 0.8
+  target_quality: 0.9
+  validation_strictness: adaptive

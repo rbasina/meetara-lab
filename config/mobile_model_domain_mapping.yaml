@@ -1,0 +1,261 @@
+# MeeTARA Lab - Mobile Model Domain Mapping
+# Intelligent routing between Thinking and Instruct models based on domain requirements
+
+# Model Selection Strategy
+model_selection:
+  thinking_model: "meetara_mobile_thinking_universal-IQ4_XS"
+  instruct_model: "meetara_mobile_instruct_universal-IQ4_XS"
+  
+  # Selection criteria
+  criteria:
+    thinking_preferred:
+      - Complex reasoning and analysis
+      - Multi-step problem solving
+      - Scientific and technical domains
+      - Crisis management and emergency response
+      - Financial and legal analysis
+      - Research and academic work
+      
+    instruct_preferred:
+      - Conversational and social interactions
+      - Step-by-step instructions
+      - Creative and artistic tasks
+      - Daily life assistance
+      - Simple Q&A and explanations
+      - Entertainment and storytelling
+
+# Domain to Model Mapping
+domain_model_mapping:
+  # THINKING MODEL DOMAINS (Complex reasoning required)
+  thinking_domains:
+    # Healthcare - Complex medical reasoning
+    - chronic_conditions
+    - emergency_care
+    - mental_health
+    - medication_management
+    - preventive_care
+    - senior_health
+    - women_health
+    
+    # Technology - Technical analysis and problem solving
+    - ai_ml
+    - cybersecurity
+    - data_analysis
+    - programming
+    - software_development
+    - tech_support
+    
+    # Business - Strategic thinking and analysis
+    - consulting
+    - entrepreneurship
+    - financial_planning
+    - hr_management
+    - legal_business
+    - project_management
+    - strategy
+    - team_leadership
+    
+    # Research & Academic - Complex analytical work
+    - academic_tutoring_research
+    - research
+    - research_assistance
+    - scientific_research
+    
+    # Crisis & Emergency - Critical thinking required
+    - crisis_management
+    - disaster_preparedness
+    - emergency_response
+    - safety_security
+    
+    # Legal & Financial - Complex analysis
+    - financial
+    - insurance
+    - legal
+    - legal_assistance
+    - real_estate
+    
+    # Engineering & Specialized - Technical reasoning
+    - aeronautics
+    - aerospace_engineering
+    - automobile
+    - engineering
+    - space_technology
+    
+    # Psychology & Wellness - Complex understanding
+    - life_coaching
+    - psychology
+    - social_support
+    
+    # Industrial - Technical analysis
+    - agriculture
+    - manufacturing
+    
+    # Business Professional - Strategic thinking
+    - digital_literacy
+    - language_learning_professional
+    - remote_work
+    - social_media_management
+
+  # INSTRUCT MODEL DOMAINS (Conversational and instructional)
+  instruct_domains:
+    # Daily Life - Conversational assistance
+    - communication
+    - conflict_resolution
+    - decision_making
+    - home_management
+    - parenting
+    - personal_assistant
+    - planning
+    - relationships
+    - shopping
+    - time_management
+    - transportation
+    - work_life_balance
+    
+    # Creative - Artistic and creative tasks
+    - art_appreciation
+    - content_creation
+    - creative_writing
+    - design_thinking
+    - music
+    - mythology
+    - photography
+    - social_media
+    - spiritual
+    - storytelling
+    - writing
+    
+    # Education - Instructional and tutorial content
+    - academic_tutoring
+    - career_guidance
+    - education
+    - educational_technology
+    - exam_preparation
+    - language_learning_education
+    - skill_development
+    - study_techniques
+    - teaching
+    
+    # General Health - Basic health guidance
+    - fitness_healthcare
+    - general_health
+    - nutrition
+    - sleep
+    - stress_management
+    - yoga
+    
+    # Business - Customer service and basic business
+    - customer_service
+    - marketing
+    - operations
+    - sales
+    
+    # Sports & Recreation - Activity guidance
+    - sports_recreation
+    
+    # Travel - Travel assistance
+    - travel_tourism
+
+# Category-based Model Selection (Fallback)
+category_model_mapping:
+  thinking_categories:
+    - healthcare
+    - technology
+    - business
+    - research_academic
+    - emergency_crisis
+    - legal_financial
+    - specialized
+    - psychology_wellness
+    - industrial_manufacturing
+    - business_professional
+    
+  instruct_categories:
+    - daily_life
+    - creative
+    - education
+    - sports_recreation
+    - travel_tourism
+
+# Intelligent Routing Rules
+routing_rules:
+  # Priority order for model selection
+  selection_priority:
+    - "exact_domain_match"      # Exact domain in mapping
+    - "category_match"          # Domain category match
+    - "keyword_analysis"        # Analyze query keywords
+    - "default_instruct"        # Default to instruct for general use
+    
+  # Keyword analysis for intelligent switching
+  keyword_indicators:
+    thinking_keywords:
+      - "analyze"
+      - "calculate"
+      - "compare"
+      - "evaluate"
+      - "explain why"
+      - "how does"
+      - "what causes"
+      - "research"
+      - "investigate"
+      - "solve"
+      - "troubleshoot"
+      - "diagnose"
+      - "strategize"
+      - "plan"
+      - "optimize"
+      - "crisis"
+      - "emergency"
+      - "urgent"
+      - "complex"
+      - "technical"
+      
+    instruct_keywords:
+      - "how to"
+      - "step by step"
+      - "guide me"
+      - "show me"
+      - "tell me about"
+      - "what is"
+      - "can you help"
+      - "explain simply"
+      - "basic"
+      - "simple"
+      - "easy"
+      - "quick"
+      - "chat"
+      - "talk"
+      - "conversation"
+      - "story"
+      - "creative"
+      - "write"
+      - "create"
+      - "make"
+
+# Performance Optimization
+performance:
+  # Model switching cost (in milliseconds)
+  switch_cost_ms: 50
+  
+  # Cache duration for model selection decisions
+  cache_duration_minutes: 30
+  
+  # Fallback behavior
+  fallback_to_instruct: true
+  
+  # Logging level for model selection
+  log_level: "INFO"
+
+# Usage Statistics Tracking
+analytics:
+  track_model_usage: true
+  track_switch_frequency: true
+  track_performance_metrics: true
+  
+  # Metrics to collect
+  metrics:
+    - "model_selection_time"
+    - "model_switch_frequency"
+    - "user_satisfaction_by_model"
+    - "domain_accuracy_by_model"
+    - "response_quality_by_model"

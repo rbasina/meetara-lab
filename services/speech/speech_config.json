@@ -1,0 +1,63 @@
+{
+  "speech_models_version": "2.0",
+  "domain": "universal",
+  "category": "universal",
+  "created": "2025-09-11T19:35:09.756360",
+  "tara_compatible": true,
+  "meetara_enhanced": true,
+  "structure": {
+    "emotion": {
+      "rms_model.pkl": "SpeechBrain RMS (Root Mean Square) model",
+      "ser_model.pkl": "SpeechBrain SER (Speech Emotion Recognition) model"
+    },
+    "voice": {
+      "general_health_voice.pkl": "General_Health voice profile",
+      "daily_life_voice.pkl": "Daily_Life voice profile",
+      "business_voice.pkl": "Business voice profile",
+      "education_voice.pkl": "Education voice profile",
+      "creative_voice.pkl": "Creative voice profile",
+      "technology_voice.pkl": "Technology voice profile",
+      "specialized_voice.pkl": "Specialized voice profile",
+      "psychology_wellness_voice.pkl": "Psychology_Wellness voice profile",
+      "sports_recreation_voice.pkl": "Sports_Recreation voice profile",
+      "business_professional_voice.pkl": "Business_Professional voice profile",
+      "research_academic_voice.pkl": "Research_Academic voice profile",
+      "legal_financial_voice.pkl": "Legal_Financial voice profile",
+      "emergency_crisis_voice.pkl": "Emergency_Crisis voice profile",
+      "aerospace_transportation_voice.pkl": "Aerospace_Transportation voice profile",
+      "industrial_manufacturing_voice.pkl": "Industrial_Manufacturing voice profile",
+      "travel_tourism_voice.pkl": "Travel_Tourism voice profile"
+    },
+    "routing": {
+      "domain_router.pkl": "Smart domain detection and routing (93 domains)",
+      "emotion_router.pkl": "Emotional context-aware routing"
+    }
+  },
+  "integration": {
+    "speechbrain_models": true,
+    "voice_profiles": 16,
+    "smart_routing": true,
+    "trinity_architecture": true,
+    "auto_coordination": true
+  },
+  "capabilities": {
+    "real_time_speech_recognition": true,
+    "emotion_aware_voice_synthesis": true,
+    "intelligent_domain_routing": true,
+    "domain_specific_routing": true,
+    "hierarchical_routing": true,
+    "context_adaptive_responses": true,
+    "multi_domain_support": true,
+    "sub_domain_detection": true
+  },
+  "trinity_enhancements": {
+    "arc_reactor_efficiency": 0.9,
+    "perplexity_intelligence": true,
+    "einstein_fusion_factor": 5.04
+  },
+  "performance": {
+    "quality_target": 0.95,
+    "compatibility_target": "TARA_v1",
+    "creation_timestamp": "2025-09-11T19:35:09.756814"
+  }
+}
