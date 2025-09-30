@@ -1,0 +1,192 @@
+{
+  "bundle_id": "translation_bundle_20250911_193509",
+  "languages": [
+    "hi",
+    "es",
+    "fr",
+    "de",
+    "ja",
+    "ko",
+    "zh",
+    "ar",
+    "te",
+    "ta",
+    "kn",
+    "ml",
+    "bn",
+    "gu",
+    "mr",
+    "pa",
+    "as",
+    "si",
+    "ur"
+  ],
+  "quantization_type": "Q4_K_M",
+  "models": {
+    "hi": {
+      "name": "Hindi",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\hi_model",
+      "size_mb": 121.73904037475586,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": false
+    },
+    "es": {
+      "name": "Spanish",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\es_model",
+      "size_mb": 129.3202247619629,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": false
+    },
+    "fr": {
+      "name": "French",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\fr_model",
+      "size_mb": 118.5824966430664,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": false
+    },
+    "de": {
+      "name": "German",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\de_model",
+      "size_mb": 115.81734085083008,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": false
+    },
+    "ja": {
+      "name": "Japanese",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\ja_model",
+      "size_mb": 120.93473815917969,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": false
+    },
+    "ko": {
+      "name": "Korean",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\ko_model",
+      "size_mb": 129.3202247619629,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": false
+    },
+    "zh": {
+      "name": "Chinese",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\zh_model",
+      "size_mb": 129.3202247619629,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": false
+    },
+    "ar": {
+      "name": "Arabic",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\ar_model",
+      "size_mb": 125.07953643798828,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": false
+    },
+    "te": {
+      "name": "Telugu",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\te_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "ta": {
+      "name": "Tamil",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\ta_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "kn": {
+      "name": "Kannada",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\kn_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "ml": {
+      "name": "Malayalam",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\ml_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "bn": {
+      "name": "Bengali",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\bn_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "gu": {
+      "name": "Gujarati",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\gu_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "mr": {
+      "name": "Marathi",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\mr_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "pa": {
+      "name": "Punjabi",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\pa_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "as": {
+      "name": "Assamese",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\as_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "si": {
+      "name": "Sinhala",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\si_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    },
+    "ur": {
+      "name": "Urdu",
+      "model_path": "G:\\My Drive\\models\\speech_models\\translation\\translation_bundle_20250911_193509\\ur_model",
+      "size_mb": 0,
+      "quantization_type": "Q4_K_M",
+      "quality_retention": 0.95,
+      "shared_model": true,
+      "shared_key": "nllb_shared_Q4_K_M"
+    }
+  },
+  "total_size_mb": 990.113826751709,
+  "created_at": "2025-09-11T19:35:09.899653"
+}

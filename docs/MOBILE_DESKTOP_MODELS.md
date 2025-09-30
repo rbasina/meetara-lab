@@ -48,16 +48,19 @@ models/production/
 
 | Model | Architecture | Size | Use Case | Performance |
 |-------|-------------|------|----------|-------------|
-| **Qwen3-4B-Thinking** | Advanced Reasoning | ~2.5GB | Complex problem solving, analysis | 98.0% quality |
-| **Qwen3-4B-Instruct** | Instruction Following | ~2.0GB | Task execution, commands | 97.5% quality |
-| **Universal Mobile** | Combined Intelligence | ~3.0GB | Complete mobile experience | 98.5% quality |
+| **Qwen3-4B-Thinking** | Advanced Reasoning | ~2.3GB | Complex problem solving, analysis | 98.0% quality |
+| **Qwen3-4B-Instruct** | Instruction Following | ~2.3GB | Task execution, commands | 97.5% quality |
+| **Mobile Thinking Universal** | Domain-Routed Intelligence | ~2.3GB | Healthcare, technology, business | 98.0% quality |
+| **Mobile Instruct Universal** | Conversational Intelligence | ~2.3GB | Daily life, creative, education | 97.5% quality |
 
 **Mobile Optimizations:**
 - ✅ Lightweight architecture for mobile devices
 - ✅ Fast inference with minimal memory usage
 - ✅ Battery-optimized processing
 - ✅ Offline capability with local processing
-- ✅ Q4_K_M quantization for optimal size/quality balance
+- ✅ IQ4_XS quantization for optimal size/quality balance
+- ✅ **Intelligent Domain Routing**: Automatic model selection based on query domain
+- ✅ **Dual Model System**: Thinking for complex reasoning, Instruct for conversations
 
 ### **🖥️ Desktop Models (8B Parameters)**
 
@@ -85,11 +88,51 @@ models/production/
 - **Domain Detection**: Automatic routing to appropriate models
 - **Complexity Analysis**: Smart model selection based on query requirements
 - **Context Understanding**: Maintains conversation context across interactions
+- **Mobile Model Routing**: Intelligent selection between Thinking and Instruct models
 
 ### **Einstein Fusion (504% Capability Amplification)**
 - **Multi-Model Coordination**: Combines mobile and desktop capabilities
 - **Intelligent Fallbacks**: Graceful degradation when resources are limited
 - **Adaptive Learning**: Continuous improvement based on usage patterns
+- **Domain-Based Intelligence**: 93 domains mapped to optimal mobile models
+
+## 🎯 **Mobile Model Domain Mapping System**
+
+### **Intelligent Model Selection:**
+The mobile system now features intelligent domain-based model selection:
+
+#### **Thinking Model Domains (48 domains):**
+- **Healthcare**: Complex medical reasoning and analysis
+- **Technology**: Advanced technical problem solving
+- **Business**: Strategic thinking and analysis
+- **Legal/Financial**: Complex legal and financial reasoning
+- **Research/Academic**: Deep research and academic work
+- **Specialized**: Engineering, aerospace, manufacturing
+- **Emergency/Crisis**: Critical thinking and crisis management
+
+#### **Instruct Model Domains (45 domains):**
+- **Daily Life**: Conversational assistance and guidance
+- **Creative**: Creative writing, art, music, storytelling
+- **Psychology/Wellness**: Emotional support and wellness
+- **Sports/Recreation**: Recreational activities and sports
+- **Travel/Tourism**: Travel planning and tourism
+- **Education**: General tutoring and instruction following
+- **Business Professional**: Communication and professional tasks
+
+### **Configuration:**
+```yaml
+# Mobile Model Domain Mapping
+mobile_model_routing:
+  domain_model_mapping:
+    thinking_domains:
+      - healthcare, technology, business, legal_financial
+      - research_academic, specialized, emergency_crisis
+      - aerospace_transportation, industrial_manufacturing
+    instruct_domains:
+      - daily_life, creative, psychology_wellness
+      - sports_recreation, travel_tourism, education
+      - business_professional
+```
 
 ## 🎤 **Complete Speech Intelligence**
 

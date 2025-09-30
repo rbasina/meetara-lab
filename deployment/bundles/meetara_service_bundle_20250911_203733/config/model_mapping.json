@@ -1,0 +1,161 @@
+{
+  "domains": {
+    "healthcare": [
+      "general_health",
+      "mental_health",
+      "nutrition",
+      "sleep",
+      "stress_management",
+      "preventive_care",
+      "chronic_conditions",
+      "medication_management",
+      "emergency_care",
+      "women_health",
+      "senior_health"
+    ],
+    "daily_life": [
+      "parenting",
+      "relationships",
+      "personal_assistant",
+      "communication",
+      "home_management",
+      "shopping",
+      "planning",
+      "transportation",
+      "time_management",
+      "decision_making",
+      "conflict_resolution",
+      "work_life_balance"
+    ],
+    "business": [
+      "entrepreneurship",
+      "marketing",
+      "sales",
+      "customer_service",
+      "project_management",
+      "team_leadership",
+      "financial_planning",
+      "operations",
+      "hr_management",
+      "strategy",
+      "consulting",
+      "legal_business"
+    ],
+    "education": [
+      "academic_tutoring",
+      "skill_development",
+      "career_guidance",
+      "exam_preparation",
+      "language_learning_education",
+      "research_assistance",
+      "study_techniques",
+      "educational_technology",
+      "teaching",
+      "education"
+    ],
+    "creative": [
+      "writing",
+      "storytelling",
+      "content_creation",
+      "social_media",
+      "design_thinking",
+      "photography",
+      "music",
+      "art_appreciation",
+      "mythology",
+      "spiritual",
+      "creative_writing"
+    ],
+    "psychology_wellness": [
+      "psychology",
+      "yoga",
+      "life_coaching",
+      "social_support"
+    ],
+    "sports_recreation": [
+      "sports_recreation",
+      "fitness_healthcare"
+    ],
+    "business_professional": [
+      "remote_work",
+      "social_media_management",
+      "digital_literacy",
+      "language_learning_professional"
+    ],
+    "research_academic": [
+      "research",
+      "research_assistance",
+      "academic_tutoring_research"
+    ],
+    "legal_financial": [
+      "legal_assistance",
+      "insurance",
+      "real_estate",
+      "legal",
+      "financial"
+    ],
+    "emergency_crisis": [
+      "crisis_management",
+      "disaster_preparedness",
+      "emergency_response",
+      "safety_security"
+    ],
+    "aerospace_transportation": [
+      "aeronautics",
+      "automobile",
+      "space_technology",
+      "aerospace_engineering"
+    ],
+    "industrial_manufacturing": [
+      "agriculture",
+      "manufacturing"
+    ],
+    "travel_tourism": [
+      "travel_tourism"
+    ],
+    "technology": [
+      "programming",
+      "ai_ml",
+      "cybersecurity",
+      "data_analysis",
+      "tech_support",
+      "software_development"
+    ],
+    "specialized": [
+      "scientific_research",
+      "engineering"
+    ]
+  },
+  "routing_logic": {
+    "primary": "domain_detection",
+    "fallback": "emotion_based_routing",
+    "confidence_threshold": 0.85
+  },
+  "category_tiers": {
+    "premium": [
+      "healthcare",
+      "legal_financial",
+      "emergency_crisis",
+      "specialized"
+    ],
+    "expert": [
+      "business",
+      "education",
+      "business_professional",
+      "research_academic",
+      "aerospace_transportation",
+      "industrial_manufacturing",
+      "technology"
+    ],
+    "quality": [
+      "daily_life",
+      "creative",
+      "psychology_wellness",
+      "sports_recreation",
+      "travel_tourism"
+    ],
+    "specialized": []
+  },
+  "total_domains": 93,
+  "total_categories": 16
+}

@@ -1,0 +1,84 @@
+{
+  "version": "1.0.0",
+  "bundle_id": "meetara_service_bundle_20250911_203733",
+  "created_at": "2025-09-11T20:38:20.226135",
+  "models": {
+    "mobile": {
+      "path": "models/meetara_mobile_universal.gguf",
+      "type": "GGUF",
+      "size_mb": 4082.11,
+      "domains": "93+ emotional intelligence domains"
+    },
+    "desktop": {
+      "path": "models/meetara_desktop_universal.gguf",
+      "type": "GGUF",
+      "size_mb": 4793.47,
+      "domains": "93+ emotional intelligence domains"
+    }
+  },
+  "services": {
+    "emotion_detection": {
+      "models": [
+        "services/emotion/rms_model.pkl",
+        "services/emotion/ser_model.pkl"
+      ],
+      "api_endpoint": "/api/v1/emotion/detect"
+    },
+    "voice_synthesis": {
+      "models": "services/voice/",
+      "categories": [
+        "healthcare",
+        "daily_life",
+        "business",
+        "education",
+        "creative",
+        "psychology_wellness",
+        "sports_recreation",
+        "business_professional",
+        "research_academic",
+        "legal_financial",
+        "emergency_crisis",
+        "aerospace_transportation",
+        "industrial_manufacturing",
+        "travel_tourism",
+        "technology",
+        "specialized"
+      ],
+      "api_endpoint": "/api/v1/voice/synthesize"
+    },
+    "translation": {
+      "supported_languages": [
+        "hi",
+        "te",
+        "ta",
+        "gu",
+        "bn",
+        "ml",
+        "mr",
+        "pa",
+        "as",
+        "si",
+        "kn",
+        "ur",
+        "ar",
+        "de",
+        "es",
+        "fr",
+        "ja",
+        "ko",
+        "zh"
+      ],
+      "models": "services/translation/",
+      "shared_nllb_model": "services/translation/shared_nllb_model/",
+      "api_endpoint": "/api/v1/translate",
+      "optimization": "99.1% storage reduction with shared NLLB model"
+    },
+    "intelligent_routing": {
+      "models": [
+        "services/routing/domain_router.pkl",
+        "services/routing/emotion_router.pkl"
+      ],
+      "api_endpoint": "/api/v1/route"
+    }
+  }
+}
